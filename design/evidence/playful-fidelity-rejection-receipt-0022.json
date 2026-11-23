@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "recordId": "design-history-0022",
+  "recordPath": "design/evidence/history/0022-maydan-playful-fidelity-rejection.md",
+  "recordSha256": "EC0C63A84316498302A29555B24021E616122DF7AE7167EF367471202EB68A32",
+  "previousRecordSha256": "9474CD97404697EABDB184893761ABCBBB0DE7F32DFEEED59DE6D8676E6754B4",
+  "previousReceiptSha256": "CE11C8D177D99CED4208ACE3DEB69CA76CBA8301DDEDEC2D599DB488A0F73D23",
+  "rejectedFreezeSha256": "15B09CC1FE21380DE107C772A893B2C6FCCBC11C63E840D87E327CDACAA4F174",
+  "referenceManifest": "design/evidence/playful-fidelity-reference-manifest-0022.json",
+  "referenceManifestSha256": "9D92731BC6B955A0DD4599C62019A6983B86BE012E5C4B7C5E3535590BAE3E51",
+  "selectedSource": "https://playful.app/",
+  "homepageCorrectionAuthorized": true,
+  "renderedHomepageAccepted": false,
+  "visualExpansionAuthorized": false
+}

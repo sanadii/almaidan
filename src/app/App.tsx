@@ -1,19 +1,31 @@
+import { isAlmaidanLocalDevelopment } from '../lib/local-development';
+
 import { Component, lazy, Suspense, type ReactNode } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './ThemeProvider';
 import { InternalHeader } from '../design-system/InternalHeader';
 import { DeferredFirebaseAuthProvider } from '../features/auth/auth-context';
 import { EntryRoute } from '../routes/EntryRoute';
+import { PgRuntimeContext } from '../features/game/runtime/room-context';
+import type { PgGameAdapter } from '../features/game/runtime/pg-game-adapter';
 import {
   isStaticPreviewBuild,
   staticPreviewNotice,
 } from '../features/game/runtime/static-preview';
 
+const EntaRoomJoinRoute = lazy(() => import('../features/enta/RoomRoutes').then(({ EntaRoomJoinRoute }) => ({ default: EntaRoomJoinRoute })));
+const EntaRoomRoute = lazy(() => import('../features/enta/RoomRoutes').then(({ EntaRoomRoute }) => ({ default: EntaRoomRoute })));
+const LocalAdminRoute = lazy(() => import('../features/local-admin/LocalAdminRoute').then(({ LocalAdminRoute }) => ({ default: LocalAdminRoute })));
+const LocalRematchRoute = lazy(() => import('../features/enta/LocalRematchRoute').then(({ LocalRematchRoute }) => ({ default: LocalRematchRoute })));
+const HuroofRematch = lazy(() => import('../features/game/HuroofRematch').then(({ HuroofRematch }) => ({ default: HuroofRematch })));
 const HostNewRoute = lazy(() => import('../routes/GameRoutes').then(({ HostNewRoute }) => ({ default: HostNewRoute })));
 const NameJoinRoute = lazy(() => import('../routes/NameJoinRoute').then(({ NameJoinRoute }) => ({ default: NameJoinRoute })));
 const HowToPlayRoute = lazy(() => import('../routes/GameRoutes').then(({ HowToPlayRoute }) => ({ default: HowToPlayRoute })));
 const NotFoundRoute = lazy(() => import('../routes/GameRoutes').then(({ NotFoundRoute }) => ({ default: NotFoundRoute })));
 const RoomRoute = lazy(() => import('../routes/GameRoutes').then(({ RoomRoute }) => ({ default: RoomRoute })));
+const ImposterNewRoute = lazy(() => import('../features/imposter/ImposterRoutes').then(({ ImposterNewRoute }) => ({ default: ImposterNewRoute })));
+const ImposterRoomRoute = lazy(() => import('../features/imposter/ImposterRoutes').then(({ ImposterRoomRoute }) => ({ default: ImposterRoomRoute })));
+const ImposterTutorialRoute = lazy(() => import('../features/imposter/ImposterRoutes').then(({ ImposterTutorialRoute }) => ({ default: ImposterTutorialRoute })));
 const AccountRoute = lazy(() => import('../routes/AuthRoutes').then(({ AccountRoute }) => ({ default: AccountRoute })));
 const LoginRoute = lazy(() => import('../routes/AuthRoutes').then(({ LoginRoute }) => ({ default: LoginRoute })));
 const AdminOverviewRoute = lazy(() => import('../features/admin/AdminRoutes').then(({ AdminOverviewRoute }) => ({ default: AdminOverviewRoute })));
@@ -27,6 +39,27 @@ const AdminShell = lazy(() => import('../features/admin/AdminRoutes').then(({ Ad
 const AdminUsersRoute = lazy(() => import('../features/admin/AdminRoutes').then(({ AdminUsersRoute }) => ({ default: AdminUsersRoute })));
 const LegacyQuestionRedirect = lazy(() => import('../features/admin/AdminRoutes').then(({ LegacyQuestionRedirect }) => ({ default: LegacyQuestionRedirect })));
 const LocalImportReviewRoute = lazy(() => import('../routes/LocalImportReviewRoute').then(({ LocalImportReviewRoute }) => ({ default: LocalImportReviewRoute })));
+const StudyRoute = lazy(() => import('../features/study/StudyRoute').then(({ StudyRoute }) => ({ default: StudyRoute })));
+const ContactRoute = lazy(() => import('../routes/ContactRoute').then(({ ContactRoute }) => ({ default: ContactRoute })));
+const MediaCreditsRoute = lazy(() => import('../routes/MediaCredits').then(({ MediaCreditsRoute }) => ({ default: MediaCreditsRoute })));
+const EpisodesRoute = lazy(() => import('../routes/EpisodesRoute').then(({ EpisodesRoute }) => ({ default: EpisodesRoute })));
+const EntaNewRoute = lazy(() => import('../routes/EntaRoutes').then(({ EntaNewRoute }) => ({ default: EntaNewRoute })));
+const EntaKidsRoute = lazy(() => import('../routes/EntaRoutes').then(({ EntaKidsRoute }) => ({ default: EntaKidsRoute })));
+const EntaHistoryRoute = lazy(() => import('../features/enta/HistoryRoutes').then(({ EntaHistoryRoute }) => ({ default: EntaHistoryRoute })));
+const OriginalResultRoute = lazy(() => import('../features/enta/OriginalResultRoute').then(({ OriginalResultRoute }) => ({ default: OriginalResultRoute })));
+const EntaRematchRoute = lazy(() => import('../features/enta/HistoryRoutes').then(({ EntaRematchRoute }) => ({ default: EntaRematchRoute })));
+const EntaMatchRoute = lazy(() => import('../routes/EntaRoutes').then(({ EntaMatchRoute }) => ({ default: EntaMatchRoute })));
+const EntaResultRoute = lazy(() => import('../routes/EntaRoutes').then(({ EntaResultRoute }) => ({ default: EntaResultRoute })));
+const EntaDrawingNewRoute = lazy(() => import('../features/enta/RoundRoutes').then(({ EntaDrawingNewRoute }) => ({default:EntaDrawingNewRoute})));
+const EntaRoundNewRoute = lazy(() => import('../features/enta/RoundRoutes').then(({ EntaRoundNewRoute }) => ({ default: EntaRoundNewRoute })));
+const EntaRoundMatchRoute = lazy(() => import('../features/enta/RoundRoutes').then(({ EntaRoundMatchRoute }) => ({ default: EntaRoundMatchRoute })));
+const EntaRoundResultRoute = lazy(() => import('../features/enta/RoundRoutes').then(({ EntaRoundResultRoute }) => ({ default: EntaRoundResultRoute })));
+const EntaCapabilityRoute = lazy(() => import('../features/enta/CapabilityRoute').then(({ EntaCapabilityRoute }) => ({ default: EntaCapabilityRoute })));
+
+const EntaCompetitionNewRoute = lazy(() => import('../features/enta/CompetitionSetup').then(({ EntaCompetitionNewRoute }) => ({ default: EntaCompetitionNewRoute })));
+const EntaCompetitionMatchRoute = lazy(() => import('../features/enta/CompetitionRoutes').then(({ EntaCompetitionMatchRoute }) => ({ default: EntaCompetitionMatchRoute })));
+const EntaCompetitionResultRoute = lazy(() => import('../features/enta/CompetitionRoutes').then(({ EntaCompetitionResultRoute }) => ({ default: EntaCompetitionResultRoute })));
+const EntaCompetitionCapabilityRoute = lazy(() => import('../features/enta/CompetitionCapability').then(({ EntaCompetitionCapabilityRoute }) => ({ default: EntaCompetitionCapabilityRoute })));
 
 type RouteStatusSurfaceProps = {
   action?: ReactNode;
@@ -45,16 +78,17 @@ function RouteStatusSurface({
 }: RouteStatusSurfaceProps) {
   const titleId = `route-status-${messageRole}-title`;
   return (
-    <main
+    <main data-page-layout="wide"
       aria-busy={busy || undefined}
       aria-live={busy ? "polite" : undefined}
-      className="app-page spatial-shell"
+      className="maydan-app maydan-public-page"
       id="main-content"
+      tabIndex={-1}
     >
       <InternalHeader />
-      <section className="setup-page spatial-setup" aria-labelledby={titleId}>
+      <section className="maydan-status-panel" data-state={busy ? 'loading' : messageRole} aria-labelledby={titleId}>
         <div>
-          <p className="eyebrow">الخلية</p>
+          <p className="eyebrow">الميدان</p>
           <h1 id={titleId}>{title}</h1>
           <p className="form-message" role={messageRole}>{message}</p>
           {action}
@@ -88,23 +122,64 @@ export class RouteChunkBoundary extends Component<{ children: ReactNode }, { fai
   }
 }
 
-function RouteAuthRuntime({ children }: { children: ReactNode }) {
+export function RouteAuthRuntime({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
-  return <DeferredFirebaseAuthProvider enabled={!isStaticPreviewBuild() && (pathname === '/login' || pathname === '/account' || pathname.startsWith('/admin'))}>{children}</DeferredFirebaseAuthProvider>;
+  if (['/enta/capability', '/enta/competitive/capability'].includes(pathname.replace(/\/$/, '').toLowerCase())) return <>{children}</>;
+  return <DeferredFirebaseAuthProvider enabled={!isStaticPreviewBuild() && (isAlmaidanLocalDevelopment || pathname === '/' || pathname === '/login' || pathname === '/account' || pathname === '/study' || pathname.startsWith('/admin') || pathname.startsWith('/enta/'))}>{children}</DeferredFirebaseAuthProvider>;
 }
 
-export function App() {
+function HostSetupRoute() {
+  const location = useLocation();
+  return new URLSearchParams(location.search).get('kind') === 'imposter' ? <ImposterNewRoute /> : <HostNewRoute />;
+}
+
+export function App({ pgRuntime = null }: { pgRuntime?: PgGameAdapter | null } = {}) {
   const staticPreview = isStaticPreviewBuild();
   const unavailable = <StaticPreviewUnavailableRoute />;
   return (
-    <ThemeProvider>
+    <PgRuntimeContext.Provider value={pgRuntime}><ThemeProvider>
       <BrowserRouter>
         <RouteAuthRuntime>
           <RouteChunkBoundary><Suspense fallback={<RouteLoading />}><Routes>
             <Route path="/" element={<EntryRoute />} />
+            <Route path="/local-admin" element={isAlmaidanLocalDevelopment ? <LocalAdminRoute /> : <NotFoundRoute />} />
+            <Route path="/enta/local-rematch/:engine/:id" element={isAlmaidanLocalDevelopment ? <LocalRematchRoute /> : <NotFoundRoute />} />
             <Route path="/room/:roomCode/join" element={<NameJoinRoute />} />
             <Route path="/how-to-play" element={<HowToPlayRoute />} />
-            <Route path="/host/new" element={<HostNewRoute />} />
+            <Route path="/media-credits" element={<MediaCreditsRoute />} />
+            <Route path="/contact" element={<ContactRoute />} />
+            <Route path="/study" element={<StudyRoute />} />
+            <Route path="/episodes" element={<EpisodesRoute />} />
+            <Route path="/enta/competitive/new/classic" element={<EntaCompetitionNewRoute format="TIER_BOARD" />} />
+            <Route path="/enta/competitive/new/mixed" element={<EntaCompetitionNewRoute format="MIXED_BOARD" />} />
+            <Route path="/enta/competitive/new/list" element={<EntaCompetitionNewRoute format="STANDALONE_LIST" />} />
+            <Route path="/enta/competitive/new/acting" element={<EntaCompetitionNewRoute format="STANDALONE_ACTING" />} />
+            <Route path="/enta/competitive/matches/:id" element={<EntaCompetitionMatchRoute />} />
+            <Route path="/enta/competitive/matches/:id/result" element={<EntaCompetitionResultRoute />} />
+            <Route path="/enta/competitive/capability" element={<EntaCompetitionCapabilityRoute />} />
+            <Route path="/enta/rooms/:code/join" element={<EntaRoomJoinRoute />} />
+            <Route path="/enta/rooms/:code/host" element={<EntaRoomRoute host />} />
+            <Route path="/enta/rooms/:code/play" element={<EntaRoomRoute />} />
+            <Route path="/enta/rooms/:code/display" element={<EntaRoomRoute display />} />
+            <Route path="/enta/new" element={<EntaNewRoute />} />
+            <Route path="/enta/new/kids" element={<EntaKidsRoute />} />
+            <Route path="/enta/new/drawing" element={<EntaDrawingNewRoute />} />
+            <Route path="/enta/new/list" element={<EntaRoundNewRoute format="STANDALONE_LIST" />} />
+            <Route path="/enta/new/acting" element={<EntaRoundNewRoute format="STANDALONE_ACTING" />} />
+            <Route path="/enta/new/mixed" element={<EntaRoundNewRoute format="MIXED_BOARD" />} />
+            <Route path="/enta/round-matches/:id" element={<EntaRoundMatchRoute />} />
+            <Route path="/enta/round-matches/:id/result" element={<EntaRoundResultRoute />} />
+            <Route path="/enta/capability" element={<EntaCapabilityRoute />} />
+            <Route path="/enta/history" element={<EntaHistoryRoute />} />
+            <Route path="/history" element={<EntaHistoryRoute />} />
+            <Route path="/huroof/rematch/:id" element={isAlmaidanLocalDevelopment?<HuroofRematch/>:<NotFoundRoute/>} />
+            <Route path="/enta/history/:id/original-result" element={<OriginalResultRoute />} />
+            <Route path="/enta/matches/:id/rematch" element={<EntaRematchRoute />} />
+            <Route path="/enta/matches/:id" element={<EntaMatchRoute />} />
+            <Route path="/enta/matches/:id/result" element={<EntaResultRoute />} />
+            <Route path="/host/new" element={<HostSetupRoute />} />
+            <Route path="/how-to-play/imposter" element={<ImposterTutorialRoute />} />
+            <Route path="/room/:roomCode/imposter" element={staticPreview ? unavailable : <ImposterRoomRoute />} />
             <Route path="/room/:roomCode/lobby" element={staticPreview ? unavailable : <RoomRoute surface="lobby" />} />
             <Route path="/room/:roomCode/host" element={staticPreview ? unavailable : <RoomRoute surface="host" />} />
             <Route path="/room/:roomCode/play" element={staticPreview ? unavailable : <RoomRoute surface="play" />} />
@@ -135,6 +210,6 @@ export function App() {
           </Routes></Suspense></RouteChunkBoundary>
         </RouteAuthRuntime>
       </BrowserRouter>
-    </ThemeProvider>
+    </ThemeProvider></PgRuntimeContext.Provider>
   );
 }

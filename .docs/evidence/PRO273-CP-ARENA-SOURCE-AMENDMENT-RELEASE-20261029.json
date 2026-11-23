@@ -1,0 +1,38 @@
+{
+  "milestone": "PRO273-SEL",
+  "assignment": "PRO311-HISTORY-FORGE",
+  "status": "AFFECTED_CONTROL_PLANE_ARENA_SOURCE_REPAIR_RELEASED_NOT_ACCEPTANCE",
+  "releasedUtc": "2026-10-29T00:20:23.1495527Z",
+  "originalRelease": ".docs/evidence/PRO273-SEL-SOURCE-AUTHORING-RELEASE-20261029.json",
+  "originalManifestSha256": "591cd769e77c990b07b536698b8b6e37b4427556fcc7245dac6737a679fbf97d",
+  "ownedPathCount": 31,
+  "scopeChangedPaths": false,
+  "contract": "output/pro311-history-20261027/planner/PRO273-CONTROL-PLANE-CLOSURE-SUPPLEMENT-20261029.md",
+  "contractSha256": "e4424e042888030411b7791ec6c8242e931b43f730b6a223c5a042f296d805ff",
+  "reviewedPredecessorSha256": "a81db457d6ae089f2d09d49c3e794244c9d37ea3f792ec0496484c7985d42bcc",
+  "databaseDisposition": {
+    "sha256": "4e158bb918ad8f44351424f8b94cb933dc8739622fd0e07f4521a108c30fd848",
+    "meaning": "Agree mechanism; direct Root integration of exact ResourceSchedule/funding completions permitted",
+    "path": "output/pro311-history-20261027/database/PRO273-CONTROL-PLANE-CLOSURE-DISPOSITION-20261029.md"
+  },
+  "securityDisposition": {
+    "sha256": "3228d6ab8cc78b54b5fb1a0d82f46bc390908595e77ee08fdd7e5e8fba944460",
+    "meaning": "Concur with exact typed ResourceSchedule/real-scope and worker/claimant clarifications",
+    "path": "output/pro311-history-20261027/security/PRO273-CONTROL-PLANE-CLOSURE-DISPOSITION-20261029.md"
+  },
+  "rootIntegration": "Exact A/B fields appended to the unchanged reviewed mechanism: complete typed nested schedule plus real four-way qualifiedScope union; CONTROL publication worker bound to its actual qualifier allocation, distinct qualified CONTROL claimant allocation; no INITIAL/revoker relabeling. PrimitiveProfileCore cycle fix explicitly concurred by both.",
+  "affected": [
+    "Permanent qualifier baseline layout/allocation/descriptor/attempt scope",
+    "Independently installed INITIAL/revoker process/preinput holder, captured revoke and no executable old overload",
+    "Directed semantic core/authority/evidence/capture receipt hashes including new PrimitiveProfile",
+    "Committed all-body invocation/debit claims and actual one-shot fixed receiver across rollback",
+    "Typed semantic-domain/resource-envelope/schedule scope binding before work",
+    "First profile bootstrap parser explicit inapplicability with independent expected installation closure"
+  ],
+  "retained": "All original receipts and compatible CAP/native-bridge/guard/DNA, primitive behavior, tuple and raw-token semantics remain at their own identities. Current candidate is incomplete and not execution-frozen.",
+  "runtimeAuthorityGranted": false,
+  "nativeSqlBuild": "NOT_RUN",
+  "requiredFinal": "Complete assigned implementation, affected real-module inert-I/O checks/noEmit, exact changed-byte Database/Security reviews and Root material reproduction; no Source/native/physical qualification invented.",
+  "fullTaskDone": false,
+  "credit": 0
+}

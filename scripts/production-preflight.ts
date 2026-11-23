@@ -1,7 +1,8 @@
+import { APPROVED_HOSTED_PROJECT, EMULATOR_KEYS, validNamespace } from "../services/enta/server/src/config-policy.js";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const productionProjectId = "huroof-a3ee7";
+export const legacyProductionProjectId = "huroof-a3ee7";
 export const productionFunctionsRegion = "me-central1";
 
 type Environment = Record<string, string | undefined>;
@@ -27,8 +28,18 @@ export function assertProductionPreflight(
     failures.push("VITE_GAME_RUNTIME must be firebase.");
   if (environment.VITE_USE_FIREBASE_EMULATORS !== "false")
     failures.push("VITE_USE_FIREBASE_EMULATORS must be false.");
-  if (environment.VITE_FIREBASE_PROJECT_ID !== productionProjectId)
-    failures.push(`VITE_FIREBASE_PROJECT_ID must be ${productionProjectId}.`);
+  const webProjectId = environment.VITE_FIREBASE_PROJECT_ID?.trim() ?? "";
+  const serverProjectId = environment.FIREBASE_PROJECT_ID?.trim() ?? "";
+  const namespaceId = environment.ENTA_NAMESPACE_ID?.trim() ?? "";
+  if (!webProjectId) failures.push("VITE_FIREBASE_PROJECT_ID is required.");
+  if (!serverProjectId) failures.push("FIREBASE_PROJECT_ID is required.");
+  if (!namespaceId) failures.push("ENTA_NAMESPACE_ID is required.");
+  if (webProjectId !== APPROVED_HOSTED_PROJECT || serverProjectId !== APPROVED_HOSTED_PROJECT)
+    failures.push("VITE_FIREBASE_PROJECT_ID and FIREBASE_PROJECT_ID must match the approved project.");
+  if (webProjectId && serverProjectId && webProjectId !== serverProjectId)
+    failures.push("VITE_FIREBASE_PROJECT_ID must match FIREBASE_PROJECT_ID.");
+  if (namespaceId && !validNamespace(namespaceId)) failures.push("ENTA_NAMESPACE_ID has an invalid format.");
+  if (environment.ENTA_ALLOW_DEV_MOCKS === "true" || environment.ENTA_RUNTIME_MODE === "local") failures.push("Development mocks must be disabled.");
   if (environment.VITE_FIREBASE_FUNCTIONS_REGION !== productionFunctionsRegion)
     failures.push(
       `VITE_FIREBASE_FUNCTIONS_REGION must be ${productionFunctionsRegion}.`,
@@ -57,20 +68,11 @@ export function assertProductionPreflight(
     !/^[a-f0-9]{64}$/i.test(environment.FIREBASE_ACTIVE_RELEASE_ROOT_SHA256!)
   )
     failures.push("FIREBASE_ACTIVE_RELEASE_ROOT_SHA256 must be a SHA-256 hex digest.");
-  for (const name of [
-    "FIRESTORE_EMULATOR_HOST",
-    "FIREBASE_AUTH_EMULATOR_HOST",
-    "FIREBASE_FUNCTIONS_EMULATOR_HOST",
-    "FIREBASE_STORAGE_EMULATOR_HOST",
-    "VITE_FIREBASE_AUTH_EMULATOR_PORT",
-    "VITE_FIREBASE_FIRESTORE_EMULATOR_PORT",
-    "VITE_FIREBASE_FUNCTIONS_EMULATOR_PORT",
-    "VITE_FIREBASE_STORAGE_EMULATOR_PORT",
-  ])
+  for (const name of EMULATOR_KEYS)
     if (hasValue(environment[name])) failures.push(`${name} must be unset.`);
-  for (const name of ["GCLOUD_PROJECT", "FIREBASE_PROJECT"])
-    if (hasValue(environment[name]) && environment[name] !== productionProjectId)
-      failures.push(`${name} must be ${productionProjectId} when provided.`);
+  for (const name of ["GCLOUD_PROJECT", "GOOGLE_CLOUD_PROJECT", "FIREBASE_PROJECT"])
+    if (hasValue(environment[name]) && environment[name] !== serverProjectId)
+      failures.push(`${name} must match FIREBASE_PROJECT_ID when provided.`);
   if (failures.length)
     throw new Error(`Production preflight rejected:\n- ${failures.join("\n- ")}`);
 }
@@ -78,7 +80,7 @@ export function assertProductionPreflight(
 function main(): void {
   assertProductionPreflight(process.env, process.versions.node);
   console.log(
-    `Production preflight passed for ${productionProjectId}; immutable release ${process.env.FIREBASE_ACTIVE_RELEASE_ID}.`,
+    `Production preflight passed for ${process.env.FIREBASE_PROJECT_ID}; immutable release ${process.env.FIREBASE_ACTIVE_RELEASE_ID}.`,
   );
 }
 

@@ -1,0 +1,5 @@
+# Source-only extension metadata; installation is not authorized.
+comment = 'PRO273 private qualified selection primitives'
+default_version = '1.0'
+module_pathname = '$libdir/pro273_primitives'
+relocatable = false

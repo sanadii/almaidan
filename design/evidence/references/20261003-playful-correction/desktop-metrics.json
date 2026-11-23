@@ -1,0 +1,402 @@
+{
+  "bodyBg": "rgb(246, 241, 237)",
+  "capturedAt": "2026-10-03T14:48:51.861Z",
+  "header": [
+    {
+      "filter": "blur(0px)",
+      "position": "sticky",
+      "rect": {
+        "h": 148.9375,
+        "w": 1265,
+        "x": 0,
+        "y": -30.71875
+      }
+    }
+  ],
+  "headings": [
+    {
+      "ancestors": [
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "flex max-w-[44rem] flex-col gap-stack-xl",
+          "gap": "24px",
+          "padding": "0px",
+          "rect": {
+            "h": 383.390625,
+            "w": 704,
+            "x": 96.5,
+            "y": 150.21875
+          },
+          "tag": "DIV"
+        },
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "flex flex-col",
+          "gap": "normal",
+          "padding": "0px",
+          "rect": {
+            "h": 1019.015625,
+            "w": 1072,
+            "x": 96.5,
+            "y": 150.21875
+          },
+          "tag": "MAIN"
+        },
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "relative z-10 mx-auto flex w-full max-w-[75rem] flex-col px-[var(--landing-gutter)] pt-[var(--landing-hero-top)] pb-[var(--landing-hero-bottom)]",
+          "gap": "normal",
+          "padding": "150.24px 64px 192px",
+          "rect": {
+            "h": 1361.25,
+            "w": 1200,
+            "x": 32.5,
+            "y": -0.015625
+          },
+          "tag": "DIV"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "line": "64.8px",
+      "rect": {
+        "h": 194.390625,
+        "w": 704,
+        "x": 96.5,
+        "y": 150.21875
+      },
+      "size": "60px",
+      "text": "Apps have always been built by strangers.Until now.",
+      "weight": "900"
+    },
+    {
+      "ancestors": [
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "flex items-center gap-inline-md",
+          "gap": "12px",
+          "padding": "0px",
+          "rect": {
+            "h": 56,
+            "w": 229.109375,
+            "x": 453.296875,
+            "y": 750.015625
+          },
+          "tag": "DIV"
+        },
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "flex flex-col items-center gap-stack-sm text-center md:items-start md:text-start",
+          "gap": "8px",
+          "padding": "0px",
+          "rect": {
+            "h": 222,
+            "w": 315,
+            "x": 453.296875,
+            "y": 750.015625
+          },
+          "tag": "DIV"
+        },
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "flex flex-col items-center gap-stack-xl pt-[var(--landing-showcase-top)] md:flex-row md:items-center md:gap-[clamp(3rem,6vw,6rem)]",
+          "gap": "76.8px",
+          "padding": "83.2px 0px 0px",
+          "rect": {
+            "h": 635.625,
+            "w": 1072,
+            "x": 96.5,
+            "y": 533.609375
+          },
+          "tag": "DIV"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "line": "33.6px",
+      "rect": {
+        "h": 33.59375,
+        "w": 161.109375,
+        "x": 521.296875,
+        "y": 761.21875
+      },
+      "size": "28px",
+      "text": "Where Next",
+      "weight": "700"
+    },
+    {
+      "ancestors": [
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "flex max-w-[46rem] flex-col gap-stack-lg",
+          "gap": "16px",
+          "padding": "0px",
+          "rect": {
+            "h": 221.15625,
+            "w": 688.015625,
+            "x": 96.5,
+            "y": 1284.421875
+          },
+          "tag": "DIV"
+        },
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "flex flex-col gap-[var(--landing-starter-stack)]",
+          "gap": "102.4px",
+          "padding": "0px",
+          "rect": {
+            "h": 645.796875,
+            "w": 688.015625,
+            "x": 96.5,
+            "y": 1284.421875
+          },
+          "tag": "DIV"
+        },
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "relative z-10 mx-auto grid w-full max-w-[75rem] items-end gap-[var(--landing-starter-gap)] px-[var(--landing-gutter)] md:grid-cols-[minmax(0,1fr)_auto]",
+          "gap": "76.8px",
+          "padding": "0px 64px",
+          "rect": {
+            "h": 645.796875,
+            "w": 1200,
+            "x": 32.5,
+            "y": 1284.421875
+          },
+          "tag": "DIV"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "line": "46.592px",
+      "rect": {
+        "h": 93.15625,
+        "w": 688.015625,
+        "x": 96.5,
+        "y": 1284.421875
+      },
+      "size": "41.6px",
+      "text": "Every app starts with a person you're making it for.",
+      "weight": "900"
+    },
+    {
+      "ancestors": [
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "flex max-w-[46rem] flex-col gap-stack-lg",
+          "gap": "16px",
+          "padding": "0px",
+          "rect": {
+            "h": 298.578125,
+            "w": 736,
+            "x": 96.5,
+            "y": 2212.8125
+          },
+          "tag": "DIV"
+        },
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "mx-auto flex w-full max-w-[75rem] flex-col gap-[var(--landing-gallery-lead)] px-[var(--landing-gutter)]",
+          "gap": "80px",
+          "padding": "0px 64px",
+          "rect": {
+            "h": 1296.390625,
+            "w": 1200,
+            "x": 32.5,
+            "y": 2212.8125
+          },
+          "tag": "DIV"
+        },
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "relative overflow-x-clip pt-[var(--landing-section-top)] pb-[var(--landing-section-bottom)]",
+          "gap": "normal",
+          "padding": "76.8px 0px 128px",
+          "rect": {
+            "h": 1501.1875,
+            "w": 1265,
+            "x": 0,
+            "y": 2136.015625
+          },
+          "tag": "SECTION"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "line": "46.592px",
+      "rect": {
+        "h": 93.15625,
+        "w": 736,
+        "x": 96.5,
+        "y": 2258.234375
+      },
+      "size": "41.6px",
+      "text": "The best app for your people is the one you make for them.",
+      "weight": "900"
+    },
+    {
+      "ancestors": [
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "flex flex-col gap-stack-lg",
+          "gap": "16px",
+          "padding": "0px",
+          "rect": {
+            "h": 377.15625,
+            "w": 504,
+            "x": 664.5,
+            "y": 3860.796875
+          },
+          "tag": "DIV"
+        },
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "mx-auto grid w-full max-w-[75rem] items-center gap-[var(--landing-privacy-gap)] px-[var(--landing-gutter)] md:grid-cols-2",
+          "gap": "64px",
+          "padding": "0px 64px",
+          "rect": {
+            "h": 668.765625,
+            "w": 1200,
+            "x": 32.5,
+            "y": 3715
+          },
+          "tag": "DIV"
+        },
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "relative overflow-x-clip pt-[var(--landing-section-top)] pb-[var(--landing-section-bottom)]",
+          "gap": "normal",
+          "padding": "76.8px 0px 128px",
+          "rect": {
+            "h": 873.5625,
+            "w": 1265,
+            "x": 0,
+            "y": 3638.203125
+          },
+          "tag": "SECTION"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "line": "46.592px",
+      "rect": {
+        "h": 139.734375,
+        "w": 504,
+        "x": 664.5,
+        "y": 3906.21875
+      },
+      "size": "41.6px",
+      "text": "You decide who can see it. Every time.",
+      "weight": "900"
+    },
+    {
+      "ancestors": [
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "mx-auto w-full max-w-[75rem] px-[var(--landing-gutter)]",
+          "gap": "normal",
+          "padding": "0px 64px",
+          "rect": {
+            "h": 757.703125,
+            "w": 1200,
+            "x": 32.5,
+            "y": 4589.5625
+          },
+          "tag": "DIV"
+        },
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "pt-[var(--landing-section-top)] pb-[var(--landing-section-bottom)]",
+          "gap": "normal",
+          "padding": "76.8px 0px 128px",
+          "rect": {
+            "h": 962.5,
+            "w": 1265,
+            "x": 0,
+            "y": 4512.765625
+          },
+          "tag": "SECTION"
+        },
+        {
+          "bg": "rgb(246, 241, 237)",
+          "cls": "bg-surface",
+          "gap": "normal",
+          "padding": "0px",
+          "rect": {
+            "h": 6160.34375,
+            "w": 1265,
+            "x": 0,
+            "y": -30.71875
+          },
+          "tag": "DIV"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "line": "49.92px",
+      "rect": {
+        "h": 49.90625,
+        "w": 1072,
+        "x": 96.5,
+        "y": 4589.5625
+      },
+      "size": "41.6px",
+      "text": "FAQs",
+      "weight": "900"
+    },
+    {
+      "ancestors": [
+        {
+          "bg": "rgba(0, 0, 0, 0)",
+          "cls": "mx-auto flex w-full max-w-[75rem] flex-col items-center gap-[var(--landing-footer-gap)] px-[var(--landing-gutter)] text-center",
+          "gap": "29.6px",
+          "padding": "0px 64px",
+          "rect": {
+            "h": 323.5625,
+            "w": 1200,
+            "x": 32.5,
+            "y": 5552.0625
+          },
+          "tag": "DIV"
+        },
+        {
+          "bg": "rgb(20, 20, 20)",
+          "cls": "pt-[var(--landing-section-top)] pb-[var(--landing-section-bottom)]",
+          "gap": "normal",
+          "padding": "76.8px 0px 128px",
+          "rect": {
+            "h": 654.359375,
+            "w": 1265,
+            "x": 0,
+            "y": 5475.265625
+          },
+          "tag": "FOOTER"
+        },
+        {
+          "bg": "rgb(246, 241, 237)",
+          "cls": "bg-surface",
+          "gap": "normal",
+          "padding": "0px",
+          "rect": {
+            "h": 6160.34375,
+            "w": 1265,
+            "x": 0,
+            "y": -30.71875
+          },
+          "tag": "DIV"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "line": "57.2px",
+      "rect": {
+        "h": 57.1875,
+        "w": 766.578125,
+        "x": 249.203125,
+        "y": 5669.65625
+      },
+      "size": "52px",
+      "text": "Make something for someone.",
+      "weight": "900"
+    }
+  ],
+  "source": "https://playful.app/",
+  "viewport": {
+    "clientWidth": 1265,
+    "h": 720,
+    "w": 1280
+  }
+}

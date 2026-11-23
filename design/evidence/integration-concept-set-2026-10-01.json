@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "artifactId": "huroof-entasa7-integration-concepts-2026-10-01",
+  "recordedAt": "2026-10-01",
+  "status": "presented-for-human-selection",
+  "purpose": "Exactly three screenshot-backed visual concepts for the new combined Arabic RTL app. These generated previews are direction evidence, not shippable interface artwork or permission to change either game's rules.",
+  "historyPrefix": {
+    "recordId": "design-history-0007",
+    "path": "design/evidence/history/0007-spatial-studio-whole-app-rollout.md",
+    "sha256": "B6FF90DD167B0813A1118C23AC030B71260D66A71DCCC38B077643DE8EFB7510"
+  },
+  "concepts": [
+    {
+      "id": "INT-CONCEPT-A",
+      "workingNameAr": "لَمّة",
+      "direction": "warm-playful",
+      "path": "design/mockups/integration-2026-10-01/concept-a-lamma.png",
+      "sha256": "460675546071528A7C21305C9BAFE4F0DCA5FF5E257C8378E4AB9604C77D7084",
+      "width": 1586,
+      "height": 992,
+      "bytes": 1752840,
+      "referenceStyleId": "5f5fd099-866e-4681-917b-0254a3883980"
+    },
+    {
+      "id": "INT-CONCEPT-B",
+      "workingNameAr": "ميدان",
+      "direction": "high-contrast-competition",
+      "path": "design/mockups/integration-2026-10-01/concept-b-maydan.png",
+      "sha256": "F9C9FC2D199B83BB2B6BEE583489BB29977D0A3E177ACCC4805C74AF8AEE9B28",
+      "width": 1586,
+      "height": 992,
+      "bytes": 1028333,
+      "referenceStyleId": "46156b44-5f16-42f5-8257-c921ba0385c5"
+    },
+    {
+      "id": "INT-CONCEPT-C",
+      "workingNameAr": "مِداد",
+      "direction": "calm-editorial",
+      "path": "design/mockups/integration-2026-10-01/concept-c-midad.png",
+      "sha256": "CF910003AF2C8D849009C6F6A35A00B20DA0BFDDB9561B4048AE45761E7A27DD",
+      "width": 1586,
+      "height": 992,
+      "bytes": 1665834,
+      "referenceStyleId": "4784cf2e-58ed-4b0c-8e6d-8758f595d997"
+    }
+  ],
+  "generation": {
+    "runner": "D:/projects/agent-profile/scripts/invoke-codex-image.ps1",
+    "model": "GPT-5.6 Sol directing built-in image_gen",
+    "note": "Final PNGs were wrapper-validated as decodable bitmaps. Corrective renders removed an invented square Huroof board; A depicts 25 staggered hexes, B uses one abstract hex motif, and C uses loose letter cards. All text and composition must be rebuilt in real accessible DOM if selected."
+  },
+  "invariants": "Concept imagery cannot supersede game geometry, scoring, role permissions, truthful data, reviewed content, or historical design approvals. The canonical Huroof board remains 25 cells with six-neighbour adjacency and physical team axes. Only a later exact human selection can authorize a new DESIGN-DNA direction."
+}

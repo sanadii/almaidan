@@ -1,0 +1,117 @@
+[
+  {
+    "path": "design/evidence/references/20261003-playful-live/01-desktop-first.jpg",
+    "bytes": 64238,
+    "sha256": "41BDD6A5D867EBB6904F169B30372B3326F8AAEC4FB1D7220CECF31F51830CC9"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/02-desktop-scroll.jpg",
+    "bytes": 70328,
+    "sha256": "21F982FDC5DEE6AE77AAB5458AF695139FA7057DD2697F7EDA5625C6E3BECBC7"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/03-desktop-scroll.jpg",
+    "bytes": 51727,
+    "sha256": "81AD88AC2F6FE0DFE9C5C756C017A2F50CEEFD3FA7D3C2976FF10AC98FC0C509"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/04-desktop-scroll.jpg",
+    "bytes": 69367,
+    "sha256": "1801AA2583F4A590126E533C6C780E694ACD1FA3868E374CB6DA05411AB35ABD"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/05-desktop-scroll.jpg",
+    "bytes": 90985,
+    "sha256": "95640A8BF155E0A4AA34E5385D8BCF477E40AD327AFDB4ED8B11996BDD696619"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/06-desktop-scroll.jpg",
+    "bytes": 53341,
+    "sha256": "647462C5D7E2450E246160CCABE7AB792482768C92E1844D1BE0B8B6BAA58E57"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/07-desktop-scroll.jpg",
+    "bytes": 16744,
+    "sha256": "A41D78E67C989B2C640D68B0911050CA8AA292793B36F83ED11CE20B6EEF82C1"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/08-desktop-scroll.jpg",
+    "bytes": 20383,
+    "sha256": "AA0F0BDF7181E9260FBB03C9B1C6B2F413F204F4F1DF79D8D28D5F89BDA5330F"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/09-desktop-scroll.jpg",
+    "bytes": 32539,
+    "sha256": "C7C833600AA6BA0C45ED730B0F206AB57FB0F48B77157AB3B59BFA89A7589693"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/10-desktop-full-revealed.jpg",
+    "bytes": 505269,
+    "sha256": "D22D22C797CEA67CFED3286AFC889581CC215FAC5E43585103693C5BC225ABDF"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/11-mobile-first.jpg",
+    "bytes": 35223,
+    "sha256": "10A2EBC7FDD806E165410D1DF601B7A05F8157DF6EFE1A82CFCA19DF694C757C"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/12-mobile-scroll.jpg",
+    "bytes": 33018,
+    "sha256": "B5FA8BC74E8A234CA109B7E35CBBC45E1D6711563A53193AD8EE036B0A425E84"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/13-mobile-scroll.jpg",
+    "bytes": 31750,
+    "sha256": "D9E9D9DB40FE35C8D373DB9EB26283BC74F527DB4609FF0446164A6D13195C06"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/14-mobile-scroll.jpg",
+    "bytes": 39672,
+    "sha256": "732088475C18010683F87507B9FA5D978DE375507AB4ECE291DD26C21993FDDC"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/15-mobile-scroll.jpg",
+    "bytes": 32600,
+    "sha256": "366A39FEFD81635E9E42F7E34BB46947FCE2D7538E77D5FE3368FEE057FBCD31"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/16-mobile-scroll.jpg",
+    "bytes": 33968,
+    "sha256": "8F1B3024BA9FB9295634DE180CB5E023359023441B7ABE2F1DF7DFE189C17B61"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/17-mobile-scroll.jpg",
+    "bytes": 34184,
+    "sha256": "3DDBAAA3A078F91DB07FD13ACDA431F1155A07AFD36495D56E8BC2E9AC87531E"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/18-mobile-scroll.jpg",
+    "bytes": 29359,
+    "sha256": "47C5D9D89A5054FAF3FF9F9DA9A81F6A37762D2C0093F53513F7B7D388C9C3E0"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/19-mobile-scroll.jpg",
+    "bytes": 30632,
+    "sha256": "0C312CCD9EC3B5C35713935B4DA63A1FC0E0CD3514D08D0B203962360FADBB4B"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/20-mobile-scroll.jpg",
+    "bytes": 30632,
+    "sha256": "0C312CCD9EC3B5C35713935B4DA63A1FC0E0CD3514D08D0B203962360FADBB4B"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/21-mobile-full-revealed.jpg",
+    "bytes": 309962,
+    "sha256": "32926C4E2424388E59B11005CDF81AB5ECCB02098B3DF547FF413A71F52592AA"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/desktop-metrics.json",
+    "bytes": 3154,
+    "sha256": "5477D68DE3C31E22503ACE0116864B88493192F374A3E5FE0EAFB38D9334FC5F"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-live/mobile-metrics.json",
+    "bytes": 1961,
+    "sha256": "7D0270EF1F681AB6AD87F0ECAC94BBFC8E57322140A70134A8EE4AF4BC9A7A41"
+  }
+]

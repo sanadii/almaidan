@@ -3,16 +3,18 @@ import test from "node:test";
 import {
   assertProductionPreflight,
   productionFunctionsRegion,
-  productionProjectId,
 } from "../scripts/production-preflight.js";
 
+const buildProjectId = "huroof-a3ee7";
 const valid = {
   VITE_GAME_RUNTIME: "firebase",
   VITE_USE_FIREBASE_EMULATORS: "false",
-  VITE_FIREBASE_PROJECT_ID: productionProjectId,
+  VITE_FIREBASE_PROJECT_ID: buildProjectId,
+  FIREBASE_PROJECT_ID: buildProjectId,
+  ENTA_NAMESPACE_ID: "maydan-isolated-v1",
   VITE_FIREBASE_FUNCTIONS_REGION: productionFunctionsRegion,
   VITE_FIREBASE_API_KEY: "public-api-key",
-  VITE_FIREBASE_AUTH_DOMAIN: "huroof-a3ee7.firebaseapp.com",
+  VITE_FIREBASE_AUTH_DOMAIN: `${buildProjectId}.firebaseapp.com`,
   VITE_FIREBASE_APP_ID: "1:123:web:production",
   VITE_FIREBASE_APP_CHECK_SITE_KEY: "public-app-check-key",
   FIREBASE_ACTIVE_RELEASE_ID: "release_20260908",
@@ -21,6 +23,14 @@ const valid = {
 
 test("production preflight accepts an explicit non-emulator Node 22 release build", () => {
   assert.doesNotThrow(() => assertProductionPreflight(valid, "22.16.0"));
+});
+
+test("production preflight pins the project and validates an independent namespace", () => {
+  assert.throws(() => assertProductionPreflight({ ...valid, FIREBASE_PROJECT_ID: "another-project" }, "22.16.0"), /approved project/);
+  assert.doesNotThrow(() => assertProductionPreflight({ ...valid, ENTA_NAMESPACE_ID: "another-namespace" }, "22.16.0"));
+  for (const namespace of ["", "bad namespace", "x".repeat(129)]) {
+    assert.throws(() => assertProductionPreflight({ ...valid, ENTA_NAMESPACE_ID: namespace }, "22.16.0"), /ENTA_NAMESPACE_ID/);
+  }
 });
 
 test("production preflight rejects the former Dammam Functions region", () => {

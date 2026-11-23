@@ -1,0 +1,48 @@
+{
+  "task": "PRO-283 / INT-040",
+  "status": "ACCEPTED_SOURCE_INVENTORY_ONLY",
+  "acceptedAtUtc": "2026-10-27T10:49:12.341780+00:00",
+  "checks": [
+    "12 source/approval identities matched",
+    "530 unique retained Huroof category identities with saved release/root and explicit current availability unknown",
+    "911 inline and1273 extra rows metadata/hash coverage;6 study rows and543empty placeholders",
+    "30 definition label comparisons and two separate categories; ambiguous/broad mappings not promoted",
+    "Exact approved CONTENT01 authoring scope retained; no publication/selection upgrade",
+    "Private prompt/answer/raw media fields absent",
+    "All six mode families have explicit source-only availability and unknowns"
+  ],
+  "artifacts": [
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\ten-task-batch-20261027\\catalog-reconcile.cjs",
+      "sha256": "dbaa93ff9319c5ba512864ab2089ed15a8d80ff1d1e4324cac59e0ae65339660"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\ten-task-batch-20261027\\catalog-reconciliation.json",
+      "sha256": "b13aeeecb756d75391ead790b487f663d2283c24cfd93ef1166d6983dd499bb8"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro283-inventory-20261027\\inline-inventory.cjs",
+      "sha256": "7c513a85e30a4b6b0fe770d54a6be563c22f0bdba20531cf7b03c4d606fb6bd8"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro283-inventory-20261027\\inline-inventory.json",
+      "sha256": "4e68d054f5b3115571e6741115785fe82fb6391e52926eacaca9fcd52d750d9d"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\.docs\\INT-4-CATEGORY-CROSSWALK.md",
+      "sha256": "83602cc4ec5e6f4a98c1bf50cb3b32796ea2c04a4c798d7178350898ff3c54a9"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\ten-task-batch-20261027\\accept-inventory.py",
+      "sha256": "a46ba4e77f260053852dd39f2acbd34bc51c22e35df313f296d400aadcf2b0b7"
+    }
+  ],
+  "remainingOutsideInventory": [
+    "Canonical equivalence decisions and editorial/rights qualification of unapproved content",
+    "Current installed pointers, media availability and first/repeat playable supply",
+    "INT-041 through INT-043 publication and runtime acceptance"
+  ],
+  "r6": "STOP",
+  "nativeOrDatabaseOperations": "NONE",
+  "sourceOnly": true
+}

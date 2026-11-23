@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "pro273-primitive-dependencies-v1",
+  "status": "UNQUALIFIED",
+  "apiReferences": {
+    "postgresql": "17.6",
+    "icu": "78.1",
+    "doubleConversion": "3.3.1"
+  },
+  "qualification": {
+    "postgresServerHeaders": null,
+    "postgresSourceAndLibrary": null,
+    "icuHeadersLibraryAndData": null,
+    "doubleConversionSourceAndBinary": null,
+    "compilerLinkerAndFlags": null,
+    "architectureAndRounding": null,
+    "nodeV8AndLocale": null,
+    "installedModuleAndFunctionIdentity": null,
+    "installerCompilerLinkerWindowsSdkAndRuntime": null,
+    "installerBcryptProviderAndHashWorkspace": null,
+    "installerExecutableAndInitialLoader": null,
+    "installerStartupHolderAndConsumedReceipt": null,
+    "installerFullLoadClosureAndFences": null
+  },
+  "acquisition": "Explicit externally verified roots only; no discovery, download or installation.",
+  "notes": "API references are not installed-version or compatibility claims. Null qualification values deny admission."
+}

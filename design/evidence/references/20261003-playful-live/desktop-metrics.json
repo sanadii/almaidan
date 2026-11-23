@@ -1,0 +1,137 @@
+{
+  "clientWidth": 1265,
+  "headings": [
+    {
+      "font": "60px",
+      "lineHeight": "64.8px",
+      "text": "Apps have always been built by strangers.Until now.",
+      "textAlign": "start",
+      "width": 704,
+      "x": 96.5
+    },
+    {
+      "font": "28px",
+      "lineHeight": "33.6px",
+      "text": "Where Next",
+      "textAlign": "start",
+      "width": 161.109375,
+      "x": 521.296875
+    },
+    {
+      "font": "41.6px",
+      "lineHeight": "46.592px",
+      "text": "Every app starts with a person you're making it for.",
+      "textAlign": "start",
+      "width": 688.015625,
+      "x": 96.5
+    },
+    {
+      "font": "41.6px",
+      "lineHeight": "46.592px",
+      "text": "The best app for your people is the one you make for them.",
+      "textAlign": "start",
+      "width": 736,
+      "x": 96.5
+    },
+    {
+      "font": "41.6px",
+      "lineHeight": "46.592px",
+      "text": "You decide who can see it. Every time.",
+      "textAlign": "start",
+      "width": 504,
+      "x": 664.5
+    },
+    {
+      "font": "41.6px",
+      "lineHeight": "49.92px",
+      "text": "FAQs",
+      "textAlign": "start",
+      "width": 1072,
+      "x": 96.5
+    },
+    {
+      "font": "52px",
+      "lineHeight": "57.2px",
+      "text": "Make something for someone.",
+      "textAlign": "center",
+      "width": 766.53125,
+      "x": 249.234375
+    }
+  ],
+  "height": 720,
+  "images": [
+    {
+      "alt": "",
+      "height": 0,
+      "src": "https://playful.app/assets/golden-hour-icon.CYqNOYF6.webp",
+      "width": 0
+    },
+    {
+      "alt": "",
+      "height": 0,
+      "src": "https://playful.app/assets/story-starter-icon.CFGGiq_j.webp",
+      "width": 0
+    },
+    {
+      "alt": "",
+      "height": 56,
+      "src": "https://playful.app/assets/where-next-icon.CmzyjKPB.webp",
+      "width": 56
+    },
+    {
+      "alt": "",
+      "height": 690.569580078125,
+      "src": "https://playful.app/assets/gallery-1.CArhsYJy.webp",
+      "width": 333.7012023925781
+    },
+    {
+      "alt": "",
+      "height": 684.302490234375,
+      "src": "https://playful.app/assets/gallery-2.CX4NcvF1.webp",
+      "width": 328.9070739746094
+    },
+    {
+      "alt": "",
+      "height": 687.436279296875,
+      "src": "https://playful.app/assets/gallery-3.BZQD-ioo.webp",
+      "width": 326.63555908203125
+    },
+    {
+      "alt": "",
+      "height": 88,
+      "src": "https://playful.app/assets/footer_logo.CbEasimh.png",
+      "width": 88
+    }
+  ],
+  "motion": [
+    {
+      "autoplay": false,
+      "loop": true,
+      "muted": true,
+      "poster": "https://playful.app/assets/starter-phone.DfPH8g0n.webp"
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Apps have always been built by strangers.Until now.",
+      "height": 1361.25
+    },
+    {
+      "heading": "Every app starts with a person you're making it for.",
+      "height": 901.78125
+    },
+    {
+      "heading": "The best app for your people is the one you make for them.",
+      "height": 1501.1875
+    },
+    {
+      "heading": "You decide who can see it. Every time.",
+      "height": 873.5625
+    },
+    {
+      "heading": "FAQs",
+      "height": 962.5
+    }
+  ],
+  "width": 1280
+}

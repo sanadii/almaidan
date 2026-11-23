@@ -1,0 +1,22 @@
+{
+  "decision": "BOUNDED_TEST_RECONCILIATION_AUTHORIZED",
+  "createdUTC": "2026-10-16T16:58:09.856141+00:00",
+  "scope": "One test source only: enta-competition-bounds.test.ts. Existing production-source release/postimage unchanged.",
+  "testPreimageSHA256": "e033d183a5a902572b13c5d28913a1748c3deaa7287d3d1f6f7f8b232f9bbe2c",
+  "authority": "INT-062-CAPACITY-CONTRACT.md670 explicitly records identical1224090+54265+65536=1343891 failed whole128 fixture and withdraws1179648 assumption; H1/H3/H5 replacement, H4 field/phase proof and684 affected bounds-test scope already adopted.",
+  "required": "Preserve full fixture cardinalities/material/diagnostics and failed assertion history. Correct obsolete positive old-full-context budget claim into explicit negative regression of that withdrawn hypothesis, with truthful name/comments. Keep descriptor/page/actual DTO/wire limits and unrelated positive assertions. Current all35/all4/C4/R6 capacity proof remains separately required and unchanged. No new maxima derived from fixture, no replacement production capacity proof from aggregate bytes.",
+  "prohibited": [
+    "Raise any budget",
+    "Reduce fixture/content/cardinality to force pass",
+    "Change profile/evaluator/model/runtime/schema",
+    "Suppress/skip test or omit negative history",
+    "Infer legal simultaneous overflow/native failure from synthetic sum"
+  ],
+  "requiredChecks": [
+    "Rerun changed test then scoped7server suite",
+    "Refreeze exact test/source/evidence chain",
+    "Applied-source Database/Security review must assess test disposition and preserved C4 premises",
+    "Root/Gate check distinct from native/installed acceptance"
+  ],
+  "limits": "No SQL/native/database/production permission or Part1 acceptance. R6 STOP unchanged."
+}

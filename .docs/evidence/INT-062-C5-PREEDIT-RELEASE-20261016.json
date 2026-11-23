@@ -1,0 +1,51 @@
+{
+  "decision": "CAP-C5.FREEZE_ACCEPTED_WITH_LIMITS_AND_PREEDIT_SOURCE_RELEASE",
+  "createdUTC": "2026-10-16T16:52:00.246961+00:00",
+  "packet": {
+    "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\output\\int062e1-lifelines-corrections-20261007\\cap-c5-freeze-20261016\\R3\\CAP-C5-FREEZE-REVIEW-PACKET-20261016.json",
+    "sha256": "cfba8f981cbc1e5e7c4352783d53139bd625eb9048372d4141412204a3420e6d"
+  },
+  "sourcePatch": {
+    "status": "EXACT_INERT_PATCH_PREPARED",
+    "target": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\services\\enta\\server\\prisma\\migrations\\20261007220000_int9_competitive\\migration.sql",
+    "preimageSHA256": "45a9c089f26ab4ce8270c71d7050866b44d76e01f078a42ef57aa6d983b4e113",
+    "proposalSHA256": "72cba1553fffb5ed0b517f4692958d093a771c40b032e2a29d5099d98d801de2",
+    "patchSHA256": "16f4b628dc67e8bb0650ca7459e547793c58658495d4f83a9ab54c1f1b34bdac",
+    "changedSourceTargets": 1,
+    "unapplied": true,
+    "retainedSources": "All bound TS/client/schema/test sources stay at the frozen preimage hashes; their existing repair implementations participate in full review with no new diff.",
+    "gitApplyCheck": {
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "rollback": "Proposal remains inert. Discarding its adoption leaves live preimage intact. After any future explicitly released application, reverse only this exact patch while its postimage matches; no automatic rollback authorized."
+  },
+  "reviews": [
+    {
+      "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\output\\int062e1-lifelines-corrections-20261007\\database\\C5-OCT16\\CAP-C5-FREEZE-R3-DATABASE-REVIEW.md",
+      "sha256": "c15291c44b62e5d7edc15858df24c36a28b344218c9c40c45057ac0a64bc12f1"
+    },
+    {
+      "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\output\\int062e1-lifelines-corrections-20261007\\security\\C5-OCT16\\SECURITY-R3-DELTA-REVIEW.md",
+      "sha256": "b47110869f80438206a6781ef870cd03807f394b5173ba19f182d8050c2be0a9"
+    }
+  ],
+  "rootChecks": "D:\\projects\\huroof_wa_oloof\\output\\part1-resume-20261016\\root-c5-r3-preedit-checks.json",
+  "authorized": "Same sole Forge applies exact reviewed patch to one INT9 source file only after fresh status/preimage checks; refreeze actual successor and run prepared permitted pure source/TS/UI/typechecks. No other source/schema edit without precise finding/disposition.",
+  "requiredAfter": [
+    "Exact applied-source Database/Security review",
+    "Relevant focused tests/typechecks and legacy/paid/DTO/reload/guard/provenance/capacity source checks",
+    "Material high-risk Gate",
+    "Root Part1 source acceptance WITH LIMITS"
+  ],
+  "prohibited": [
+    "SQL parser/compiler/query/apply/census/PostgreSQL/native/financial/cloud/deploy",
+    "Root build/build:enta native chain",
+    "Server/browser/preview reset or promotion",
+    "Parts2\u20137 work",
+    "Staging/commit/push/destructive cleanup"
+  ],
+  "rollback": "Before any admitted5 state, reverse only exact owned source delta if needed; preserve all mixed work and frozen histories. Operational rollback must preserve admitted5 readers/drain/history and never restore database over new payments.",
+  "limits": "Source-only authority; installed SQL/ACL/SET/lock/transaction/parity/DO-scale/native/human/production unverified. Financial/native R6 STOP remains."
+}

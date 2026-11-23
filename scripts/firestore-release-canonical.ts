@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 /** Deterministic JSON used for release hashes and equality checks. */
 export function canonicalize(value: unknown): unknown {
   if (value === null || typeof value === 'string' || typeof value === 'boolean') return value;
@@ -37,3 +38,31 @@ export function canonicalApprovedJsonl(raw: string): string {
   records.sort((left, right) => String(left.id) < String(right.id) ? -1 : String(left.id) > String(right.id) ? 1 : 0);
   return records.map(canonicalJson).join('\n');
 }
+
+export type ReleaseDocument = { path: string; data: Record<string, unknown> };
+export const hash = (value: string): string =>
+  createHash("sha256").update(value, "utf8").digest("hex");
+export const byPath = (left: ReleaseDocument, right: ReleaseDocument) =>
+  left.path < right.path ? -1 : left.path > right.path ? 1 : 0;
+export const documentsHash = (documents: ReleaseDocument[]): string =>
+  hash(
+    canonicalJson(
+      documents
+        .slice()
+        .sort(byPath)
+        .map(({ path, data }) => ({ path, data })),
+    ),
+  );
+
+
+/** Firestore document paths have an even number of non-empty, safe segments. */
+export function assertFirestoreDocumentPath(path: string): void {
+  const segments = path.split("/");
+  if (
+    segments.length === 0 ||
+    segments.length % 2 !== 0 ||
+    segments.some((segment) => !SAFE_DOCUMENT_ID.test(segment))
+  )
+    throw new Error(`Invalid Firestore document path: ${path}`);
+}
+

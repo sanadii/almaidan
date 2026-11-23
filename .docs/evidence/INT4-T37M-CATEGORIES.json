@@ -1,0 +1,4782 @@
+{
+  "schemaVersion": "maydan-int4-t37m-category-observation-v1",
+  "sourceCapture": "output/t43-difficulty-20260929/FRESH-BASE.json",
+  "sourceCaptureSha256": "781dbb9142c8fd61d9cfdb559bc5ffb10719aca5ed0cefe1191368d8825691e6",
+  "capturedAt": "2026-09-29T05:18:12.966Z",
+  "releaseId": "t37m-media-cc919463d962a644fefb20b5d05ed8f8",
+  "releaseRootSha256": "7ef9b9fe0aad1b6945bd3d2b476da3f831626085174990643fa6240db68b771c",
+  "categoryCount": 530,
+  "interpretation": "Saved metadata observation only; readiness flags are not editorial, rights or reviewed-playability approval.",
+  "categories": [
+    {
+      "id": "goals-2026",
+      "labelAr": "من سجل الهدف؟",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "huroof-063",
+      "labelAr": "كرة السلة وNBA",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "huroof-064",
+      "labelAr": "دوري أبطال أوروبا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "huroof-065",
+      "labelAr": "الدوري الإنجليزي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "huroof-066",
+      "labelAr": "الدوري الإسباني",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "huroof-067",
+      "labelAr": "الدوري السعودي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "huroof-068",
+      "labelAr": "منتخب الكويت",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-069",
+      "labelAr": "كرة القدم الكويتية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-070",
+      "labelAr": "الألعاب الأولمبية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "huroof-071",
+      "labelAr": "WWE",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "huroof-072",
+      "labelAr": "الملاكمة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "huroof-073",
+      "labelAr": "ألعاب الفيديو",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "huroof-074",
+      "labelAr": "PlayStation",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-075",
+      "labelAr": "Nintendo",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-076",
+      "labelAr": "Fortnite",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-077",
+      "labelAr": "Pokémon",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-078",
+      "labelAr": "Dragon Ball",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-079",
+      "labelAr": "أفلام ديزني وبيكسار",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-080",
+      "labelAr": "Marvel",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-081",
+      "labelAr": "DC Comics",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-082",
+      "labelAr": "Harry Potter",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-083",
+      "labelAr": "Friends",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-084",
+      "labelAr": "Breaking Bad",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-085",
+      "labelAr": "مسلسلات أجنبية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-086",
+      "labelAr": "أفلام هوليوود",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-087",
+      "labelAr": "أفلام عربية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-088",
+      "labelAr": "مسلسلات خليجية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-089",
+      "labelAr": "مسلسلات كويتية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-090",
+      "labelAr": "مشاهير الكويت",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-091",
+      "labelAr": "مشاهير العرب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-092",
+      "labelAr": "أغاني خليجية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-093",
+      "labelAr": "أغاني كويتية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-094",
+      "labelAr": "السيرة النبوية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-095",
+      "labelAr": "الصحابة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-096",
+      "labelAr": "الحضارة الإسلامية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-097",
+      "labelAr": "علوم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-098",
+      "labelAr": "فضاء وفلك",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-099",
+      "labelAr": "طب وجسم الإنسان",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "huroof-100",
+      "labelAr": "جغرافيا العالم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-001",
+      "labelAr": "من أنا - دول",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-002",
+      "labelAr": "من أنا - لاعبين كرة قدم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-003",
+      "labelAr": "من أنا - حيوانات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-004",
+      "labelAr": "من أنا - مسلسلات عربية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-005",
+      "labelAr": "من أنا - ممثلين",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-006",
+      "labelAr": "معلومات عامة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-007",
+      "labelAr": "عالم الحيوان",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-008",
+      "labelAr": "تكنولوجيا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-009",
+      "labelAr": "تاريخ",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-010",
+      "labelAr": "منو المشهور",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-011",
+      "labelAr": "خمن الصورة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-012",
+      "labelAr": "شنو هذا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-013",
+      "labelAr": "ألغاز",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-014",
+      "labelAr": "الجزء المفقود",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-015",
+      "labelAr": "أمثال وغطاوي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-021",
+      "labelAr": "ريال مدريد",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-022",
+      "labelAr": "برشلونة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-023",
+      "labelAr": "كأس العالم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-024",
+      "labelAr": "ميسي وكرستيانو",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-025",
+      "labelAr": "من هو اللاعب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-026",
+      "labelAr": "طاش ما طاش",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-027",
+      "labelAr": "باب الحارة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-028",
+      "labelAr": "أفلام كلاسيك",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-029",
+      "labelAr": "أفلام رعب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-030",
+      "labelAr": "Game Of Thrones",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-031",
+      "labelAr": "الزمن الجميل",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-032",
+      "labelAr": "أم كلثوم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-033",
+      "labelAr": "نشيد وطني",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-034",
+      "labelAr": "أغاني أجنبية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-035",
+      "labelAr": "عبدالكريم عبدالقادر",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-036",
+      "labelAr": "One Piece",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-037",
+      "labelAr": "Attack on Titan",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-038",
+      "labelAr": "Naruto",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-039",
+      "labelAr": "المحقق كونان",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-040",
+      "labelAr": "PUBG",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-041",
+      "labelAr": "Call Of Duty",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-042",
+      "labelAr": "Minecraft",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-043",
+      "labelAr": "ألعاب الطفولة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-044",
+      "labelAr": "أعلام",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-045",
+      "labelAr": "عواصم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-046",
+      "labelAr": "دول وعواصم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-047",
+      "labelAr": "عملات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-048",
+      "labelAr": "UFC والفنون القتالية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-049",
+      "labelAr": "تنس",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-050",
+      "labelAr": "Formula One",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-051",
+      "labelAr": "سيارات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-052",
+      "labelAr": "منوعات كرة قدم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-053",
+      "labelAr": "منوعات شعرية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-054",
+      "labelAr": "كرة قدم عالمية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-055",
+      "labelAr": "الكرة الإيطالية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-056",
+      "labelAr": "قصص الأنبياء",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-057",
+      "labelAr": "القرآن الكريم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-058",
+      "labelAr": "مطاعم الكويت",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-059",
+      "labelAr": "من أنا جغرافيا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-060",
+      "labelAr": "مسيرة لاعب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-061",
+      "labelAr": "LineUp",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-062",
+      "labelAr": "كأس العالم 2026",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-001",
+      "labelAr": "من أنا / صحابة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-002",
+      "labelAr": "من أنا / تنس",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-003",
+      "labelAr": "من أنا / شخصيات عمانيه",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-004",
+      "labelAr": "من أنا / كرة يد",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-005",
+      "labelAr": "من أنا / دول",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-006",
+      "labelAr": "من أنا / أنبياء",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-007",
+      "labelAr": "من أنا / مدربين كرة قدم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-008",
+      "labelAr": "من أنا / شخصيات بحرينية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-009",
+      "labelAr": "من أنا / شعراء وأدباء",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-010",
+      "labelAr": "من أنا / شخصيات إماراتية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-011",
+      "labelAr": "من أنا / ممثلين",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-012",
+      "labelAr": "من أنا / أكلات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-013",
+      "labelAr": "من أنا / مطربين",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-014",
+      "labelAr": "من أنا / منتخبات كرة قدم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-015",
+      "labelAr": "من أنا / مشاهير سوشيال ميديا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-016",
+      "labelAr": "من أنا / الخلفاء",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-017",
+      "labelAr": "من أنا / شخصيات كويتية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-018",
+      "labelAr": "من أنا / شخصيات سعودية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-019",
+      "labelAr": "من أنا / شخصيات قطريه",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-020",
+      "labelAr": "من أنا / أعوام",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-021",
+      "labelAr": "من أنا / حيوانات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-022",
+      "labelAr": "من أنا / مسلسلات عربيه",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-023",
+      "labelAr": "من أنا / مسلسلات خليجية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-024",
+      "labelAr": "من أنا / لاعبين كرة قدم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-025",
+      "labelAr": "من أنا / كرة سلة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-026",
+      "labelAr": "من أنا / أندية كرة قدم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-027",
+      "labelAr": "فالكون",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-028",
+      "labelAr": "باور",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-029",
+      "labelAr": "علم نفس",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-032",
+      "labelAr": "أكثر دولة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-034",
+      "labelAr": "Booktok العربي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-036",
+      "labelAr": "صحح الخطأ",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-037",
+      "labelAr": "ميمز",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-038",
+      "labelAr": "أكمل الفراغ",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-039",
+      "labelAr": "معارك وحروب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-042",
+      "labelAr": "اختصارات إنجليزية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-043",
+      "labelAr": "تكنولوجيا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-044",
+      "labelAr": "أول من؟",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-045",
+      "labelAr": "في أي عام؟",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-046",
+      "labelAr": "عالم الساعات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-047",
+      "labelAr": "الفضاء",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-049",
+      "labelAr": "دراجات نارية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-050",
+      "labelAr": "إسم الشخصية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-051",
+      "labelAr": "جيل الطيبين",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-052",
+      "labelAr": "لغة الجسد",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-055",
+      "labelAr": "عطور عالمية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-056",
+      "labelAr": "عطور عربية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-057",
+      "labelAr": "كتب ومؤلفون",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-058",
+      "labelAr": "سوشل ميديا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-059",
+      "labelAr": "توقعني؟",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-061",
+      "labelAr": "سوالف التيك توك",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-063",
+      "labelAr": "اقتصاد وتكنولوجيا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-064",
+      "labelAr": "ربع البحر",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-065",
+      "labelAr": "جيل الثمانينات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-066",
+      "labelAr": "تاريخ",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-067",
+      "labelAr": "منو المشهور",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-068",
+      "labelAr": "شعارات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-069",
+      "labelAr": "منوعات شعرية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-070",
+      "labelAr": "معلومات عامة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-072",
+      "labelAr": "لغة وأدب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-073",
+      "labelAr": "سيارات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-074",
+      "labelAr": "عالم الحيوان",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-075",
+      "labelAr": "منتجات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-076",
+      "labelAr": "أكلات وطبخات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-077",
+      "labelAr": "طب وصيدلة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-078",
+      "labelAr": "حروف متحركة جغرافيا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-081",
+      "labelAr": "حروف اسلامي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-082",
+      "labelAr": "حروف غناوي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-083",
+      "labelAr": "حروف فن خليجي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-084",
+      "labelAr": "حروف أنمي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-085",
+      "labelAr": "حروف كرة قدم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-086",
+      "labelAr": "حروف",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-087",
+      "labelAr": "تفسير",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-088",
+      "labelAr": "أول من - إسلامي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-089",
+      "labelAr": "رتبها - إسلامي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-090",
+      "labelAr": "أسماء الله الحسنى",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-091",
+      "labelAr": "جزء تبارك",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-092",
+      "labelAr": "جزء عم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-093",
+      "labelAr": "غزوات الرسول",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-095",
+      "labelAr": "أحاديث",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-097",
+      "labelAr": "غزوات ومعارك",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-098",
+      "labelAr": "قصص الأنبياء",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-099",
+      "labelAr": "الدين الإسلامي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-100",
+      "labelAr": "القرآن الكريم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-101",
+      "labelAr": "السيرة النبوية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-120",
+      "labelAr": "وجّه صاحبك",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-121",
+      "labelAr": "شنو الرابط؟",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-122",
+      "labelAr": "صيد المختفي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-123",
+      "labelAr": "ركب الجمله",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-124",
+      "labelAr": "ركز على الكلمات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-126",
+      "labelAr": "Emoji's",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-127",
+      "labelAr": "الجزء المفقود",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-128",
+      "labelAr": "كلمات بالمقلوب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-130",
+      "labelAr": "توقع الحيوان",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-132",
+      "labelAr": "لون الصورة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-134",
+      "labelAr": "خمن الصورة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-135",
+      "labelAr": "شنو هذا؟",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-136",
+      "labelAr": "يبيلها تركيز",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-137",
+      "labelAr": "رتّبهم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-138",
+      "labelAr": "رياضيات وعلوم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-139",
+      "labelAr": "لخبطة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-140",
+      "labelAr": "ألغاز",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-141",
+      "labelAr": "أمثال وغطاوي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-142",
+      "labelAr": "صيد الفرق",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-143",
+      "labelAr": "حيوانات / اي لا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-144",
+      "labelAr": "فن خليجي / إي لا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-145",
+      "labelAr": "فن عربي / إي لا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-146",
+      "labelAr": "أغاني خليجية / إي لا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-147",
+      "labelAr": "أغاني أجنبية / إي لا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-148",
+      "labelAr": "أغاني عربية / إي لا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-149",
+      "labelAr": "أنمي / إي لا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-150",
+      "labelAr": "مشاهير عرب / إي لا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-151",
+      "labelAr": "مشاهير أجانب / إي لا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-152",
+      "labelAr": "دول / إي لا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-153",
+      "labelAr": "لاعبين عرب / إي لا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-154",
+      "labelAr": "لاعبين أجانب / إي لا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-155",
+      "labelAr": "إي لا عام",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-156",
+      "labelAr": "كرتون / إي لا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-157",
+      "labelAr": "مصارعة / إي لا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-158",
+      "labelAr": "جغرافيا / إي لا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-159",
+      "labelAr": "فن أجنبي / إي لا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-160",
+      "labelAr": "منوعات إي لأ",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-161",
+      "labelAr": "السد القطري",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-162",
+      "labelAr": "النصر السعودي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-163",
+      "labelAr": "الهلال",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-164",
+      "labelAr": "شنو الرابط كرة قدم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-165",
+      "labelAr": "كريستيانو رونالدو",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-166",
+      "labelAr": "ميسي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-167",
+      "labelAr": "كأس العالم 2026",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-168",
+      "labelAr": "رونالدينيو",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-169",
+      "labelAr": "بدر المطوع",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-170",
+      "labelAr": "نادي الكويت",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-171",
+      "labelAr": "أبطال أوروبا 25/26",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-173",
+      "labelAr": "مانشستر يونايتد",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-174",
+      "labelAr": "مانشستر سيتي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-175",
+      "labelAr": "اتليتكو مدريد",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-176",
+      "labelAr": "برشلونة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-177",
+      "labelAr": "ريال مدريد",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-178",
+      "labelAr": "كأس العرب 2025",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-179",
+      "labelAr": "أمم أوروبا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-180",
+      "labelAr": "كوبا أمريكا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-181",
+      "labelAr": "النتيجة النهائية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-182",
+      "labelAr": "انتقالات الدوري الكويتي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-183",
+      "labelAr": "PL 25/26",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-184",
+      "labelAr": "La Liga 25/26",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-186",
+      "labelAr": "ديربي الغضب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-187",
+      "labelAr": "كرة قدم إسبانية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-190",
+      "labelAr": "رقم وتيشيرت لاعب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-191",
+      "labelAr": "أين يلعب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-192",
+      "labelAr": "النادي المشترك",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-193",
+      "labelAr": "رتّبهم (كرة قدم)",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-194",
+      "labelAr": "كرة قدم ايطالية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-195",
+      "labelAr": "تشكيلات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-196",
+      "labelAr": "من هو اللاعب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-197",
+      "labelAr": "الهلال والنصر",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-198",
+      "labelAr": "من سجل الهدف",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-199",
+      "labelAr": "كأس العالم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-200",
+      "labelAr": "نادي القادسية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-201",
+      "labelAr": "النادي العربي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-202",
+      "labelAr": "وين الكرة؟",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-205",
+      "labelAr": "مسيرة مدرب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-206",
+      "labelAr": "توقع اللاعب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-207",
+      "labelAr": "ميسي وكرستيانو",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-208",
+      "labelAr": "خليجي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-210",
+      "labelAr": "ريال مدريد vs برشلونة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-211",
+      "labelAr": "اسم الدوري",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-212",
+      "labelAr": "كرة قدم عالمية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-213",
+      "labelAr": "كرة قدم كويتية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-214",
+      "labelAr": "كرة قدم سعودية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-215",
+      "labelAr": "كرة قدم قطرية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-216",
+      "labelAr": "كرة قدم بحرينية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-217",
+      "labelAr": "كرة قدم عمانية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-218",
+      "labelAr": "كرة قدم إماراتية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": true
+      }
+    },
+    {
+      "id": "tahadani-games-219",
+      "labelAr": "منوعات كرة قدم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-220",
+      "labelAr": "مسيرة لاعب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-221",
+      "labelAr": "وائل كفوري",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-225",
+      "labelAr": "ذكرى",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-228",
+      "labelAr": "أغاني الزمن الجميل",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-230",
+      "labelAr": "عبدالكريم عبدالقادر",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-233",
+      "labelAr": "بلقيس",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-266",
+      "labelAr": "رؤساء دول",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-272",
+      "labelAr": "عملات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-274",
+      "labelAr": "خرايط",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-275",
+      "labelAr": "اليابان",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-276",
+      "labelAr": "النشيد الوطني",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-277",
+      "labelAr": "عواصم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-278",
+      "labelAr": "عالم الطيران",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-279",
+      "labelAr": "جوازات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-280",
+      "labelAr": "أعلام",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-281",
+      "labelAr": "جغرافيا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-282",
+      "labelAr": "حدد من الخريطة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-283",
+      "labelAr": "دول و عواصم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-284",
+      "labelAr": "لندن",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-285",
+      "labelAr": "كان",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-286",
+      "labelAr": "ماربيا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-287",
+      "labelAr": "مدينة برشلونة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-288",
+      "labelAr": "مصر",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-289",
+      "labelAr": "ميكانوس",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-290",
+      "labelAr": "مبتعثين مصر",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-291",
+      "labelAr": "مبتعثين أمريكا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-292",
+      "labelAr": "مبتعثين بريطانيا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-293",
+      "labelAr": "سياحة وسفر",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-294",
+      "labelAr": "بدر المطوع",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-295",
+      "labelAr": "القانون الكويتي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-296",
+      "labelAr": "خريطة المنطقة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-297",
+      "labelAr": "شتاء الكويت",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-298",
+      "labelAr": "مجمع الأفنيوز",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-299",
+      "labelAr": "نادي القادسية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-300",
+      "labelAr": "مجمعات الكويت",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-301",
+      "labelAr": "النادي العربي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-302",
+      "labelAr": "مناطق الكويت",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-303",
+      "labelAr": "لوكيشن الكويت",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-304",
+      "labelAr": "الداخلية والعسكرية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-305",
+      "labelAr": "دعايات وترندات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-306",
+      "labelAr": "كلمات كويتية قديمة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-307",
+      "labelAr": "الكويت",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-308",
+      "labelAr": "مجلس الأمة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-309",
+      "labelAr": "كرة قدم كويتية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-310",
+      "labelAr": "مطاعم الكويت",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-311",
+      "labelAr": "النصر السعودي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-312",
+      "labelAr": "الهلال",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-313",
+      "labelAr": "مجمعات السعودية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-314",
+      "labelAr": "يوم التأسيس",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-315",
+      "labelAr": "يوتيوب سعودي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-316",
+      "labelAr": "(جيل الطيبين (سعودي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-318",
+      "labelAr": "الهلال والنصر",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-319",
+      "labelAr": "معالم السعودية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-320",
+      "labelAr": "التلفزيون السعودي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-321",
+      "labelAr": "موسم الرياض",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-322",
+      "labelAr": "السعودية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-324",
+      "labelAr": "مطاعم السعودية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-325",
+      "labelAr": "السد القطري",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-326",
+      "labelAr": "لوكيشن قطر",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-327",
+      "labelAr": "معالم قطر",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-329",
+      "labelAr": "قطر",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-331",
+      "labelAr": "مطاعم قطر",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-332",
+      "labelAr": "دبي مول",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-334",
+      "labelAr": "الإمارات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-336",
+      "labelAr": "مطاعم الإمارات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-337",
+      "labelAr": "سوبر ماركت البحرين",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-339",
+      "labelAr": "مطاعم البحرين",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-340",
+      "labelAr": "البحرين",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-341",
+      "labelAr": "كرة قدم بحرينية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-343",
+      "labelAr": "أمثال عمانية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-344",
+      "labelAr": "عمان",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-345",
+      "labelAr": "كرة قدم عمانية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-346",
+      "labelAr": "مسرح المظفر",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-347",
+      "labelAr": "مسرح المانع",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-350",
+      "labelAr": "Backstage أعمال",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-352",
+      "labelAr": "مسرح الرشود",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-353",
+      "labelAr": "مسرح طارق",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-354",
+      "labelAr": "مدرسة المشاغبين",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-355",
+      "labelAr": "العيال كبرت",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-356",
+      "labelAr": "مسرحيات زين",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-357",
+      "labelAr": "البيت المسكون",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-358",
+      "labelAr": "قروب البلام",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-360",
+      "labelAr": "سستر فخرية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-361",
+      "labelAr": "مسلسلات رمضان 2026",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-362",
+      "labelAr": "شارع الاعشى 2",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-364",
+      "labelAr": "الغميضة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-365",
+      "labelAr": "قصة مسلسل",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-367",
+      "labelAr": "على الدنيا السلام",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-368",
+      "labelAr": "كان إنسان",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-369",
+      "labelAr": "العاصوف",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-370",
+      "labelAr": "قطاع الطرق",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-371",
+      "labelAr": "صيف 99",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-372",
+      "labelAr": "دفعة بيروت",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-373",
+      "labelAr": "سوق المقاصيص",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-374",
+      "labelAr": "شاهد",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-375",
+      "labelAr": "أمر إخلاء",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-376",
+      "labelAr": "أمي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-377",
+      "labelAr": "أغاني الشاشة الخليجية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-378",
+      "labelAr": "حال مناير",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-379",
+      "labelAr": "كنة الشام",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-380",
+      "labelAr": "سوالف طفاش",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-381",
+      "labelAr": "مسلسلات الطيبين",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-382",
+      "labelAr": "شخصية فنية (عربي)",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-383",
+      "labelAr": "سيلفي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-384",
+      "labelAr": "إلى أبي وأمي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-385",
+      "labelAr": "أم 44",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-386",
+      "labelAr": "شارع الأعشى",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-387",
+      "labelAr": "عبدالرحمن العقل",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-388",
+      "labelAr": "من شارع الهرم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-389",
+      "labelAr": "هدى حسين",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-390",
+      "labelAr": "داود حسين",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-391",
+      "labelAr": "خريف القلب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-392",
+      "labelAr": "خالد النفيسي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-393",
+      "labelAr": "عبدالحسين عبدالرضا",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-394",
+      "labelAr": "ذكريات لا تموت",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-395",
+      "labelAr": "سعاد و حياة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-396",
+      "labelAr": "أمنا رويحة الجنة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-397",
+      "labelAr": "صديقات العمر",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-398",
+      "labelAr": "أم البنات",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-399",
+      "labelAr": "ساهر الليل",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-400",
+      "labelAr": "طاش ماطاش",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-401",
+      "labelAr": "أميمة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-402",
+      "labelAr": "شباب البومب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-403",
+      "labelAr": "زوارة خميس",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-404",
+      "labelAr": "الحيالة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-405",
+      "labelAr": "خالتي قماشة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-406",
+      "labelAr": "فن خليجي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-409",
+      "labelAr": "عمرو دياب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-411",
+      "labelAr": "فيلم برشامة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-412",
+      "labelAr": "الدبور",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-413",
+      "labelAr": "سيد الناس",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-414",
+      "labelAr": "آسر",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-416",
+      "labelAr": "أشغال شاقة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-417",
+      "labelAr": "نيللي وشريهان",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-418",
+      "labelAr": "حكاية فيلم (عربي)",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-419",
+      "labelAr": "الكبير أوي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-420",
+      "labelAr": "اللعبة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-421",
+      "labelAr": "الهيبة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-422",
+      "labelAr": "عادل إمام",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-423",
+      "labelAr": "محمد رمضان",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-424",
+      "labelAr": "جميل وهناء",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-425",
+      "labelAr": "العميل",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-426",
+      "labelAr": "باب الحارة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-427",
+      "labelAr": "الزير سالم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-428",
+      "labelAr": "فن عربي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-431",
+      "labelAr": "فن سوري",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-432",
+      "labelAr": "المدينة البعيدة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-433",
+      "labelAr": "حلم أشرف",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-435",
+      "labelAr": "وادي الذئاب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-436",
+      "labelAr": "المؤسس عثمان",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-437",
+      "labelAr": "قيامة أرطغرل",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-438",
+      "labelAr": "الحفرة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-439",
+      "labelAr": "فن تركي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-440",
+      "labelAr": "spider noir",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-441",
+      "labelAr": "Succession",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-442",
+      "labelAr": "ريترو أفلام",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-443",
+      "labelAr": "Obsession",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-445",
+      "labelAr": "Brooklyn 99",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-448",
+      "labelAr": "Star Wars",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-449",
+      "labelAr": "Netflix",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-450",
+      "labelAr": "HIMYM",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-451",
+      "labelAr": "Blacklist",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-452",
+      "labelAr": "HTGAWM",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-453",
+      "labelAr": "حكاية فيلم (أجنبي)",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-454",
+      "labelAr": "The Sopranos",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-455",
+      "labelAr": "أفلام كلاسيك",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-456",
+      "labelAr": "شخصية فنية (أجنبي)",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-458",
+      "labelAr": "أفلام رعب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-459",
+      "labelAr": "Vampire Diaries",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-460",
+      "labelAr": "طاقم الفيلم",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-461",
+      "labelAr": "فن كوري",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-462",
+      "labelAr": "Seinfeld",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-463",
+      "labelAr": "Grey's Anatomy",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-464",
+      "labelAr": "Toy Story",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-465",
+      "labelAr": "Lost",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-466",
+      "labelAr": "Better Call Saul",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-467",
+      "labelAr": "Cobra Kai",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-468",
+      "labelAr": "Big Bang Theory",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-469",
+      "labelAr": "Squid Game",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-470",
+      "labelAr": "Bollywood",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-471",
+      "labelAr": "Gossip Girl",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-472",
+      "labelAr": "Suits",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-473",
+      "labelAr": "Vikings",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-474",
+      "labelAr": "The Boys",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-475",
+      "labelAr": "Interstellar",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-476",
+      "labelAr": "FROM",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-477",
+      "labelAr": "Peaky Blinders",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-478",
+      "labelAr": "Lord of the Rings",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-479",
+      "labelAr": "The Walking Dead",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-480",
+      "labelAr": "Dark",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-481",
+      "labelAr": "Stranger Things",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-482",
+      "labelAr": "The Office",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-483",
+      "labelAr": "Harry Potter",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-484",
+      "labelAr": "Dexter",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-485",
+      "labelAr": "La Casa De Papel",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-486",
+      "labelAr": "Breaking Bad",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-487",
+      "labelAr": "Prison Break",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-488",
+      "labelAr": "Gilmore Girls",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-489",
+      "labelAr": "House of the Dragon",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-490",
+      "labelAr": "Game Of Thrones",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-491",
+      "labelAr": "Friends",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-492",
+      "labelAr": "Marvel",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-493",
+      "labelAr": "DC",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-494",
+      "labelAr": "فن أجنبي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-497",
+      "labelAr": "Ninjago",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-499",
+      "labelAr": "FULLMETAL ALCHEMIST",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-500",
+      "labelAr": "My Hero Academia",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-501",
+      "labelAr": "Jujutsu Kaisen",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-502",
+      "labelAr": "معالم ورموز أنمي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-503",
+      "labelAr": "Black Clover",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-504",
+      "labelAr": "Solo Leveling",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-505",
+      "labelAr": "Bleach",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-507",
+      "labelAr": "Hunter × Hunter",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-508",
+      "labelAr": "توقعني (أنمي)",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-509",
+      "labelAr": "Demon Slayer",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-510",
+      "labelAr": "كونان",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-511",
+      "labelAr": "Death Note",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-512",
+      "labelAr": "Attack on Titan",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-513",
+      "labelAr": "Dragon Ball",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-514",
+      "labelAr": "Naruto",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-515",
+      "labelAr": "One Piece",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-516",
+      "labelAr": "عالم البوكيمون",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-517",
+      "labelAr": "أنمي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-518",
+      "labelAr": "Roblox",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-519",
+      "labelAr": "لعبة PUBG",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-520",
+      "labelAr": "MARVEL RIVALS",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-521",
+      "labelAr": "League of legends",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-522",
+      "labelAr": "RESIDENT EVIL",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-523",
+      "labelAr": "العاب الطفولة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-524",
+      "labelAr": "FUT 26",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-525",
+      "labelAr": "Rocket League",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-527",
+      "labelAr": "Counter Strike",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-528",
+      "labelAr": "Valorant",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-529",
+      "labelAr": "لعبة الشطرنج",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-530",
+      "labelAr": "لعبة البلوت",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-531",
+      "labelAr": "Souls Game",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-532",
+      "labelAr": "شخصية لعبة الكترونية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-533",
+      "labelAr": "Fortnite",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-534",
+      "labelAr": "Minecraft",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-535",
+      "labelAr": "Overwatch",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-536",
+      "labelAr": "Call of Duty",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-538",
+      "labelAr": "ألعاب",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-539",
+      "labelAr": "شخصيات كرتونية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-541",
+      "labelAr": "Monster INC",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-542",
+      "labelAr": "MBC 3",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-544",
+      "labelAr": "عالم دزني",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-545",
+      "labelAr": "ببايات قديمة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-546",
+      "labelAr": "بباي",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-547",
+      "labelAr": "سبيستون",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-548",
+      "labelAr": "توقعني (رياضة)",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-549",
+      "labelAr": "لعبة البادل",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-550",
+      "labelAr": "الفنون القتالية",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-551",
+      "labelAr": "تنس",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-552",
+      "labelAr": "كرة يد",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-553",
+      "labelAr": "UFC",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-554",
+      "labelAr": "Formula 1",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-555",
+      "labelAr": "المصارعة الحرة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-556",
+      "labelAr": "ربع الحديد",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-557",
+      "labelAr": "NBA",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    },
+    {
+      "id": "tahadani-games-558",
+      "labelAr": "رياضة",
+      "runtimeReadiness": {
+        "categories": true,
+        "charades": false,
+        "huroof": false
+      }
+    }
+  ]
+}

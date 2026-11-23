@@ -1,0 +1,28 @@
+/* INT-071.E: approved shared shell and universal page-rail tokens. */
+.maydan-episodes-page .episodes-catalog { margin-block: 40px; display: grid; gap: 32px; }
+.maydan-episodes-page .episodes-catalog__heading { display: grid; gap: 8px; }
+.maydan-episodes-page .episodes-catalog__heading > p { max-inline-size: 65ch; }
+.maydan-episodes-page .episodes-catalog__heading .eyebrow { margin: 0; }
+.maydan-episodes-page .episodes-catalog__state { display: grid; justify-items: start; gap: 16px; padding: 24px; border: 1px solid var(--app-border); border-radius: 16px; background: var(--app-surface); }
+.maydan-episodes-page .episodes-catalog__state > p { max-inline-size: 65ch; }
+.maydan-episodes-page .episodes-catalog__state[data-state="loading"] { border-inline-start: 4px solid var(--app-accent); }
+.maydan-episodes-page .episodes-catalog__state:is([data-state="unavailable"], [data-state="malformed"]) { border-inline-start: 4px solid var(--app-error); }
+.maydan-episodes-page .episodes-catalog__state [role="alert"] { color: var(--app-error); }
+.maydan-episodes-page .episodes-catalog__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 24px; padding: 0; margin: 0; list-style: none; }
+.maydan-episodes-page .episodes-catalog__list > li { min-inline-size: 0; }
+.maydan-episodes-page .episode-summary { display: grid; align-content: start; gap: 16px; padding: 24px; block-size: 100%; border: 1px solid var(--app-border); border-radius: 16px; background: var(--app-surface); }
+.maydan-episodes-page .episode-summary__number { color: var(--app-accent); font-weight: 600; font-size: 14px; }
+.maydan-episodes-page .episode-summary__description { white-space: pre-line; }
+.maydan-episodes-page .episode-summary__date { border-block-start: 1px solid var(--app-border); padding-block-start: 16px; font-size: 14px; }
+.maydan-episodes-page .episodes-catalog :is(h1, h2, p, a, button) { min-inline-size: 0; overflow-wrap: anywhere; }
+.maydan-episodes-page .episodes-catalog__footer { display: flex; flex-wrap: wrap; gap: 16px; }
+.maydan-episodes-page .episodes-catalog .button { display: inline-flex; align-items: center; justify-content: center; min-inline-size: 44px; max-inline-size: 100%; }
+@media (max-width: 48rem) {
+  .maydan-episodes-page .episodes-catalog { margin-block: 32px; gap: 24px; }
+}
+@media (max-width: 360px) {
+  .maydan-episodes-page :is(.episodes-catalog__state, .episode-summary) { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .maydan-episodes-page .episodes-catalog .button { transition: none; animation: none; }
+}

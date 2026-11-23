@@ -1,0 +1,11 @@
+# Root acceptance — INT-074.W shared wide-page template — 2026-10-04
+
+Done for the universal layout slice. Owner explicitly authorized all pages including homepage use the wider shared template. The existing approved brand/DNA remains binding.
+
+Root inspected the shared page-layout.css, exact DELTA.patch, route inventory and logic-preservation evidence; reviewed1920dark homepage and1440/390dark gameplay renders plus actual live homepage. All35distinct concrete mounted paths and catch-all/redirect coverage are recorded. Reusable data-page-layout wide/.page-rail and gutter tokens form the future page contract; inner readable form/board constraints remain intentional.
+
+Root independently replayed final4173 homepage: hero/main sections/footer span1265px at1280viewport with32pxpadding, no max cap and no horizontal overflow. Root then inspected actual host setup and measured summary below all other form children with no overflow. No room/name creation or credentials submitted. Root independently verified11source and152evidence hashes with zero mismatches. Source writes stopped;4173original preview preserved, temporary fixture server stopped.
+
+Forge typecheck, scoped lint, diff and frontend builds passed;272fixture layout checks,16conditional auth checks and34final actual public route records are documented. Three behavior failures reproduce exact before sources and remain open, not silently repaired. The initial live metric wait captured lazy loading instead of route content; final34records wait for actual rails and replace that invalid metric attempt. Fixture admin/game/auth checks do not establish live backend/production readiness. Original full-bleed photo crop remains intentional; gallery travel space prevents phone/caption clipping. Build retains existing large-chunk warning.
+
+Evidence: C:/Users/User/.codex/worktrees/huroof-enta-integration/huroof_wa_oloof/output/int074w-wide-template-20261004/REPORT.md, FREEZE.json, DELTA.patch, ROUTE-COVERAGE.md, verification.json, root-live-home.png. Canonical task INT-074.W W3 accepted. Broader game/admin feature integration and payment/content/production gates remain open.

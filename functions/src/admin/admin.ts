@@ -5,7 +5,10 @@ import { FieldPath, FieldValue, getFirestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
 import { HttpsError, onCall, type CallableRequest } from "firebase-functions/https";
 import { reduceGame } from "../../../src/features/game/domain/lifecycle.js";
-import { projectRoom, type CanonicalMember, type CanonicalRoom } from "../game.js";
+import { applyChallengeAward, createChallengeBridgeContext } from "../../../src/features/game/challenges/award-bridge.js";
+import { compactChallengeState, parseChallengeDefinitionEnvelope, restoreChallengeState, type ChallengeDefinitionEnvelope } from "../../../src/features/game/challenges/integration.js";
+import { reconcileChallengeDeadline } from "../../../src/features/game/challenges/engine.js";
+import { projectRoom, type CanonicalMember, type CanonicalQuestion, type CanonicalRoom } from "../game.js";
 
 if (!getApps().length) initializeApp();
 const db = getFirestore();
@@ -14,11 +17,11 @@ const region = process.env.FUNCTIONS_REGION || "me-central1";
 const callable = { region, enforceAppCheck: process.env.FUNCTIONS_EMULATOR !== "true" } as const;
 const roles = ["super_admin", "content_admin", "reviewer", "game_ops", "viewer"] as const;
 type Role = (typeof roles)[number];
-type Capability = "session" | "questions.read" | "questions.write" | "reviews.read" | "reviews.decide" | "categories.read" | "categories.write" | "releases.read" | "releases.stage" | "rooms.read" | "rooms.act" | "users.read" | "users.write" | "audit.read" | "health.read" | "settings.read" | "settings.write";
+type Capability = "session" | "questions.read" | "questions.inspect" | "questions.write" | "reviews.read" | "reviews.decide" | "categories.read" | "categories.write" | "releases.read" | "releases.stage" | "rooms.read" | "rooms.act" | "users.read" | "users.write" | "audit.read" | "health.read" | "settings.read" | "settings.write";
 const capabilities: Record<Role, readonly Capability[]> = {
-  super_admin: ["session", "questions.read", "questions.write", "reviews.read", "reviews.decide", "categories.read", "categories.write", "releases.read", "releases.stage", "rooms.read", "rooms.act", "users.read", "users.write", "audit.read", "health.read", "settings.read", "settings.write"],
-  content_admin: ["session", "questions.read", "questions.write", "reviews.read", "categories.read", "categories.write", "releases.read", "releases.stage", "audit.read", "health.read", "settings.read"],
-  reviewer: ["session", "questions.read", "reviews.read", "reviews.decide", "categories.read", "audit.read", "health.read"],
+  super_admin: ["session", "questions.read", "questions.inspect", "questions.write", "reviews.read", "reviews.decide", "categories.read", "categories.write", "releases.read", "releases.stage", "rooms.read", "rooms.act", "users.read", "users.write", "audit.read", "health.read", "settings.read", "settings.write"],
+  content_admin: ["session", "questions.read", "questions.inspect", "questions.write", "reviews.read", "categories.read", "categories.write", "releases.read", "releases.stage", "audit.read", "health.read", "settings.read"],
+  reviewer: ["session", "questions.read", "questions.inspect", "reviews.read", "reviews.decide", "categories.read", "audit.read", "health.read"],
   game_ops: ["session", "rooms.read", "rooms.act", "audit.read", "health.read"],
   viewer: ["session", "questions.read", "reviews.read", "categories.read", "releases.read", "rooms.read", "audit.read", "health.read", "settings.read"],
 };
@@ -63,6 +66,12 @@ function listInput(value: unknown) {
 }
 function mutationEnabled() { return process.env.FUNCTIONS_EMULATOR === "true" || process.env.ADMIN_MUTATIONS_ENABLED === "true"; }
 function productionBlocked() { if (!mutationEnabled()) throw new HttpsError("failed-precondition", "Admin mutations are staged and disabled in this environment."); }
+/** This narrow gate deliberately does not enable the general admin mutation surface. */
+export function categoryCorrectionDraftsEnabled(environment: NodeJS.ProcessEnv = process.env) { return environment.FUNCTIONS_EMULATOR === "true" || environment.ADMIN_CATEGORY_CORRECTION_DRAFTS_ENABLED === "true"; }
+function categoryCorrectionDraftsBlocked() { if (!categoryCorrectionDraftsEnabled()) throw new HttpsError("failed-precondition", "Category correction drafts are staged and disabled in this environment."); }
+/** This gate controls only release-bound operational inspection markers. */
+export function publishedQuestionInspectionsEnabled(environment: NodeJS.ProcessEnv = process.env) { return environment.FUNCTIONS_EMULATOR === "true" || environment.ADMIN_PUBLISHED_QUESTION_INSPECTIONS_ENABLED === "true"; }
+function publishedQuestionInspectionsBlocked() { if (!publishedQuestionInspectionsEnabled()) throw new HttpsError("failed-precondition", "Published question inspections are staged and disabled in this environment."); }
 function canonicalize(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(canonicalize);
   if (value && typeof value === "object") {
@@ -77,7 +86,7 @@ function canonicalize(value: unknown): unknown {
 export function canonicalAdminHash(value: unknown) {
   return createHash("sha256").update(JSON.stringify(canonicalize(value))).digest("hex");
 }
-type Principal = { uid: string; roles: Role[]; authzVersion: number; requestHash: string; categoryScopes?: string[]; reviewerScopes?: string[] };
+type Principal = { uid: string; roles: Role[]; claimRoles: Role[]; authzVersion: number; claimAuthzVersion: unknown; requestHash: string; categoryScopes?: string[]; reviewerScopes?: string[] };
 async function principal(request: CallableRequest<unknown>, capability: Capability): Promise<Principal> {
   const uid = request.auth?.uid;
   const token = request.auth?.token as Record<string, unknown> | undefined;
@@ -90,7 +99,7 @@ async function principal(request: CallableRequest<unknown>, capability: Capabili
   const claimRoles = Array.isArray(token?.adminRoles) ? token.adminRoles.filter((role): role is Role => typeof role === "string" && (roles as readonly string[]).includes(role)) : [];
   if (!sameAdminAuthorization(liveRoles, claimRoles, row.authzVersion, token?.authzVersion)) throw new HttpsError("permission-denied", "Administrative authorization is stale. Refresh your Google session.");
   if (!liveRoles.some((role) => capabilities[role].includes(capability))) throw new HttpsError("permission-denied", "Missing administrative capability.");
-  return { uid, roles: liveRoles, authzVersion: row.authzVersion, requestHash: canonicalAdminHash(request.data ?? {}), categoryScopes: Array.isArray(row.categoryScopes) ? row.categoryScopes.filter((v: unknown): v is string => typeof v === "string") : [], reviewerScopes: Array.isArray(row.reviewerScopes) ? row.reviewerScopes.filter((v: unknown): v is string => typeof v === "string") : [] };
+  return { uid, roles: liveRoles, claimRoles, authzVersion: row.authzVersion, claimAuthzVersion: token?.authzVersion, requestHash: canonicalAdminHash(request.data ?? {}), categoryScopes: Array.isArray(row.categoryScopes) ? row.categoryScopes.filter((v: unknown): v is string => typeof v === "string") : [], reviewerScopes: Array.isArray(row.reviewerScopes) ? row.reviewerScopes.filter((v: unknown): v is string => typeof v === "string") : [] };
 }
 function requireRole(actor: Principal, role: Role) { if (!actor.roles.includes(role)) throw new HttpsError("permission-denied", "This action requires super administrator authority."); }
 function scopeCategory(actor: Principal, categoryId: string) { if (!actor.roles.includes("super_admin") && (!actor.categoryScopes?.includes(categoryId))) throw new HttpsError("permission-denied", "Category is outside your assigned scope."); }
@@ -129,9 +138,34 @@ export function questionReviewBinding(value: Record<string, unknown>, revision: 
 export function reviewMatchesQuestion(review: Record<string, unknown>, question: Record<string, unknown>) { return review.status === "in_review" && question.status === "in_review" && question.revision === review.questionRevision && questionReviewBinding(question, Number(review.questionRevision)) === review.questionHash; }
 export function isArchivableQuestionStatus(status: unknown) { return status === "draft" || status === "ready_for_review" || status === "changes_requested"; }
 export function adminRoomDto(id: string, data: Record<string, unknown>, includeMembers = false) { const game = data.game && typeof data.game === "object" ? data.game as Record<string, unknown> : {}; const config = data.config && typeof data.config === "object" ? data.config as Record<string, unknown> : {}; const lifecycle = data.lifecycle ?? game.lifecycle; return { id, revision: data.revision, lifecycle, memberCount: data.memberCount ?? (Array.isArray(data.members) ? data.members.filter(member => member && typeof member === "object" && (member as Record<string, unknown>).active === true).length : undefined), createdAt: data.createdAt ?? null, updatedAt: data.updatedAt ?? null, releaseId: data.releaseId ?? config.releaseId, roomCode: data.roomCode, paused: lifecycle === "PAUSED", closed: data.closed === true, currentRound: data.currentRound ?? game.currentRound, questionScores: data.questionScores ?? game.questionScores, teams: data.teams ?? config.teams, ...(includeMembers && Array.isArray(data.members) ? { members: data.members.map(member => { const value = object(member); return { uid: value.uid, displayName: value.displayName, role: value.role, team: value.team, ready: value.ready === true, active: value.active === true }; }) } : {}) }; }
-function writeRoomAdminViews(tx: FirebaseFirestore.Transaction, roomId: string, room: CanonicalRoom, members: CanonicalMember[]) {
-  tx.set(db.doc(`rooms/${roomId}/projections/audience`), projectRoom(roomId, room, members, "audience", undefined, Date.now()));
-  for (const member of members) { if (!member.active) continue; if (member.role === "host") tx.set(db.doc(`rooms/${roomId}/projections/host`), projectRoom(roomId, room, members, "host", member.uid, Date.now())); if (member.role === "player") tx.set(db.doc(`rooms/${roomId}/projections/player_${member.uid}`), projectRoom(roomId, room, members, "player", member.uid, Date.now())); }
+const challengeDefinitionDigest = (json: string) => createHash("sha256").update(json).digest("hex");
+async function reconcileAdminChallenge(tx: FirebaseFirestore.Transaction, room: CanonicalRoom) {
+  if (!room.challenge || !room.activeQuestion?.challenge) return { room, definition: undefined };
+  const question = room.activeQuestion as CanonicalQuestion;
+  const reference = question.challenge?.definition;
+  if (!reference) throw new HttpsError("failed-precondition", "CHALLENGE_DEFINITION_MISSING");
+  const definitionDoc = await tx.get(db.doc(`challengeDefinitionSets/${reference.manifestSha256}/definitions/${reference.id}`));
+  if (!definitionDoc.exists || definitionDoc.id !== reference.id) throw new HttpsError("failed-precondition", "CHALLENGE_DEFINITION_MISSING");
+  let definition: import("../../../src/features/game/challenges/definition.js").CanonicalChallengeDefinition;
+  try { definition = parseChallengeDefinitionEnvelope(definitionDoc.data() as ChallengeDefinitionEnvelope, challengeDefinitionDigest); }
+  catch (reason) { throw new HttpsError("failed-precondition", reason instanceof Error ? reason.message : "CHALLENGE_DEFINITION_INVALID"); }
+  const current = restoreChallengeState(room.challenge);
+  const reconciled = reconcileChallengeDeadline(definition, current, Date.now());
+  if (reconciled === current) return { room, definition };
+  let game = room.game;
+  let bridge = room.challengeBridge;
+  if (reconciled.result === "correct" && game.activeCellId) {
+    const awarded = applyChallengeAward(reconciled, game, bridge ?? createChallengeBridgeContext(reconciled.occurrence, game.activeCellId));
+    game = awarded.game;
+    bridge = awarded.context;
+  }
+  // The enclosing admin operation owns the one canonical revision and audit
+  // event.  It must still project the reconciled challenge before its change.
+  return { room: { ...room, game, challenge: compactChallengeState(reconciled), challengeBridge: bridge }, definition };
+}
+function writeRoomAdminViews(tx: FirebaseFirestore.Transaction, roomId: string, room: CanonicalRoom, members: CanonicalMember[], definition?: import("../../../src/features/game/challenges/definition.js").CanonicalChallengeDefinition) {
+  tx.set(db.doc(`rooms/${roomId}/projections/audience`), projectRoom(roomId, room, members, "audience", undefined, Date.now(), definition));
+  for (const member of members) { if (!member.active) continue; if (member.role === "host") tx.set(db.doc(`rooms/${roomId}/projections/host`), projectRoom(roomId, room, members, "host", member.uid, Date.now(), definition)); if (member.role === "player") tx.set(db.doc(`rooms/${roomId}/projections/player_${member.uid}`), projectRoom(roomId, room, members, "player", member.uid, Date.now(), definition)); }
   tx.set(db.doc(`adminRoomSummaries/${roomId}`), { revision: room.revision, roomCode: room.roomCode, lifecycle: room.game.lifecycle, releaseId: room.config.releaseId, memberCount: members.filter(member => member.active).length, closed: Boolean((room as CanonicalRoom & { closedAt?: unknown }).closedAt), currentRound: room.game.currentRound, questionScores: room.game.questionScores, teams: room.config.teams, members: members.map(member => ({ uid: member.uid, displayName: member.displayName, role: member.role, team: member.team ?? null, ready: member.ready, active: member.active })), updatedAt: FieldValue.serverTimestamp() });
 }
 async function page(collection: string, input: ReturnType<typeof listInput>, filters: Record<string, unknown> = {}, allowedCategories?: readonly string[]) {
@@ -211,12 +245,76 @@ function publishedScope(actor: Principal, categoryId?: string) {
   if (!categoryId && scopes.length > 30) throw new HttpsError("failed-precondition", "Select one assigned category to page published content.");
   return categoryId ? [categoryId] : scopes;
 }
-function publishedQuestionDto(id: string, row: Record<string, unknown>, detail = false) {
-  const media = (value: unknown) => value && typeof value === "object" ? (() => { const item = value as Record<string, unknown>; return { mediaId: item.mediaId ?? null, type: item.type ?? null, contentType: item.contentType ?? null, altAr: item.altAr ?? null, assetSha256: item.assetSha256 ?? null }; })() : null;
+function publishedMediaDto(value: unknown) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const item = value as Record<string, unknown>;
+  if (typeof item.mediaId !== "string" || !/^[A-Za-z0-9:_-]{1,128}$/.test(item.mediaId) || typeof item.assetSha256 !== "string" || !/^[a-f0-9]{64}$/i.test(item.assetSha256)) return null;
+  const contentType = item.contentType === "image/png" || item.contentType === "image/jpeg" || item.contentType === "video/mp4" ? item.contentType : null;
+  const type = item.type === "image" || item.type === "video" ? item.type : null;
+  return { mediaId: item.mediaId, type, contentType, altAr: typeof item.altAr === "string" ? item.altAr : null, assetSha256: item.assetSha256 };
+}
+/** Explicit public-admin allowlist; never project release internals or storage routing. */
+export function publishedQuestionDto(id: string, row: Record<string, unknown>, detail = false) {
   return {
     id, categoryId: row.categoryId, modality: row.modality, headerAr: row.headerAr, promptAr: row.promptAr, targetLetter: row.targetLetter ?? null,
-    ...(detail ? { promptAr: row.promptAr, canonicalAnswer: row.canonicalAnswer, acceptedAnswers: Array.isArray(row.acceptedAnswers) ? row.acceptedAnswers : [], media: media(row.media), answerMedia: media(row.answerMedia) } : {}),
+    ...(detail ? {
+      canonicalAnswer: row.canonicalAnswer,
+      acceptedAnswers: Array.isArray(row.acceptedAnswers) ? row.acceptedAnswers.filter(answer => typeof answer === "string") : [],
+      media: publishedMediaDto(row.media), answerMedia: publishedMediaDto(row.answerMedia),
+      points: typeof row.points === "number" && Number.isFinite(row.points) ? row.points : null,
+      difficulty: typeof row.difficulty === "string" && row.difficulty.trim() ? row.difficulty.trim() : null,
+    } : {}),
   };
+}
+export function publishedQuestionContentDigest(id: string, row: Record<string, unknown>) {
+  return canonicalAdminHash(publishedQuestionDto(id, row, true));
+}
+type LiveInspectionPrincipal = { roles: Role[]; categoryScopes: string[] };
+export function canInspectPublishedQuestion(live: LiveInspectionPrincipal, categoryId: string) {
+  return live.roles.includes("super_admin") || (live.categoryScopes.includes(categoryId) && (live.roles.includes("content_admin") || live.roles.includes("reviewer")));
+}
+/** This is deliberately distinct from editorial-review authority. */
+export function validateLivePublishedQuestionInspectionPrincipal(actor: { claimRoles: readonly Role[]; claimAuthzVersion: unknown }, row: Record<string, unknown> | undefined, categoryId: string): LiveInspectionPrincipal {
+  if (!row || row.enabled !== true || row.identityReady !== true || !Array.isArray(row.roles) || typeof row.authzVersion !== "number" || !Number.isInteger(row.authzVersion)) throw new HttpsError("permission-denied", "Administrator registry authority changed.");
+  const liveRoles = row.roles.filter((role: unknown): role is Role => typeof role === "string" && (roles as readonly string[]).includes(role));
+  if (!sameAdminAuthorization(liveRoles, actor.claimRoles, row.authzVersion, actor.claimAuthzVersion)) throw new HttpsError("permission-denied", "Administrative authorization changed. Refresh your session.");
+  const categoryScopes = Array.isArray(row.categoryScopes) ? row.categoryScopes.filter((scope: unknown): scope is string => typeof scope === "string") : [];
+  const live = { roles: liveRoles, categoryScopes };
+  if (!liveRoles.some(role => capabilities[role].includes("questions.inspect")) || !canInspectPublishedQuestion(live, categoryId)) throw new HttpsError("permission-denied", "Published question inspection authority or scope changed.");
+  return live;
+}
+function validateLivePublishedReadPrincipal(actor: Principal, row: Record<string, unknown> | undefined, categoryId: string) {
+  if (!row || row.enabled !== true || row.identityReady !== true || !Array.isArray(row.roles) || typeof row.authzVersion !== "number" || !Number.isInteger(row.authzVersion)) throw new HttpsError("permission-denied", "Administrator registry authority changed.");
+  const liveRoles = row.roles.filter((role: unknown): role is Role => typeof role === "string" && (roles as readonly string[]).includes(role));
+  if (!sameAdminAuthorization(liveRoles, actor.claimRoles, row.authzVersion, actor.claimAuthzVersion) || !liveRoles.some(role => capabilities[role].includes("questions.read"))) throw new HttpsError("permission-denied", "Administrative authorization changed. Refresh your session.");
+  if (!liveRoles.includes("super_admin") && !(Array.isArray(row.categoryScopes) && row.categoryScopes.includes(categoryId))) throw new HttpsError("permission-denied", "Category is outside your assigned scope.");
+}
+type PublishedQuestionInspectionBinding = { releaseId: string; releaseRootSha256: string; questionId: string; categoryId: string; questionContentDigest: string };
+function inspectionDto(snapshot: FirebaseFirestore.DocumentSnapshot, binding: PublishedQuestionInspectionBinding) {
+  if (!snapshot.exists) return { reviewed: false, reviewedAt: null };
+  const value = snapshot.data() ?? {};
+  if (value.releaseId !== binding.releaseId || value.releaseRootSha256 !== binding.releaseRootSha256 || value.questionId !== binding.questionId || value.categoryId !== binding.categoryId || value.questionContentDigest !== binding.questionContentDigest || value.status !== "reviewed") throw new HttpsError("failed-precondition", "Published question inspection binding is invalid.");
+  return { reviewed: true, reviewedAt: value.reviewedAt ?? null };
+}
+async function publishedQuestionNeighbors(releaseId: string, categoryId: string, question: FirebaseFirestore.DocumentSnapshot) {
+  const collection = db.collection(`releases/${releaseId}/questions`);
+  const base = collection.where("categoryId", "==", categoryId).orderBy(FieldPath.documentId());
+  const [previous, next] = await Promise.all([base.endBefore(question).limitToLast(1).get(), base.startAfter(question).limit(1).get()]);
+  return { previousQuestionId: previous.docs[0]?.id ?? null, nextQuestionId: next.docs[0]?.id ?? null };
+}
+async function inspectionBaselineInTransaction(tx: FirebaseFirestore.Transaction, questionId: string, requestedReleaseId?: string): Promise<PublishedQuestionInspectionBinding & { markerRef: FirebaseFirestore.DocumentReference }> {
+  const pointer = await tx.get(db.doc("runtime/activeRelease"));
+  const releaseId = pointer.data()?.releaseId;
+  if (!pointer.exists || typeof releaseId !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(releaseId)) throw new HttpsError("failed-precondition", "No active immutable release.");
+  if (requestedReleaseId && releaseId !== requestedReleaseId) throw new HttpsError("aborted", "ACTIVE_RELEASE_CHANGED");
+  const root = await tx.get(db.doc(`releases/${releaseId}`)); const rootData = root.data();
+  if (!root.exists || rootData?.immutable !== true || typeof rootData.documentRootSha256 !== "string" || !/^[a-f0-9]{64}$/i.test(rootData.documentRootSha256)) throw new HttpsError("failed-precondition", "Active release is incomplete or not immutable.");
+  const question = await tx.get(db.doc(`releases/${releaseId}/questions/${questionId}`));
+  if (!question.exists) throw new HttpsError("not-found", "Published question not found.");
+  const questionData = question.data()!; const categoryId = id(questionData.categoryId, "stored categoryId");
+  const category = await tx.get(db.doc(`releases/${releaseId}/catalogCategories/${categoryId}`));
+  if (!category.exists) throw new HttpsError("failed-precondition", "Published question category is unavailable.");
+  return { releaseId, releaseRootSha256: rootData.documentRootSha256, questionId, categoryId, questionContentDigest: publishedQuestionContentDigest(questionId, questionData), markerRef: db.doc(`adminPublishedQuestionInspections/${releaseId}/questions/${questionId}`) };
 }
 async function publishedCategoryDto(releaseId: string, snapshot: FirebaseFirestore.DocumentSnapshot) {
   const value = snapshot.data() ?? {};
@@ -224,6 +322,61 @@ async function publishedCategoryDto(releaseId: string, snapshot: FirebaseFiresto
   const count = inventory.data()?.approvedCount;
   const readiness = value.runtimeReadiness && typeof value.runtimeReadiness === "object" ? value.runtimeReadiness as Record<string, unknown> : {};
   return { id: snapshot.id, labelAr: value.labelAr ?? value.displayNameAr ?? snapshot.id, runtimeReadiness: { huroof: readiness.huroof === true, categories: readiness.categories === true, charades: readiness.charades === true }, approvedCount: Number.isSafeInteger(count) ? count : 0, uniqueAnswerConceptCount: Number.isSafeInteger(inventory.data()?.uniqueAnswerConceptCount) ? inventory.data()!.uniqueAnswerConceptCount : null };
+}
+
+type CategoryCorrectionBaseline = { categoryId: string; releaseId: string; releaseRootSha256: string; publishedLabelAr: string; correctionRef: FirebaseFirestore.DocumentReference };
+type LiveCorrectionPrincipal = { roles: Role[]; categoryScopes: string[] };
+
+/** The correction form is intentionally limited to a proposed label and private operational note. */
+export function categoryCorrectionDraftInput(value: unknown) {
+  const draft = object(value); only(draft, ["proposedLabelAr", "internalNote"]);
+  return { proposedLabelAr: text(draft.proposedLabelAr, "proposedLabelAr", 160), internalNote: text(draft.internalNote, "internalNote", 2000) };
+}
+export function canManageCategoryCorrection(live: LiveCorrectionPrincipal, categoryId: string) {
+  return live.roles.includes("super_admin") || (live.roles.includes("content_admin") && live.categoryScopes.includes(categoryId));
+}
+/** Pure, exported transaction guard: callers must invoke it from the Firestore transaction. */
+export function validateLiveCategoryCorrectionPrincipal(actor: { claimRoles: readonly Role[]; claimAuthzVersion: unknown }, row: Record<string, unknown> | undefined, categoryId: string): LiveCorrectionPrincipal {
+  if (!row || row.enabled !== true || row.identityReady !== true || !Array.isArray(row.roles) || typeof row.authzVersion !== "number" || !Number.isInteger(row.authzVersion)) throw new HttpsError("permission-denied", "Administrator registry authority changed.");
+  const liveRoles = row.roles.filter((role: unknown): role is Role => typeof role === "string" && (roles as readonly string[]).includes(role));
+  if (!sameAdminAuthorization(liveRoles, actor.claimRoles, row.authzVersion, actor.claimAuthzVersion)) throw new HttpsError("permission-denied", "Administrative authorization changed. Refresh your session.");
+  const categoryScopes = Array.isArray(row.categoryScopes) ? row.categoryScopes.filter((scope: unknown): scope is string => typeof scope === "string") : [];
+  const live = { roles: liveRoles, categoryScopes };
+  if (!liveRoles.some(role => capabilities[role].includes("categories.write")) || !canManageCategoryCorrection(live, categoryId)) throw new HttpsError("permission-denied", "Category correction authority or scope changed.");
+  return live;
+}
+export function categoryCorrectionDto(value: Record<string, unknown>, includeInternalNote: boolean) {
+  return {
+    categoryId: value.categoryId,
+    baseReleaseId: value.baseReleaseId,
+    baseReleaseRootSha256: value.baseReleaseRootSha256,
+    publishedLabelAr: value.publishedLabelAr,
+    proposedLabelAr: value.proposedLabelAr,
+    status: value.status === "draft" ? "draft" : "unknown",
+    revision: Number.isSafeInteger(value.revision) ? value.revision : 0,
+    createdAt: value.createdAt ?? null,
+    updatedAt: value.updatedAt ?? null,
+    ...(includeInternalNote && typeof value.internalNote === "string" ? { internalNote: value.internalNote } : {}),
+  };
+}
+function correctionReadDto(snapshot: FirebaseFirestore.DocumentSnapshot, includeInternalNote: boolean) {
+  if (!snapshot.exists) return null;
+  const value = snapshot.data() ?? {};
+  return categoryCorrectionDto(value, includeInternalNote);
+}
+async function correctionBaselineInTransaction(tx: FirebaseFirestore.Transaction, categoryId: string): Promise<CategoryCorrectionBaseline> {
+  const pointer = await tx.get(db.doc("runtime/activeRelease"));
+  const releaseId = pointer.data()?.releaseId;
+  if (!pointer.exists || typeof releaseId !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(releaseId)) throw new HttpsError("failed-precondition", "No active immutable release.");
+  const [release, category] = await Promise.all([tx.get(db.doc(`releases/${releaseId}`)), tx.get(db.doc(`releases/${releaseId}/catalogCategories/${categoryId}`))]);
+  const releaseData = release.data(); const categoryData = category.data();
+  if (!release.exists || releaseData?.immutable !== true || typeof releaseData.documentRootSha256 !== "string" || !/^[a-f0-9]{64}$/i.test(releaseData.documentRootSha256)) throw new HttpsError("failed-precondition", "Active release is incomplete or not immutable.");
+  const publishedLabelAr = typeof categoryData?.labelAr === "string" && categoryData.labelAr.trim() ? categoryData.labelAr.trim() : typeof categoryData?.displayNameAr === "string" && categoryData.displayNameAr.trim() ? categoryData.displayNameAr.trim() : null;
+  if (!category.exists || !publishedLabelAr) throw new HttpsError("not-found", "Published category not found in the active release.");
+  return { categoryId, releaseId, releaseRootSha256: releaseData.documentRootSha256, publishedLabelAr, correctionRef: db.doc(`adminCategoryCorrections/${categoryId}/releases/${releaseId}`) };
+}
+function correctionMatchesBaseline(value: Record<string, unknown>, baseline: CategoryCorrectionBaseline) {
+  return value.categoryId === baseline.categoryId && value.baseReleaseId === baseline.releaseId && value.baseReleaseRootSha256 === baseline.releaseRootSha256 && value.publishedLabelAr === baseline.publishedLabelAr && value.status === "draft";
 }
 async function publishedQuestionPage(release: ActiveRelease, actor: Principal, input: ReturnType<typeof listInput>) {
   const scope = publishedScope(actor, input.categoryId);
@@ -242,7 +395,7 @@ async function publishedQuestionPage(release: ActiveRelease, actor: Principal, i
   return { releaseId: release.id, items: docs.map(doc => publishedQuestionDto(doc.id, doc.data())), nextCursor: result.docs.length > input.limit ? docs.at(-1)?.id ?? null : null };
 }
 
-export const adminGetSession = call("session", async (_request, actor) => ({ uid: actor.uid, roles: actor.roles, authzVersion: actor.authzVersion, capabilities: [...new Set(actor.roles.flatMap(role => capabilities[role]))], mutationMode: mutationEnabled() ? "enabled" : "staged" }));
+export const adminGetSession = call("session", async (_request, actor) => ({ uid: actor.uid, roles: actor.roles, authzVersion: actor.authzVersion, capabilities: [...new Set(actor.roles.flatMap(role => capabilities[role]))], mutationMode: mutationEnabled() ? "enabled" : "staged", categoryCorrectionDraftMode: categoryCorrectionDraftsEnabled() ? "enabled" : "staged", publishedQuestionInspectionMode: publishedQuestionInspectionsEnabled() ? "enabled" : "staged" }));
 export const adminGetOverview = call("session", async (_request, actor) => {
   const inventory: Record<string, number> = {};
   const draftScope = actor.roles.includes("super_admin") || actor.roles.includes("viewer");
@@ -266,8 +419,13 @@ export const adminListPublishedQuestions = call("questions.read", async (request
 export const adminGetPublishedQuestion = call("questions.read", async (request, actor) => {
   const data = object(request.data); only(data, ["id", "releaseId"]); const release = await activeRelease({ releaseId: optionalId(data.releaseId, "releaseId") }); const questionId = id(data.id);
   const snap = await db.doc(`releases/${release.id}/questions/${questionId}`).get();
-  if (!snap.exists) throw new HttpsError("not-found", "Published question not found."); scopeCategory(actor, String(snap.data()?.categoryId));
-  return { releaseId: release.id, ...publishedQuestionDto(snap.id, snap.data()!, true) };
+  if (!snap.exists) throw new HttpsError("not-found", "Published question not found."); const question = snap.data()!; const categoryId = id(question.categoryId, "stored categoryId"); scopeCategory(actor, categoryId);
+  const category = await db.doc(`releases/${release.id}/catalogCategories/${categoryId}`).get();
+  const label = category.data()?.labelAr ?? category.data()?.displayNameAr;
+  if (!category.exists || typeof label !== "string" || !label.trim()) throw new HttpsError("failed-precondition", "Published question category is unavailable.");
+  const binding: PublishedQuestionInspectionBinding = { releaseId: release.id, releaseRootSha256: release.documentRootSha256, questionId, categoryId, questionContentDigest: publishedQuestionContentDigest(questionId, question) };
+  const [marker, neighbors] = await Promise.all([db.doc(`adminPublishedQuestionInspections/${release.id}/questions/${questionId}`).get(), publishedQuestionNeighbors(release.id, categoryId, snap)]);
+  return { releaseId: release.id, ...publishedQuestionDto(snap.id, question, true), categoryLabelAr: label.trim(), inspection: inspectionDto(marker, binding), ...neighbors };
 });
 /**
  * Delivers a small, verified release-owned preview only after question scope is
@@ -287,7 +445,44 @@ export const adminGetPublishedQuestionMedia = call("questions.read", async (requ
   if (bytes.length !== size || createHash("sha256").update(bytes).digest("hex") !== binding.assetSha256 || metadata.generation !== record.generation || metadata.contentType !== contentType) throw new HttpsError("failed-precondition", "Immutable media preview verification failed.");
   const png = bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])); const jpeg = bytes.subarray(0, 3).equals(Buffer.from([0xff, 0xd8, 0xff])); const video = bytes.subarray(4, 8).toString("ascii") === "ftyp";
   if ((contentType === "image/png" && !png) || (contentType === "image/jpeg" && !jpeg) || (contentType === "video/mp4" && !video)) throw new HttpsError("failed-precondition", "Immutable media preview format mismatch.");
+  // Download is intentionally followed by fresh principal, release, and scope
+  // checks so an expired session cannot retain an authorization race window.
+  const [livePrincipal, finalRelease, finalQuestion] = await Promise.all([db.doc(`adminPrincipals/${actor.uid}`).get(), activeRelease({ releaseId: release.id }), db.doc(`releases/${release.id}/questions/${questionId}`).get()]);
+  if (!finalQuestion.exists || finalQuestion.data()?.categoryId !== question.data()?.categoryId) throw new HttpsError("aborted", "Published media question binding changed.");
+  validateLivePublishedReadPrincipal(actor, livePrincipal.data(), String(finalQuestion.data()?.categoryId));
+  if (finalRelease.documentRootSha256 !== release.documentRootSha256) throw new HttpsError("aborted", "ACTIVE_RELEASE_CHANGED");
   return { releaseId: release.id, questionId, variant: data.variant, mediaId: binding.mediaId, type: binding.type, contentType, altAr: binding.altAr, url: `data:${contentType};base64,${bytes.toString("base64")}` };
+});
+
+/**
+ * Creates the shared operational inspection marker once. It never edits an
+ * immutable release or editorial-review record, and every replay is bound to
+ * its original request receipt.
+ */
+export const adminMarkPublishedQuestionInspected = call("questions.inspect", async (request, actor) => {
+  const data = object(request.data); only(data, ["id", "releaseId", "operationId"]);
+  const questionId = id(data.id); const requestedReleaseId = id(data.releaseId, "releaseId"); const operationId = id(data.operationId, "operationId");
+  publishedQuestionInspectionsBlocked();
+  return db.runTransaction(async tx => {
+    publishedQuestionInspectionsBlocked();
+    const baseline = await inspectionBaselineInTransaction(tx, questionId, requestedReleaseId);
+    const [livePrincipal, marker, priorOperation] = await Promise.all([tx.get(db.doc(`adminPrincipals/${actor.uid}`)), tx.get(baseline.markerRef), tx.get(db.doc(`adminOperations/${operationId}`))]);
+    const live = validateLivePublishedQuestionInspectionPrincipal(actor, livePrincipal.data(), baseline.categoryId);
+    const target = `${baseline.releaseId}:${questionId}`;
+    const current = inspectionDto(marker, baseline);
+    if (priorOperation.exists) {
+      const prior = priorOperation.data()!;
+      if (prior.actorUid !== actor.uid || prior.action !== "published-question.inspection.mark" || prior.target !== target || prior.requestHash !== actor.requestHash) throw new HttpsError("already-exists", "operationId was previously used for a different mutation payload.");
+      if (!current.reviewed) throw new HttpsError("failed-precondition", "Published question inspection receipt has no valid marker.");
+      return { operationId, revision: prior.revision, replayed: true, alreadyInspected: prior.status === "already_inspected", reviewedAt: current.reviewedAt, serverTime: prior.serverTime ?? null };
+    }
+    const serverTime = new Date().toISOString();
+    const status = current.reviewed ? "already_inspected" : "reviewed";
+    if (!current.reviewed) tx.create(baseline.markerRef, { releaseId: baseline.releaseId, releaseRootSha256: baseline.releaseRootSha256, questionId, categoryId: baseline.categoryId, questionContentDigest: baseline.questionContentDigest, status: "reviewed", revision: 1, reviewedByUid: actor.uid, reviewedAt: FieldValue.serverTimestamp(), createdAt: FieldValue.serverTimestamp() });
+    tx.create(priorOperation.ref, { actorUid: actor.uid, actorRoles: live.roles, action: "published-question.inspection.mark", target, revision: 1, status, reviewedAt: current.reviewedAt ?? null, serverTime, requestHash: actor.requestHash, releaseId: baseline.releaseId, releaseRootSha256: baseline.releaseRootSha256, questionId, categoryId: baseline.categoryId, questionContentDigest: baseline.questionContentDigest });
+    tx.create(db.collection("adminAudit").doc(), { actorUid: actor.uid, actorRoles: live.roles, operationId, action: "published-question.inspection.mark", target, resultRevision: 1, result: status, requestHash: actor.requestHash, releaseId: baseline.releaseId, releaseRootSha256: baseline.releaseRootSha256, questionId, categoryId: baseline.categoryId, questionContentDigest: baseline.questionContentDigest, createdAt: FieldValue.serverTimestamp() });
+    return { operationId, revision: 1, replayed: false, alreadyInspected: current.reviewed, reviewedAt: current.reviewedAt ?? null, serverTime };
+  });
 });
 export const adminListPublishedCategories = call("categories.read", async (request, actor) => {
   const input = listInput(request.data); const release = await activeRelease(input); const scope = publishedScope(actor, input.categoryId);
@@ -304,6 +499,58 @@ export const adminGetPublishedCategory = call("categories.read", async (request,
   const data = object(request.data); only(data, ["id", "releaseId"]); const release = await activeRelease({ releaseId: optionalId(data.releaseId, "releaseId") }); const categoryId = id(data.id); scopeCategory(actor, categoryId);
   const snap = await db.doc(`releases/${release.id}/catalogCategories/${categoryId}`).get(); if (!snap.exists) throw new HttpsError("not-found", "Published category not found.");
   return { releaseId: release.id, ...await publishedCategoryDto(release.id, snap) };
+});
+
+/** Correction drafts are separate from immutable release catalogs. */
+export const adminGetCategoryCorrection = call("categories.read", async (request, actor) => {
+  const data = object(request.data); only(data, ["categoryId", "releaseId"]); const categoryId = id(data.categoryId, "categoryId"); const release = await activeRelease({ releaseId: optionalId(data.releaseId, "releaseId") });
+  scopeCategory(actor, categoryId);
+  const category = await db.doc(`releases/${release.id}/catalogCategories/${categoryId}`).get(); if (!category.exists) throw new HttpsError("not-found", "Published category not found.");
+  const correction = await db.doc(`adminCategoryCorrections/${categoryId}/releases/${release.id}`).get();
+  const canManage = canManageCategoryCorrection({ roles: actor.roles, categoryScopes: actor.categoryScopes ?? [] }, categoryId) && actor.roles.some(role => capabilities[role].includes("categories.write"));
+  if (correction.exists) {
+    const categoryData = category.data()!;
+    const label = typeof categoryData.labelAr === "string" && categoryData.labelAr.trim() ? categoryData.labelAr.trim() : typeof categoryData.displayNameAr === "string" && categoryData.displayNameAr.trim() ? categoryData.displayNameAr.trim() : null;
+    if (!label || !correctionMatchesBaseline(correction.data()!, { categoryId, releaseId: release.id, releaseRootSha256: release.documentRootSha256, publishedLabelAr: label, correctionRef: correction.ref })) throw new HttpsError("failed-precondition", "Category correction draft no longer matches the active release baseline.");
+  }
+  return { releaseId: release.id, draft: correctionReadDto(correction, canManage), canEdit: canManage, correctionDraftMode: categoryCorrectionDraftsEnabled() ? "enabled" : "staged" };
+});
+
+/**
+ * Writes one shared category/release draft. It re-reads live authorization,
+ * pointer, immutable root, category baseline, and idempotency inside its
+ * transaction before creating the draft, revision snapshot, and audit receipt.
+ */
+export const adminSaveCategoryCorrection = call("categories.write", async (request, actor) => {
+  const data = object(request.data); only(data, ["categoryId", "releaseId", "operationId", "expectedRevision", "draft"]);
+  const categoryId = id(data.categoryId, "categoryId"); const requestedReleaseId = id(data.releaseId, "releaseId"); const operationId = id(data.operationId, "operationId"); const expectedRevision = integer(data.expectedRevision, "expectedRevision", 0); const draft = categoryCorrectionDraftInput(data.draft);
+  scopeCategory(actor, categoryId);
+  if (!canManageCategoryCorrection({ roles: actor.roles, categoryScopes: actor.categoryScopes ?? [] }, categoryId)) throw new HttpsError("permission-denied", "Category correction authority or scope is missing.");
+  categoryCorrectionDraftsBlocked();
+  return db.runTransaction(async tx => {
+    categoryCorrectionDraftsBlocked();
+    const baseline = await correctionBaselineInTransaction(tx, categoryId);
+    if (baseline.releaseId !== requestedReleaseId) throw new HttpsError("aborted", "ACTIVE_RELEASE_CHANGED");
+    const [livePrincipal, correction, priorOperation] = await Promise.all([tx.get(db.doc(`adminPrincipals/${actor.uid}`)), tx.get(baseline.correctionRef), tx.get(db.doc(`adminOperations/${operationId}`))]);
+    const live = validateLiveCategoryCorrectionPrincipal(actor, livePrincipal.data(), categoryId);
+    const target = `${categoryId}:${baseline.releaseId}`;
+    if (priorOperation.exists) {
+      const prior = priorOperation.data()!;
+      if (prior.actorUid !== actor.uid || prior.action !== "category.correction-draft.save" || prior.target !== target || prior.requestHash !== actor.requestHash) throw new HttpsError("already-exists", "operationId was previously used for a different mutation payload.");
+      return { operationId, revision: prior.revision, replayed: true, serverTime: prior.serverTime ?? null };
+    }
+    const previous = correction.exists ? correction.data()! : undefined;
+    const revision = Number(previous?.revision ?? 0);
+    if (previous && !correctionMatchesBaseline(previous, baseline)) throw new HttpsError("aborted", "CATEGORY_CORRECTION_BASE_CHANGED");
+    if (revision !== expectedRevision) throw new HttpsError("aborted", "stale-revision");
+    const nextRevision = revision + 1; const serverTime = new Date().toISOString();
+    const next = { categoryId, baseReleaseId: baseline.releaseId, baseReleaseRootSha256: baseline.releaseRootSha256, publishedLabelAr: baseline.publishedLabelAr, proposedLabelAr: draft.proposedLabelAr, internalNote: draft.internalNote, status: "draft", revision: nextRevision, authorUid: previous?.authorUid ?? actor.uid, updatedByUid: actor.uid, updatedAt: FieldValue.serverTimestamp(), createdAt: previous?.createdAt ?? FieldValue.serverTimestamp() };
+    tx.set(baseline.correctionRef, next);
+    tx.create(baseline.correctionRef.collection("revisions").doc(String(nextRevision).padStart(8, "0")), { ...next, immutable: true, createdByUid: actor.uid, createdAt: FieldValue.serverTimestamp() });
+    tx.create(priorOperation.ref, { actorUid: actor.uid, actorRoles: live.roles, action: "category.correction-draft.save", target, expectedRevision, revision: nextRevision, status: "draft_saved", serverTime, requestHash: actor.requestHash, categoryId, baseReleaseId: baseline.releaseId, baseReleaseRootSha256: baseline.releaseRootSha256 });
+    tx.create(db.collection("adminAudit").doc(), { actorUid: actor.uid, actorRoles: live.roles, operationId, action: "category.correction-draft.save", target, expectedRevision, resultRevision: nextRevision, result: "draft_saved", requestHash: actor.requestHash, categoryId, baseReleaseId: baseline.releaseId, baseReleaseRootSha256: baseline.releaseRootSha256, createdAt: FieldValue.serverTimestamp() });
+    return { operationId, revision: nextRevision, replayed: false, serverTime };
+  });
 });
 
 export const adminListQuestions = call("questions.read", async (request, actor) => { const input = listInput(request.data); const result = await page("adminQuestionDrafts", input, { status: input.status, categoryId: input.categoryId }, actor.roles.includes("super_admin") ? undefined : actor.categoryScopes); const items = (result.items as Record<string, unknown>[]).map(item => ({ id: item.id, revision: item.revision, status: item.status, categoryId: item.categoryId, modality: item.modality, headerAr: item.headerAr, updatedAt: item.updatedAt })); return { ...result, items }; });
@@ -342,7 +589,43 @@ export const adminRollbackRelease = staged("releases.stage", "Release rollback")
 
 export const adminListRooms = call("rooms.read", async request => { const result = await page("adminRoomSummaries", listInput(request.data)); return { ...result, items: result.items.map(item => adminRoomDto(String(item.id), item)) }; });
 export const adminGetRoom = call("rooms.act", async request => { const data = object(request.data); only(data, ["id"]); const roomId = id(data.id); const snap = await db.doc(`adminRoomSummaries/${roomId}`).get(); if (!snap.exists) throw new HttpsError("not-found", "Room summary not found."); return adminRoomDto(snap.id, snap.data()!, true); });
-export const adminRoomAction = call("rooms.act", async (request, actor) => { const data = object(request.data); only(data, ["id", "operationId", "expectedRevision", "action", "reason", "memberUid"]); const roomId = id(data.id); const action = data.action === "pause" || data.action === "resume" || data.action === "close" || data.action === "remove_member" ? data.action : (() => { throw new HttpsError("invalid-argument", "Invalid room action."); })(); const reason = text(data.reason, "reason", 1000); const memberUid = action === "remove_member" ? id(data.memberUid, "memberUid") : undefined; const expected = integer(data.expectedRevision, "expectedRevision", 1); return mutate(actor, id(data.operationId, "operationId"), `room.${action}`, roomId, expected, async tx => { const ref = db.doc(`rooms/${roomId}`); const snap = await tx.get(ref); const membersSnap = await tx.get(ref.collection("members")); if (!snap.exists) throw new HttpsError("not-found", "Room not found."); const room = snap.data() as CanonicalRoom; if (room.revision !== expected || (room as unknown as { closedAt?: unknown }).closedAt) throw new HttpsError("aborted", "stale-or-closed-room"); const targetMember = memberUid ? membersSnap.docs.map(doc => doc.data() as CanonicalMember).find(member => member.uid === memberUid) : undefined; if (memberUid && (!targetMember || targetMember.role === "host" || targetMember.active !== true)) throw new HttpsError("failed-precondition", "Only an active non-host participant may be removed."); const game = action === "pause" || action === "resume" ? reduceGame(room.game, { type: action === "pause" ? "PAUSE" : "RESUME" }) : room.game; const timer = action === "pause" && room.timer ? { deadlineMs: 0, buzzOpen: false, remainingMs: Math.max(0, room.timer.deadlineMs - Date.now()), pausedBuzzOpen: room.timer.buzzOpen } : action === "resume" && room.timer?.remainingMs !== undefined ? { deadlineMs: Date.now() + room.timer.remainingMs, buzzOpen: Boolean(room.timer.pausedBuzzOpen) } : room.timer; const next = { ...room, game, timer, revision: expected + 1, updatedAt: FieldValue.serverTimestamp(), ...(action === "close" ? { closedAt: FieldValue.serverTimestamp() } : {}) } as CanonicalRoom; const members = membersSnap.docs.map(doc => doc.data() as CanonicalMember).map(member => memberUid && member.uid === memberUid ? { ...member, active: false } : member); if (memberUid) tx.update(ref.collection("members").doc(memberUid), { active: false, removedBy: actor.uid, removedReason: reason, updatedAt: FieldValue.serverTimestamp() }); tx.update(ref, next); tx.create(ref.collection("events").doc(String(next.revision).padStart(12, "0")), { type: `ADMIN_${action.toUpperCase()}`, actorUid: actor.uid, reason, revision: next.revision, createdAt: FieldValue.serverTimestamp() }); writeRoomAdminViews(tx, roomId, next, members); return { revision: next.revision }; }); });
+export const adminRoomAction = call("rooms.act", async (request, actor) => {
+  const data = object(request.data);
+  only(data, ["id", "operationId", "expectedRevision", "action", "reason", "memberUid"]);
+  const roomId = id(data.id);
+  const action = data.action === "pause" || data.action === "resume" || data.action === "close" || data.action === "remove_member"
+    ? data.action : (() => { throw new HttpsError("invalid-argument", "Invalid room action."); })();
+  const reason = text(data.reason, "reason", 1000);
+  const memberUid = action === "remove_member" ? id(data.memberUid, "memberUid") : undefined;
+  const expected = integer(data.expectedRevision, "expectedRevision", 1);
+  return mutate(actor, id(data.operationId, "operationId"), `room.${action}`, roomId, expected, async tx => {
+    const ref = db.doc(`rooms/${roomId}`);
+    const [snap, membersSnap] = await Promise.all([tx.get(ref), tx.get(ref.collection("members"))]);
+    if (!snap.exists) throw new HttpsError("not-found", "Room not found.");
+    const stored = snap.data() as CanonicalRoom;
+    if (stored.revision !== expected || (stored as CanonicalRoom & { closedAt?: unknown }).closedAt)
+      throw new HttpsError("aborted", "stale-or-closed-room");
+    // Generic board PAUSE/RESUME cannot safely mutate a challenge deadline.
+    // Hosts must use the challenge controls, which carry occurrence and stage.
+    if ((action === "pause" || action === "resume") && stored.challenge && !stored.challenge.continued)
+      throw new HttpsError("failed-precondition", "CHALLENGE_ADMIN_CONTROLS_REQUIRED");
+    const reconciled = await reconcileAdminChallenge(tx, stored);
+    const room = reconciled.room;
+    const targetMember = memberUid ? membersSnap.docs.map(doc => doc.data() as CanonicalMember).find(member => member.uid === memberUid) : undefined;
+    if (memberUid && (!targetMember || targetMember.role === "host" || targetMember.active !== true))
+      throw new HttpsError("failed-precondition", "Only an active non-host participant may be removed.");
+    const game = action === "pause" || action === "resume" ? reduceGame(room.game, { type: action === "pause" ? "PAUSE" : "RESUME" }) : room.game;
+    const timer = action === "pause" && room.timer ? { deadlineMs: 0, buzzOpen: false, remainingMs: Math.max(0, room.timer.deadlineMs - Date.now()), pausedBuzzOpen: room.timer.buzzOpen }
+      : action === "resume" && room.timer?.remainingMs !== undefined ? { deadlineMs: Date.now() + room.timer.remainingMs, buzzOpen: Boolean(room.timer.pausedBuzzOpen) } : room.timer;
+    const next = { ...room, game, timer, revision: expected + 1, updatedAt: FieldValue.serverTimestamp(), ...(action === "close" ? { closedAt: FieldValue.serverTimestamp() } : {}) } as CanonicalRoom;
+    const members = membersSnap.docs.map(doc => doc.data() as CanonicalMember).map(member => memberUid && member.uid === memberUid ? { ...member, active: false } : member);
+    if (memberUid) tx.update(ref.collection("members").doc(memberUid), { active: false, removedBy: actor.uid, removedReason: reason, updatedAt: FieldValue.serverTimestamp() });
+    tx.update(ref, next);
+    tx.create(ref.collection("events").doc(String(next.revision).padStart(12, "0")), { type: `ADMIN_${action.toUpperCase()}`, actorUid: actor.uid, reason, revision: next.revision, createdAt: FieldValue.serverTimestamp() });
+    writeRoomAdminViews(tx, roomId, next, members, reconciled.definition);
+    return { revision: next.revision };
+  });
+});
 
 export const adminLookupUser = call("users.read", async request => { const data = object(request.data); only(data, ["uid", "email"]); if ((data.uid === undefined) === (data.email === undefined)) throw new HttpsError("invalid-argument", "Provide exactly one UID or email."); const user = data.uid !== undefined ? await auth.getUser(id(data.uid, "uid")) : await auth.getUserByEmail(text(data.email, "email", 320).toLowerCase()); const registry = await db.doc(`adminPrincipals/${user.uid}`).get(); return { uid: user.uid, displayName: user.displayName ?? null, email: user.email ?? null, providerIds: user.providerData.map(provider => provider.providerId), emailVerified: user.emailVerified, disabled: user.disabled, admin: registry.exists ? { enabled: registry.data()!.enabled === true, identityReady: registry.data()!.identityReady === true, roles: registry.data()!.roles ?? [], categoryScopes: registry.data()!.categoryScopes ?? [], reviewerScopes: registry.data()!.reviewerScopes ?? [], authzVersion: registry.data()!.authzVersion ?? 0 } : null }; });
 async function synchronizeClaims(targetUid: string) { const [user, registry] = await Promise.all([auth.getUser(targetUid), db.doc(`adminPrincipals/${targetUid}`).get()]); const row = registry.data()!; if (!user.emailVerified || !user.providerData.some(provider => provider.providerId === "google.com" || provider.providerId === "password") || (row.enabled === true && user.disabled)) throw new HttpsError("failed-precondition", "Target must be a verified, usable Google or email/password identity before administrative activation."); await auth.setCustomUserClaims(targetUid, { ...(user.customClaims ?? {}), adminRoles: row.enabled === true ? row.roles : [], authzVersion: row.authzVersion }); await auth.revokeRefreshTokens(targetUid); }

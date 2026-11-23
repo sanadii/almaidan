@@ -1,0 +1,26 @@
+{
+  "assignmentId": "PRO311-HISTORY-FORGE",
+  "taskId": "PRO273-SEL",
+  "disposition": "SOURCE CLARIFICATION RELEASED; NOT ACCEPTANCE",
+  "basis": "Independent Database and Security concurrence on selected branch; supplements PRO273-PAIR-FUNDING-SOURCE-DECISION-20261031.json and closure supplement lines 130-145.",
+  "mapping": {
+    "claimantScopeKind": "QUALIFIER_ALLOCATION",
+    "claimantScopeId": "parserAuthority.claimantFundingRef.allocationId",
+    "claimantAllocationCoreHash": "parserAuthority.claimantFundingRef.allocationCoreHash",
+    "claimantPrincipalOid": "parserAuthority.claimantFundingRef.principalOid",
+    "claimantCredentialEpoch": "parserAuthority.claimantFundingRef.credentialEpoch",
+    "claimantLaunchEpoch": "parserAuthority.claimantFundingRef.launchEpoch",
+    "workerScopeKind": "QUALIFIER_CONTROL",
+    "workerScopeId": "parserAuthority.workerScope.controlId",
+    "workerScopeCoreHash": "parserAuthority.workerScope.descriptorCoreHash"
+  },
+  "conditions": [
+    "Resolve each full descriptor and allocation by exact controlId, descriptorCoreHash, allocationId and allocationCoreHash; compare protected OID/name/epochs, scope, physical/source/install identity, validity, independent bootstrap/trust/evidence/charge and full allocation provenance.",
+    "ResourceSchedule claimantFunding must equal full claimant reference; workerFunding remains QUALIFIER_ALLOCATION and must match allocation behind distinct QUALIFIER_CONTROL worker descriptor; bind exact schedule/resource IDs, generations, core hashes and parser authority.",
+    "Reject shared control IDs, allocation IDs, underlying reservations or principal OIDs; do not reject equal epoch strings alone. Derive claimantPrincipalName from authenticated descriptor/allocation and verify current pg_roles exact stored OID and name, login/non-superuser.",
+    "At invocation independently authenticate claimant SESSION_USER/OID/PID/start/epochs and assigned worker observation/session/PID/start/epochs; revalidate both scopes, time, trust and vectors under released locks, require committed pair and different transaction.",
+    "Private debit derives event/ordinal/amount, commits all body uses and aggregate debit before dispatch; no caller amount, late debit, refund or receipt redispatch. Preserve four resource schedule shapes; other scalar variants deny.",
+    "Keep installer/owner-only provision, revoke PUBLIC and direct writes, require independent changed-byte Database/Security reviews and Root reproduction."
+  ],
+  "holds": "R6 STOP; preserve both reader guards, installation aborts, accepted evidence and spent admissions; no SQL/native/DB/service/network/install/deployment authorization."
+}

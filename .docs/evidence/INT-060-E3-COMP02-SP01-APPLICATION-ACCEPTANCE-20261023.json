@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "atKuwait": "2026-10-23T00:50:24.864699+03:00",
+  "task": "INT-060.E3.COMP02.SP01.AP",
+  "decision": "ACCEPTED_WITH_LIMITS_EXACT_REVIEWED_SOURCE_APPLICATION_AND_OFFLINE_CHECKS",
+  "manifest": {
+    "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-sp01-application-20261023\\forge\\APPLICATION-FROZEN-MANIFEST.json",
+    "sha256": "60f74c70e0749abd765f14198fd9caf86c07246b77fab11a3a5566c6d302326c",
+    "members": 21
+  },
+  "applicationFiles": [
+    {
+      "sha256": "5f99a925e6f27fe2b8caeb750d987b7de878d3e69dfc4dce5054ece1f03c0a6c",
+      "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\services\\enta\\server\\src\\catalog\\receipt-proof-correspondence.ts",
+      "operation": "byte-identical copy from reviewed postimage"
+    },
+    {
+      "preSha256": "22c96567041461f20e8040f5f1862f0167732d6167cf6185705ec955b1f8aeaf",
+      "postSha256": "60e85fa3c79cbac9cf24130c9c9a122d5bec935b30f7dace4b092cbc4eda5600",
+      "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\services\\enta\\server\\tsconfig.json",
+      "operation": "added only src/catalog/receipt-proof-correspondence.ts to files"
+    },
+    {
+      "sha256": "303827fbdae9a42b106815e22a5a70e6f119e4584b2d6e9ffc3e2bf067679131",
+      "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\services\\enta\\server\\tests\\receipt-proof-correspondence.test.ts"
+    },
+    {
+      "sha256": "133f8c3a408c7a7da8cc9fca581296850b18e80a8290eac0a22cd1babd41c531",
+      "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\services\\enta\\server\\tests\\receipt-proof-correspondence.integration.test.ts"
+    }
+  ],
+  "reviews": {
+    "database": {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-sp01-application-20261023\\database\\FINAL-APPLICATION-REVIEW.md",
+      "sha256": "323dc799ef2e67f10ca6e544c95d9ef6898fceae3d05fed0cf6ed830823adfb4",
+      "decision": "CONCUR_WITH_LIMITS_SP01_AP_ONLY"
+    },
+    "security": {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-sp01-application-20261023\\security\\FINAL-APPLICATION-REVIEW.md",
+      "sha256": "0fc1732fa7179a19b6db9655a1a994c0fe8d660d88145cf75d077bec827312ac",
+      "decision": "CONCUR_WITH_LIMITS_SP01_AP_ONLY"
+    }
+  },
+  "rootEvidence": [
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-sp01-application-20261023\\ROOT-APPLICATION-IDENTITY-AND-DIFF.json",
+      "sha256": "5ee3c8da2258f6b2beed82e22fe7420f740f6ec7620c682f12c002613789911c"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-sp01-application-20261023\\ROOT-APPLICATION-MEMBER-JOIN.json",
+      "sha256": "05da1a31fd460ad7f0bd7b673e5fd14ddc7d5e231bc0db32213f3bf73c971214"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-sp01-application-20261023\\ROOT-LOAD-BEARING-CHECK.json",
+      "sha256": "e1b8f5c19c20ddee022901e51ac1846f2d6603548b18528dd8b6248cfbdad8b4"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-sp01-application-20261023\\ROOT-OFFLINE-INTEGRATION.log",
+      "sha256": "96dab50588ff051da5e273464a70e3c953f00fe59099209586c87d4885c2e72c"
+    }
+  ],
+  "checks": {
+    "SP01-AP-C01": "PASS exact source SHA and minimal one-entry compiler enrollment; four allowed W paths",
+    "SP01-AP-C02": "PASS direct server strict noEmit; installed TypeScript5.9.3 on Node24, no Prisma/npm hooks",
+    "SP01-AP-C03": "PASS focused strict helper+two tests noEmit; compiler evidence retained by compatible identity",
+    "SP01-AP-C04": "PASS executed Node22 v22.23.3 suite12/12 including looped field/edge cases",
+    "SP01-AP-C05": "PASS executed actual-module offline projection/JSON/mixed-release/nullable/closed-result integration",
+    "SP01-AP-DB": "CONCUR_WITH_LIMITS",
+    "SP01-AP-SEC": "CONCUR_WITH_LIMITS",
+    "SP01-AP-ROOT": "PASS integrated source/test/config review; independent4/4 integration subset on same Node22/source/test identity. Subset is no extra unique-suite credit."
+  },
+  "failureHistory": "Initial test-fixture nullable strict compiler error and hard-coded compiler enrollment count failure corrected; failed evidence retained. Node22 initially not located then found in existing verified output runtime, no install/download. Root relative manifest-member lookup corrected; unrelated successful checks retained.",
+  "limits": {
+    "R6": "STOP",
+    "productionCaller": "NONE_ADDED",
+    "actualAuthority": "UNVERIFIED",
+    "actualR": "UNVERIFIED",
+    "installedNativeOrDbQualification": "NOT_PERFORMED",
+    "parentCOMP02Done": false,
+    "downstreamStarted": false,
+    "deployed": false
+  },
+  "rollback": "Exact reviewed inverse of only four application paths if still matching postimages; restore only saved compiler preimage delta, preserve mixed user work/history/payments; no database rollback.",
+  "next": "Remaining full authentic consumer/source authority, native4/5 policy and owner/H1/native5 display source obligations need their next bounded reviewed slice; actual approved content and installed/physical/global gates remain separate. No automatic R6 or next-part authority.",
+  "usage": {
+    "savedWorkWindowStartKuwait": "2026-10-23T00:39:01.530205+03:00",
+    "savedWorkWindowEndKuwait": "2026-10-23T00:50:24.864699+03:00",
+    "savedWorkWindowMinutes": 11.4,
+    "originalEstimateMinutes": [
+      45,
+      90
+    ],
+    "sessions": "Continuing Luna Forge1; Sol6.1 Database1 and Security1; Root continuing session",
+    "providerInputCachedOutputTokens": "unavailable",
+    "providerSessionElapsed": "unavailable"
+  }
+}

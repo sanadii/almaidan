@@ -1,0 +1,18 @@
+-- Read-only evidence before/after exact permission-repair application.
+\set ON_ERROR_STOP on
+BEGIN READ ONLY;
+SELECT current_database(),session_user,current_setting('server_version'),host(inet_server_addr()),inet_server_port(),current_setting('server_encoding'),current_setting('client_encoding'),(SELECT system_identifier FROM pg_control_system());
+SELECT rolname,rolcanlogin,rolsuper,rolcreatedb,rolcreaterole,rolbypassrls,rolreplication,rolinherit FROM pg_roles ORDER BY rolname;
+SELECT pg_get_userbyid(roleid) AS role,pg_get_userbyid(member) AS member,pg_get_userbyid(grantor) AS grantor,admin_option,inherit_option,set_option FROM pg_auth_members ORDER BY 1,2;
+SELECT r.rolname AS subject,w.rolname AS writer,pg_has_role(r.oid,w.oid,'member') AS transitive_member FROM pg_roles r CROSS JOIN pg_roles w WHERE r.rolname IN ('enta_runtime','enta_finance_executor','enta_outbox_worker','enta_huroof_reserver','enta_huroof_provisioner','enta_huroof_reconciler','int5b_utf8_e_reserver','int5b_utf8_e_provisioner','int5b_utf8_e_reconciler','int5b_utf8_l_reserver','int5b_utf8_l_provisioner','int5b_utf8_l_reconciler') AND w.rolname IN ('catalog_assembler','catalog_reviewer','catalog_publisher','catalog_validator','catalog_activator') ORDER BY 1,2;
+SELECT c.relname,pg_get_userbyid(c.relowner) AS owner,c.relacl FROM pg_class c WHERE c.oid IN ('public."ActiveCatalogPointer"'::regclass,'public."CatalogValidationReceipt"'::regclass);
+SELECT a.attname,a.attacl,pg_get_userbyid(x.grantor) AS grantor,CASE WHEN x.grantee=0 THEN 'PUBLIC' ELSE pg_get_userbyid(x.grantee) END AS grantee,x.privilege_type,x.is_grantable FROM pg_attribute a LEFT JOIN LATERAL aclexplode(a.attacl) x ON TRUE WHERE a.attrelid='public."ActiveCatalogPointer"'::regclass AND a.attnum>0 AND NOT a.attisdropped ORDER BY a.attnum,grantee;
+SELECT r.rolname,a.attname,has_column_privilege(r.oid,a.attrelid,a.attnum,'UPDATE') AS effective_update FROM pg_roles r CROSS JOIN pg_attribute a WHERE a.attrelid='public."ActiveCatalogPointer"'::regclass AND a.attnum>0 AND NOT a.attisdropped AND r.rolname IN ('enta_finance_executor','enta_huroof_reserver','enta_huroof_provisioner','enta_huroof_reconciler','int5b_utf8_e_reserver','int5b_utf8_e_provisioner','int5b_utf8_e_reconciler','int5b_utf8_l_reserver','int5b_utf8_l_provisioner','int5b_utf8_l_reconciler') ORDER BY 1,2;
+SELECT rolname,has_table_privilege(oid,'public."ActiveCatalogPointer"','UPDATE') AS table_update,has_any_column_privilege(oid,'public."CatalogValidationReceipt"','UPDATE') AS receipt_update,has_schema_privilege(oid,'public','CREATE') AS schema_create FROM pg_roles WHERE rolname IN ('enta_finance_executor','enta_huroof_reserver','enta_huroof_provisioner','enta_huroof_reconciler','int5b_utf8_e_reserver','int5b_utf8_e_provisioner','int5b_utf8_e_reconciler','int5b_utf8_l_reserver','int5b_utf8_l_provisioner','int5b_utf8_l_reconciler');
+SELECT p.oid::regprocedure,pg_get_userbyid(p.proowner),p.prosecdef,p.proconfig,p.proacl,pg_get_functiondef(p.oid) FROM pg_proc p WHERE p.oid IN (to_regprocedure('public.int5b_reserve_huroof(jsonb,text,jsonb)'),'public.int4_active_pointer_guard()'::regprocedure,'public.activate_catalog_release(text,text)'::regprocedure) OR p.oid=to_regprocedure('public.int5b_test_pointer_guard()');
+SELECT nspname,pg_get_userbyid(nspowner),nspacl FROM pg_namespace WHERE nspname IN ('public','int4_crypto');
+SELECT pg_get_userbyid(defaclrole),defaclnamespace::regnamespace,defaclobjtype,defaclacl FROM pg_default_acl;
+SELECT (SELECT count(*) FROM public."Admission" WHERE state='HELD') AS holds;
+-- Outbox is introduced by INT5B; inspect it only after candidate application.
+SELECT to_regclass('public."AdmissionOutbox"') AS outbox_present;
+COMMIT;

@@ -1,0 +1,32 @@
+[
+  {
+    "path": "design/evidence/references/20261003-playful-correction/02-scroll.jpg",
+    "bytes": 38900,
+    "sha256": "2857C0A738D066C5DB542F0A736E4C422D74FCF92D0FFD4C28043584925F9F82"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-correction/03-scroll.jpg",
+    "bytes": 90985,
+    "sha256": "651DF095446B77350FECFB19826F3C80144188C4E8858E05C7A03F7EB97C0672"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-correction/04-scroll.jpg",
+    "bytes": 16445,
+    "sha256": "54F68CFDB8457EDA573469A69719FFD6E82EA7B1F46227B5A35745F9489B34B9"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-correction/05-scroll.jpg",
+    "bytes": 25995,
+    "sha256": "D7F320287C0EC5BB0D745F4E04EB56C3783401FBD950EE0F093B5ABB88C6C4C0"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-correction/desktop-first.jpg",
+    "bytes": 59500,
+    "sha256": "5F341BEAFFCFEBDEC65E61CA38E81E438AB09288D2C241AE4D69F3C5434F443D"
+  },
+  {
+    "path": "design/evidence/references/20261003-playful-correction/desktop-metrics.json",
+    "bytes": 10291,
+    "sha256": "18A9B457A53CAAF71A097D681448D5E6CEFB79C427B9AD172694E60D851792EA"
+  }
+]

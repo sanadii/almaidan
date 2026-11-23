@@ -92,6 +92,8 @@ it("labels cached projection snapshots as non-authoritative until Firestore conf
   const adapter = new FirebaseGameAdapter();
   adapter.subscribeProjection("room-1", "player", "", received);
   await Promise.resolve();
+  mocks.calls[0]?.resolve(snapshot());
+  await Promise.resolve();
   await Promise.resolve();
 
   const projectionListener = vi.mocked(

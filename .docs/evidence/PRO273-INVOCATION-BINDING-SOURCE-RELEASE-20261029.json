@@ -1,0 +1,33 @@
+{
+  "status": "BOUNDED_SOURCE_COMPLETION_RELEASED_NOT_IMPLEMENTATION_ACCEPTANCE",
+  "assignmentId": "PRO311-HISTORY-FORGE",
+  "taskId": "PRO273-SEL",
+  "reports": {
+    "database": {
+      "path": "output/pro311-history-20261027/database/PRO273-INVOCATION-BUDGET-BINDING-DISPOSITION-20261029.md",
+      "sha256": "a88ec64a9acc07d5de6d7cddb569b38db60bb1712750df0db18b8f593c2f53e6"
+    },
+    "security": {
+      "path": "output/pro311-history-20261027/security/PRO273-INVOCATION-BUDGET-BINDING-DISPOSITION-20261029.md",
+      "sha256": "db9184db8e628b5e73bb29c758c9f83f8a6f2ed8dd77c0045196853f50b83879"
+    }
+  },
+  "rootReconciliation": {
+    "budgetVariant": "PRECAPTURED|OWNER_DERIVED; known bytes only for PRECAPTURED; fixed rule and explicit null future identity otherwise",
+    "workBinding": "owner-private pro273_sel_bind_work_body(BYTEA) derives actual claim/next slot from protected fixed receiver context; no authoritative caller ID/ordinal/digest",
+    "grant": "one independently provisioned immutable exact invocation claimant/debit grant binds separately funded actual claimant allocation/session, worker schedule and physical/source/install/coverage; preserve directed core/provenance DAG",
+    "debit": "one aggregate existing ControlCharge per invocation only if independently qualified baseline.eventWorstCase explicitly covers all invocation overhead and sum of every scheduled body catalog/index/WAL/rollback/binding allowance; otherwise unavailable",
+    "privateDebit": "pro273_sel_debit_invocation(scheduleId TEXT,invocationOrdinal BIGINT,claimId TEXT) called only by owning claim constructor; derives actual grant/session/event/binding and amount, no broadened old allocator helper",
+    "retry": "unique scheduleId+dispatchAttemptId returns original claim/debit only; lookup cannot redispatch; actual one-shot receiver and committed delivery fence enforce this",
+    "lockOrder": "global -> PhysicalDomain -> current trust/grant/bootstrap -> allocation/descriptor/session -> ControlBaseline -> schedule -> attempt/claim/body/receipt; stable shared order/NOWAIT and fresh currentness",
+    "references": "all body budget rows restrictively reference parent aggregate claim/charge; preserve unique bodyUseId/catalogEventKey, remove conflicting per-body aggregate charge uniqueness",
+    "causality": "work binding may rollback, permanent budget/debit remains spent; owning locked source reconstruction precedes binding and arena growth under funded upstream holders"
+  },
+  "scope": "existing released31 paths only; final changed-byte Database/Security and Root acceptance required",
+  "runtimeAuthorityGranted": false,
+  "nativeSqlChecks": "NOT_RUN",
+  "r6": "STOP",
+  "publicReaderGuards": "PRESERVED",
+  "fullTaskDone": false,
+  "credit": 0
+}

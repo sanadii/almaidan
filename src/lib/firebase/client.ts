@@ -50,12 +50,14 @@ function configuredFirebase() {
 }
 
 function firebaseApp() {
-  return getApps().length ? getApp() : initializeApp({
+  const app = getApps().some(candidate => candidate.name === "[DEFAULT]") ? getApp() : initializeApp({
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
     authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
     projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
     appId: import.meta.env.VITE_FIREBASE_APP_ID,
   });
+  if (app.options.projectId !== import.meta.env.VITE_FIREBASE_PROJECT_ID) throw new Error("FIREBASE_CLIENT_PROJECT_MISMATCH");
+  return app;
 }
 
 function attachAuthEmulatorOnce(app: FirebaseApp, auth: Auth) {

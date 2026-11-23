@@ -1,0 +1,82 @@
+{
+  "id": "INT-060-E3-COMP02-R3-INERT-ACCEPTANCE-20261022",
+  "atKuwait": "2026-10-22T20:15:47.785818+03:00",
+  "task": "MID-TRN-05 / PRO-259 / INT-060.E3.COMP02",
+  "disposition": "ACCEPTED_WITH_LIMITS_FOR_EXACT_INERT_REPAIR_ONLY",
+  "candidate": {
+    "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\output\\part2-e3-20261022\\comp02-r3\\COMP02-R3-PACKET.json",
+    "sha256": "e9a6c9d22c399d78c211917e1c152eed57c1e098d245b474e5579beb4d05dbb7",
+    "bytes": 3874
+  },
+  "domainReviews": {
+    "Database": {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\linear-five-20261022\\comp02-database\\R3-REVIEW.md",
+      "sha256": "5943a70ae25187f847bc689b609d6278728cce12770dab47c1f98822b0cd4ac6",
+      "bytes": 9381
+    },
+    "Security": {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\linear-five-20261022\\comp02-security\\R3-SECURITY-REVIEW.md",
+      "sha256": "07fcaa2faee4092ca53c9db89537c064fcb5504a28abf3997828314670f66e42",
+      "bytes": 6433
+    }
+  },
+  "rootEvidence": [
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\linear-five-20261022\\ROOT-COMP02-R3-HASH-JOIN.json",
+      "sha256": "dd9ca150a602551a30d21c670f598c0dde5d19eccd915c9f0441320a7b83ad12",
+      "bytes": 1599
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\linear-five-20261022\\ROOT-COMP02-R3-SQL-DELTA.patch",
+      "sha256": "dc512518ed87e1238f9bcb36efe7d778ab83b1ab8ff7fe6923c3bab6179ac58a",
+      "bytes": 10110
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\linear-five-20261022\\ROOT-COMP02-R3-AFFECTED.log",
+      "sha256": "9c1c714e3105c6287a1098d303be1394db8fc33051a7a521de8ad9897cacbea1",
+      "bytes": 354
+    }
+  ],
+  "supportingClaimsOutsideCandidateManifest": [
+    {
+      "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\output\\part2-e3-20261022\\comp02-r3\\CHECKS.json",
+      "sha256": "1d6c40b70c6985b855d8a1b579c503e961011853217389e126d78bf89da627c3",
+      "bytes": 2061
+    },
+    {
+      "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\output\\part2-e3-20261022\\comp02-r3\\STATUS.json",
+      "sha256": "06d4d26e4173a78c099b9d0af0bfbeb27233052181102d9e6733109334e36063",
+      "bytes": 1545
+    }
+  ],
+  "verified": {
+    "packetMembers": "18/18; Root matches",
+    "appliedFivePostimages": "unchanged, independently rejoined against accepted R2 identities",
+    "sourceFindings": "DB1-3/S1-3 closed by exact changed-byte Database/Security reviews",
+    "RootAffectedPure": "3/3 fresh, log f6567e exit0; exact R3 imports",
+    "SecurityAffectedPure": "17/17 fresh per exact independent report and saved logs",
+    "DatabaseAffectedPure": "7/7 fresh per exact independent report; pre-test cross-drive failure retained and corrected",
+    "implementerReported": "7/7 reader and noEmit0;13 literal source-text assertions, not SQL semantics",
+    "retained": "286/noEmit and Root100 preserve original compatible identities; R2 reader5 remains historical only"
+  },
+  "acceptanceExcludes": [
+    "SQL syntax/parser/compiler/query/EXPLAIN or live behavior",
+    "source/schema/migration/auth/ACL/route application or mounting",
+    "COMP02 adoption gate or entire PRO-259 Done",
+    "whole E3/Part2/Part3/product/runtime/financial/deployment acceptance"
+  ],
+  "sourceApplicationAuthority": "NOT GRANTED; parent COMP02 adoption prerequisites incomplete",
+  "remainingPrerequisites": {
+    "SourceAuthority": "Native4 approved release membership and genuine issuer/receipt consumption; current selection.ts39 and I8 migration341 explicitly deny unavailable format policy",
+    "InstalledQualification": "Authentic installed definitions/immutable recursive and owner-population custody; H1 true-MAX current/retired correspondence; native5 result1/display equivalence; effective auth/ACL/C-index/planner/material-fit evidence",
+    "OperationalAuthority": "R6 STOP stays binding; no spent operation/budget reset, no alternative runtime environment or financial bypass"
+  },
+  "sequence": {
+    "PRO-256": "Done exact source-review scope",
+    "PRO-259": "In Progress; R3 repair accepted, adoption held by named prerequisites",
+    "PRO-262": "Not started; depends on PRO-259 adoption and whole composition requirements",
+    "PRO-264": "Not started; depends on all20 E3 acceptance",
+    "PRO-267": "Not started; owner-approved fifth in order"
+  },
+  "next": "Owner asked whether existing release/installation evidence is available or prerequisites should be prepared next. Do not infer an answer, fabricate authority, weaken gate or advance a later task."
+}

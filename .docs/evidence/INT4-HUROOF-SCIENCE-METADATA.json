@@ -1,0 +1,27 @@
+{
+  "kind": "INT-4 saved Huroof science-category metadata projection",
+  "sourceCapture": "output/t43-difficulty-20260929/FRESH-BASE.json",
+  "sourceCaptureSha256": "781dbb9142c8fd61d9cfdb559bc5ffb10719aca5ed0cefe1191368d8825691e6",
+  "capturedAtUtc": "2026-09-29T05:18:12.966Z",
+  "releaseId": "t37m-media-cc919463d962a644fefb20b5d05ed8f8",
+  "releaseRootSha256": "7ef9b9fe0aad1b6945bd3d2b476da3f831626085174990643fa6240db68b771c",
+  "categoryId": "huroof-097",
+  "labelAr": "علوم",
+  "runtimeReadiness": {
+    "categories": true,
+    "charades": false,
+    "huroof": true
+  },
+  "savedInventory": {
+    "approvedCount": 598,
+    "uniqueAnswerConceptCount": 538
+  },
+  "streamedQuestionDocs": 598,
+  "modalityCounts": {
+    "classic": 598
+  },
+  "distinctAnswerConceptIds": 538,
+  "distinctTargetLetters": 28,
+  "method": "Stream all 121574 release descendants; select exact release questions whose data.categoryId is huroof-097; count modality and distinct answerConceptId/targetLetter values without retaining or emitting prompts or answers.",
+  "limits": "Saved source metadata only. This does not prove current pointer, editorial review, rights, privacy, letter-game playability, category equivalence with Enta, or first/repeat match supply in the new project."
+}

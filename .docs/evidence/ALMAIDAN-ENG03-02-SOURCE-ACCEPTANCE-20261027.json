@@ -1,0 +1,63 @@
+{
+  "task": "ALMAIDAN-ENG03-02",
+  "linear": "PRO-307",
+  "parent": "PRO-259",
+  "acceptedAtUTC": "2026-10-27T05:33:34.180602+00:00",
+  "status": "DONE_SOURCE_ONLY_WITH_LIMITS",
+  "scope": "Exact additive PostgreSQL schema, role and routine source applied to three reviewed integration paths. No installation or executable SQL qualification.",
+  "applied": {
+    "schema": {
+      "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\services\\enta\\server\\prisma\\schema.prisma",
+      "sha256": "c94657592bd185f90ddd97d5973f2cb1b69a1bb7c32bfb1d3088a89878cee6a8",
+      "matches": true
+    },
+    "migration": {
+      "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\services\\enta\\server\\prisma\\migrations\\20261026100000_eng03_02_huroof_owned_history\\migration.sql",
+      "sha256": "a4303a34028fa61fcc7e6b8f49a668a3af3f9f07420f1ae9bbef06e9ac0f1b7c",
+      "matches": true
+    },
+    "roles": {
+      "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\services\\enta\\server\\prisma\\roles\\eng03_02_huroof_runtime_roles.sql",
+      "sha256": "8f5fd75c9ca8a1a61adf756729ba633823b632023bf9b0df669cfc8efad204a8",
+      "matches": true
+    }
+  },
+  "checks": {
+    "C01": "PASS: original preimage/absence receipts retained; final applied identity and containment verified",
+    "C02": "PASS retained exact R2 lexical schema/SQL agreement",
+    "C03": "PASS retained R2 execution; corrected R4 complete helper equivalence confirmed independently",
+    "C04": "PASS retained R3 role/ACL inventory",
+    "C05": "PASS retained R2 generation and collision source checks",
+    "C06": "PASS retained R3 immutable/CAS guards and original Root reproduction",
+    "C07": "PASS retained R3 all-side closure/projection and original Root reproduction",
+    "C08": "PASS retained R3 O01-O22 source responsibility allocation",
+    "C09": "PASS both exact pre-edit/final domain reviews plus original Root actual-checker reproduction and final applied hash verification"
+  },
+  "evidence": {
+    "ROOT-SOURCE-RELEASE-R4.json": "6b9b57e71a77e7c9635d27de9d1080b2242e33e765fb8e08fea39e82a8ad9765",
+    "ROOT-R3-REPRODUCTION.json": "5a42646d64b217a681bc5ac6e2de6f06a10bd2a12bb153adee1f4b755ebbb76a",
+    "ROOT-R4-IDENTITY.json": "cd40afb006487b64f3f07d4769efcb3c2e183789550bcdde333819e940c26f34",
+    "ROOT-APPLIED-IDENTITY-R4.json": "d38531c5a74df101c88a697be9c8c6c0cdcd2545cf0aed5b91507320a1fa389e",
+    "database/PREEDIT-REVIEW-R4.md": "352eb290cf42c31b49601c49ef274217e5df9ed1e20b9521232e5547f9668594",
+    "security/PREEDIT-REVIEW-R4.md": "7b363213f5489651c78fd3d363858a3d670606b55bac123f39825b0aff853889",
+    "database/FINAL-REVIEW-R4.md": "275ea9f385271d5b8f0efa95738fcbeb5160b269c9bb9d950a66f93974ddea54",
+    "security/FINAL-REVIEW-R4.md": "3bbfcd7bfcabc21451eca464b00736bffe55aa1fc5c0fc25f35bab0b45ad00b6",
+    "forge/candidate-r4/MANIFEST.json": "36b42db5b2ff89e72b212cdd7c8effd2cf1aab1e0fc86b533bd94dac08b7c2e1",
+    "forge/candidate-r4/R4-COMPATIBILITY-JOIN.json": "c52c725ada541922ab946df17f5fac35a16991d3415054a503eb696b21045c64",
+    "forge/candidate-r4/R4-C03-CHECKS.json": "2228bded288f098c5ce6addf8403a2369720ed0884bac3483afcf5eef98f75f4",
+    "forge/candidate-r4/R3-AFFECTED-CHECKS.json": "49c05d1dc0d85520c528336d1586eef003d92231df9a35afe9362966399f3766",
+    "forge/candidate-r4/R3-AFFECTED-PROBES.json": "dc936973e035ece8a6f70e4e24481431b1d4a82f4fae176553992d228fa22716",
+    "forge/candidate-r4/C01-C08.json": "869d39ba3693bb573d4050240fcbed9779f9e3c7e70800b352cfe4c2fde7743b",
+    "forge/POST-APPLY-R4-RECEIPT.json": "fdd66aa01a350ffde0f4474525710af9ae49b5dda67687d935bc703db05a0177",
+    "forge/POST-APPLY-R4-RELOCATION-RECEIPT.json": "f0adbaa96ffdfc599edb70e03573a9b827977fe806fce307cce2ff93f092dab7"
+  },
+  "containedIncident": "Original copy created a duplicate nested migration; exact bytes preserved outside app tree, wrong path absent, bounded subtree contains no files. Original disclosure receipt retained.",
+  "limits": [
+    "All32 runtime/parity cases NOT_RUN",
+    "SQL parsing/execution, Prisma, database/compiler/runtime/service qualification NOT_RUN",
+    "Target/operator, installed roles, genuine policy/issuer/custody remain unresolved",
+    "Service/auth wiring ENG03-03 and later integration remain incomplete",
+    "Parent PRO-259 remains open"
+  ],
+  "R6": "STOP"
+}

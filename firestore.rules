@@ -18,14 +18,23 @@ service cloud.firestore {
     function isHost(roomId) {
       return isRoomMember(roomId) && membership(roomId).data.role == 'host';
     }
+    function admissionAllowsProjection(roomId) {
+      let room = get(/databases/$(database)/documents/rooms/$(roomId)).data;
+      // A demo fixture cannot be created through production callables. All
+      // production rooms have an immutable server-only paid binding.
+      return (room.config.demo == true && room.config.releaseDemoFixture == true)
+        || (room.config.paidAdmission.roomId == roomId
+          && get(/databases/$(database)/documents/paidAdmissions/$(room.config.paidAdmission.admissionId)).data.binding == room.config.paidAdmission
+          && get(/databases/$(database)/documents/paidAdmissions/$(room.config.paidAdmission.admissionId)).data.state in ['RESERVED', 'STARTED']);
+    }
 
     // Projections are deliberately the only browser-readable documents.  The
     // server writes them as complete role-safe snapshots; clients never list.
     match /rooms/{roomId}/projections/{projectionId} {
-      allow get: if isRoomMember(roomId) && (
+      allow get: if isRoomMember(roomId) && admissionAllowsProjection(roomId) && (
         projectionId == 'audience' ||
         (projectionId == 'host' && isHost(roomId)) ||
-        projectionId == 'player_' + request.auth.uid
+        (projectionId == 'player_' + request.auth.uid && membership(roomId).data.role == 'player')
       );
       allow list, create, update, delete: if false;
     }

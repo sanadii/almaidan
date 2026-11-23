@@ -1,0 +1,16 @@
+import {LIFECYCLE_STATES} from './domain/lifecycle';
+export type HuroofHistoryRow={id:string;code:string;revision:number;phase:string;complete:boolean;teams:{horizontal:string;vertical:string};scores:{horizontal:number;vertical:number};roundWins:{horizontal:number;vertical:number};createdAt:string|null;completionReason:string|null;settings:{gameKind:string};source:{snapshot:string|null}};
+const fail=():never=>{throw Error('INVALID_HISTORY');};
+const object=(v:unknown):Record<string,unknown>=>v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:fail();
+const uuid=(v:unknown)=>typeof v==='string'&&/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(v);
+const integer=(v:unknown,min=0)=>Number.isSafeInteger(v)&&(v as number)>=min&&(v as number)<=2147483647;
+export function parseHuroofHistory(value:unknown,offset:number):{items:HuroofHistoryRow[];nextOffset:number|null}{
+ const data=object(value);if(Object.keys(data).sort().join(',')!=='items,nextOffset'||!Array.isArray(data.items)||data.items.length>100||data.nextOffset!==null&&(data.nextOffset!==offset+100||data.items.length!==100||!integer(data.nextOffset)))fail();
+ const seen=new Set<string>();const items=(data.items as unknown[]).map(value=>{const row=object(value),settings=object(row.settings),source=object(row.source);
+ if(!uuid(row.id)||seen.has(row.id as string)||typeof row.code!=='string'||!/^[A-Z0-9]{6}$/.test(row.code)||!integer(row.revision,1)||!LIFECYCLE_STATES.includes(row.phase as never)||typeof row.complete!=='boolean'||row.complete!==(row.phase==='MATCH_COMPLETE')||!['huroof','categories'].includes(settings.gameKind as string)||source.snapshot!==null&&(typeof source.snapshot!=='string'||!/^[a-f0-9]{64}$/.test(source.snapshot))||row.createdAt!==null&&(typeof row.createdAt!=='string'||!Number.isFinite(Date.parse(row.createdAt)))||row.completionReason!==null&&typeof row.completionReason!=='string')fail();
+ const teams=object(row.teams);if(Object.keys(teams).sort().join(',')!=='horizontal,vertical'||Object.values(teams).some(t=>typeof t!=='string'||!t.trim()||t.length>60||/[<>\p{Cc}]/u.test(t)))fail();
+ for(const key of ['scores','roundWins']){const pair=object(row[key]);if(Object.keys(pair).sort().join(',')!=='horizontal,vertical'||Object.values(pair).some(v=>!integer(v,key==='scores'?-2147483648:0)))fail();}
+ seen.add(row.id as string);return {id:row.id,code:row.code,revision:row.revision,phase:row.phase,complete:row.complete,teams:row.teams,scores:row.scores,roundWins:row.roundWins,createdAt:row.createdAt,completionReason:row.completionReason,settings:{gameKind:settings.gameKind},source:{snapshot:source.snapshot}} as HuroofHistoryRow;
+ });return {items,nextOffset:data.nextOffset as number|null};
+}
+export function parseHuroofOwnerAccess(value:unknown,row:HuroofHistoryRow){const data=object(value);if(Object.keys(data).sort().join(',')!=='audienceToken,revision,roomCode,roomId,token'||data.roomId!==row.id||data.roomCode!==row.code||!integer(data.revision,1)||typeof data.token!=='string'||data.token.length<20||data.token.length>16384||typeof data.audienceToken!=='string'||data.audienceToken.length<20||data.audienceToken.length>16384)fail();return {token:data.token};}

@@ -1,0 +1,132 @@
+{
+  "kind": "INT-041 private LIST editorial review queue metadata",
+  "status": "HELD",
+  "publicationAllowed": false,
+  "canonicalRowHash": "SHA-256 of UTF-8 JSON with sorted object keys, no extra whitespace, and Unicode preserved",
+  "sourceArtifacts": [
+    {
+      "path": "output/int4-list-pack-draft-20261002/DRAFT.json",
+      "sha256": "3560a48c53bb8148409718df42c6ebf9dc63718f63d24168922e68ea4f2971b5"
+    },
+    {
+      "path": "output/int4-list-pack-draft-20261002/EXPANSION.json",
+      "sha256": "5f8b4df9dc30c7e0fdd01d8723300bd7daecb269f671c8f34129b8e91b3441b8"
+    }
+  ],
+  "itemCount": 12,
+  "tierCounts": {
+    "200": 4,
+    "400": 4,
+    "600": 4
+  },
+  "items": [
+    {
+      "id": "int4-list-draft-001",
+      "sourceFile": "DRAFT.json",
+      "proposedTier": 200,
+      "exactRowSha256": "636eb264a72defda3f1548fd2a2d76844d058f795f4662ca610af69f34ba827d",
+      "factSource": "https://science.nasa.gov/solar-system/planets/",
+      "editorialStatus": "HELD",
+      "rightsStatus": "UNREVIEWED"
+    },
+    {
+      "id": "int4-list-draft-002",
+      "sourceFile": "DRAFT.json",
+      "proposedTier": 200,
+      "exactRowSha256": "b4ff6044de7fb56abcc2329b459e8633ff1ad3baceb96c9e07e3ac15842a1380",
+      "factSource": "https://www.gcc-sg.org/ar/PortalServices/FAQs/Pages/FAQ-002.aspx",
+      "editorialStatus": "HELD",
+      "rightsStatus": "UNREVIEWED"
+    },
+    {
+      "id": "int4-list-draft-003",
+      "sourceFile": "DRAFT.json",
+      "proposedTier": 400,
+      "exactRowSha256": "14fe37d0338eae246c1ecb66820512002ed7bb4dbc72dfeff4da8dc88479da12",
+      "factSource": "https://www.nist.gov/pml/special-publication-330/sp-330-section-2",
+      "editorialStatus": "HELD",
+      "rightsStatus": "UNREVIEWED"
+    },
+    {
+      "id": "int4-list-draft-004",
+      "sourceFile": "DRAFT.json",
+      "proposedTier": 400,
+      "exactRowSha256": "878d41d6acf3ce85c9256f4ead8f2a7f2b2bfdd0d97d143279dc99d8085649e5",
+      "factSource": "https://oceanservice.noaa.gov/facts/howmanyoceans.html",
+      "editorialStatus": "HELD",
+      "rightsStatus": "UNREVIEWED"
+    },
+    {
+      "id": "int4-list-draft-005",
+      "sourceFile": "DRAFT.json",
+      "proposedTier": 600,
+      "exactRowSha256": "0f7e5ee208535d1f73f40b168e2af35228a5372257def0bbff272f0d4f549161",
+      "factSource": "https://science.nasa.gov/jupiter/jupiter-moons/",
+      "editorialStatus": "HELD",
+      "rightsStatus": "UNREVIEWED"
+    },
+    {
+      "id": "int4-list-draft-006",
+      "sourceFile": "DRAFT.json",
+      "proposedTier": 600,
+      "exactRowSha256": "f65d7b57cada56a9e694288d410ede36c8125999a44c670731a6c4b8f728a2da",
+      "factSource": "https://science.nasa.gov/earth/earth-atmosphere/earths-atmosphere-a-multi-layered-cake/",
+      "editorialStatus": "HELD",
+      "rightsStatus": "UNREVIEWED"
+    },
+    {
+      "id": "int4-list-draft-007",
+      "sourceFile": "EXPANSION.json",
+      "proposedTier": 200,
+      "exactRowSha256": "dc3f287a686b9ba037b7c4ef814e5eec3e96ffd9f36215ef544c2adebeb19894",
+      "factSource": "https://www.un.org/en/our-work/official-languages",
+      "editorialStatus": "HELD",
+      "rightsStatus": "UNREVIEWED"
+    },
+    {
+      "id": "int4-list-draft-008",
+      "sourceFile": "EXPANSION.json",
+      "proposedTier": 200,
+      "exactRowSha256": "b794bac699a3138ccf24cadd18d4084577261eafca67c57e01889b0b70f51312",
+      "factSource": "https://main.un.org/securitycouncil/en/content/current-members",
+      "editorialStatus": "HELD",
+      "rightsStatus": "UNREVIEWED"
+    },
+    {
+      "id": "int4-list-draft-009",
+      "sourceFile": "EXPANSION.json",
+      "proposedTier": 400,
+      "exactRowSha256": "d4d65dd147cfa60b3439a9e39aedb9631de8b876b8a5d17b5cb8473861391f88",
+      "factSource": "https://science.nasa.gov/dwarf-planets/",
+      "editorialStatus": "HELD",
+      "rightsStatus": "UNREVIEWED"
+    },
+    {
+      "id": "int4-list-draft-010",
+      "sourceFile": "EXPANSION.json",
+      "proposedTier": 400,
+      "exactRowSha256": "ee56fec6b538225db0f1de35659cd41e492139a4f652a105a5e7c95cff8fcf12",
+      "factSource": "https://www.itftennis.com/en/tours/grand-slam-tournaments/",
+      "editorialStatus": "HELD",
+      "rightsStatus": "UNREVIEWED"
+    },
+    {
+      "id": "int4-list-draft-011",
+      "sourceFile": "EXPANSION.json",
+      "proposedTier": 600,
+      "exactRowSha256": "cabb6df0ea91840d48c08e6881916984b62bc4d1367a635e4d3681809b23c17a",
+      "factSource": "https://home.cern/science/physics/standard-model/",
+      "editorialStatus": "HELD",
+      "rightsStatus": "UNREVIEWED"
+    },
+    {
+      "id": "int4-list-draft-012",
+      "sourceFile": "EXPANSION.json",
+      "proposedTier": 600,
+      "exactRowSha256": "805660bf79bc41416af150c817925de75cb2bb00d61777effc0a32ebfd641a5f",
+      "factSource": "https://home.cern/science/physics/standard-model/",
+      "editorialStatus": "HELD",
+      "rightsStatus": "UNREVIEWED"
+    }
+  ]
+}

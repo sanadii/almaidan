@@ -1,0 +1,13 @@
+# INT-070.A — Root technical acceptance — 2026-10-04
+
+Scope: approved shared shell, account and joining visual slice; human homepage0026 remains aesthetic authority. Root inspected the exact implementation delta against preserved mixed before-state, new scoped CSS, actual desktop dark login/mobile light login/corrected mobile dark joining/light account captures, and the rebuilt4173 app. No auth provider, roles, gameplay protocol, database or financial path change was accepted here.
+
+Root replay: actual login return-home link; lowercase ab12cd34 normalized to /room/AB12CD34/join; empty-name submit retained route, displayed validation and focused player-name input; return-to-login worked. No real room was created/joined or credentials supplied. Evidence: isolated output/int070a-shared-screens-20261004/root-live-login.png and root-live-join-validation.png.
+
+Root independently verified all1253 FREEZE.json SHA256 entries with zero mismatches. Forge's50 focused tests,12 final-copy tests, app typecheck/scoped lint/diff/build,126 fixture state renders,1506 contrast roles and24 production cases are scoped technical evidence. Root corrected inherited navy join styling and unnecessary Firebase sign-out copy through Forge. Root authorized only an App status eyebrow and admin header accessible-name identity extension; no role/layout changes.
+
+Homepage pixel comparison originally compared each before file to itself on Windows. Root rejected that claim; corrected distinct-path report records1/6 identical, five differing and one height difference. Source/asset/global stylesheet preservation181 hashes is verified; full pixel preservation is not established. Original before files retained. A3's no-homepage-source-change requirement is met; no unsupported screenshot identity claim is used for acceptance.
+
+Existing Vite chunk advisory remains. Optional broader legacy suite initially failed14/69; three sampled setup/status failures reproduce baseline, remaining unrelated failures are unverified. Actual sign-in remains unavailable in local4173; fixture states do not establish live auth. No production acceptance, deploy, staging/commit, DB change, content publication or finance mount. Existing4173 preserved; temporary4180/4181 stopped.
+
+Outcome: INT-070.A A4 Done for this presentation slice. Whole INT-6/7 integration remains open. Next authorized continuation: apply approved DNA to host setup/help/game/supporting route bodies through existing INT-6/7 acceptance, preserving mechanics and checking real route states; resume protected INT-5B admission draft/review separately. Provider/currency, content publication and production cutover gates remain open.

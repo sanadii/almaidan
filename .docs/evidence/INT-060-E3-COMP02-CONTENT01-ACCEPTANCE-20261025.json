@@ -1,0 +1,222 @@
+{
+  "task": "INT-060.E3.COMP02.CONTENT01",
+  "parent": "PRO-259 / MID-TRN-05 / INT-060.E3.COMP02",
+  "decision": "ACCEPTED_WITH_LIMITS_CONDITIONAL_UNMOUNTED_SOURCE_AND_APPROVED_CONTENT_ONLY",
+  "acceptedBy": "Root coordinator existing chat",
+  "acceptedAtKuwait": "2026-10-25T23:07:35.444222+03:00",
+  "plan": {
+    "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/CONTENT01-PLAN.md",
+    "sha256": "719ffd31eb0eec0abd9dab396c99546b4b1710ddee94e6db52e0827f90fff0e1"
+  },
+  "editRelease": {
+    "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/ROOT-EDIT-RELEASE.json",
+    "sha256": "d5981252bc0c101dad4d76a277f0c587b222af373669c42eece1b972aa6da431"
+  },
+  "candidate": {
+    "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/ROOT-CANDIDATE-R1.json",
+    "sha256": "617c3d1344d1868e682b19f7947982d2e4390a250ebea9de108ec610276ba4bd"
+  },
+  "candidateAuthorship": "Forge manifest; Root independently verified and accepted only here",
+  "writerEvidence": {
+    "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/forge/C01-R1-IMPLEMENTATION-EVIDENCE.json",
+    "sha256": "2d1706eedcdc22deba2ed0a18cf0d89d5aaf0cbeb416d4727594409923f710b5"
+  },
+  "writerEvidenceException": "Full/focused compiler PASS claims INVALID; use fresh Root subprocess evidence and erratum below. Original logs remain intact.",
+  "erratum": {
+    "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/ROOT-R1-EVIDENCE-ERRATUM.md",
+    "sha256": "2cf0457a3e2f5771719dda5f759436bf6d29113feae8ca7812a0a86ff8583e9a"
+  },
+  "rootReview": {
+    "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/ROOT-FINAL-SOURCE-REVIEW.json",
+    "sha256": "969be5027e088259d23986ab856970a47bb3481f5e492855724e868a31595d6c"
+  },
+  "reproduction": {
+    "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/ROOT-R1-REPRODUCTION.json",
+    "sha256": "b1bb68bb27e38bb3f114dceb900bffc85bec3db91550ff297d6ae0b7a2b23e73"
+  },
+  "reviews": [
+    {
+      "domain": "database",
+      "disposition": "CONCUR WITH LIMITS",
+      "review": {
+        "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/database/FINAL-REVIEW-R1.md",
+        "sha256": "8ab1028a14a128084f8771cf11ea24c3ef18662d32c95772c5001b0c428d3933"
+      },
+      "metadata": {
+        "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/database/FINAL-METADATA-R1.json",
+        "sha256": "a4469adfc4fcef7c34802d3b5e8f14f0570672b799b4104437d3496992dd8ebc"
+      },
+      "independentExecution": false
+    },
+    {
+      "domain": "security",
+      "disposition": "CONCUR WITH LIMITS",
+      "review": {
+        "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/security/FINAL-REVIEW-R1.md",
+        "sha256": "3e4e2dfe42850fc6acf241918dba440d919251fad75138af7740b79271fceb8c"
+      },
+      "metadata": {
+        "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/security/FINAL-METADATA-R1.json",
+        "sha256": "b7661df3e3980458794abbe14cab09bce375e70d321c5dba10a8e4cd64e4aa93"
+      },
+      "independentExecution": false
+    }
+  ],
+  "sourcePostimages": [
+    {
+      "path": "services/enta/server/src/rounds/approved-list-content.ts",
+      "sha256": "381c29382d50c492b12ae482eac82642d4e6b034cb22b187bad07849507b55f2",
+      "role": "source"
+    },
+    {
+      "path": "services/enta/server/tests/approved-list-content.test.ts",
+      "sha256": "53573486a06e8194c53069f6b10cd1b543f962446b8a2a4e75fb8ce2890c66f1",
+      "role": "test"
+    },
+    {
+      "path": "services/enta/server/tsconfig.json",
+      "sha256": "8e22c6f78704317f99b626e3f3da31d6b81363c7e51dd82efbd576311262ba7c",
+      "role": "additive source enrollment; unchanged from R0"
+    }
+  ],
+  "approvedInputs": [
+    {
+      "label": "owner-approval",
+      "path": "D:/projects/huroof_wa_oloof/output/content-owner-review-20261025/private/OWNER-AUTHORING-APPROVAL.json",
+      "sha256": "c8f5aa4e6d326c57a206a7c0cbf83a5cd91293cf23ba5974f7bc185a4976e54e",
+      "expectedSha256": "c8f5aa4e6d326c57a206a7c0cbf83a5cd91293cf23ba5974f7bc185a4976e54e",
+      "match": true
+    },
+    {
+      "label": "root-binding",
+      "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/private/ROOT-REVIEW-BINDINGS.json",
+      "sha256": "45e1201161a5c8da84f5181cb1162304552b52d1d3a487fcfd6db37426d04300",
+      "expectedSha256": "45e1201161a5c8da84f5181cb1162304552b52d1d3a487fcfd6db37426d04300",
+      "match": true
+    },
+    {
+      "label": "content-review",
+      "path": "D:/projects/huroof_wa_oloof/output/comp02-prerequisites-20261022/package/private/CONTENT-REVIEW-CARDS.md",
+      "sha256": "e6214ee9678e3ef7234069217c68e0668bc36453a0422efe8b4b98aab9724581",
+      "expectedSha256": "e6214ee9678e3ef7234069217c68e0668bc36453a0422efe8b4b98aab9724581",
+      "match": true
+    },
+    {
+      "label": "draft",
+      "path": "D:/projects/huroof_wa_oloof/output/comp02-prerequisites-20261022/package/private/content/LIST-DRAFT.json",
+      "sha256": "3560a48c53bb8148409718df42c6ebf9dc63718f63d24168922e68ea4f2971b5",
+      "expectedSha256": "3560a48c53bb8148409718df42c6ebf9dc63718f63d24168922e68ea4f2971b5",
+      "match": true
+    },
+    {
+      "label": "expansion",
+      "path": "D:/projects/huroof_wa_oloof/output/comp02-prerequisites-20261022/package/private/content/LIST-EXPANSION.json",
+      "sha256": "5f8b4df9dc30c7e0fdd01d8723300bd7daecb269f671c8f34129b8e91b3441b8",
+      "expectedSha256": "5f8b4df9dc30c7e0fdd01d8723300bd7daecb269f671c8f34129b8e91b3441b8",
+      "match": true
+    },
+    {
+      "label": "settings-json",
+      "path": "D:/projects/huroof_wa_oloof/output/content-owner-review-20261025/private/REVIEW-SETTINGS-PROPOSAL.json",
+      "sha256": "43a4ad6129fc274b44fc7049d77db52784a01aad41a501d4e1bd29fb1f7f41b0",
+      "expectedSha256": "43a4ad6129fc274b44fc7049d77db52784a01aad41a501d4e1bd29fb1f7f41b0",
+      "match": true
+    },
+    {
+      "label": "settings-markdown",
+      "path": "D:/projects/huroof_wa_oloof/output/content-owner-review-20261025/private/REVIEW-SETTINGS-PROPOSAL.md",
+      "sha256": "91c84f676b97a95482bf2b172751ceb5d16d572be672a83945e44fe85f3c74be",
+      "expectedSha256": "91c84f676b97a95482bf2b172751ceb5d16d572be672a83945e44fe85f3c74be",
+      "match": true
+    }
+  ],
+  "successor": {
+    "revisionId": "approved_list_content01_r2",
+    "revisionHash": "f7d7213234059f1f2c717a2cf202c088fa69ad5141624f3ca107c330b34a3576",
+    "path": "D:/projects/huroof_wa_oloof/output/content-owner-review-20261025/private/successors/content01/approved-list-successor-r2.json",
+    "sha256": "3706d874fe4011d4cec9ecdfeb6fb3403054f0c48fa5523c5e9d0e18b1cd2f90",
+    "counts": {
+      "hints": 12,
+      "answers": 65,
+      "cards": 12
+    },
+    "syntheticFixtureCatalogIncluded": false
+  },
+  "checks": {
+    "actualModuleGroups": "C01-PINS / FORMAT / SELECT / CONSUME / DENY: 5 passed, 0 failed",
+    "fullCompiler": "Fresh Root subprocess exit0/stdout0/stderr0",
+    "focusedCompiler": "Fresh Root subprocess exit0/stdout0/stderr0",
+    "rootSubset": "SELECT/CONSUME 2/2, no additional unique credit",
+    "identityJoins": "67/67 before and after, unchanged",
+    "closure": "45 local source modules; 7 raw inputs; 3 fixture media; 3 listed tool files",
+    "prior29": "Retained only at original compatible scope, not reissued; 42 intake joins, 16 overlap hashes and six unchanged source postimages; tsconfig additive enrollment compiled afresh"
+  },
+  "preservation": {
+    "R0": {
+      "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/forge/pre-repair-r0-snapshot.json",
+      "sha256": "18a26a0e6df287e430d9a428ca4756ea110276acd8480ff5a3d97be6825b928f"
+    },
+    "priorAcceptance": {
+      "path": "D:/projects/huroof_wa_oloof/.docs/evidence/INT-060-E3-COMP02-SRC-CLOSE-ACCEPTANCE-20261023.json",
+      "sha256": "86063fcc09c595114665f2a7037c0025adde1d55c76875cf056d0b7b67aa8bfe"
+    },
+    "governingArchives": [
+      {
+        "original": "D:\\projects\\huroof_wa_oloof\\.docs\\README.md",
+        "archive": {
+          "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/governing-preacceptance/README.md",
+          "sha256": "385f57b054696f45202df23adb24705429944175f5795ea2d12aae48c31a8175"
+        }
+      },
+      {
+        "original": "D:\\projects\\huroof_wa_oloof\\.docs\\IMPLEMENTATION-PLAN.md",
+        "archive": {
+          "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/governing-preacceptance/IMPLEMENTATION-PLAN.md",
+          "sha256": "6be3c4e54d0e37a180f5323263e866ee7a74c1d10580da049587eeba2f805633"
+        }
+      },
+      {
+        "original": "D:\\projects\\huroof_wa_oloof\\.docs\\MILESTONES.md",
+        "archive": {
+          "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/governing-preacceptance/MILESTONES.md",
+          "sha256": "29fdefa0cd89bb2e41d3466f70434df5ba7b0a63cca40a3f6e779e0eed45db06"
+        }
+      },
+      {
+        "original": "D:\\projects\\huroof_wa_oloof\\.docs\\HANDOVER.md",
+        "archive": {
+          "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/governing-preacceptance/HANDOVER.md",
+          "sha256": "468527c245fdb1f60e625b1cf5708eb90d4d12d8588b0d77bcb8a5b11937db9d"
+        }
+      },
+      {
+        "original": "D:\\projects\\huroof_wa_oloof\\.docs\\DAILY-WORK-PLAN.md",
+        "archive": {
+          "path": "D:/projects/huroof_wa_oloof/output/pro259-content-20261025/governing-preacceptance/DAILY-WORK-PLAN.md",
+          "sha256": "3e2a1130aecadae7aff3a6ce1174ead0271e02c2fd54a463f432bbf43158ee01"
+        }
+      }
+    ]
+  },
+  "remainingParentGates": [
+    "Genuine approved whole-release/format/rights/media/repeat and issuer receipts; owner authoring approval and structural fixture tests do not establish these.",
+    "Authentic production policy and lifecycle/revocation/clock/freshness/grapheme authority.",
+    "Installed immutable origin/owner/H1 and native5 original-result/display custody; actual ACL/RLS/constraints/locks/C-index/UTC evidence.",
+    "Complete material/liveness/native/driver/concurrency physical fit and original parent adoption."
+  ],
+  "R6": "STOP",
+  "productionActivated": false,
+  "parentDone": false,
+  "downstreamStarted": false,
+  "rollback": "Exact postimage-matched inverse of owned producer/test/additive enrollment and quarantine of owned successor. Preserve original inputs, review/failure history and unrelated mixed work. No database restore or installed rollback.",
+  "usage": {
+    "startedAtKuwait": "2026-10-25T22:18:35.837914+03:00",
+    "finishedAtKuwait": "2026-10-25T23:07:35.444222+03:00",
+    "originalEstimateMinutes": [
+      60,
+      120
+    ],
+    "providerTokens": "unavailable",
+    "sessions": "Existing Root Sol6.1; Astra planner; Luna Forge; Sol6.1 Database and Security, stable assignments reused"
+  }
+}

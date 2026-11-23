@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "t37-word-search-reviewed-clues-v1",
+  "sourceArchiveSha256": "d485966685142cc47bb1687b6af0338998ba0e1fb2bdd50a38042faea6792907",
+  "sourceMember": "Tahadani_Topup_100_Categories/NEW_QUESTIONS.jsonl",
+  "reason": "Six original clue descriptions contain the normalized target answer as a stem or inflection; runtime wording removes that direct disclosure while preserving the authored grid and answer.",
+  "corrections": [
+    {
+      "sourceId": "topup-20260923-tahadani-games-122-583e87c5acf519b8ad",
+      "answerAr": "قوس",
+      "correctedClueAr": "صيد المختفي: ابحث في الشبكة عن كلمة تطابق هذا الوصف: «عنصر بنائي منحني يمتد فوق فتحة في جدار». قد تمتد أفقيًا أو رأسيًا أو قطريًا."
+    },
+    {
+      "sourceId": "topup-20260923-tahadani-games-122-412bb04aac4bb9cfda",
+      "answerAr": "صاروخ",
+      "correctedClueAr": "صيد المختفي: ابحث في الشبكة عن كلمة تطابق هذا الوصف: «مركبة طويلة تنطلق بالدفع النفاث وقد تحمل قمرًا صناعيًا». قد تمتد أفقيًا أو رأسيًا أو قطريًا."
+    },
+    {
+      "sourceId": "topup-20260923-tahadani-games-122-70fdc272e2d79d6561",
+      "answerAr": "برتقال",
+      "correctedClueAr": "صيد المختفي: ابحث في الشبكة عن كلمة تطابق هذا الوصف: «ثمرة حمضية مستديرة تؤكل طازجة أو تستخدم للعصير». قد تمتد أفقيًا أو رأسيًا أو قطريًا."
+    },
+    {
+      "sourceId": "topup-20260923-tahadani-games-122-a6b6070c7b78ed713b",
+      "answerAr": "بصل",
+      "correctedClueAr": "صيد المختفي: ابحث في الشبكة عن كلمة تطابق هذا الوصف: «خضرة ذات طبقات متداخلة تسبب الدموع عند تقطيعها». قد تمتد أفقيًا أو رأسيًا أو قطريًا."
+    },
+    {
+      "sourceId": "topup-20260923-tahadani-games-122-103fe375a758ae945d",
+      "answerAr": "عدس",
+      "correctedClueAr": "صيد المختفي: ابحث في الشبكة عن كلمة تطابق هذا الوصف: «بقول صغيرة مسطحة تطهى كثيرًا في الحساء». قد تمتد أفقيًا أو رأسيًا أو قطريًا."
+    },
+    {
+      "sourceId": "topup-20260923-tahadani-games-122-f7daad37e94be6eb30",
+      "answerAr": "حمص",
+      "correctedClueAr": "صيد المختفي: ابحث في الشبكة عن كلمة تطابق هذا الوصف: «بقول مستديرة يخلط مسلوقها مع الطحينة في طبق شائع». قد تمتد أفقيًا أو رأسيًا أو قطريًا."
+    }
+  ],
+  "status": "root_reviewed_runtime_wording_only_no_source_archive_change"
+}

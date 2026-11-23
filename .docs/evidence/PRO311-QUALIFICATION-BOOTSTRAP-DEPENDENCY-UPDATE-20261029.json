@@ -1,0 +1,17 @@
+{
+  "status": "QUALIFICATION_DEPENDENCIES_UPDATED_NO_AUTHORITY_EXTENSION",
+  "predecessorPath": "output/pro311-history-20261027/BOUNDED-QUALIFICATION-REQUEST-PRE-BOOTSTRAP-49edbf5c81f4916f.json",
+  "predecessorSha256": "49edbf5c81f4916fabfc0f952c823ae6db115cb7d02194ba61ffde8e66848c34",
+  "requestSha256": "778792721f9dbc9bc635010519ef6369d8a29661adc8932ec76bb93b55e90f93",
+  "changedScope": "selectionPrimitiveQualificationDependency only; exact reviewed Source completion and remaining null genuine bindings",
+  "originalCaseRegisterUnchanged": true,
+  "originalCaseRegisterCount": 32,
+  "readinessAdmissionUnchanged": true,
+  "readinessStatus": "COMPLETED_SPENT_NO_RETRY",
+  "acquisitionProposalUnchanged": true,
+  "authorityGranted": false,
+  "executionSourceFreezeStatus": "NOT_FROZEN_PRO273_SOURCE_IMPLEMENTATION_IN_PROGRESS",
+  "newExecutedCases": 0,
+  "fullTaskDone": false,
+  "credit": 0
+}

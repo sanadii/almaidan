@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "recordId": "design-history-0017",
+  "recordPath": "design/evidence/history/0017-maydan-electric-blue-live-feedback.md",
+  "recordSha256": "AC43E0803CC1FF84930908F5D545B556BF2958700B4C1A40DD4CEBC1C1B59EF4",
+  "previousRecordId": "design-history-0016",
+  "previousRecordSha256": "65E0B1782388506473A6A15E53B461541AF093A01F5DBA4DFD7B3E4793850C31",
+  "candidateEvidence": {
+    "path": "design/evidence/review/0016-candidate-readiness.md",
+    "sha256": "0DCD02B1E818BF2C055DE328FE9269028AA81A096DB244E52F89DB9674BB8FE8"
+  },
+  "decision": "live-homepage-needs-changes",
+  "exactHumanAnswer": "it needs changes, can u show me the reference in urls from refro.design website",
+  "productName": "ميدان",
+  "visualExpansionAuthorized": false,
+  "replacementDirectionSelected": false,
+  "recordedAt": "2026-10-03"
+}

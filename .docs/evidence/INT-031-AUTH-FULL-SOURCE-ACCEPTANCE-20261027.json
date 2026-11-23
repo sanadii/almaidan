@@ -1,0 +1,59 @@
+{
+  "issue": "PRO-271",
+  "task": "INT-031.AUTH",
+  "status": "ACCEPTED_ORIGINAL_SOURCE_SCOPE_WITH_RUNTIME_LIMITS",
+  "acceptedUtc": "2026-10-27T12:41:35.5302686Z",
+  "scope": "Shared raw project/UID, collision preservation, verified hosting, guest/admin/grant scopes; no migration",
+  "changeImpact": "No new source change. Accepted05 clears admin prerequisite. Accepted PRO267 R1 replaces only affected verifier/config identity evidence; bounded collision and unchanged03/04/05 controls retained. G2 adds actual verifier/principal/grant/account composition with inert external I/O.",
+  "evidence": [
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\.docs\\evidence\\INT-031-AUTH-COLLISION-SOURCE-ACCEPTANCE-20261027.json",
+      "sha256": "b894437fc087ac2c664f7ee1d98a824d0fda0880e676ffbf91e0567b6b262cab"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\.docs\\evidence\\ALMAIDAN-ENG03-03-SOURCE-ACCEPTANCE-20261027.json",
+      "sha256": "b5b93f4c54279a4720bc9d8600d636bde3c54313a00b721923f192a5396e2d5a"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\.docs\\evidence\\ALMAIDAN-ENG03-04-SOURCE-ACCEPTANCE-20261027.json",
+      "sha256": "3caa396ac23ea5bcf196926a948f78536b43670dd221b80e7cb3b415371f2fdb"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\.docs\\evidence\\ALMAIDAN-ENG03-05-SOURCE-ACCEPTANCE-20261027.json",
+      "sha256": "47c66c945ffb6dde20859572f7648a64cea5c69a4cebce71fb4639c4c248dcf6"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\.docs\\evidence\\INT-031-CONFIG-SOURCE-ACCEPTANCE-20261027.json",
+      "sha256": "4c01315309f5c063d7c18c68b8629dab4a4ce75a3058ae6212782907c9143e5b"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro271-auth-20261027\\security\\FULL-SCOPE-GAP-MAP.md",
+      "sha256": "db3ca999ce9c78298074474d4222e137fdb75d40b1a504d765613b8b1af02265"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro271-auth-20261027\\full-scope\\manifest.json",
+      "sha256": "30be58d7c3893612f209ac50d1fff961276b36473a56faaff9048bac93e1c328"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro271-auth-20261027\\full-scope\\ROOT-REPRODUCTION.log",
+      "sha256": "a4d989a5fd4186762baf1c2babbcbf9f94646750496c98d4a055991d5f563d0f"
+    }
+  ],
+  "finalReviews": [
+    {
+      "sha256": "de1ab5c5c34ed673ee6ca79ad330d872919b23fcef035217bcbede6bada7eb06",
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro271-auth-20261027\\full-scope\\DATABASE-FINAL-REVIEW.md"
+    },
+    {
+      "sha256": "08cfcebb1525612069fc612121480a4eaa087efa84a746c87335751864d8b9b9",
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro271-auth-20261027\\full-scope\\SECURITY-FINAL-REVIEW.md"
+    }
+  ],
+  "rootReproduction": "Actual grant-composition exit0; inspected harness substitutes I/O not grant/principal/account validators",
+  "limits": [
+    "No installed DB concurrency or financial operations",
+    "No SDK persistence/rollback, genuine policy provisioning, claim propagation, historical external equality or device continuity",
+    "R6 STOP and32 native parity NOT_RUN; source-only proposed acceptance"
+  ],
+  "notes": "Full original Source criteria joined; bounded collision receipt remains unchanged. No new app source added for G2. Installed/runtime/historical/device acceptance is not claimed."
+}

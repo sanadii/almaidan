@@ -1,0 +1,89 @@
+{
+  "headings": [
+    {
+      "font": "30px",
+      "lineHeight": "32.4px",
+      "text": "Apps have always been built by strangers.Until now.",
+      "textAlign": "start",
+      "width": 327,
+      "x": 24
+    },
+    {
+      "font": "28px",
+      "lineHeight": "33.6px",
+      "text": "Where Next",
+      "textAlign": "center",
+      "width": 161.109375,
+      "x": 136.9375
+    },
+    {
+      "font": "28px",
+      "lineHeight": "31.36px",
+      "text": "Every app starts with a person you're making it for.",
+      "textAlign": "start",
+      "width": 327,
+      "x": 24
+    },
+    {
+      "font": "28px",
+      "lineHeight": "31.36px",
+      "text": "The best app for your people is the one you make for them.",
+      "textAlign": "start",
+      "width": 327,
+      "x": 24
+    },
+    {
+      "font": "28px",
+      "lineHeight": "31.36px",
+      "text": "You decide who can see it. Every time.",
+      "textAlign": "start",
+      "width": 351,
+      "x": 24
+    },
+    {
+      "font": "28px",
+      "lineHeight": "33.6px",
+      "text": "FAQs",
+      "textAlign": "start",
+      "width": 327,
+      "x": 24
+    },
+    {
+      "font": "32px",
+      "lineHeight": "35.2px",
+      "text": "Make something for someone.",
+      "textAlign": "center",
+      "width": 327,
+      "x": 24
+    }
+  ],
+  "height": 844,
+  "sections": [
+    {
+      "heading": "Apps have always been built by strangers.Until now.",
+      "height": 1211.671875,
+      "y": 2
+    },
+    {
+      "heading": "Every app starts with a person you're making it for.",
+      "height": 1201.640625,
+      "y": 1174.671875
+    },
+    {
+      "heading": "The best app for your people is the one you make for them.",
+      "height": 2719.90625,
+      "y": 2377.3125
+    },
+    {
+      "heading": "You decide who can see it. Every time.",
+      "height": 867.3125,
+      "y": 5098.21875
+    },
+    {
+      "heading": "FAQs",
+      "height": 806.59375,
+      "y": 5966.53125
+    }
+  ],
+  "width": 390
+}

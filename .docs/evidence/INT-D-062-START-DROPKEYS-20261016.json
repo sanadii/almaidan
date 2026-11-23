@@ -1,0 +1,77 @@
+{
+  "id": "INT-D-062-START-DROPKEYS-20261016",
+  "status": "ADOPTED_WITH_LIMITS_PROSPECTIVE_SOURCE_ONLY",
+  "adoptedBy": "Root coordinator",
+  "localDate": "2026-10-16 Asia/Kuwait",
+  "authority": {
+    "databaseReview": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\output\\int062e1-lifelines-corrections-20261007\\database\\OCT16-CAP-C4-R6-DEFINITION-REVIEW.md",
+    "databaseReviewSHA256": "e1982bdb3f31ebecfeb912b13f1699a760c9d3f6663f5e4bbc6306cb3c3856a8",
+    "separateAstraAssignment": "PART1-C4-RESIDUAL-CLOSURE-PLAN-OCT16",
+    "canonicalPlan": "D:\\projects\\huroof_wa_oloof\\.docs\\IMPLEMENTATION-PLAN.md",
+    "task": "CAP-C4.R6"
+  },
+  "source": {
+    "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\output\\int062e1-lifelines-corrections-20261007\\capacity-successor-v2\\CAP-C4-F11-STARTS-R2-PROPOSED-20261016.sql",
+    "fileSHA256": "a6693c258e644fab89831771e5658fde4d613e879c8859560b5ef55c835cba3f",
+    "function": "int9_start",
+    "bodySHA256": "9c17028a6fadf56cfcb61abb77091776aee808ab6dc9d4e0c48cfbc3c62daa68",
+    "line": 48,
+    "expression": "base_pin:=pin-ARRAY['hints','graphemes','hintRoot','effectValue','effectValueSource','proofHash']",
+    "expressionSHA256": "f7b93be55bb7e00b290fcfb8dbda4c7fde07246d3d19a0f44660d884c5c80bd7"
+  },
+  "carrier": {
+    "type": "fixed source-constructed one-dimensional nonNULL TEXT[]",
+    "orderedElements": [
+      "hints",
+      "graphemes",
+      "hintRoot",
+      "effectValue",
+      "effectValueSource",
+      "proofHash"
+    ],
+    "rawWidths": [
+      5,
+      9,
+      8,
+      11,
+      17,
+      9
+    ],
+    "rawTotal": 59,
+    "individualJSONStringTotal": 71,
+    "logicalVectorFormula": "sum individual JSON-string widths + 2 per element",
+    "logicalCompletedVectorAllowance": 83
+  },
+  "phases": {
+    "constructorRawInputs": 59,
+    "constructorOutput": 83,
+    "constructorInputOutputOverlap": 142,
+    "pendingLeftPin": "independent actual D, additional to parent-owned pin",
+    "constructorWithPendingPin": "D + 142",
+    "subtractionInputsOutput": "D + 83 + B",
+    "continuation": "Constructor output continues once as RHS; no second vector copy solely for role change.",
+    "assignment": "Retain original P including larger old base_pin upper, continuing output B and independent new declared assignment B. Do not resurrect completed array/literal inputs at assignment."
+  },
+  "scope": [
+    "Only this exact fixed ordered six-literal source occurrence and its JSONB-minus RHS.",
+    "No general convention for other arrays, ranks, lower bounds, NULL/empty vectors, arbitrary private input or changed elements.",
+    "Preserve independent literal siblings, actuals/formals/owned/query/PL parents, operator/error conventions and old/new assignments.",
+    "No prior frozen receipt is certified or rebound under this new definition; only an explicitly named future successor may consume it."
+  ],
+  "unchanged": [
+    "RAW8/J10 profile",
+    "4194304 allowance",
+    "V113/R8/G/H",
+    "all35/all4",
+    "512/128",
+    "V7+c18 only",
+    "existing operation algebra/evaluator formulas",
+    "source/schema/content/runtime semantics"
+  ],
+  "limits": [
+    "Logical encoded-source allowance only: no PostgreSQL heap/ABI/wire/array_out/native claim.",
+    "No runtime conversion or shadow object.",
+    "Financial/native R6 STOP remains; CAP-C4.R6 proof task does not lift it.",
+    "C4/C5/E1/Gate/Part1 acceptance remain separate."
+  ]
+}

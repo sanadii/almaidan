@@ -1,0 +1,24 @@
+{
+  "checkId": "PRO273-ROOT-METADATA-CANONICAL-ORACLE-20261029",
+  "status": "ACTUAL_CANONICAL_SOURCE_ORACLE_PASS",
+  "passed": 4,
+  "source": {
+    "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\scripts\\firestore-release-canonical.ts",
+    "sha256": "bdb2affb35b98fd70ae53f471b2a5637d65687d2b36ecca848255edffb8aded6"
+  },
+  "harness": {
+    "path": "output/pro311-history-20261027/PRO273-ROOT-METADATA-CANONICAL-ORACLE-20261029.mts",
+    "sha256": "c75b1979a775aefee6ca051ea3dc5596ab5b7833009d8675d470c242bc9aa5d9"
+  },
+  "log": {
+    "path": "output/pro311-history-20261027/PRO273-ROOT-METADATA-CANONICAL-ORACLE-20261029.log",
+    "sha256": "b087dfee6fbc107b08b9028b714a88a42d4c5ea8d8083a7c23d6714c12a8f74e"
+  },
+  "node": "v24.16.0",
+  "actualInputScope": "four static raw JSON canonical semantics vectors; actual canonicalJson Source import only",
+  "boundary": "Actual canonical Source only with static inputs; no installer authorization, parser execution, SQL/native parity, database, app, client, network or resource qualification. These raw semantics vectors do not authorize a closed metadata constructor shape.",
+  "sqlNativeParity": "NOT_RUN",
+  "authorityGranted": false,
+  "fullTaskDone": false,
+  "credit": 0
+}

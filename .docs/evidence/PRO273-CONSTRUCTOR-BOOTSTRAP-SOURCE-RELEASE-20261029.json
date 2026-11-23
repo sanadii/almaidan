@@ -1,0 +1,51 @@
+{
+  "status": "BOUNDED_SOURCE_CONSTRUCTOR_COMPLETION_RELEASED_IMPLEMENTATION_PENDING",
+  "taskId": "PRO273-SEL",
+  "assignmentId": "PRO311-HISTORY-FORGE",
+  "proposal": {
+    "path": "output/pro311-history-20261027/planner/PRO273-CONSTRUCTOR-BOOTSTRAP-ORDER-20261029.md",
+    "sha256": "a4ef8bd44a7cbaee20fcbb1c44c0d680a4942dae781326744134ff4570110e64"
+  },
+  "reviews": {
+    "database": {
+      "path": "output/pro311-history-20261027/database/PRO273-CONSTRUCTOR-BOOTSTRAP-ORDER-DISPOSITION-20261029.md",
+      "sha256": "376899f505c06a0ec4cf2589e922b1fc1111f27b87416ebcf6163fdebe7cfbe2"
+    },
+    "security": {
+      "path": "output/pro311-history-20261027/security/PRO273-CONSTRUCTOR-BOOTSTRAP-ORDER-DISPOSITION-20261029.md",
+      "sha256": "a41d293048dccc14da80248df1d0c5731397a48ff9c6f1a136894de05d3bd9e2"
+    }
+  },
+  "rootExactReconciliation": {
+    "metadataContext": "Choose Database nested closed context schema pro273-installer-metadata-context-v1, name target field expectedTargetId, add actual sessionClaimId top-level. principal retains actual OID/name/PID/start/epochs/host/boot/tree/parent tree; limits and charge exact closed objects. Every value derives protected actual rows and receiver, no caller mode/amount.",
+    "bootstrap": "Fixed INSTALLER_ROOT no-catalog explicit-stack parser, all bounds before growth/hash/base64/JSONB, no ordinary arena/native/ICU/binary64; metadata numeric tokens denied; ordinary gameplay domain unchanged. Independent process/attempt/input/capture/driver/stack/workspace/evidence/output and success/failure durable coverage mandatory.",
+    "pairCoreKeys": [
+      "schemaVersion",
+      "pairId",
+      "scheduleCore",
+      "grantCore"
+    ],
+    "pairSchemaVersion": "pro273-invocation-schedule-grant-pair-v1",
+    "hash": "H(domain,value)=SHA256(C([domain,value])), using released DEFAULT_UTF16 metadata canonical encoding",
+    "scheduleDomain": "pro273.invocation.schedule.core.v1",
+    "grantDomain": "pro273.invocation.debit-grant.core.v1",
+    "pairDomain": "pro273.invocation.schedule-grant-pair.core.v1",
+    "pairId": "Independently preregistered value calculated as H(pro273.invocation.schedule-grant-pair.target.v1,{scheduleId,grantId}); this depends on preregistered IDs only, never resulting core/evidence. expectedTargetId equals pairId.",
+    "bootstrapKind": "SELECTION_INVOCATION_SCHEDULE_GRANT_PAIR:<pairId>",
+    "pairConstructor": "pro273_sel_construct_invocation_pair(expectationId TEXT,captured BYTEA) RETURNS TEXT; fixed private installation receiver only",
+    "directedCore": "ScheduleCore names preregistered grantId and complete ordered BodySpecs; GrantCore binds scheduleId + calculated scheduleCoreHash; PairCore includes pairId and both cores. No own/core-binding authority/evidence/capture/charge receipt hashes backwards.",
+    "atomicity": "One transaction inserts schedule, all BodySpecs, grant and one exact immutable construction/provenance receipt. Mutual FKs remain deferred and checked at commit; standalone half-pair constructors unavailable.",
+    "committedUse": "Receipt records constructionTransactionId xid8; invocation claim/debit requires receipt and different current transaction, actual disjoint funded claimant and source-owned receiver. No usable uncommitted pair.",
+    "receiver": "Actual fixed source dispatch in owned producer/supervisor modules; independently approved preregistered attempt and input/durable claim committed before capture; actual independent observation/session; permanent whole-delivery fence; no arbitrary query/callback/savepoint/reentry/automatic retry.",
+    "boundsAndPrivilege": "All limits independently qualified, absent default-denied; owner-private constructor/context/parser; exact installation capability only; no ordinary root fallback. Exact ACL/default/overload/FK/SET ROLE review remains required.",
+    "retryRollback": "Exact original wire/core/evidence/expectation/claim/receipt equality returns original receipt only, no redispatch/debit; mismatch conflicts. Failed work rolls back pair only; root input/attempt/debit remain spent."
+  },
+  "scope": "same released31 Source paths; one private pair receipt, no resource pool or ordinary capability expansion",
+  "acceptance": "actual implementation, affected inert Source checks, both final changed-byte reviews and Root integrated reproduction pending",
+  "runtimeAuthorityGranted": false,
+  "r6": "STOP",
+  "readerGuards": "PRESERVED",
+  "installationAborts": "PRESERVED",
+  "fullTaskDone": false,
+  "credit": 0
+}

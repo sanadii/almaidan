@@ -135,7 +135,8 @@
     --arena-radius-capsule: 999px;
     --player-buzzer-deep-base: #000;
 
-    --font-ui: "IBM Plex Sans Arabic", Tahoma, Arial, sans-serif;
+    --font-sans: "Cairo", "Instrument Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-ui: var(--font-sans);
     --weight-regular: 400;
     --weight-medium: 500;
     --weight-semibold: 600;

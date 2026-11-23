@@ -1,0 +1,193 @@
+{
+  "task": "PRO-262",
+  "dependencyOf": "PRO-311",
+  "milestone": "PRO262-CAP",
+  "status": "CONDITIONAL_CAPACITY_SUPPLIER_SOURCE_IMPLEMENTATION_ACCEPTED_OPERATIONAL_QUALIFICATION_HELD",
+  "acceptedUtc": "2026-10-28T21:37:52.582850+00:00",
+  "sourceRoot": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof",
+  "sourceMilestoneDone": true,
+  "fullTaskDone": false,
+  "completionCredit": 0,
+  "originalRequiredSetComplete": false,
+  "owned": {
+    "services/enta/server/prisma/roles/pro262_capacity_supplier_roles.sql": "409c51b1733d64789a183040b36d30bb3c1c7691e82b10c560c9b76a7c84148e",
+    "services/enta/server/src/history-rematch/capacity-contract.ts": "f7519853e408f9d8dd242b6d2e62485c3e68745b788491e43c59db9ff2bbd831",
+    "services/enta/server/src/history-rematch/capacity-supplier.ts": "321dd3d03cdc5507d6cd125dd895b0eed40e7b9415d8d7d7e4ea5339b813fcbb",
+    "services/enta/server/src/history-rematch/capacity-producer.ts": "384e5c0412bf2b0104fb59dfec6f456fc1e8968e87cc0f4e8d6d67b81bdbbe3b",
+    "services/enta/server/src/history-rematch/capacity-ingress.ts": "e2e4c10ee9ecb2404e6a406ce4cc755b90bb88efcf654cf0392362a3e406d2e8",
+    "services/enta/server/tests/pro262-capacity-supplier.test.ts": "0dfe3ec47a38e74fdc1da88d2913f7e8b771f1e26021b1dfc5082d31db88524a",
+    "services/enta/server/src/history-rematch/successor-postgres.ts": "ce66ff4907c3a8d5233192710a6b9f8bc0df6ed7e548d5f9f86368a0078a8482",
+    "services/enta/server/src/huroof-pg/successor.ts": "e22864b9ca781dc94eaa5d3a0a263eb5e03cb97c3cc7aedffe03fff864f53e92",
+    "services/enta/server/src/huroof-pg/successor-postgres.ts": "243511e2341447d27ddc07d0381698294c64c8f7c53119a67d1ca0663163a9f2",
+    "services/enta/server/src/app.ts": "f2dc37c7870f45f382a8cfa28d03d3daaffd4233330797cbcc2107b61173ff89",
+    "services/enta/server/tests/huroof-successor-composition.test.ts": "6573efe90138b75071c42b7a238296fb7301e836dc8d41461ad86174b9d8615b",
+    "services/enta/server/src/history-rematch/successor.ts": "526bad09b29ca5c25584c4d7e4ad4c2ebcafcf40c726be33680390ad3e37d0f5",
+    "services/enta/server/prisma/migrations/20261028140000_pro262_capacity_supplier/migration.sql": "4f35801dff9003982663f2bf95114c53ae33a0e4d23d2e0869e45206a5ebc8cd",
+    "services/enta/server/src/history-rematch/capacity-supervisor.ts": "8bf8b52e0c6d1367b6dbef2013f7779897b8a3cdc2ff015da4c8471281d34c2d",
+    "services/enta/server/tests/pro262-capacity-lifecycle.test.ts": "f45503b0b7ae33abbdbba9925b1916c3435a885412c340b5479a01627b1daf63",
+    "services/enta/server/tests/e3-successor-composition.test.ts": "4d47592d583e69ef263d9df55f374fb8cab07c5b3ee1de0e07ab6aebdb761129",
+    "services/enta/server/tests/successor-capacity.test.ts": "59a2923731330e7d90920f4012192bdb3d2b6c550c78dad0cfd3edf9ee517881"
+  },
+  "dependencies": {
+    "count": 915,
+    "identityMap": {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO262-CAP-A123-FINAL-SOURCE-FREEZE.json",
+      "sha256": "0b70bf6ce7a2369eaa5ac2a513fd8b1b6ab3f11d49fd398d277627d30f76935c"
+    },
+    "verification": "Both independent final reviews matched current915;12 retained owned plus5 changed join the17-path controlling manifest."
+  },
+  "manifest": {
+    "path": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO262-CAP-PREEDIT-MANIFEST.json",
+    "sha256": "22fa18d4e594159201273ec0305751dc7866a25116eba9f7b6984cf835617a3d"
+  },
+  "interfaceInventory": {
+    "path": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO262-CAP-APPLICABILITY-CURRENT-INTERFACES.json",
+    "sha256": "a50dc48b1d3a8b115eef00d3f6520709d19e97d92858ee095cb950e501a15028"
+  },
+  "freeze": {
+    "path": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO262-CAP-A123-FINAL-SOURCE-FREEZE.json",
+    "sha256": "0b70bf6ce7a2369eaa5ac2a513fd8b1b6ab3f11d49fd398d277627d30f76935c"
+  },
+  "preimages": [
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO262-CAP-PREEDIT-PREIMAGES\\01-successor-postgres.ts",
+      "sha256": "9b3a5ede439318b1859753407aff0e5a512db88f8c4ff385f51a371b8f6f985e"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO262-CAP-PREEDIT-PREIMAGES\\02-successor.ts",
+      "sha256": "aa2317b50fb14d7137c337dad545ca95f02017266141cb997e67db4026ee7479"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO262-CAP-PREEDIT-PREIMAGES\\03-successor-postgres.ts",
+      "sha256": "d4d311f3acb603e73ed6693d79051d6959b4ecd95305b48bfbd108b3c83d96a8"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO262-CAP-PREEDIT-PREIMAGES\\04-app.ts",
+      "sha256": "e8b9fbafff90e3490b5dc62ac053e07baf9f3c00848c95876c5ba6117190cff9"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO262-CAP-PREEDIT-PREIMAGES\\05-e3-successor-composition.test.ts",
+      "sha256": "644fd6142ace970891ed1feb8aed7ad22bd82ddae2df5234db976494059da68f"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO262-CAP-PREEDIT-PREIMAGES\\06-huroof-successor-composition.test.ts",
+      "sha256": "5c72e99f7544c13b6f450cf176b7531fff680e3957586cf0ff86609770478dc8"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO262-CAP-PREEDIT-PREIMAGES\\07-successor-capacity.test.ts",
+      "sha256": "9dcb7bed35041c77061f5dfa41e88ed806e2187ca23396404acd7264ed9752bb"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO262-CAP-PREEDIT-PREIMAGES\\08-successor.ts",
+      "sha256": "6dca2e577900a1211ac4bed5a6e1f56b023d7ffa6ae7d2e489e1d7827c12c30c"
+    }
+  ],
+  "reviews": [
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\database\\PRO262-CAP-APPLICABILITY-FINAL-REVIEW-20261029.md",
+      "sha256": "072d72e4df243fbd60e10a4afd0fd29e8137a5155586f84c0e633f1002b0af22"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\database\\PRO262-CAP-A123-FINAL-REVIEW-20261029.md",
+      "sha256": "3bca02d20ec4f4131238851e1c0b95082252e5241fbf57fc6b761cb563fb7316"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\security\\PRO262-CAP-A123-FINAL-REVIEW-20261029.md",
+      "sha256": "c57320f61b20a3f031e29f12f11dba354a4f1b1b8905e224d3cecfda65ddefec"
+    }
+  ],
+  "findings": {
+    "DB-CAP-F1-F4": "Closed for conditional Source by Database reviews",
+    "CAP-S1-S2": "Closed for conditional Source at cumulative exact repaired joins",
+    "CAP-A1-A3": "Closed by final Database and Security reviews; Root actual overlap reproduction now1/1/1"
+  },
+  "checks": {
+    "currentRequiredSourceCases": {
+      "affected": 61,
+      "dependentComposition": 26,
+      "totalDistinct": 87,
+      "result": "PASS",
+      "evidence": {
+        "PRO262-CAP-A123-CLOSURE-TESTS.log": "c548970468ab1b0c6a7478cedbf5e7148d9864949986fa70cd0f4fd32b7e0a75",
+        "PRO262-CAP-A123-CLOSURE-COMPOSITION.log": "b66a67e12874580672a3e28b00300846154574b18e16a9aa4d2e014cde9860de",
+        "PRO262-CAP-A123-CLOSURE-SERVER-NOEMIT.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "PRO262-CAP-A123-CLOSURE-AFFECTED-NOEMIT.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "PRO262-CAP-A123-CLOSURE-ROOT-REPRO.log": "42436bf72103195f76031aa15ef71420dd33e8fa3ccf3be315e7932dd73499d4",
+        "PRO262-CAP-A123-SIGNATURE-AUDIT.json": "db60cbf7e58ecd1624f650bf1287996cb55394ac84bcebbf621260d549afc9ac"
+      },
+      "notes": "Not added to earlier80/64/11 results; current87 supersede affected scopes."
+    },
+    "serverNoEmit": "PASS exit0, current frozen bytes",
+    "nineModuleNoEmit": "PASS exit0, current frozen bytes",
+    "rootMaterial": {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\PRO262-CAP-ROOT-A123-CHECK-20261029.json",
+      "sha256": "7299882290741da6ad48a98c589d8804bcf20e3dabdd4043d62686b019ff5678"
+    },
+    "rootIndependentCases": "4/4 PASS at current bytes; unchanged original overlap harness1claim/1open/max1payload, both callers fulfilled",
+    "priorEvidence": "Original failed overlap, failed assertions and every predecessor freeze/log retained at its own Source/environment identity."
+  },
+  "nativeBridgeCompatibility": {
+    "originalAcceptance": {
+      "path": "D:\\projects\\huroof_wa_oloof\\.docs\\evidence\\PRO311-NATIVE-BRIDGE-SOURCE-ACCEPTANCE-20261028.json",
+      "sha256": "85ea785ae6e63b65542cd49c387c2b0405c723c8c39d5fe1883bcdc309b2994a"
+    },
+    "owned8": "All unchanged and independently matched by Root",
+    "retainedDependencies": 74,
+    "affectedDependencies": {
+      "services/enta/server/src/app.ts": {
+        "acceptedBefore": "e8b9fbafff90e3490b5dc62ac053e07baf9f3c00848c95876c5ba6117190cff9",
+        "currentAfter": "f2dc37c7870f45f382a8cfa28d03d3daaffd4233330797cbcc2107b61173ff89"
+      },
+      "services/enta/server/src/history-rematch/successor-postgres.ts": {
+        "acceptedBefore": "9b3a5ede439318b1859753407aff0e5a512db88f8c4ff385f51a371b8f6f985e",
+        "currentAfter": "ce66ff4907c3a8d5233192710a6b9f8bc0df6ed7e548d5f9f86368a0078a8482"
+      },
+      "services/enta/server/src/history-rematch/successor.ts": {
+        "acceptedBefore": "6dca2e577900a1211ac4bed5a6e1f56b023d7ffa6ae7d2e489e1d7827c12c30c",
+        "currentAfter": "526bad09b29ca5c25584c4d7e4ad4c2ebcafcf40c726be33680390ad3e37d0f5"
+      },
+      "services/enta/server/src/huroof-pg/successor-postgres.ts": {
+        "acceptedBefore": "d4d311f3acb603e73ed6693d79051d6959b4ecd95305b48bfbd108b3c83d96a8",
+        "currentAfter": "243511e2341447d27ddc07d0381698294c64c8f7c53119a67d1ca0663163a9f2"
+      },
+      "services/enta/server/src/huroof-pg/successor.ts": {
+        "acceptedBefore": "aa2317b50fb14d7137c337dad545ca95f02017266141cb997e67db4026ee7479",
+        "currentAfter": "e22864b9ca781dc94eaa5d3a0a263eb5e03cb97c3cc7aedffe03fff864f53e92"
+      }
+    },
+    "interpretation": "Original full87 identity join is not claimed current. Exact five admitted CAP dependency changes are covered by this milestone and affected reviews; compatible isolated adapter/resource/terminal evidence remains at original identities. Native effective graph qualification remains NOT_RUN."
+  },
+  "guardJoin": {
+    "services/enta/server/src/huroof-pg/history.ts": "0fb0dfcd991a3f89259c8ffe169d630f97ac7510fbc39cdaf1a3a16187925c0e",
+    "services/enta/server/prisma/migrations/20261028000000_pro311_history/migration.sql": "e6d8f158af261951a7e4fa7cc75a140cdaf67b8fecc0e7e61b64d7e1b62ee15f"
+  },
+  "scope": [
+    "Actual fixed-only successor ingress/producer/supplier/supervisor and independent SQL authority/stage/witness/seal closure",
+    "Qualified prelaunch physical reservations and exact atomic transfer; shared future archive gating; monotonic prepaid durable/control growth",
+    "Default-empty independent installed observation; typed actual native applicability under same owning locks as heavy readers",
+    "Permanent physically prepaid observer slots and exact captured bytes before publication; current trust scope enforced",
+    "Whole-delivery coalescing/fencing, bounded preclaim metadata, cached exact ACK and retained uncertain outcome",
+    "No physical release until complete observed process/backend/credential/launch/parent/IPC closed scope and fresh all-incarnation absence"
+  ],
+  "notRun": [
+    "SQL parsing/execution/DDL installation",
+    "Native differential/parity/fresh20/P01-P32 execution",
+    "Installed ACL/role/lock/deferred/race/rollback semantics",
+    "Actual observer credential/custody/process/driver/parent/IPC containment",
+    "Numerical physical/control/storage fit and genuine capacity/content supplier",
+    "Complete operational historical inventory/UTC provenance/large-record lane",
+    "Application/full-shell/device/human/financial/deployment acceptance"
+  ],
+  "holds": [
+    "R6 STOP; readiness01 SPENT; no grant renewal or stopped-resource observation",
+    "Both public result-reader guards unchanged",
+    "Source migration and role installation aborts intentionally retained; no authority to strip them or install",
+    "Protected old ports/processes/data/admissions unchanged; no target cluster or credentials created",
+    "Full five tasks not complete; PRO312/PRO264 prerequisites remain; PRO273/PRO267 operational and human gates remain"
+  ],
+  "rollback": "Disable new fresh issuance/admission first, retain immutable committed lineage/retries/results and all uncertain occupied reservations. No destructive down/data rewrite/refund/reset. Any Source rollback only separately authorized exact owned preimages/new paths; never mixed tree revert.",
+  "usage": {
+    "providerTokens": "unavailable",
+    "models": "Existing configured Sol coordinator/reviewers, Terra Forge, Astra planner; no extra reporting session"
+  }
+}

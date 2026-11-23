@@ -1,0 +1,149 @@
+{
+  "task": "PRO-309",
+  "milestone": "ALMAIDAN-ENG03-04",
+  "status": "ACCEPTED_SOURCE_ONLY",
+  "acceptedAtUtc": "2026-10-27T10:18:59.872532+00:00",
+  "workspace": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof",
+  "scope": "Reviewed realtime read/replay and PG adapter/parser/cache/recovery with explicit unmounted composition; Firebase default retained",
+  "sourcePaths": [
+    {
+      "path": "services/enta/server/src/realtime/contracts.ts",
+      "sha256": "6e05467709ad75a9576e22638f36ea4b3864f6dd2efd86b7bff1f5e40723ad4f"
+    },
+    {
+      "path": "services/enta/server/src/realtime/repository.ts",
+      "sha256": "59833d759a5651c7c8fbc169d09681dae4a42a40fe08fa1c6dffdf1466abed2c"
+    },
+    {
+      "path": "services/enta/server/src/realtime/postgres.ts",
+      "sha256": "7d67a0d6259acf035340f3e45e7c94d877c1dac2ef23189e8e2aba9c5769c574"
+    },
+    {
+      "path": "services/enta/server/src/realtime/service.ts",
+      "sha256": "f06b6fcd3e59699299a67005617f6757c8e58573e9e423bba685777f70129ad5"
+    },
+    {
+      "path": "services/enta/server/src/realtime/router.ts",
+      "sha256": "7e313a99a22fd95483f0a8de5a338f8a5886cbf36debc7e462844dd6d042004a"
+    },
+    {
+      "path": "services/enta/server/prisma/migrations/20261027120000_eng03_04_huroof_realtime/migration.sql",
+      "sha256": "1265309a7787a47daad07370e658258c85eadcf97e7ccf2de78c00a7a50cf0ed"
+    },
+    {
+      "path": "services/enta/server/prisma/roles/eng03_04_huroof_realtime_roles.sql",
+      "sha256": "ed2067bd91df10e8504a8c402ec21f4c7b251e406d6253acb0cbe50ab9c6f632"
+    },
+    {
+      "path": "src/features/game/runtime/pg-game-adapter.ts",
+      "sha256": "a9b6e994287006656b38e56bb6004b03cc129a497e8f2d8453f4c67cab573496"
+    },
+    {
+      "path": "src/features/game/runtime/pg-recovery.ts",
+      "sha256": "cb465e8adea377592f847057f51b521a255adfc897dc03f1a4a469822c2546b0"
+    },
+    {
+      "path": "src/features/game/runtime/room-context.ts",
+      "sha256": "ffa3d208857158620f9e058fdbbcc4e24934244586c2d1e90c6034f4d6e90e36"
+    },
+    {
+      "path": "src/features/game/runtime/room-locator.ts",
+      "sha256": "07ea5579d8c15e085c0975230443767ebbd17a23f6ba6c4158563216c209122a"
+    },
+    {
+      "path": "services/enta/server/src/huroof-pg/composition.ts",
+      "sha256": "5fade5c5d1138e32655c10cf933c519d2148dd096894024423c03c0a1e9f4cf0"
+    },
+    {
+      "path": "src/features/game/runtime/contracts.ts",
+      "sha256": "2ffb08b5a4b657f4211508927e3bc26db0523f4a99a8979abea1327aa618a6cd"
+    },
+    {
+      "path": "src/features/game/runtime/index.ts",
+      "sha256": "49a9626792e1508650cd41fece1240fa719d59e7525accbf903f00752b822c01"
+    },
+    {
+      "path": "src/routes/EntryRoute.tsx",
+      "sha256": "d66e93dbd3665e4055bca948ecef4a2490adec7f6a85752a2015b40f52f3df36"
+    },
+    {
+      "path": "src/routes/NameJoinRoute.tsx",
+      "sha256": "a72fe4b718cd07a8a0fb1949da8f732c7d0792c68097b43bfe556d84324528d5"
+    },
+    {
+      "path": "src/routes/GameRoutes.tsx",
+      "sha256": "cd4db5b1c075a5e744f0f662d10332b6d9fdb0ed17df3e1127b6b73300755bd0"
+    },
+    {
+      "path": "src/app/App.tsx",
+      "sha256": "5985d81b180a801ebfe27d2deed6eb5cd4f6bd5b326e3e57bd7f0ddad40a6072"
+    },
+    {
+      "path": "services/enta/server/tests/eng03-04-realtime.test.ts",
+      "sha256": null
+    },
+    {
+      "path": "tests/app/eng03-04-client.test.ts",
+      "sha256": null
+    }
+  ],
+  "changedSourcePaths": 18,
+  "plannedAbsentTestPaths": 2,
+  "preimagesVerified": 7,
+  "retained03PathsVerified": 21,
+  "auditSourceInputsVerified": 65,
+  "checks": "C01-C10 cumulative source evidence: compatible R1 findings, R2 affected actual-module/real-route/noEmit, R3 roles-only source check; both domain reviews and Root reproduction",
+  "evidence": [
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-04-20261027\\forge\\CANDIDATE-CHECK-MANIFEST.json",
+      "sha256": "8dfb03534f38ad0330bbc9e1f9851955cdbc0dc3850af3bba27438c04386c56d"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-04-20261027\\forge\\r2\\R2-CANDIDATE-CHECK-MANIFEST.json",
+      "sha256": "75d22e3cdf56747ca35944859bd7c72d0b58fc2af3efd7245d2c915585e721eb"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-04-20261027\\forge\\r3\\R3-CANDIDATE-CHECK-MANIFEST.json",
+      "sha256": "fb18bd9eaf1397152993a6d1acffa0cfc5d72ad534b2fd6ff8b043776e2c3e4e"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-04-20261027\\forge\\C01-C10-EVIDENCE.md",
+      "sha256": "46d601876d6369bd6e2eb07bed12ce6f64429835f1a9dfc9a48308992dcff357"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-04-20261027\\forge\\r2\\R2-EVIDENCE.md",
+      "sha256": "512a5c4782f539f8bcf109628ef8f0abe14de30f1a8fa17473f1948b5962f5b3"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-04-20261027\\database\\FINAL-REVIEW-R3.md",
+      "sha256": "45663ecab3c515de328bc5592085b6a06bd7657fa687e65507a6a321a6b89d45"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-04-20261027\\security\\FINAL-REVIEW-R2.json",
+      "sha256": "a2b86c64ae2f9c31623e83cae28b61a024942d64e315d44e5fb0021074df17c3"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-04-20261027\\ROOT-R2-ROUTE-REPRODUCTION.json",
+      "sha256": "a38d8e76369825d355e02f2c2bc36afb95fc93d62a333853818c00137d66b2ad"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-04-20261027\\ROOT-C10-REPRODUCTION.json",
+      "sha256": "f3edd73c4ac0564982e769b36891c23be4ac0db9605ea713be064b73a4036147"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-04-20261027\\forge\\PRIOR-COMPATIBILITY.json",
+      "sha256": "be64b77cd6f837c8fc7b1072036889eb31b6eac410bbea5f5c6e98344544a1c8"
+    }
+  ],
+  "residuals": [
+    "Definite stale JOIN CAS lacks typed error recovery; ambiguous request retained, never blindly reset. Remaining game-path recovery follow-up PRO-273.",
+    "PG creation/catalog discovery, deadline reconciliation and gameplay media not enabled by this stage; fail closed. PRO-310/PRO-273 continue.",
+    "Same-room rematch and unsupported lifecycles deny before charge.",
+    "SQL execution, installed ACL/MVCC, host parser ordering, actual SDK/transport, physical fit and all32 native parity NOT_RUN."
+  ],
+  "holds": [
+    "R6 STOP",
+    "No runtime, database application, finance, publication, configuration or deployment approval"
+  ],
+  "rollback": "Only matched task-owned postimages to captured preimages; preserve unrelated work, accepted source, data, payments and history."
+}

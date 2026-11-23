@@ -1,0 +1,54 @@
+{
+  "at": "2026-10-22T16:12:20.083501+00:00",
+  "task": "INT-060.E3.UTC-05.R1",
+  "linear": "PRO-256 / MID-TRN-04",
+  "status": "DONE_WITH_LIMITS_EXACT_INERT_SOURCE_REVIEW",
+  "packet": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\output\\part2-e3-20261017\\composition-utc05-pure-r1\\UTC05-R1-PACKET.json",
+  "packetSha256": "4a8ea2071722bc6f8e7b5b0b869324e22fb4c0659ab893cf22c474b997489a03",
+  "reviews": [
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\linear-five-20261022\\database\\UTC05-R1-REVIEW.md",
+      "sha256": "5e9766dbc3e8d4a59acde44a4416f74768edf1ad28e74e5dc3cc5608996429d2",
+      "verdict": "CONCUR_WITH_LIMITS"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\linear-five-20261022\\security\\UTC05-R1-REVIEW.md",
+      "sha256": "730d6d25e69d2ec7836a4b6b7a0e0ba3f8218ec4ef1452f4f4f7bdcb7d0e7664",
+      "verdict": "CONCUR_WITH_LIMITS"
+    }
+  ],
+  "root": {
+    "changeImpact": "DTO summary predicates and summary.test only; four supporting sources unchanged",
+    "freshAffectedTest": {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\linear-five-20261022\\ROOT-SUMMARY-AFFECTED.log",
+      "sha256": "a5cd32613713440aa01e6de43744e13105fec9d20d7d5c81358e94eba92e93da",
+      "passed": 100,
+      "exitCode": 0
+    },
+    "identityJoin": {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\linear-five-20261022\\ROOT-IMPACT-AND-HASH-JOIN.json",
+      "sha256": "9e3396815c08e908226e5740770dc0657103b915e802a6fcb1a1984ab2ef62e1"
+    }
+  },
+  "retainedEvidence": {
+    "author": "Historical286/noEmit0, exact packet and recorded dependency pins matched; not rerun wholesale",
+    "Root": "Historical5/5 exact harness retained",
+    "Security": "Historical6/6 retained; fresh affected independent5/5",
+    "Database": "90 identity joins matched; exact producer source review closes F1"
+  },
+  "sourceRelease": {
+    "scope": "Only five exact pure candidate source postimages may be introduced under history-rematch as part of separately assigned PRO-259; preimage/absence check and corresponding scoped verification required. No SQL/API/keys/reader mount/config activation.",
+    "applied": false
+  },
+  "limits": [
+    "R6 STOP",
+    "Genuine release/custody/owned query/rights/UTC/config/key/native/operational/finalE3 Gate unverified",
+    "All20 history/rematch, tournament and Part2 not Done",
+    "No double credit for historical and fresh overlapping checks"
+  ],
+  "usage": {
+    "rootTokens": "unavailable",
+    "Database": "GPT-6.1 Sol, approx4minutes, token telemetry unavailable",
+    "Security": "GPT-6.1 Sol, approx6minutes, token telemetry unavailable"
+  }
+}

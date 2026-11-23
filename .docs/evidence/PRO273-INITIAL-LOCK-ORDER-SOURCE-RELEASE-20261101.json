@@ -1,0 +1,19 @@
+{
+  "assignmentId": "PRO311-HISTORY-FORGE",
+  "taskId": "PRO273-SEL",
+  "disposition": "BOUNDED SOURCE IMPLEMENTATION ONLY",
+  "proposal": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\database\\PRO311-INITIAL-ORDERED-BINDER-20261101.md",
+  "sha256": "a270ed03525b1531e5fea9ef2c71fc4ead98fe19670f7fcd563f4013c2178406",
+  "review": "Database Source lock trace and Security conditional concurrence",
+  "conditions": [
+    "Shared authority helper accepts protected session/reservation routing IDs only and preserves both existing INITIAL and PROFILE_REVOKE assertion purposes; INITIAL binder alone selects INITIAL parser authority.",
+    "Admission receipt is optional during first preparation; if present lock and revalidate, but only the consuming binder and fixed receipt functions require exact separately committed admission. No caller phase flag.",
+    "Acquire strongest global/physical modes before mutable entry, then complete deduplicated sorted trust set for baseline/observation/binding/input slot/independent capture slot; pin and reread routing, reject late newly discovered or changed trust.",
+    "Require binding/slot trust agreement and observation/capture-slot trust agreement; repeated parser assertion reuses same protected identities, READ COMMITTED, no upgrade/new authority and fresh clock.",
+    "Actual launch/session/binding/claim/admission xids are derived in private constructors and compared with current transaction only at consuming binder/receipt; visible receipt or nonce does not prove unused fence.",
+    "Authenticate actual receiver OID/name/epochs/PID/start, protected target/charge, resources and provenance; independently qualified permanent one-shot fence before capture, no recapture/redispatch.",
+    "Keep existing immutable row locks, installer/INITIAL authority separation, fixed private owner/ACL and all existing charge/identity checks; no caller context/GUC or new debit.",
+    "Both assertion purposes, initial preparation without receipt, same-transaction creation vs consumption, trust substitution/revocation, strongest locks/reentry and UTC precision require affected checks and independent Database/Security changed-byte review."
+  ],
+  "holds": "R6 STOP, public reader guards, installation aborts, accepted evidence and spent/UNKNOWN occupancy remain. No SQL/native/DB/OS/service/network/install/deploy authority."
+}

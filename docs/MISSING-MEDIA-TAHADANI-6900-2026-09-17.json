@@ -1,0 +1,10 @@
+{
+  "attachedBytes": 0,
+  "mediaRequests": 0,
+  "diagnostics": {
+    "priorExactOverlaps": 56,
+    "maxPerGameFamily": 1,
+    "mediaAttachedBytes": 0,
+    "noFactualClaims": true
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "task": "INT-060.E3.COMP02.SRC-CLOSE",
+  "parent": "PRO-259 / MID-TRN-05 / INT-060.E3.COMP02",
+  "decision": "ACCEPTED_WITH_LIMITS_CONDITIONAL_UNMOUNTED_SOURCE_ONLY",
+  "acceptedBy": "Root coordinator existing chat",
+  "acceptedAtKuwait": "2026-10-23T11:06:14.510755+03:00",
+  "scope": "SC01\u2013SC06 conditional source implementation and declared source-only check surfaces. Does not satisfy original parent adoption or enable production operations.",
+  "freeze": {
+    "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\forge\\IMMUTABLE-RELEASE-FREEZE.json",
+    "sha256": "c0390849311205b8bde3110704748d6ed36b0d2f55fd592394ac37b607c033d0"
+  },
+  "sourcePostimages": [
+    {
+      "path": "services/enta/server/tests/history-reader-service.test.ts",
+      "bytes": 16016,
+      "sha256": "cd75f8f83703dcab8e4a36003aedbd557cfff10a7b80cbf6caaae700de97bf45"
+    },
+    {
+      "path": "services/enta/server/tests/catalog-proof-supply-adapter.test.ts",
+      "bytes": 14421,
+      "sha256": "ad7ff4d247bbcd948f75991b2140b1e20c4d0ceefc3689a17a252d9d90aefce7"
+    },
+    {
+      "path": "services/enta/server/src/history-rematch/reader.ts",
+      "bytes": 4502,
+      "sha256": "20ec9b33ff4410801f90e701d90c0e71e1b23b51f5b445cb9f70bdfc4533c7d2"
+    },
+    {
+      "path": "services/enta/server/src/history-rematch/service.ts",
+      "bytes": 4106,
+      "sha256": "6980df81bdd43449afe96909b81d19662d05478fd7db89d73c00d6dbf22b5a9b"
+    },
+    {
+      "path": "services/enta/server/src/catalog/proof-supply-contract.ts",
+      "bytes": 3566,
+      "sha256": "96e46223f3103a72f39369fd5b08ebdffd3cb20dd2021485d079fef19b7f2d1b"
+    },
+    {
+      "path": "services/enta/server/src/catalog/proof-supply-adapter.ts",
+      "bytes": 11685,
+      "sha256": "6be97eab0a49f051d0ab9f3e8a0efec95108a4f1377c0db8530e25c8e3e81724"
+    },
+    {
+      "path": "services/enta/server/tsconfig.json",
+      "bytes": 1753,
+      "sha256": "674dfa19611ca2ca1e2be817e9bafe02b41687c70efd77090c9cad5847502194"
+    }
+  ],
+  "reviews": [
+    {
+      "domain": "database",
+      "disposition": "CONCUR WITH LIMITS",
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\database\\SRC-FINAL-REVIEW-R2.md",
+      "sha256": "aeadae4ebad31a0513fa8fd57031936e7bfc535bbebd237ee9b60b302e9ed3fd",
+      "metadata": {
+        "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\database\\SRC-FINAL-METADATA-R2.json",
+        "sha256": "8ec980e3de940f05e311f62312494d37414c3c54c2542e2edde97d7462f760e5"
+      }
+    },
+    {
+      "domain": "security",
+      "disposition": "CONCUR WITH LIMITS",
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\security\\SRC-FINAL-REVIEW-R2.md",
+      "sha256": "d5ebde1f8882fbda114de374046d5e43784ff49520bc488d88dd59ce0139acae",
+      "metadata": {
+        "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\security\\SRC-FINAL-METADATA-R2.json",
+        "sha256": "4c977ed57e4466cf19fcf9b4486b143af1cc75f8fb89156f23b467e984183225"
+      }
+    }
+  ],
+  "rootReproduction": {
+    "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\ROOT-FINAL-LOAD-BEARING-R2.json",
+    "sha256": "e5b46e69673d97a3cbee1ee4d6f93a4f01c7fd102cdc3b07bfdff68d0392f9a3"
+  },
+  "rootReproductionLog": {
+    "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\ROOT-FINAL-LOAD-BEARING-R2.log",
+    "sha256": "d3b2dbf1af69fa7e1c77bca2524843c0028501b662e587052abfa3dc0f7a0ffd"
+  },
+  "rootIdentityComparisons": 106,
+  "rootAffectedTests": {
+    "passed": 8,
+    "failed": 0,
+    "subsetOfWriter29": true,
+    "additionalUniqueCredit": false
+  },
+  "checks": {
+    "directFullServerNoEmit": 0,
+    "directFocusedStrictNoEmit": 0,
+    "actualModuleTests": {
+      "passed": 29,
+      "failed": 0,
+      "skipped": 0
+    },
+    "all20SourceMappingAndBothDocConsistency": 0,
+    "abstractBounds": 0,
+    "staticImportClosure": {
+      "modules": 29,
+      "localAssets": 3,
+      "scope": "Static input evidence, not production process/network monitoring"
+    }
+  },
+  "sourceReview": "Root original four-module reads and repaired guard diff retained; final test reachability/selector/telemetry changes inspected; required independent reviews concur.",
+  "requiredChecklist": {
+    "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\ROOT-ACCEPTANCE-CHECKLIST.json",
+    "sha256": "a6dcf2a72873262202aab9e91839677631c4929d75e017946f7456192a5fda4b"
+  },
+  "governingSnapshots": [
+    {
+      "sourcePath": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\SRC-CLOSE-PLAN.md",
+      "snapshotPath": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\ROOT-GOVERNING-SNAPSHOTS\\00-SRC-CLOSE-PLAN.md",
+      "sha256": "1acbf9dd5c7d4bf95b9b389a999cabd71c6787d6e1fe6715d5ef13baf939265c",
+      "role": "Exact reviewed governing bytes before normal final status updates; no future whole-file revalidation required."
+    },
+    {
+      "sourcePath": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\ROOT-SRC-EDIT-RELEASE.json",
+      "snapshotPath": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\ROOT-GOVERNING-SNAPSHOTS\\01-ROOT-SRC-EDIT-RELEASE.json",
+      "sha256": "1439256a7995048c114849b3ec4c090b3da87962d57bb81413fd5b7ac4c501e3",
+      "role": "Exact reviewed governing bytes before normal final status updates; no future whole-file revalidation required."
+    },
+    {
+      "sourcePath": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\database\\SRC-PREEDIT-REVIEW.md",
+      "snapshotPath": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\ROOT-GOVERNING-SNAPSHOTS\\02-SRC-PREEDIT-REVIEW.md",
+      "sha256": "26d45c2704d78fd2957870a97aef038da2e70442f2b4d3f6929b6e871ac5d9eb",
+      "role": "Exact reviewed governing bytes before normal final status updates; no future whole-file revalidation required."
+    },
+    {
+      "sourcePath": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\security\\SRC-PREEDIT-REVIEW.md",
+      "snapshotPath": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\ROOT-GOVERNING-SNAPSHOTS\\03-SRC-PREEDIT-REVIEW.md",
+      "sha256": "ac5cfb0bd8008b3093dd66549fd848d8239f3cccc460cc724f6742d62b04adc3",
+      "role": "Exact reviewed governing bytes before normal final status updates; no future whole-file revalidation required."
+    },
+    {
+      "sourcePath": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\ROOT-SOURCE-OBSERVATIONS-R0.md",
+      "snapshotPath": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\ROOT-GOVERNING-SNAPSHOTS\\04-ROOT-SOURCE-OBSERVATIONS-R0.md",
+      "sha256": "3baaa587461a30ae44e3883d3a85c09a9ffcdc7d75b4cf711df369ec574097cf",
+      "role": "Exact reviewed governing bytes before normal final status updates; no future whole-file revalidation required."
+    },
+    {
+      "sourcePath": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\ROOT-SOURCE-READ-PINS.json",
+      "snapshotPath": "D:\\projects\\huroof_wa_oloof\\output\\pro259-completion-20261023\\ROOT-GOVERNING-SNAPSHOTS\\05-ROOT-SOURCE-READ-PINS.json",
+      "sha256": "e88cd11aebdaf644af351fa3f8a982e7e3272b049810a7dd9ebaabb9efb68e67",
+      "role": "Exact reviewed governing bytes before normal final status updates; no future whole-file revalidation required."
+    }
+  ],
+  "preservation": "Prior source/config/tests/evidence/failure history and accepted SP01/AP/SP02/SP03 identities retained. Current freeze is not rewritten on status updates.",
+  "parentGatesStillOpen": [
+    "Genuine approved complete release R/content/rights/media/repeat evidence and authentic receipt/issuer",
+    "Authentic production policy/lifecycle/revocation/generation/clock/age/race authority and producer",
+    "Installed immutable origin/owner population/H1 custody and native5 original result1/display custody",
+    "Effective ACL/RLS/constraints/FKs/locks/C-index/UTC provenance and installed qualification",
+    "Complete real liveness/material/caller/native/driver/deferred/concurrent physical numeric fit"
+  ],
+  "parentDecision": "IN_PROGRESS_HOLD_NOT_DONE",
+  "R6": "STOP",
+  "noActivation": "No mounted route, repository wiring, source policy activation, schema/ACL/grant or production operation released.",
+  "rollback": "Exact inverse of newly owned additions/enrollment only after matching current postimages; preserve mixed edits, accepted modules, old history/retry/FINISH/drain and paid value. No installed rollback attempted.",
+  "usage": {
+    "rootTokens": "unavailable",
+    "delegatedTokens": "unavailable",
+    "sessions": "Astra planner; Luna Forge; Sol6.1 Database and Security; Root Sol6.1; stable assignments reused"
+  }
+}

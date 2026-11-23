@@ -1,0 +1,23 @@
+{
+  "milestone": "PRO273-SEL",
+  "status": "ROOT_PREEDIT_IDENTITY_ONLY_NOT_AUTHORING_RELEASE",
+  "observedUtc": "2026-10-28T22:52:46.1729322Z",
+  "manifestSha256": "2ca0bf48d828d71333255ed32f00bcac343dc3fb236a8fe12b29cd9ec92d36e4",
+  "companionSha256": "5994eaceef22489878a66ce7f72ccb2536c6b7067e0e652e69e37f95a6b6097a",
+  "sourceRoot": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof",
+  "dependenciesMatched": 988,
+  "changePreimagesMatched": 17,
+  "newPathsAbsent": 13,
+  "failures": [],
+  "domainReview": "PENDING",
+  "sourceAuthoringReleased": false,
+  "nativeSqlBuild": "NOT_RUN",
+  "holds": [
+    "R6 STOP",
+    "both reader guards unchanged",
+    "spent readiness preserved",
+    "accepted evidence preserved"
+  ],
+  "fullTaskDone": false,
+  "credit": 0
+}

@@ -1,0 +1,15 @@
+{
+  "kind": "INT-2R read-only domain feasibility observation",
+  "observedAt": "2026-10-02T18:59:32Z",
+  "source": "Vercel search_domains connector",
+  "query": ["maydan.app", "maydan.games", "maidan.games", "maydanquiz.com"],
+  "results": [
+    { "domain": "maydan.app", "available": false },
+    { "domain": "maydan.games", "available": true, "registrationUsdOneYear": 14.99, "renewalUsdOneYear": 28, "premium": false },
+    { "domain": "maidan.games", "available": true, "registrationUsdOneYear": 14.99, "renewalUsdOneYear": 28, "premium": false },
+    { "domain": "maydanquiz.com", "available": true, "registrationUsdOneYear": 11.25, "renewalUsdOneYear": 11.25, "premium": false }
+  ],
+  "decision": "none",
+  "purchaseMade": false,
+  "limits": "Availability and prices can change at any time. Registration, ownership, domain preference and brand/legal clearance are not established; recheck before any purchase or cutover."
+}

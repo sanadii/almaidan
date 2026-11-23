@@ -1,0 +1,85 @@
+{
+  "status": "INT-060.E3 bounded pending-safety SOURCE ACCEPTED WITH LIMITS; E3/Part2 not Done",
+  "at": "2026-10-17T21:44:34+03:00",
+  "sourceEntries": 74,
+  "productionFiles": [
+    "src/features/enta/CompetitionSetup.tsx",
+    "src/features/enta/pending-intent.ts",
+    "src/features/enta/pending-start.ts",
+    "src/features/enta/RoundRoutes.tsx",
+    "src/routes/EntaRoutes.tsx",
+    "src/features/enta/client.ts",
+    "src/features/enta/competition-client.ts"
+  ],
+  "sourcePostimages": [
+    {
+      "path": "src/features/enta/CompetitionSetup.tsx",
+      "candidateSha256": "8ea6f29e158eec0dd0f1698d265ed850737220e7f66c85149ac57cc773835826",
+      "livePreimage": "930b575ae287c7edac106df600c7274fd4dc7385093880183d82f32c009a8963",
+      "bytes": 17686
+    },
+    {
+      "path": "src/features/enta/pending-intent.ts",
+      "candidateSha256": "8133016911e4c3429c872f32bf458a64937f21b381f4b39edb12cd99e1ac51d4",
+      "livePreimage": "5697f8f8b6c7b018b38f675eb08fbef04c10dc04513ea918ac5909443a8d7197",
+      "bytes": 6766
+    },
+    {
+      "path": "src/features/enta/pending-start.ts",
+      "candidateSha256": "e24f0c6d4f85ef3ac752b1d7df182708c0958ffb1e3ef2447fac89980361a157",
+      "livePreimage": null,
+      "bytes": 4375
+    },
+    {
+      "path": "src/features/enta/RoundRoutes.tsx",
+      "candidateSha256": "28b0d44c83bc7123bd2aa5150c37a0eac6fe3bcc35dec587a4845d06fd88b26e",
+      "livePreimage": "dcc85e38c84c30eaa06388ff2f5d050538a2247e22604746d04140a4681fa58e",
+      "bytes": 30199
+    },
+    {
+      "path": "src/routes/EntaRoutes.tsx",
+      "candidateSha256": "9598d1e3a4392ad03fae2e17a71ad0461869865d5a23f090e712ff60a5b86455",
+      "livePreimage": "4ff729a8a478e5b87f9e2af10ce7d888a86d59453f96a03fd94813550fc3bba6",
+      "bytes": 21984
+    },
+    {
+      "path": "src/features/enta/client.ts",
+      "candidateSha256": "9b367daa3dc330e8d33c9ce8d2190d45edf9a1a688adc52e082e35213c317fab",
+      "livePreimage": "3139dfa22405c284241c3dc91d65534e323aa2ee2203399725fbc43e77473987",
+      "bytes": 16550
+    },
+    {
+      "path": "src/features/enta/competition-client.ts",
+      "candidateSha256": "f9e61cbcfa8affb7fd66086c892ac9409d51a652e739ba6a45568e6de0818c99",
+      "livePreimage": "710d4974a623060e4a3e9fcd71be3b277605105065aed971b7f1d081e5307f62",
+      "bytes": 24671
+    }
+  ],
+  "authorPacketSha256": "3af69d963c3b117d0ab355be41fffaa667da128d605a8272852a171980dd2872",
+  "appliedPacketSha256": "6972ff884939b3fc6faa4600bfca345749ea975f09cf27fdd987580daf53c224",
+  "discoveryPacketSha256": "11cdcfb1437e0dcd35bf747897be4f00e7fa74e695fefeca9ac498effe7f984a",
+  "appliedSecuritySha256": "43447d0f4e97873d020a6d1937e5ae2b3cfcd473adf81ddbd9984e52d3dd6b94",
+  "checks": [
+    "198/198 actual-source related checks",
+    "86/86 ordinary default Vite discoverable POST tests",
+    "Full frontend app noEmit exit0",
+    "Root10/10 critical actual-source checks, priorR3 fourfail retained",
+    "Independent Security12/12 on exact same source",
+    "74 exact postimages plus105+12+7 evidence members verified",
+    "Permanent86/57 exact semantic import/fixture relocation; no weakened assertions",
+    "Part1 protected INT9 migration and approved preview index unchanged"
+  ],
+  "limits": [
+    "Pure source/jsdom/mock transport only; native/Firebase/HTTP/financial/production/human acceptance unverified",
+    "Existing unrelated auth-service collision mismatch3/4 remains open for sharedidentity work",
+    "WholeE3 allformat history/rematch, COMP01/02, INT063 tournament and finalmaterial Gate still open",
+    "R6 STOP unchanged"
+  ],
+  "next": "Same Forge E3.0.COMP-01 inert exact composition prerequisite assigned; Domain reviews and RootCOMP02 gate precede application",
+  "elapsedMinutesThisRepair": 28,
+  "originalEstimateMinutes": [
+    20,
+    45
+  ],
+  "usage": "Continuing GPT6.1Sol Forge/Security sessions; root and provider token telemetry unavailable"
+}

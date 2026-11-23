@@ -1,3 +1,4 @@
+import { CURRENT_CATEGORY_PROJECTION, canonicalCategoryId, canonicalizeCategoryIds, type CategoryProjectionVersion } from "../src/features/game/runtime/category-projection.js";
 import {
   createHash,
   createHmac,
@@ -7,7 +8,7 @@ import {
 import { lstat, readFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
-import { join, relative, resolve, sep } from "node:path";
+import { join, relative, resolve, sep, isAbsolute } from "node:path";
 import { tmpdir } from "node:os";
 import {
   generateBoard,
@@ -25,23 +26,48 @@ import {
   type RuleSet,
 } from "../src/features/game/domain/lifecycle.js";
 import {
+  addChallengeReplacementReserve,
+  beginNextChallengeSelectionRound,
   createCategoryQuestionSelection,
+  createChallengeCategoryQuestionSelection,
   createMatchQuestionSelection,
+  promoteReservedChallengeQuestion,
   promoteReservedQuestion,
+  reserveChallengeQuestionForCell,
   reserveQuestionForCell,
+  selectChallengeCategoryQuestion,
   selectCategoryQuestion,
   selectMatchQuestion,
+  type ChallengeCategoryQuestionSelection,
   type MatchQuestionSelection,
   type RuntimeQuestionV32,
-} from "../src/features/game/runtime/question-selector.js";
+} from "../src/features/game/runtime/challenge-question-selector.js";
 import type {
+  ChallengeCapabilityOffer,
   ClientRole,
   GameIntent,
   ProjectionEnvelope,
   SafeProjection,
 } from "../src/features/game/runtime/contracts.js";
+import {
+  canonicalChallengeJson,
+  compactChallengeState,
+  participantRecipient,
+  projectChallenge,
+  restoreChallengeState,
+  teamForChallengeRecipient,
+  type ChallengeDefinitionReference,
+  type PersistedChallengeState,
+} from "../src/features/game/challenges/integration.js";
+import { createChallengeState, reduceChallenge, reconcileChallengeDeadline, type ChallengeIntent, type ChallengeRuntimeConfig, type Participant } from "../src/features/game/challenges/engine.js";
+import { applyChallengeAward, applyChallengeContinuation, createChallengeBridgeContext, type TrustedChallengeBridgeContext } from "../src/features/game/challenges/award-bridge.js";
+import { ChallengeDefinitionRepository } from "./challenge-definition-repository.js";
+import type { FamilySlot } from "../src/features/game/challenges/family-allocation.js";
+import { materializeMapPresentation, type MapPresentation, type MapVariantBinding } from "../src/features/game/runtime/map-variant-resolver.js";
 import type { LocalRuntimeQuestionSource } from "./local-firestore-question-source.js";
 import { sourceCategoryRegistry } from "../scripts/source-category-crosswalk.js";
+import { localMediaEntry, assertLocalRealContent } from './local-release-question-source.js';
+import { isYouTubeMediaDescriptor, youtubeDescriptorBytes, type YouTubeMediaDescriptor } from '../src/features/game/runtime/youtube-media.js';
 
 type Member = {
   uid: string;
@@ -51,7 +77,7 @@ type Member = {
   ready: boolean;
 };
 type ManualParticipant = { id: string; displayName: string; team: TeamAxis };
-type QuestionMedia = { mediaId: string; assetSha256: string; altAr: string; type?: "image" | "video"; contentType?: string };
+type QuestionMedia = { mediaId: string; assetSha256: string; altAr: string; type?: "image" | "video"; contentType?: string; youtube?: YouTubeMediaDescriptor };
 const hasRevealedOccurrence = (
   activeOccurrence: unknown,
   revealedOccurrence: unknown,
@@ -71,9 +97,12 @@ type StoredQuestion = RuntimeQuestionV32 & {
   sourceUrl?: string;
   media?: QuestionMedia;
   answerMedia?: QuestionMedia;
+  challenge?: { definition: ChallengeDefinitionReference; factFamilies: string[]; kind: "navigation" | "missing_tile" | "memory" | "qatar_map" | "word_search" };
+  selectionFacts?: { kind: "qatar_map"; factFamilies: readonly string[] };
 };
 export type MatchConfig = {
   policyVersion?: 1;
+  categoryProjectionVersion?: CategoryProjectionVersion;
   questionSeconds: number;
   opponentSeconds: number;
   teams: Record<TeamAxis, string>;
@@ -84,21 +113,27 @@ export type MatchConfig = {
   difficulty: string;
   mode: "classic" | "fast" | "custom";
   showQuestionOnAudience?: boolean;
+  labelledColours?: boolean;
+  /** Legacy rooms default to ordinary predecessor presentation. */
+  mapPresentation?: MapPresentation;
+  challenge?: ChallengeCapabilityOffer;
 };
-type CreateMatchConfig = Partial<MatchConfig> & { bestOf?: 1 | 3 | 5 | 7 };
+type CreateMatchConfig = Omit<Partial<MatchConfig>,'teams'> & { teams?: Partial<Record<TeamAxis,string>>; bestOf?: 1 | 3 | 5 | 7 };
 type Room = {
   id: string;
   code: string;
   revision: number;
   demo: boolean;
   questionSourceSnapshot?: string;
+  localRematch?: {predecessorRoomId:string;sourceSnapshot:string;excludedQuestionIds:string[];excludedAnswerConceptIds:string[];excludedFactFamilies:string[]};
   roomSchemaVersion: 1 | 2;
   ruleSet: RuleSet;
   config: MatchConfig;
   game: GameState;
   members: Member[];
   manualParticipants?: ManualParticipant[];
-  intentIds: Record<string, number>;
+  /** Legacy snapshots may contain inline receipts; new writes use SQLite intent_receipts. */
+  intentIds?: Record<string, number>;
   intentHashes?: Record<string, string>;
   boardNonce: string;
   boardSequence: number;
@@ -107,10 +142,13 @@ type Room = {
   activeQuestionOccurrence?: string;
   answerRevealedOccurrence?: string;
   surpriseLetters: string[];
-  questionSelection?: MatchQuestionSelection;
+  questionSelection?: MatchQuestionSelection | ChallengeCategoryQuestionSelection;
   deadlineAt?: string;
   buzzOpen?: boolean;
   pausedTimer?: { remainingMs: number; buzzOpen?: boolean };
+  /** Persisted compact state; private grading stays in the injected repository. */
+  challenge?: PersistedChallengeState;
+  challengeBridge?: TrustedChallengeBridgeContext;
   buzzWinner?: {
     uid?: string;
     displayName: string;
@@ -182,6 +220,20 @@ const scores = (value?: unknown): Record<TeamAxis, number> => {
   };
 };
 const canonicalIntentHash = (intent: GameIntent) =>
+  createHash("sha256").update(intent.type.startsWith("CHALLENGE_") ? canonicalChallengeJson({
+    type: intent.type,
+    expectedRevision: intent.expectedRevision,
+    payload: intent.payload,
+  }) : JSON.stringify({
+    type: intent.type,
+    expectedRevision: intent.expectedRevision,
+    payload: Object.fromEntries(
+      Object.entries(intent.payload).sort(([left], [right]) =>
+        left.localeCompare(right),
+      ),
+    ),
+  })).digest("hex");
+const legacyCanonicalIntentJson = (intent: GameIntent) =>
   JSON.stringify({
     type: intent.type,
     expectedRevision: intent.expectedRevision,
@@ -194,6 +246,7 @@ const canonicalIntentHash = (intent: GameIntent) =>
 const trustedCategorySnapshot = (
   ids: string[],
   importedCategories: ReadonlyArray<{ id: string; labelAr: string }> = [],
+  version?: CategoryProjectionVersion,
 ) => {
   const source = JSON.parse(
     readFileSync(
@@ -217,6 +270,10 @@ const trustedCategorySnapshot = (
   for (const category of importedCategories)
     if (typeof category.id === "string" && typeof category.labelAr === "string" && category.labelAr.trim())
       labels.set(category.id, category.labelAr.trim());
+  if (version) {
+    labels.set("tahadani-047", "عملات");
+    labels.set("tahadani-019", "كرتون / ولا كلمة");
+  }
   const snapshot = ids
     .map((id) => ({ id, labelAr: labels.get(id) }))
     .filter((item): item is { id: string; labelAr: string } =>
@@ -227,6 +284,19 @@ const trustedCategorySnapshot = (
   return snapshot;
 };
 
+function validChallengeIntentPayload(type: string, payload: Record<string, unknown>): boolean {
+  const keys = Object.keys(payload);
+  const revision = payload.challengeRevision;
+  if (!keys.every((key) => ["occurrence", "challengeRevision", "stage", "assignment", "participantId", "readiness", "direction", "answers", "start", "end"].includes(key)) || typeof payload.occurrence !== "string" || !/^[A-Za-z0-9:_-]{1,180}$/.test(payload.occurrence) || typeof revision !== "number" || !Number.isSafeInteger(revision) || revision < 0 || !["setup", "countdown", "observation", "answer", "steal_offer", "steal", "result", "void"].includes(payload.stage as string)) return false;
+  if (type === "CHALLENGE_ASSIGN") return keys.length === 5 && ["guide", "mover", "captain", "stealCaptain"].includes(payload.assignment as string) && typeof payload.participantId === "string" && /^(member|manual):[A-Za-z0-9_-]{1,120}$/.test(payload.participantId);
+  if (type === "CHALLENGE_READY") { const readiness = payload.readiness; return keys.length === 5 && typeof payload.participantId === "string" && /^(member|manual):[A-Za-z0-9_-]{1,120}$/.test(payload.participantId) && readiness !== null && typeof readiness === "object" && !Array.isArray(readiness) && Object.keys(readiness).sort().join("|") === "assignmentHash|protocolHash|stimulusHash" && Object.values(readiness).every((value) => typeof value === "string" && value.length > 0 && value.length <= 256); }
+  if (type === "CHALLENGE_MOVE") return keys.length === 4 && ["north", "east", "south", "west"].includes(payload.direction as string);
+  if (type === "CHALLENGE_SUBMIT") {
+    const endpoint = (value: unknown) => Boolean(value && typeof value === "object" && !Array.isArray(value) && Object.keys(value).sort().join("|") === "column|row" && Number.isInteger((value as { row?: unknown }).row) && Number.isInteger((value as { column?: unknown }).column) && (value as { row: number }).row >= 0 && (value as { row: number }).row < 9 && (value as { column: number }).column >= 0 && (value as { column: number }).column < 9);
+    return (keys.length === 4 && Array.isArray(payload.answers) && payload.answers.length > 0 && payload.answers.length <= 3 && payload.answers.every((value) => typeof value === "string" && value.length <= 64)) || (keys.length === 5 && endpoint(payload.start) && endpoint(payload.end));
+  }
+  return keys.length === 3;
+}
 function validIntent(intent: unknown): intent is GameIntent {
   if (!intent || typeof intent !== "object") return false;
   const value = intent as GameIntent;
@@ -245,6 +315,7 @@ function validIntent(intent: unknown): intent is GameIntent {
   )
     return false;
   const keys = Object.keys(value.payload);
+  if (value.type.startsWith("CHALLENGE_")) return validChallengeIntentPayload(value.type, value.payload);
   if (value.type === "LOBBY_SET_READY")
     return keys.length === 1 && typeof value.payload.ready === "boolean";
   if (value.type === "LOBBY_ASSIGN_TEAM") {
@@ -421,27 +492,18 @@ function upcastRoom(value: unknown): Room {
   };
 }
 
+export class LocalRoomPreparationError extends Error { constructor(public reason:string){super('LOCAL_CREATE_SETUP_UNAVAILABLE');} }
 export class RoomStore {
   private readonly db: DatabaseSync;
   /** The development database lives outside the worktree unless GAME_DB_PATH explicitly opts in. */
   constructor(path = join(tmpdir(), "huroof-wa-oloof-local-game.sqlite")) {
     this.db = new DatabaseSync(path);
     this.db.exec(
-      "CREATE TABLE IF NOT EXISTS rooms (id TEXT PRIMARY KEY, code TEXT UNIQUE NOT NULL, revision INTEGER NOT NULL, data TEXT NOT NULL); CREATE TABLE IF NOT EXISTS events (room_id TEXT NOT NULL, revision INTEGER NOT NULL, event TEXT NOT NULL, created_at TEXT NOT NULL, PRIMARY KEY(room_id, revision)); CREATE TABLE IF NOT EXISTS snapshots (room_id TEXT NOT NULL, revision INTEGER NOT NULL, data TEXT NOT NULL, PRIMARY KEY(room_id, revision)); CREATE TABLE IF NOT EXISTS local_admin_drafts (id TEXT PRIMARY KEY, data TEXT NOT NULL, updated_at TEXT NOT NULL);",
+      "CREATE TABLE IF NOT EXISTS rooms (id TEXT PRIMARY KEY, code TEXT UNIQUE NOT NULL, revision INTEGER NOT NULL, data TEXT NOT NULL); CREATE TABLE IF NOT EXISTS events (room_id TEXT NOT NULL, revision INTEGER NOT NULL, event TEXT NOT NULL, created_at TEXT NOT NULL, PRIMARY KEY(room_id, revision)); CREATE TABLE IF NOT EXISTS snapshots (room_id TEXT NOT NULL, revision INTEGER NOT NULL, data TEXT NOT NULL, PRIMARY KEY(room_id, revision)); CREATE TABLE IF NOT EXISTS intent_receipts (room_id TEXT NOT NULL, actor_uid TEXT NOT NULL, intent_id TEXT NOT NULL, request_hash TEXT NOT NULL, revision INTEGER NOT NULL, created_at TEXT NOT NULL, PRIMARY KEY(room_id, actor_uid, intent_id)); CREATE TABLE IF NOT EXISTS local_admin_drafts (id TEXT PRIMARY KEY, data TEXT NOT NULL, updated_at TEXT NOT NULL);",
     );
   }
   save(room: Room): void {
-    const data = JSON.stringify(room);
-    this.db
-      .prepare(
-        "INSERT INTO rooms(id, code, revision, data) VALUES (?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET revision=excluded.revision,data=excluded.data",
-      )
-      .run(room.id, room.code, room.revision, data);
-    this.db
-      .prepare(
-        "INSERT OR REPLACE INTO snapshots(room_id, revision, data) VALUES (?, ?, ?)",
-      )
-      .run(room.id, room.revision, data);
+    this.persist(room);
   }
   event(room: Room, value: unknown, at: string): void {
     this.db
@@ -449,6 +511,74 @@ export class RoomStore {
         "INSERT OR REPLACE INTO events(room_id, revision, event, created_at) VALUES (?, ?, ?, ?)",
       )
       .run(room.id, room.revision, JSON.stringify(value), at);
+  }
+  receipt(roomId: string, actorUid: string, intentId: string): { requestHash: string; revision: number } | undefined {
+    const row = this.db.prepare("SELECT request_hash, revision FROM intent_receipts WHERE room_id=? AND actor_uid=? AND intent_id=?").get(roomId, actorUid, intentId) as { request_hash?: unknown; revision?: unknown } | undefined;
+    return row && typeof row.request_hash === "string" && Number.isSafeInteger(row.revision) ? { requestHash: row.request_hash, revision: row.revision as number } : undefined;
+  }
+  recordReceipt(roomId: string, actorUid: string, intentId: string, requestHash: string, revision: number, at: string): void {
+    this.db.prepare("INSERT INTO intent_receipts(room_id, actor_uid, intent_id, request_hash, revision, created_at) VALUES (?, ?, ?, ?, ?, ?)").run(roomId, actorUid, intentId, requestHash, revision, at);
+  }
+  /** A room revision, snapshot, audit event, and accepted receipt are one durable unit. */
+  commit(room: Room, event: unknown, at: string, receipt?: { actorUid: string; intentId: string; requestHash: string }): void {
+    this.db.exec("BEGIN IMMEDIATE");
+    try {
+      this.persist(room);
+      this.event(room, event, at);
+      if (receipt) this.recordReceipt(room.id, receipt.actorUid, receipt.intentId, receipt.requestHash, room.revision, at);
+      this.db.exec("COMMIT");
+    } catch (error) {
+      try { this.db.exec("ROLLBACK"); } catch { /* transaction was never opened or already failed */ }
+      throw error;
+    }
+  }
+  createLocalOwned(ownerUid:string,requestKey:string,requestHash:string,prepare:()=>Room):{room:Room;idempotent:boolean}{
+    assertLocalRealContent();
+    this.db.exec('CREATE TABLE IF NOT EXISTS local_owned_room_creations (owner_uid TEXT NOT NULL, request_key TEXT NOT NULL, request_hash TEXT NOT NULL, room_id TEXT NOT NULL, PRIMARY KEY(owner_uid,request_key))');
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      const receipt=this.db.prepare('SELECT request_hash,room_id FROM local_owned_room_creations WHERE owner_uid=? AND request_key=?').get(ownerUid,requestKey) as {request_hash:string;room_id:string}|undefined;
+      if(receipt){if(receipt.request_hash!==requestHash)throw Error('LOCAL_CREATE_KEY_CONFLICT');const room=this.load(receipt.room_id);if(!room)throw Error('LOCAL_CREATE_RECEIPT_UNAVAILABLE');this.db.exec('COMMIT');return {room,idempotent:true};}
+      let room:Room;try{room=prepare();}catch(error){throw new LocalRoomPreparationError(error instanceof Error&&/^[A-Z0-9_]{1,100}$/.test(error.message)?error.message:'LOCAL_CREATE_SETUP_UNAVAILABLE');}this.persist(room);this.event(room,room.audit[0]!,room.audit[0]!.at);
+      this.db.prepare('INSERT INTO local_owned_room_creations(owner_uid,request_key,request_hash,room_id) VALUES (?,?,?,?)').run(ownerUid,requestKey,requestHash,room.id);
+      this.db.exec('COMMIT');return {room,idempotent:false};
+    }catch(error){try{this.db.exec('ROLLBACK');}catch{}throw error;}
+  }
+  localRoomOwner(roomId:string):string|undefined{
+    assertLocalRealContent();if(!this.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='local_owned_room_creations'").get())return undefined;
+    return (this.db.prepare('SELECT owner_uid FROM local_owned_room_creations WHERE room_id=?').get(roomId) as {owner_uid:string}|undefined)?.owner_uid;
+  }
+  localOwnedRoom(ownerUid:string,roomId:string):Room|undefined{
+    assertLocalRealContent();
+    if(!ownerUid||!/^[a-f0-9-]{36}$/i.test(roomId))return undefined;
+    if(!this.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='local_owned_room_creations'").get())return undefined;
+    const row=this.db.prepare('SELECT r.data FROM local_owned_room_creations o JOIN rooms r ON r.id=o.room_id WHERE o.owner_uid=? AND o.room_id=?').get(ownerUid,roomId) as {data:string}|undefined;
+    return row?upcastRoom(JSON.parse(row.data)):undefined;
+  }
+  localOwnedHistory(ownerUid:string,offset=0){
+    assertLocalRealContent();
+    if(!ownerUid||!Number.isSafeInteger(offset)||offset<0||offset>100000)throw Error('LOCAL_HISTORY_REQUEST_INVALID');
+    // A read never creates/migrates storage or claims legacy unowned rooms.
+    if(!this.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='local_owned_room_creations'").get())return {items:[],nextOffset:null};
+    const rows=this.db.prepare('SELECT r.data FROM local_owned_room_creations o JOIN rooms r ON r.id=o.room_id WHERE o.owner_uid=? ORDER BY r.rowid DESC LIMIT 101 OFFSET ?').all(ownerUid,offset) as Array<{data:string}>;
+    const items=rows.slice(0,100).map(({data})=>{
+      // Deliberately avoid hydrate(), which may write schema markers during reads.
+      const room=upcastRoom(JSON.parse(data)),match=deriveMatch(room.game),config=room.config;
+      return {id:room.id,code:room.code,revision:room.revision,createdAt:room.audit[0]?.at??null,updatedAt:room.audit.at(-1)?.at??null,
+        phase:room.game.lifecycle,complete:room.game.lifecycle==='MATCH_COMPLETE',teams:{horizontal:config.teams.horizontal,vertical:config.teams.vertical},
+        settings:{gameKind:config.gameKind??'huroof',modality:config.modality,mode:config.mode,difficulty:config.difficulty,mapPresentation:config.mapPresentation??'ordinary',questionSeconds:config.questionSeconds,opponentSeconds:config.opponentSeconds},
+        categories:config.categories.map(id=>({id,labelAr:config.categorySnapshot?.find(c=>c.id===id)?.labelAr??id})),
+        scores:{horizontal:room.game.questionScores.horizontal,vertical:room.game.questionScores.vertical},roundWins:match.roundWins,currentRound:room.game.currentRound,
+        winner:match.matchWinner??null,completionReason:room.game.endedWithoutWinner?'CONTENT_EXHAUSTED':match.matchWinReason??null,
+        source:{snapshot:room.questionSourceSnapshot??null},predecessor:room.localRematch?{predecessorRoomId:room.localRematch.predecessorRoomId,sourceSnapshot:room.localRematch.sourceSnapshot}:null};
+    });
+    return {items,nextOffset:rows.length>100?offset+100:null};
+  }
+  private persist(room: Room): void {
+    // Keep legacy receipt JSON until a matching request has safely replayed it.
+    const data = JSON.stringify(room);
+    this.db.prepare("INSERT INTO rooms(id, code, revision, data) VALUES (?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET revision=excluded.revision,data=excluded.data").run(room.id, room.code, room.revision, data);
+    this.db.prepare("INSERT OR REPLACE INTO snapshots(room_id, revision, data) VALUES (?, ?, ?)").run(room.id, room.revision, data);
   }
   private hydrate(data: string): Room {
     const room = upcastRoom(JSON.parse(data));
@@ -502,6 +632,9 @@ export class AuthoritativeGameService {
   >();
   private readonly roomSerial = new Map<string, Promise<void>>();
   private readonly mediaIssues = new Map<string, number[]>();
+  private readonly challengeDefinitions: ChallengeDefinitionRepository;
+  private readonly enabledChallengeMechanics: ReadonlySet<NonNullable<ChallengeCapabilityOffer>["mechanics"][number]>;
+  private readonly mapVariants: readonly MapVariantBinding[];
   constructor(
     options: {
       dbPath?: string;
@@ -509,12 +642,21 @@ export class AuthoritativeGameService {
       clock?: Clock;
       boardNonce?: () => string;
       localFirestoreQuestionSource?: LocalRuntimeQuestionSource;
+      /** Explicit server/test-only private definitions. Absence keeps mechanics disabled. */
+      challengeDefinitions?: ConstructorParameters<typeof ChallengeDefinitionRepository>[0];
+      /** Explicit server-only local feature flags; default disabled. */
+      enabledChallengeMechanics?: readonly NonNullable<ChallengeCapabilityOffer>["mechanics"][number][];
+      /** Immutable release sidecars supplied by the local authority test fixture. */
+      mapVariants?: readonly MapVariantBinding[];
     } = {},
   ) {
     this.store = new RoomStore(options.dbPath);
     this.secret = options.secret ?? "local-development-secret";
     this.clock = options.clock ?? (() => new Date());
     this.newBoardNonce = options.boardNonce ?? randomUUID;
+    this.challengeDefinitions = new ChallengeDefinitionRepository(options.challengeDefinitions ?? []);
+    this.enabledChallengeMechanics = new Set(options.enabledChallengeMechanics ?? []);
+    this.mapVariants = options.mapVariants ?? [];
     if (options.localFirestoreQuestionSource)
       this.replaceLocalQuestionSource(options.localFirestoreQuestionSource);
   }
@@ -526,6 +668,7 @@ export class AuthoritativeGameService {
    * source bindings of rooms that are already active.
    */
   replaceLocalQuestionSource(source: LocalRuntimeQuestionSource): void {
+    this.challengeDefinitions.add(source.challengeDefinitions ?? []);
     this.localQuestionSourcesBySnapshot.set(source.snapshotId, source);
     this.localFirestoreQuestionSource = source;
   }
@@ -557,21 +700,50 @@ export class AuthoritativeGameService {
       return undefined;
     }
   }
-  createAudienceCapability(roomId: string): string {
-    this.mustRoom(roomId);
+  createAudienceCapability(roomId: string, challenge?: unknown): string {
+    const room = this.mustRoom(roomId);
+    if (room.config.challenge && !this.sameChallengeCapability(challenge, room.config.challenge))
+      throw new Error("CHALLENGE_PROTOCOL_REQUIRED");
     return this.token({ roomId, uid: "audience", role: "audience" });
   }
-  create(
-    displayName = "المضيف",
-    demo = false,
-    requested: CreateMatchConfig = {},
-  ): {
-    roomId: string;
-    roomCode: string;
-    revision: number;
-    token: string;
-    audienceToken: string;
-  } {
+  localOwnerAccess(ownerUid:string,roomId:string){
+    assertLocalRealContent();const room=this.store.localOwnedRoom(ownerUid,roomId);
+    if(!room)throw Error('LOCAL_OWNED_ROOM_NOT_FOUND');
+    return this.creationResponse(room);
+  }
+  private creationResponse(room:Room){const host=room.members.find(m=>m.role==='host');if(!host)throw Error('LOCAL_CREATE_RECEIPT_UNAVAILABLE');return {roomId:room.id,roomCode:room.code,revision:room.revision,token:this.token({roomId:room.id,uid:host.uid,role:'host'}),audienceToken:this.token({roomId:room.id,uid:'audience',role:'audience'})};}
+  create(displayName='المضيف',demo=false,requested:CreateMatchConfig={}){
+    const room=this.prepareRoom(displayName,demo,requested);this.store.commit(room,room.audit[0]!,room.audit[0]!.at);return this.creationResponse(room);
+  }
+  createLocalOwned(ownerUid:string,requestKey:string,requestHash:string,displayName:string,requested:CreateMatchConfig){
+    assertLocalRealContent();if(!ownerUid||!requestKey||!/^[A-Za-z0-9._:-]{8,128}$/.test(requestKey)||!/^[a-f0-9]{64}$/.test(requestHash))throw Error('LOCAL_CREATE_REQUEST_INVALID');
+    const result=this.store.createLocalOwned(ownerUid,requestKey,requestHash,()=>this.prepareRoom(displayName,true,requested));return {...this.creationResponse(result.room),idempotent:result.idempotent};
+  }
+  createLocalRematch(ownerUid:string,requestKey:string,requestHash:string,predecessorRoomId:string,hostCapability:string){
+    assertLocalRealContent();let capability:Capability|undefined;try{capability=this.verify(hostCapability);}catch{throw Error('LOCAL_REMATCH_HOST_REQUIRED');}const predecessor=this.store.load(predecessorRoomId);
+    const recordedOwner=this.store.localRoomOwner(predecessorRoomId);if(recordedOwner&&recordedOwner!==ownerUid)throw Error('LOCAL_REMATCH_HOST_REQUIRED');
+    if(!capability||capability.role!=='host'||capability.roomId!==predecessorRoomId||!predecessor?.members.some(m=>m.role==='host'&&m.uid===capability.uid))throw Error('LOCAL_REMATCH_HOST_REQUIRED');
+    const result=this.store.createLocalOwned(ownerUid,requestKey,requestHash,()=>{
+      const predecessor=this.store.load(predecessorRoomId);if(!predecessor)throw Error('LOCAL_REMATCH_SOURCE_UNAVAILABLE');
+      if(predecessor.game.lifecycle!=='MATCH_COMPLETE')throw Error('LOCAL_REMATCH_NOT_FINISHED');
+      const snapshot=predecessor.questionSourceSnapshot,source=snapshot?this.localQuestionSourcesBySnapshot.get(snapshot):undefined;if(!snapshot||!source)throw Error('LOCAL_REMATCH_SOURCE_UNAVAILABLE');
+      const previous=predecessor.localRematch,selection=predecessor.questionSelection,family=selection&&this.isChallengeSelection(selection)?selection.challengeFamilyState:undefined;
+      const excludedQuestionIds=[...new Set([...(previous?.excludedQuestionIds??[]),...(selection?.consumedQuestionIds??[]),...(family?.consumedIds??[]),...(predecessor.activeQuestion?[predecessor.activeQuestion.id]:[])])];
+      const excludedAnswerConceptIds=[...new Set([...(previous?.excludedAnswerConceptIds??[]),...(selection?.consumedAnswerConceptIds??[]),...(family?.consumedConceptIds??[]),...(predecessor.activeQuestion?[predecessor.activeQuestion.answerConceptId]:[])])];
+      const excludedFactFamilies=[...new Set([...(previous?.excludedFactFamilies??[]),...(family?.consumedFactFamilies??[])])];
+      const retained={predecessorRoomId,sourceSnapshot:snapshot,excludedQuestionIds,excludedAnswerConceptIds,excludedFactFamilies};
+      const filtered={...source,questions:this.excludePriorQuestions(source.questions,retained)};
+      const room=this.prepareRoom(predecessor.members.find(m=>m.role==='host')!.displayName,true,predecessor.config,filtered,true);room.localRematch=retained;return room;
+    });
+    if(result.room.localRematch?.predecessorRoomId!==predecessorRoomId)throw Error('LOCAL_CREATE_KEY_CONFLICT');
+    return {...this.creationResponse(result.room),idempotent:result.idempotent,predecessorRoomId,source:{snapshotId:result.room.localRematch.sourceSnapshot,selection:'UNSEEN_PREDECESSOR' as const}};
+  }
+  private excludePriorQuestions<T extends StoredQuestion>(questions:T[],prior:NonNullable<Room['localRematch']>){
+    const ids=new Set(prior.excludedQuestionIds),concepts=new Set(prior.excludedAnswerConceptIds),families=new Set(prior.excludedFactFamilies??[]);
+    return questions.filter(q=>!ids.has(q.id)&&!concepts.has(q.answerConceptId)&&!(q.challenge?.factFamilies??[]).some(f=>families.has(f)));
+  }
+  private prepareRoom(displayName:string,demo:boolean,requested:CreateMatchConfig,localSourceOverride?:LocalRuntimeQuestionSource,isRematch=false):Room {
+    const categoryProjectionVersion = isRematch ? requested.categoryProjectionVersion : CURRENT_CATEGORY_PROJECTION;
     if (!demo && !this.questionsSync(false).length)
       throw new Error("NO_APPROVED_QUESTION_STOCK");
     const id = randomUUID();
@@ -583,7 +755,7 @@ export class AuthoritativeGameService {
       ready: true,
     };
     // bestOf is accepted only for stale clients and deliberately has no v2 effect.
-    const requestedCategories = [
+    const requestedCategories = canonicalizeCategoryIds([
       ...new Set(
         (requested.categories ?? [])
           .filter(
@@ -592,20 +764,20 @@ export class AuthoritativeGameService {
           )
           .map((category) => category.trim()),
       ),
-    ].sort();
+    ], categoryProjectionVersion).sort();
     const categories = requestedCategories.length
       ? requestedCategories
       : demo
-        ? [
+        ? canonicalizeCategoryIds([
             ...new Set(
-              this.questionsSync(true)
+              ((localSourceOverride?.questions as StoredQuestion[]|undefined)??this.questionsSync(true))
                 .map((question) => question.categoryId)
                 .filter(
                   (category): category is string =>
                     typeof category === "string",
                 ),
             ),
-          ].sort()
+          ], categoryProjectionVersion).sort()
         : [];
     if (!categories.length) throw new Error("QUESTION_CATEGORY_SCOPE_REQUIRED");
     const modality =
@@ -622,10 +794,40 @@ export class AuthoritativeGameService {
         modality !== "classic")
     )
       throw new Error("CATEGORY_GAME_COMBINATION_INVALID");
-    this.requirePlayableQuestionScope(demo, categories, modality, gameKind);
-    const localSource = demo ? this.localFirestoreQuestionSource : undefined;
+    if (requested.mapPresentation !== undefined && requested.mapPresentation !== "ordinary" && requested.mapPresentation !== "interactive")
+      throw new Error("MAP_PRESENTATION_INVALID");
+    const challenge = requested.challenge;
+    if (challenge !== undefined) {
+      const mechanics = challenge && typeof challenge === "object" ? challenge.mechanics : undefined;
+      const definitionSchemas = challenge && typeof challenge === "object" && challenge.definitionSchemas !== undefined ? challenge.definitionSchemas : ["t36-challenge-definition-v1"];
+      if (
+        !challenge ||
+        challenge.protocolVersion !== "t36-challenge-runtime-v1" ||
+        !Array.isArray(mechanics) ||
+        !mechanics.length ||
+        mechanics.length > 5 ||
+        new Set(mechanics).size !== mechanics.length ||
+        mechanics.some((mechanic) => !["navigation", "missing_tile", "memory", "qatar_map", "word_search"].includes(mechanic)) ||
+        !Array.isArray(definitionSchemas) || !definitionSchemas.length || definitionSchemas.length > 3 || new Set(definitionSchemas).size !== definitionSchemas.length || definitionSchemas.some((schema) => schema !== "t36-challenge-definition-v1" && schema !== "t37-clean70-challenge-definition-v1" && schema !== "t37-topup-word-search-definition-v1")
+      ) throw new Error("CHALLENGE_PROTOCOL_UNSUPPORTED");
+    }
+    const scopedQuestions = this.questionsForChallengeAdmission((localSourceOverride?.questions as StoredQuestion[]|undefined)??this.questionsSync(demo), challenge);
+    const scopedChallengeKinds = [...new Set([
+      ...scopedQuestions
+      .filter((question) => categories.includes(canonicalCategoryId(question.categoryId, categoryProjectionVersion)) && question.modality === modality)
+      .flatMap((question) => question.challenge ? [question.challenge.kind] : []),
+      ...(requested.mapPresentation === "interactive" && categories.includes("tahadani-games-326") ? ["qatar_map" as const] : []),
+    ])];
+    const scopedDefinitionSchemas = [...new Set(scopedQuestions.filter((question) => categories.includes(canonicalCategoryId(question.categoryId, categoryProjectionVersion)) && question.modality === modality && question.challenge).map((question) => question.challenge!.definition.schemaVersion))];
+    if (scopedChallengeKinds.length && !challenge) throw new Error("CHALLENGE_PROTOCOL_REQUIRED");
+    if (scopedChallengeKinds.length && (!challenge || gameKind !== "categories" || !this.hasInjectedChallengeDefinitions() || !scopedChallengeKinds.every((mechanic) => challenge.mechanics.includes(mechanic)) || !scopedChallengeKinds.every((mechanic) => this.enabledChallengeMechanics.has(mechanic)) || (requested.mapPresentation === "interactive" && !this.mapVariants.length)))
+      throw new Error("CHALLENGE_MECHANICS_DISABLED");
+    if (scopedDefinitionSchemas.length && (!challenge || !scopedDefinitionSchemas.every((schema) => (challenge.definitionSchemas ?? ["t36-challenge-definition-v1"]).includes(schema)))) throw new Error("CHALLENGE_DEFINITION_SCHEMA_UNSUPPORTED");
+    this.requirePlayableQuestionScope(demo, categories, modality, gameKind, scopedQuestions, categoryProjectionVersion);
+    const localSource = demo ? localSourceOverride??this.localFirestoreQuestionSource : undefined;
     const config: MatchConfig = {
       policyVersion: 1,
+      ...(categoryProjectionVersion ? { categoryProjectionVersion } : {}),
       questionSeconds: Math.max(
         10,
         Math.min(60, requested.questionSeconds ?? 20),
@@ -642,11 +844,14 @@ export class AuthoritativeGameService {
       modality,
       gameKind,
       ...(gameKind === "categories"
-        ? { categorySnapshot: trustedCategorySnapshot(categories, localSource?.inventory.categories) }
+        ? { categorySnapshot: isRematch && requested.categorySnapshot ? requested.categorySnapshot : trustedCategorySnapshot(categories, localSource?.inventory.categories, categoryProjectionVersion) }
         : {}),
       difficulty: requested.difficulty ?? "mixed",
       mode: requested.mode ?? "classic",
       showQuestionOnAudience: requested.showQuestionOnAudience !== false,
+      labelledColours: requested.labelledColours === true,
+      mapPresentation: requested.mapPresentation === "interactive" ? "interactive" : "ordinary",
+      ...(challenge && scopedChallengeKinds.length ? { challenge: { protocolVersion: challenge.protocolVersion, mechanics: scopedChallengeKinds, definitionSchemas: scopedDefinitionSchemas.sort() } } : {}),
     };
     const room: Room = {
       id,
@@ -659,7 +864,6 @@ export class AuthoritativeGameService {
       game: initialGameState(),
       members: [host],
       manualParticipants: [],
-      intentIds: {},
       boardNonce: this.newBoardNonce(),
       boardSequence: 0,
       surpriseLetters: [],
@@ -674,37 +878,41 @@ export class AuthoritativeGameService {
       ],
     };
     if (localSource) room.questionSourceSnapshot = localSource.snapshotId;
-    this.store.save(room);
-    this.store.event(room, room.audit[0], this.now());
-    return {
-      roomId: id,
-      roomCode: code,
-      revision: 1,
-      token: this.token({ roomId: id, uid: host.uid, role: "host" }),
-      audienceToken: this.token({
-        roomId: id,
-        uid: "audience",
-        role: "audience",
-      }),
-    };
+    return room;
+  }
+  private hasInjectedChallengeDefinitions(): boolean {
+    return this.challengeDefinitions.hasDefinitions;
+  }
+  private sameChallengeCapability(value: unknown, expected: ChallengeCapabilityOffer): boolean {
+    if (!value || typeof value !== "object") return false;
+    const candidate = value as Partial<ChallengeCapabilityOffer>;
+    const schemas: unknown = candidate.definitionSchemas ?? ["t36-challenge-definition-v1"];
+    return candidate.protocolVersion === expected.protocolVersion && Array.isArray(candidate.mechanics) && candidate.mechanics.length > 0 && candidate.mechanics.length <= 5 && new Set(candidate.mechanics).size === candidate.mechanics.length && candidate.mechanics.every((mechanic) => mechanic === "navigation" || mechanic === "missing_tile" || mechanic === "memory" || mechanic === "qatar_map" || mechanic === "word_search") &&
+      Array.isArray(schemas) && schemas.length > 0 && schemas.length <= 3 && new Set(schemas).size === schemas.length && schemas.every((schema) => schema === "t36-challenge-definition-v1" || schema === "t37-clean70-challenge-definition-v1" || schema === "t37-topup-word-search-definition-v1") &&
+      expected.mechanics.every((mechanic) => candidate.mechanics!.includes(mechanic)) &&
+      (expected.definitionSchemas ?? ["t36-challenge-definition-v1"]).every((schema) => schemas.includes(schema));
   }
   async join(
     code: string,
     displayName: unknown,
+    challenge?: unknown,
   ): Promise<{ roomId: string; revision: number; token: string }> {
     const initial = this.store.load(code);
     if (!initial) throw new Error("ROOM_NOT_FOUND");
     return this.serialize(initial.id, async () =>
-      this.joinSerialized(code, displayName),
+      this.joinSerialized(code, displayName, challenge),
     );
   }
   private joinSerialized(
     code: string,
     displayName: unknown,
+    challenge?: unknown,
   ): { roomId: string; revision: number; token: string } {
     const room = this.store.load(code);
     if (!room) throw new Error("ROOM_NOT_FOUND");
     const name = validDisplayName(displayName);
+    if (room.config.challenge && !this.sameChallengeCapability(challenge, room.config.challenge))
+      throw new Error("CHALLENGE_PROTOCOL_REQUIRED");
     if (!canManageTeamsInState(room.game.lifecycle))
       throw new Error("JOIN_NOT_ALLOWED");
     if (this.participantCount(room) >= 16)
@@ -729,6 +937,25 @@ export class AuthoritativeGameService {
     const capability = this.mustCapability(roomId, token);
     const room = this.mustRoom(roomId);
     return this.project(room, capability);
+  }
+  /**
+   * Local equivalent of the Firebase resume callable.  A challenge room must
+   * negotiate its pinned protocol before either HTTP snapshot or WebSocket
+   * delivery; ordinary legacy rooms remain compatible.
+   */
+  resume(roomId: string, token: string, challenge?: unknown): { revision: number; serverTime: string } {
+    const capability = this.mustCapability(roomId, token);
+    const room = this.mustRoom(roomId);
+    if (capability.role !== "audience") {
+      const member = room.members.find((candidate) => candidate.uid === capability.uid);
+      if (!member || member.role !== capability.role) throw new Error("UNAUTHORIZED");
+    }
+    if (room.config.challenge && !this.sameChallengeCapability(challenge, room.config.challenge))
+      throw new Error("CHALLENGE_PROTOCOL_REQUIRED");
+    // Reconcile before the caller fetches a projection or upgrades to WebSocket.
+    // Client timers are display-only; an elapsed observation must never reappear.
+    this.expire(room);
+    return { revision: room.revision, serverTime: this.now() };
   }
   presenceActor(
     roomId: string,
@@ -764,6 +991,12 @@ export class AuthoritativeGameService {
     const capability = this.verify(token);
     if (!capability || capability.roomId !== roomId)
       throw new Error("UNAUTHORIZED");
+    const room = this.store.load(roomId);
+    if (!room) throw new Error("ROOM_NOT_FOUND");
+    if (capability.role === "audience" && capability.uid === "audience") return capability;
+    const member = room.members.find((candidate) => candidate.uid === capability.uid);
+    if (!member || member.role !== capability.role)
+      throw new Error("UNAUTHORIZED");
     return capability;
   }
   /** Authorizes an image by the active immutable question binding only. */
@@ -774,6 +1007,8 @@ export class AuthoritativeGameService {
   ): QuestionMedia {
     const capability = this.mustCapability(roomId, token);
     const room = this.mustRoom(roomId);
+    if (room.challenge && !restoreChallengeState(room.challenge).solutionRevealed)
+      throw new Error("CHALLENGE_MEDIA_DENIED");
     const value = request as Partial<QuestionMedia> | undefined;
     if (
       !value ||
@@ -899,6 +1134,23 @@ export class AuthoritativeGameService {
       bearerToken,
       { mediaId: payload.mediaId, assetSha256: payload.assetSha256 },
     );
+    if (media.youtube !== undefined) {
+      assertLocalRealContent();
+      if (media.type !== 'video' || !isYouTubeMediaDescriptor(media.youtube) || createHash('sha256').update(youtubeDescriptorBytes(media.youtube)).digest('hex') !== media.assetSha256) throw Error('MEDIA_BINDING_MISMATCH');
+      return { bytes: Buffer.from(youtubeDescriptorBytes(media.youtube)), contentType: 'application/vnd.huroof.youtube+json' };
+    }
+    if(process.env.LOCAL_DB_QUESTION_SOURCE==='saved-release'){
+      const entry=await localMediaEntry(media.mediaId,media.assetSha256);
+      if(entry?.path){
+        const target=await import('node:fs/promises').then(fs=>fs.realpath(entry.path!));
+        const allowedRoots=['D:/projects/huroof_wa_oloof','C:/Users/User/.codex/worktrees/huroof-enta-integration/huroof_wa_oloof'].map(root=>resolve(root));
+        if(!allowedRoots.some(root=>{const rel=relative(root,target);return rel!==''&&!rel.startsWith('..')&&!isAbsolute(rel);})||(await lstat(entry.path)).isSymbolicLink())throw Error('MEDIA_PATH_INVALID');
+        const bytes=await readFile(target);
+        if(bytes.length!==entry.byteSize||createHash('sha256').update(bytes).digest('hex')!==media.assetSha256)throw Error('MEDIA_ASSET_INVALID');
+        if(!['image/png','image/jpeg','image/webp','video/mp4'].includes(entry.contentType))throw Error('MEDIA_TYPE_UNSUPPORTED');
+        return {bytes,contentType:entry.contentType};
+      }
+    }
     const video = media.type === "video";
     const rebuiltImage = !video && media.mediaId.startsWith("rebuild-v2-photo-");
     const packageDirectory = video
@@ -957,63 +1209,45 @@ export class AuthoritativeGameService {
     verifyPrivateQuestionMediaBytes(bytes, media.assetSha256, entry.width, entry.height);
     return { bytes, contentType: "image/png" };
   }
+  private categoryChallengePlan(board: GameBoard, boardSequence: number): { boardSlots: FamilySlot[]; reserveSlots: FamilySlot[] } {
+    const boardSlots = board.cells.map((cell) => {
+      if (!cell.categoryId) throw new Error("Challenge category board cell is missing its category.");
+      return { slotId: `board:${boardSequence}:${cell.id}`, categoryId: cell.categoryId };
+    });
+    const categories = [...new Set(boardSlots.map((slot) => slot.categoryId))].sort();
+    return { boardSlots, reserveSlots: categories.map((categoryId) => ({ slotId: `reserve:${boardSequence}:${categoryId}:0`, categoryId })) };
+  }
+  private isChallengeSelection(selection: MatchQuestionSelection | ChallengeCategoryQuestionSelection | undefined): selection is ChallengeCategoryQuestionSelection {
+    return !!selection && "challengeFamilyState" in selection;
+  }
+  private challengeRemainingSlots(selection: ChallengeCategoryQuestionSelection, selectedSlotId?: string): FamilySlot[] {
+    const occupied = new Set([...selection.challengeCompletedSlotIds, ...Object.values(selection.challengeSlotForCell)]);
+    if (selectedSlotId) occupied.add(selectedSlotId);
+    return selection.challengePlannedSlots.filter((slot) => !occupied.has(slot.slotId));
+  }
   private async freshBoard(room: Room): Promise<GameBoard> {
-    const questions = await this.questions(
-      room.demo,
-      room.questionSourceSnapshot,
-    );
-    const selection =
-      room.questionSelection ??
-      (room.config.gameKind === "categories"
-        ? createCategoryQuestionSelection(questions, {
-            categories: room.config.categories,
-            modality: "classic",
-            seed: deriveBoardSeed(room.boardNonce, 0),
-          })
-        : createMatchQuestionSelection(questions, {
-            categories: room.config.categories,
-            modality: room.config.modality,
-            seed: deriveBoardSeed(room.boardNonce, 0),
-            reservePerLetter: room.demo ? 1 : 3,
-          }));
-    room.questionSelection = selection;
-    const letters = Object.keys(selection.queues);
+    const questions = await this.effectiveQuestions(room);
     let sequence = room.boardSequence;
     let seed = deriveBoardSeed(room.boardNonce, sequence);
-    // Legacy rooms can have an existing revision-derived board. Do not repeat it
-    // when their first new round is created after the safe upcast.
-    while (seed === room.game.board?.seed) {
-      sequence++;
-      seed = deriveBoardSeed(room.boardNonce, sequence);
-    }
-    const shuffled = letters
-      .map((letter, index) => ({
-        letter,
-        order: (seed * 1103515245 + index * 12345) >>> 0,
-      }))
-      .sort((a, b) => a.order - b.order)
-      .map(({ letter }) => letter);
+    while (seed === room.game.board?.seed) { sequence++; seed = deriveBoardSeed(room.boardNonce, sequence); }
     if (room.config.gameKind === "categories") {
+      const board = generateCategoryBoard(seed, room.config.categorySnapshot ?? []);
+      if (room.config.challenge) {
+        const challengeQuestions = questions.filter((question) => question.modality !== "charades" && (!question.challenge || room.config.challenge!.mechanics.includes(question.challenge.kind)));
+        const plan = this.categoryChallengePlan(board, sequence);
+        try {
+          room.questionSelection = this.isChallengeSelection(room.questionSelection)
+            ? beginNextChallengeSelectionRound(challengeQuestions, room.questionSelection, plan)
+            : createChallengeCategoryQuestionSelection(challengeQuestions, { categories: room.config.categories, categoryProjectionVersion: room.config.categoryProjectionVersion, modality: "classic", seed }, plan);
+        } catch (error) { throw new Error(`CHALLENGE_CONTENT_DEPLETED: ${error instanceof Error ? error.message : "family allocation failed"}`); }
+      } else room.questionSelection ??= createCategoryQuestionSelection(questions, { categories: room.config.categories, categoryProjectionVersion: room.config.categoryProjectionVersion, modality: "classic", seed });
       room.boardSequence = sequence + 1;
-      const board = generateCategoryBoard(
-        seed,
-        room.config.categorySnapshot ?? [],
-      );
-      room.categoryOccurrences = Object.fromEntries(
-        board.cells.reduce<Map<string, number>>(
-          (counts, cell) =>
-            counts.set(
-              cell.categoryId!,
-              Math.max(
-                counts.get(cell.categoryId!) ?? 0,
-                cell.categoryOccurrence ?? 0,
-              ),
-            ),
-          new Map(),
-        ),
-      );
+      room.categoryOccurrences = Object.fromEntries(board.cells.reduce<Map<string, number>>((counts, cell) => counts.set(cell.categoryId!, Math.max(counts.get(cell.categoryId!) ?? 0, cell.categoryOccurrence ?? 0)), new Map()));
       return board;
     }
+    const selection = room.questionSelection ?? createMatchQuestionSelection(questions, { categories: room.config.categories, categoryProjectionVersion: room.config.categoryProjectionVersion, modality: room.config.modality, seed: deriveBoardSeed(room.boardNonce, 0), reservePerLetter: room.demo ? 1 : 3 });
+    room.questionSelection = selection;
+    const shuffled = Object.keys(selection.queues).map((letter, index) => ({ letter, order: (seed * 1103515245 + index * 12345) >>> 0 })).sort((a, b) => a.order - b.order).map(({ letter }) => letter);
     room.surpriseLetters = shuffled.slice(16, 25);
     room.boardSequence = sequence + 1;
     return generateBoard(seed, shuffled.slice(0, 16));
@@ -1046,12 +1280,14 @@ export class AuthoritativeGameService {
     room.buzzWinner = undefined;
   }
   async startBoard(room: Room, nextRound = false): Promise<void> {
-    if (nextRound) this.releaseRoundReservations(room);
+    if (nextRound && !this.isChallengeSelection(room.questionSelection)) this.releaseRoundReservations(room);
     const board = await this.freshBoard(room);
     // A board boundary is also a media/reveal boundary.  Keeping an old
     // occurrence here would let a delayed reveal grant describe a question
     // that no longer belongs to the active board.
     room.activeQuestion = undefined;
+    room.challenge = undefined;
+    room.challengeBridge = undefined;
     room.activeQuestionOccurrence = undefined;
     room.answerRevealedOccurrence = undefined;
     room.buzzOpen = false;
@@ -1132,7 +1368,103 @@ export class AuthoritativeGameService {
       this.intentSerialized(roomId, token, intent),
     );
   }
+  private challengeParticipants(room: Room, hostUid: string): Participant[] {
+    return [
+      ...room.members.flatMap((member) => member.role === "player" && member.team ? [{ kind: "member" as const, uid: `member:${member.uid}`, actorUid: member.uid, team: member.team }] : []),
+      ...(room.manualParticipants ?? []).map((participant) => ({ kind: "manual" as const, id: `manual:${participant.id}`, team: participant.team, controllerUid: hostUid })),
+    ];
+  }
+  private challengeRuntime(room: Room, definitionHash: string): ChallengeRuntimeConfig {
+    const hostUid = room.members.find((member) => member.role === "host")?.uid;
+    if (!hostUid || !room.config.challenge) throw new Error("CHALLENGE_PROTOCOL_UNAVAILABLE");
+    return {
+      hostUid,
+      protocolHash: room.config.challenge.protocolVersion,
+      assignmentHash: `${room.activeQuestionOccurrence ?? "missing"}:${room.revision}`,
+      stimulusHash: definitionHash,
+    };
+  }
+  private activateChallenge(room: Room): void {
+    if (!room.config.challenge || !room.activeQuestion?.challenge) return;
+    const definition = this.challengeDefinitions.resolveBound(room.activeQuestion);
+    if (!room.config.challenge.mechanics.includes(definition.kind)) throw new Error("CHALLENGE_MECHANIC_NOT_NEGOTIATED");
+    if (!room.activeQuestionOccurrence || !room.game.activeCellId || !room.game.entitledTeam) throw new Error("CHALLENGE_OCCURRENCE_UNAVAILABLE");
+    if (definition.kind === "navigation" && !room.members.some((member) => member.role === "player" && member.team === room.game.entitledTeam))
+      throw new Error("NAVIGATION_PRIVATE_GUIDE_REQUIRED");
+    const runtime = this.challengeRuntime(room, definition.definitionSha256);
+    room.challenge = compactChallengeState(createChallengeState(definition, room.activeQuestionOccurrence, room.game.entitledTeam, this.clock().getTime(), runtime));
+    room.challengeBridge = createChallengeBridgeContext(room.activeQuestionOccurrence, room.game.activeCellId);
+    // Challenges own their own stages. The existing board enters the entitled
+    // first-answer state without opening a generic buzzer or grading path.
+    room.game = reduceGame(room.game, { type: "BUZZ_ACCEPTED", team: room.game.entitledTeam });
+    room.buzzOpen = false;
+    room.deadlineAt = undefined;
+  }
+  private async applyChallengeIntent(room: Room, capability: Capability, intent: GameIntent, receiptKey: string, receiptHash: string) {
+    if (!room.challenge || !room.activeQuestion?.challenge || !room.activeQuestionOccurrence) throw new Error("CHALLENGE_NOT_ACTIVE");
+    const definition = this.challengeDefinitions.resolveBound(room.activeQuestion);
+    const current = restoreChallengeState(room.challenge);
+    const runtime = this.challengeRuntime(room, definition.definitionSha256);
+    const participants = this.challengeParticipants(room, runtime.hostUid);
+    const names: Record<string, ChallengeIntent["type"]> = {
+      CHALLENGE_ASSIGN: "ASSIGN", CHALLENGE_READY: "READY", CHALLENGE_START: "START", CHALLENGE_MOVE: "MOVE", CHALLENGE_SUBMIT: "SUBMIT", CHALLENGE_START_STEAL: "START_STEAL", CHALLENGE_DECLINE_STEAL: "DECLINE_STEAL", CHALLENGE_PAUSE: "PAUSE", CHALLENGE_RESUME: "RESUME", CHALLENGE_VOID: "VOID", CHALLENGE_REVEAL: "REVEAL", CHALLENGE_CONTINUE: "CONTINUE",
+    };
+    const type = names[intent.type as keyof typeof names];
+    if (!type) throw new Error("CHALLENGE_INTENT_INVALID");
+    const payload = intent.payload;
+    const common = { id: intent.intentId, actor: capability.uid, payloadHash: receiptHash, occurrence: payload.occurrence as string, revision: payload.challengeRevision as number, expectedStage: payload.stage as ChallengeIntent["expectedStage"], at: this.clock().getTime(), type };
+    const challengeIntent = type === "ASSIGN" ? { ...common, type, assignment: payload.assignment as "guide" | "mover" | "captain" | "stealCaptain", participantId: payload.participantId as string }
+      : type === "READY" ? { ...common, type, participantId: payload.participantId as string, readiness: payload.readiness as ChallengeIntent & never }
+      : type === "MOVE" ? { ...common, type, direction: payload.direction as "north" | "east" | "south" | "west" }
+      : type === "SUBMIT" ? { ...common, type, ...(Array.isArray(payload.answers) ? { answers: payload.answers as string[] } : { start: payload.start as { row: number; column: number }, end: payload.end as { row: number; column: number } }) }
+      : common as ChallengeIntent;
+    const next = reduceChallenge(definition, current, challengeIntent as ChallengeIntent, participants, runtime);
+    if (next === current) throw new Error("CHALLENGE_INTENT_REJECTED");
+    room.challenge = compactChallengeState(next);
+    if (next.result === "correct" && room.game.activeCellId) {
+      const bridged = applyChallengeAward(next, room.game, room.challengeBridge ?? createChallengeBridgeContext(next.occurrence, room.game.activeCellId));
+      room.challenge = compactChallengeState(bridged.challenge);
+      room.game = bridged.game;
+      room.challengeBridge = bridged.context;
+    }
+    if (next.continued) {
+      if (next.result !== "correct") {
+        if (!room.game.activeCellId) throw new Error("CHALLENGE_CONTINUATION_CELL_MISSING");
+        // A continued failed/void category cell must have a fresh family-safe reservation before it returns unclaimed.
+        if (room.config.gameKind === "categories") await this.replaceFailedCategory(room);
+        const bridged = applyChallengeContinuation(next, room.game, room.challengeBridge ?? createChallengeBridgeContext(next.occurrence, room.game.activeCellId));
+        room.game = bridged.game;
+        room.challengeBridge = bridged.context;
+      }
+      // Terminal data remains projected until this explicit host action. Once it
+      // is accepted, return to the audited board lifecycle without a second
+      // award or any retained challenge projection.
+      room.challenge = undefined;
+      room.challengeBridge = undefined;
+      room.activeQuestion = undefined;
+      room.activeQuestionOccurrence = undefined;
+    }
+    this.commit(room, intent.type, capability.uid, { occurrence: next.occurrence, stage: next.stage, result: next.result }, receiptKey, receiptHash);
+    return { revision: room.revision, replayed: false, projection: this.project(room, capability) };
+  }
   private expire(room: Room): boolean {
+    if (room.challenge && room.activeQuestion?.challenge) {
+      const definition = this.challengeDefinitions.resolveBound(room.activeQuestion);
+      const current = restoreChallengeState(room.challenge);
+      const next = reconcileChallengeDeadline(definition, current, this.clock().getTime());
+      if (next !== current) {
+        room.challenge = compactChallengeState(next);
+        if (next.result === "correct" && room.game.activeCellId) {
+          const bridged = applyChallengeAward(next, room.game, room.challengeBridge ?? createChallengeBridgeContext(next.occurrence, room.game.activeCellId));
+          room.challenge = compactChallengeState(bridged.challenge);
+          room.game = bridged.game;
+          room.challengeBridge = bridged.context;
+        }
+        this.commit(room, "CHALLENGE_SERVER_DEADLINE", "server", { occurrence: next.occurrence, stage: next.stage, result: next.result });
+        return true;
+      }
+      return false;
+    }
     if (
       !room.buzzOpen ||
       !room.deadlineAt ||
@@ -1167,17 +1499,27 @@ export class AuthoritativeGameService {
     const capability = this.mustCapability(roomId, token);
     const room = this.mustRoom(roomId);
     this.expire(room);
-    const receiptKey = `${capability.uid}:${intent.intentId}`;
+    const receiptKey = `${capability.uid}\u0000${intent.intentId}`;
     const receiptHash = canonicalIntentHash(intent);
-    const seen = room.intentIds[receiptKey];
-    if (seen !== undefined) {
-      if (room.intentHashes?.[receiptKey] !== receiptHash)
+    const seen = this.store.receipt(roomId, capability.uid, intent.intentId);
+    if (seen) {
+      if (seen.requestHash !== receiptHash)
         throw new Error("INTENT_ID_REUSED");
       return {
-        revision: seen,
+        revision: seen.revision,
         replayed: true,
         projection: this.project(room, capability),
       };
+    }
+    const legacyKey = `${capability.uid}:${intent.intentId}`;
+    const legacyRevision = room.intentIds?.[receiptKey] ?? room.intentIds?.[legacyKey];
+    if (legacyRevision !== undefined) {
+      const legacyHash = room.intentHashes?.[receiptKey] ?? room.intentHashes?.[legacyKey];
+      // Legacy rooms stored canonical JSON. An exact match may replay, while
+      // altered payloads remain rejected instead of being rehashed blindly.
+      if (legacyHash !== legacyCanonicalIntentJson(intent) && legacyHash !== receiptHash)
+        throw new Error("INTENT_ID_REUSED");
+      return { revision: legacyRevision, replayed: true, projection: this.project(room, capability) };
     }
     if (intent.expectedRevision !== room.revision)
       return {
@@ -1186,6 +1528,8 @@ export class AuthoritativeGameService {
         stale: true,
         projection: this.project(room, capability),
       };
+    if (intent.type.startsWith("CHALLENGE_"))
+      return this.applyChallengeIntent(room, capability, intent, receiptKey, receiptHash);
     if (intent.type === "LOBBY_SET_READY") {
       this.require(capability, "player");
       if (room.game.lifecycle !== "LOBBY") throw new Error("READY_NOT_ALLOWED");
@@ -1208,6 +1552,8 @@ export class AuthoritativeGameService {
       };
     }
     if (intent.type === "BUZZ") {
+      if (room.challenge && !restoreChallengeState(room.challenge).continued)
+        throw new Error("CHALLENGE_ACTIVE_LEGACY_INTENT_BLOCKED");
       this.require(capability, "player");
       const member = room.members.find(
         (value) => value.uid === capability.uid,
@@ -1369,7 +1715,7 @@ export class AuthoritativeGameService {
           "START_NEXT_ROUND",
         ].includes(intent.type)
       ) {
-        Object.assign(room, before);
+        this.restoreRoom(room, before);
         this.holdContent(
           room,
           intent.type === "START_NEXT_ROUND"
@@ -1381,7 +1727,10 @@ export class AuthoritativeGameService {
             ? (intent.payload.cellId as string)
             : before.game.activeCellId,
         );
-      } else throw error;
+      } else {
+        this.restoreRoom(room, before);
+        throw error;
+      }
     }
     this.commit(
       room,
@@ -1399,6 +1748,8 @@ export class AuthoritativeGameService {
   }
   private async applyHostIntent(room: Room, intent: GameIntent): Promise<void> {
     const payload = intent.payload;
+    if (room.challenge && !restoreChallengeState(room.challenge).continued)
+      throw new Error("CHALLENGE_ACTIVE_LEGACY_INTENT_BLOCKED");
     // Older clients may still send OPEN_QUESTION. It remains harmless, but cannot
     // reset the timer which is now opened atomically with question visibility.
     if (intent.type === "OPEN_QUESTION") {
@@ -1533,6 +1884,10 @@ export class AuthoritativeGameService {
       return;
     }
     if (intent.type === "SELECT_CELL") {
+      if (room.challenge && restoreChallengeState(room.challenge).continued) {
+        room.challenge = undefined;
+        room.challengeBridge = undefined;
+      }
       room.game = reduceGame(room.game, {
         type: "SELECT_CELL",
         cellId: String(payload.cellId),
@@ -1547,7 +1902,7 @@ export class AuthoritativeGameService {
       await this.revealActiveCell(room);
       return;
     }
-    const events: Record<
+    const events: Partial<Record<
       Exclude<
         GameIntent["type"],
         | "LOBBY_SET_READY"
@@ -1565,9 +1920,9 @@ export class AuthoritativeGameService {
         | "SET_AUDIENCE_QUESTION_VISIBILITY"
         | "REVEAL_ANSWER"
         | "END_WITHOUT_WINNER"
-      >,
+    >,
       () => GameEvent
-    > = {
+    >> = {
       ROUND_READY: () => ({ type: "ROUND_READY" }),
       JUDGE_CORRECT: () => ({ type: "JUDGE_CORRECT" }),
       JUDGE_INCORRECT: () => ({ type: "JUDGE_INCORRECT" }),
@@ -1672,6 +2027,10 @@ export class AuthoritativeGameService {
     }
     room.game = reduceGame(room.game, { type: "LETTER_REVEALED" });
     if (questionMustBeSelectedNow) await this.assignQuestion(room);
+    if (room.activeQuestion?.challenge) {
+      this.activateChallenge(room);
+      return;
+    }
     if (
       !hasRevealedOccurrence(
         room.activeQuestionOccurrence,
@@ -1681,30 +2040,25 @@ export class AuthoritativeGameService {
       this.openQuestionBuzzer(room);
   }
   private async assignQuestion(room: Room): Promise<void> {
-    const questions = await this.questions(room.demo, room.questionSourceSnapshot);
+    const questions = await this.effectiveQuestions(room);
     const cell = room.game.board?.cells.find(
       (value) => value.id === room.game.activeCellId,
     );
     if (!cell || !room.questionSelection)
       throw new Error("QUESTION_SELECTION_NOT_INITIALIZED");
-    const promoted = promoteReservedQuestion(
-      questions,
-      room.questionSelection,
-      cell.id,
-    );
-    const selected =
-      promoted ??
-      (room.config.gameKind === "categories"
-        ? selectCategoryQuestion(
-            questions,
-            room.questionSelection,
-            cell.categoryId ?? "",
-          )
-        : selectMatchQuestion(
-            questions,
-            room.questionSelection,
-            cell.revealedLetter ?? cell.visibleValue ?? "",
-          ));
+    const selected = this.isChallengeSelection(room.questionSelection)
+      ? (() => {
+          const challengeQuestions = questions.filter((question) => question.modality !== "charades" && (!question.challenge || room.config.challenge!.mechanics.includes(question.challenge.kind)));
+          const promoted = promoteReservedChallengeQuestion(challengeQuestions, room.questionSelection, cell.id);
+          if (promoted) return promoted;
+          const slot = room.questionSelection.challengeBoardSlots.find((candidate) => candidate.slotId === `board:${room.boardSequence - 1}:${cell.id}`);
+          if (!slot) throw new Error("CHALLENGE_SLOT_MISSING");
+          return selectChallengeCategoryQuestion(challengeQuestions, room.questionSelection, slot, this.challengeRemainingSlots(room.questionSelection, slot.slotId));
+        })()
+      : (() => {
+          const promoted = promoteReservedQuestion(questions, room.questionSelection!, cell.id);
+          return promoted ?? (room.config.gameKind === "categories" ? selectCategoryQuestion(questions, room.questionSelection!, cell.categoryId ?? "") : selectMatchQuestion(questions, room.questionSelection!, cell.revealedLetter ?? cell.visibleValue ?? ""));
+        })();
     room.activeQuestion = selected.question as StoredQuestion;
     room.activeQuestionOccurrence = `${room.boardSequence}:${cell.id}:${selected.question.id}`;
     room.answerRevealedOccurrence = undefined;
@@ -1716,26 +2070,22 @@ export class AuthoritativeGameService {
     );
     if (!cell?.categoryId || !room.questionSelection || !room.game.board)
       throw new Error("CONTENT_EXHAUSTED");
-    const questions = await this.questions(
-      room.demo,
-      room.questionSourceSnapshot,
-    );
+    const questions = await this.effectiveQuestions(room);
     const alternatives = room.config.categories
       .filter((id) => id !== cell.categoryId)
       .sort();
-    let selected: ReturnType<typeof reserveQuestionForCell> | undefined;
+    let selected: { question: RuntimeQuestionV32; selection: MatchQuestionSelection | ChallengeCategoryQuestionSelection } | undefined;
     for (const categoryId of alternatives)
       try {
-        selected = reserveQuestionForCell(
-          questions,
-          room.questionSelection,
-          categoryId,
-          cell.id,
-        );
+        if (this.isChallengeSelection(room.questionSelection)) {
+          const challengeQuestions = questions.filter((question) => question.modality !== "charades" && (!question.challenge || room.config.challenge!.mechanics.includes(question.challenge.kind)));
+          let challengeSelection = room.questionSelection;
+          let slot = challengeSelection.challengeReserveSlots.find((candidate) => candidate.categoryId === categoryId && !challengeSelection.challengeCompletedSlotIds.includes(candidate.slotId) && !Object.values(challengeSelection.challengeSlotForCell).includes(candidate.slotId));
+          if (!slot) { slot = { slotId: `replacement:${room.boardSequence}:${cell.id}:${categoryId}:${challengeSelection.challengeReserveSlots.length}`, categoryId }; challengeSelection = addChallengeReplacementReserve(challengeQuestions, challengeSelection, slot); }
+          selected = reserveChallengeQuestionForCell(challengeQuestions, challengeSelection, slot, this.challengeRemainingSlots(challengeSelection, slot.slotId), cell.id);
+        } else selected = reserveQuestionForCell(questions, room.questionSelection, categoryId, cell.id);
         break;
-      } catch {
-        /* try next eligible category */
-      }
+      } catch { /* try next eligible category */ }
     if (!selected) throw new Error("CONTENT_EXHAUSTED");
     const label = room.config.categorySnapshot?.find(
       (item) => item.id === selected.question.categoryId,
@@ -1777,10 +2127,7 @@ export class AuthoritativeGameService {
       !room.game.board
     )
       throw new Error("CONTENT_EXHAUSTED");
-    const questions = await this.questions(
-      room.demo,
-      room.questionSourceSnapshot,
-    );
+    const questions = await this.effectiveQuestions(room);
     const used = new Set(
       room.game.board.cells.flatMap((item) =>
         item.kind === "letter"
@@ -1823,20 +2170,43 @@ export class AuthoritativeGameService {
   questionInventory() {
     const inventory = this.localFirestoreQuestionSource?.inventory;
     if (!inventory) return undefined;
+    const grouped = new Map<string, typeof inventory.categories>();
+    for (const category of inventory.categories) {
+      const id = canonicalCategoryId(category.id, CURRENT_CATEGORY_PROJECTION);
+      grouped.set(id, [...(grouped.get(id) ?? []), category]);
+    }
     return {
       source: inventory.source,
       huroofAvailable: inventory.huroofAvailable,
-      recommendedHuroofCategoryIds: inventory.recommendedHuroofCategoryIds,
-      categories: inventory.categories.map((category) => ({
-        id: category.id,
-        labelAr: category.labelAr,
-        sourceOnly: category.sourceOnly,
-        questionCount: category.questionCount,
-        heldQuestionCount: category.heldQuestionCount,
-        huroofQuestionCount: category.huroofQuestionCount,
-        categoryGameEligible: category.categoryGameEligible,
-        availability: category.availability,
-      })),
+      recommendedHuroofCategoryIds: inventory.recommendedHuroofCategoryIds && canonicalizeCategoryIds(inventory.recommendedHuroofCategoryIds, CURRENT_CATEGORY_PROJECTION),
+      categories: [...grouped].map(([id, members]) => {
+        const base = members.find((item) => item.id === id) ?? members[0];
+        if (id !== "tahadani-047" && id !== "tahadani-019") return {
+          id: base.id, labelAr: base.labelAr, sourceOnly: base.sourceOnly,
+          questionCount: base.questionCount, sourceQuestionCount: base.sourceQuestionCount,
+          unavailableReason: base.unavailableReason, heldQuestionCount: base.heldQuestionCount,
+          huroofQuestionCount: base.huroofQuestionCount, categoryGameEligible: base.categoryGameEligible,
+          availability: base.availability,
+        };
+        const records = this.localFirestoreQuestionSource!.questions.filter((question) => canonicalCategoryId(question.categoryId, CURRENT_CATEGORY_PROJECTION) === id);
+        const uniqueConcepts = new Set(records.filter((question) => question.modality !== "charades").map((question) => question.answerConceptId)).size;
+        const distinctCards = id === "tahadani-019"
+          ? new Set(records.map((question) => question.modality === "charades" ? `mime:${question.canonicalAnswer.normalize("NFKC").replace(/[\u064b-\u065f\u0640]/gu, "").replace(/\s+/gu, " ").trim().toLocaleLowerCase("ar")}` : `concept:${question.answerConceptId}`)).size
+          : records.length;
+        const eligible = uniqueConcepts >= 14;
+        return {
+          id,
+          labelAr: id === "tahadani-047" ? "عملات" : id === "tahadani-019" ? "كرتون / ولا كلمة" : base.labelAr,
+          sourceOnly: members.every((item) => item.sourceOnly),
+          questionCount: distinctCards,
+          sourceQuestionCount: members.reduce((sum, item) => sum + (item.sourceQuestionCount ?? item.questionCount), 0),
+          unavailableReason: eligible ? undefined : base.unavailableReason,
+          heldQuestionCount: members.reduce((sum, item) => sum + item.heldQuestionCount, 0),
+          huroofQuestionCount: records.filter((question) => question.modality === "classic" && Boolean(question.targetLetter)).length,
+          categoryGameEligible: eligible,
+          availability: eligible ? "ready" : records.length ? "insufficient_questions" : "held_only",
+        };
+      }),
     };
   }
   private firestoreQuestions(snapshot?: string): StoredQuestion[] {
@@ -1882,6 +2252,41 @@ export class AuthoritativeGameService {
       );
     return this.fileQuestions(demo);
   }
+  /**
+   * The same sidecar materializer runs before every board allocation and
+   * replacement.  It preserves ordinary delivery while denying original map
+   * prompt/media fields to interactive candidates.
+   */
+  private async effectiveQuestions(room: Room): Promise<StoredQuestion[]> {
+    const sourceQuestions = await this.questions(room.demo, room.questionSourceSnapshot);
+    const questions=room.localRematch?this.excludePriorQuestions(sourceQuestions,room.localRematch):sourceQuestions;
+    const materialized = !this.mapVariants.length ? questions : materializeMapPresentation(
+      questions,
+      room.config.mapPresentation ?? "ordinary",
+      this.mapVariants,
+      (question) => createHash("sha256").update(canonicalChallengeJson(question)).digest("hex"),
+      (binding) => this.challengeDefinitions.resolve(binding.definition),
+    ) as StoredQuestion[];
+    return this.questionsForRoom(materialized, room.config.challenge);
+  }
+  /** Creation must see every scoped challenge row when a client offers the
+   * protocol, so an unsupported mechanic/schema cannot be hidden by filtering. */
+  private questionsForChallengeAdmission(
+    questions: readonly StoredQuestion[],
+    challenge: ChallengeCapabilityOffer | undefined,
+  ): StoredQuestion[] {
+    return challenge ? [...questions] : questions.filter((question) => !question.challenge);
+  }
+  /** A room without negotiated challenge capability is an ordinary room, even
+   * when one selected category has both ordinary and challenge children. */
+  private questionsForRoom(
+    questions: readonly StoredQuestion[],
+    challenge: ChallengeCapabilityOffer | undefined,
+  ): StoredQuestion[] {
+    return !challenge
+      ? questions.filter((question) => !question.challenge)
+      : questions.filter((question) => !question.challenge || challenge.mechanics.includes(question.challenge.kind));
+  }
   private questionsSync(demo: boolean, snapshot?: string): StoredQuestion[] {
     if (snapshot) return this.firestoreQuestions(snapshot);
     if (demo && this.localFirestoreQuestionSource)
@@ -1921,18 +2326,22 @@ export class AuthoritativeGameService {
     categories: string[],
     modality: MatchConfig["modality"],
     gameKind: MatchConfig["gameKind"] = "huroof",
+    questions = this.questionsSync(demo),
+    categoryProjectionVersion?: CategoryProjectionVersion,
   ): void {
     if (modality === "charades") return;
     try {
       if (gameKind === "categories")
-        createCategoryQuestionSelection(this.questionsSync(demo), {
+        createCategoryQuestionSelection(questions, {
           categories,
+          categoryProjectionVersion,
           modality: "classic",
           seed: 0,
         });
       else
-        createMatchQuestionSelection(this.questionsSync(demo), {
+        createMatchQuestionSelection(questions, {
           categories,
+          categoryProjectionVersion,
           modality,
           seed: 0,
           reservePerLetter: demo ? 1 : 3,
@@ -2034,14 +2443,6 @@ export class AuthoritativeGameService {
     intentHash?: string,
   ): void {
     room.revision++;
-    if (intentId) {
-      room.intentIds[intentId] = room.revision;
-      if (intentHash)
-        room.intentHashes = {
-          ...(room.intentHashes ?? {}),
-          [intentId]: intentHash,
-        };
-    }
     const audit = {
       revision: room.revision,
       type,
@@ -2049,9 +2450,17 @@ export class AuthoritativeGameService {
       actor,
       payload,
     };
-    room.audit.push(audit);
-    this.store.save(room);
-    this.store.event(room, audit, audit.at);
+    room.audit = [...room.audit.slice(-99), audit];
+    const divider = intentId?.indexOf("\u0000") ?? -1;
+    this.store.commit(room, audit, audit.at, divider > 0 && intentHash
+      ? { actorUid: intentId!.slice(0, divider), intentId: intentId!.slice(divider + 1), requestHash: intentHash }
+      : undefined);
+  }
+  /** Restore an in-place transaction snapshot, including optional fields absent before a rejected mutation. */
+  private restoreRoom(room: Room, before: Room): void {
+    const target = room as unknown as Record<string, unknown>;
+    for (const key of Object.keys(target)) if (!(key in before)) delete target[key];
+    Object.assign(room, before);
   }
   project(room: Room, capability: Capability): ProjectionEnvelope {
     const member = room.members.find((value) => value.uid === capability.uid);
@@ -2116,6 +2525,8 @@ export class AuthoritativeGameService {
           difficulty: room.config.difficulty,
           mode: room.config.mode,
           showQuestionOnAudience: room.config.showQuestionOnAudience !== false,
+          labelledColours: room.config.labelledColours === true,
+          ...(room.config.challenge ? { challenge: room.config.challenge } : {}),
         },
         audienceQuestionVisible: room.config.showQuestionOnAudience !== false,
         canStart: !startBlockedReason,
@@ -2203,6 +2614,24 @@ export class AuthoritativeGameService {
             },
           }),
     };
+    if (room.challenge && room.activeQuestion?.challenge) {
+      const definition = this.challengeDefinitions.resolveBound(room.activeQuestion);
+      const state = restoreChallengeState(room.challenge);
+      const recipient = participantRecipient(state, capability.uid, capability.role);
+      const requiredTeam = teamForChallengeRecipient(state, recipient);
+      if (capability.role === "player" && requiredTeam && member?.team !== requiredTeam)
+        throw new Error("CHALLENGE_ASSIGNMENT_STALE");
+      projection.challenge = projectChallenge(definition, state, recipient);
+      // A challenge projection replaces generic question/audit fields so no
+      // canonical answer, media binding, or submitted answer can leak.
+      return {
+        roomId: room.id,
+        revision: room.revision,
+        serverTime: this.now(),
+        role: capability.role,
+        projection,
+      };
+    }
     const revealed = hasRevealedOccurrence(
       room.activeQuestionOccurrence,
       room.answerRevealedOccurrence,
@@ -2210,6 +2639,9 @@ export class AuthoritativeGameService {
     const visibleMedia = revealed
       ? room.activeQuestion?.answerMedia ?? room.activeQuestion?.media
       : room.activeQuestion?.media;
+    // The external descriptor is delivered only through the authorized media ticket.
+    const visibleMediaBinding = visibleMedia ? { ...visibleMedia } : undefined;
+    if (visibleMediaBinding) delete visibleMediaBinding.youtube;
     const sharedAnswerVisible =
       capability.role !== "player" &&
       (capability.role === "host" || room.config.showQuestionOnAudience !== false) &&
@@ -2223,8 +2655,8 @@ export class AuthoritativeGameService {
         ...(capability.role !== "player" &&
         (capability.role === "host" ||
           room.config.showQuestionOnAudience !== false) &&
-        visibleMedia
-          ? { media: visibleMedia }
+        visibleMediaBinding
+          ? { media: visibleMediaBinding }
           : {}),
         ...(sharedAnswerVisible
           ? { revealedAnswer: room.activeQuestion.canonicalAnswer }
@@ -2236,8 +2668,8 @@ export class AuthoritativeGameService {
           ...(room.activeQuestionOccurrence ? { occurrence: room.activeQuestionOccurrence } : {}),
           headerAr: room.activeQuestion.headerAr,
           promptAr: room.activeQuestion.promptAr,
-          ...(questionVisible && visibleMedia
-            ? { media: visibleMedia }
+          ...(questionVisible && visibleMediaBinding
+            ? { media: visibleMediaBinding }
             : {}),
           ...(sharedAnswerVisible
             ? { revealedAnswer: room.activeQuestion.canonicalAnswer }
@@ -2265,3 +2697,5 @@ export class AuthoritativeGameService {
     };
   }
 }
+
+

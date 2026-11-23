@@ -1,0 +1,48 @@
+{
+  "status": "Root accepts bounded INERT R2 SOURCE/PURE-HOST repair closure WITH LIMITS; no source/schema application or COMP02/E3/Part2 acceptance",
+  "at": "2026-10-17T23:02:09.710024+03:00",
+  "packetSha256": "e218f70deb1110dd1c3be0d552d28b57f1f3105f35f5c0ea8a7b48877a1c699b",
+  "reviews": {
+    "database": {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\part2-resume-20261017\\database\\COMP01-R2-EXACT-REVIEW.md",
+      "sha256": "e2bbeb320cf4d7a2cc720ca3a7180a72745d25f36026acac773ad33bdc3e5b8c"
+    },
+    "security": {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\part2-resume-20261017\\security\\COMP01-R2-EXACT-REVIEW.md",
+      "sha256": "d5a519cb57fab9f2ca94b0f4dfa9d87a52e1195efe74f223fb81a86e34ea9957"
+    }
+  },
+  "finalFunctionalIdentityChecks": [
+    {
+      "path": "03-closed-wrapper.sql",
+      "sha256": "b1d68d008d3381cae5de96b628b98dfa446c8c2efad8344444f75006f50f1095",
+      "matches": true
+    },
+    {
+      "path": "retained-transaction.ts",
+      "sha256": "053149a6e2856e90ed1d15026456eb5cfdac2d8956abee7564f2679f2bd97287",
+      "matches": true
+    }
+  ],
+  "closedFindings": [
+    "DB-COMP01-01 / SEC-COMP01-01 typed terminal SQL-null versus JSON-null correspondence",
+    "SEC-COMP01-02 actual retained host reaches independent committed retry after fresh-entrypoint revocation"
+  ],
+  "evidence": {
+    "rootPacketMembersVerified": 256,
+    "authorFocusedPureChecks": 125,
+    "authorNoEmitExit": 0,
+    "rootUnchangedActualHostReplay": "10/10 pass; baseline7fail/3pass preserved; mocked permission before function body",
+    "historicalCoreReuseOnly": 241
+  },
+  "notProven": [
+    "PostgreSQL parsing/execution/types/trigger/FK/role behavior",
+    "native/physical/deferred/hash/driver complete capacity",
+    "effective installed rights/custody/lock/race/rollback",
+    "UTC/history/signedcursor/all20routes/UI/runtime",
+    "genuine content issuer/certificates",
+    "whole E3/Part2/finalGate/production"
+  ],
+  "next": "same Forge P0 raw-value source-feasibility decision sheet, separately frozen and domain reviewed before any representation amendment",
+  "R6": "unchanged"
+}

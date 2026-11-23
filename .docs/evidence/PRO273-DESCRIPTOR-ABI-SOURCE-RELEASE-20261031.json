@@ -1,0 +1,21 @@
+{
+  "assignmentId": "PRO311-HISTORY-FORGE",
+  "taskId": "PRO273-SEL",
+  "disposition": "RELEASED FOR BOUNDED SOURCE IMPLEMENTATION ONLY",
+  "abiPath": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\planner\\PRO311-DESCRIPTOR-CORE-ABI-20261031.md",
+  "abiSha256": "694893c4bf4ad8221101926bfa2045286a467d37d4cdff3eae54c32e42563524",
+  "review": "Database PRO311-PAIR-FUNDING-REVIEW and Security PRO311-PAIR-AUTHORITY-REVIEW conditional concurrence, 31 October 2026",
+  "rootAdoption": "Adopt QUALIFIER_DESCRIPTOR constructor kind and QUALIFIER_DESCRIPTOR charge purpose; observerGroupProof lives in separately protected immutable binding, not core. Preserve closed provenance payload and add exact separate linkage.",
+  "conditions": [
+    "Replace legacy trust validator and reserve path together; no fallback; extend exact expectation/context/parser/receiver/receipt branches.",
+    "Load publication trust by exact expectation trustId/trustGeneration; match independent trustRecordHash, publisher/session, validity and seven-field scope. Do not substitute input-slot trust. Match core hash across expectation/bootstrap/calculation and evidence hash across capture/expectation/bootstrap/trust.",
+    "Recompute charge binding from exact protected kind/event/claim/expectation and purpose; bind same descriptor, expectation, attempt, session, input, event and charge using restrictive keys; use actual constructor transaction xid.",
+    "Reject duplicate decoded raw keys only for new descriptor envelope/core before JSONB; retain other parser behavior. Apply bounded string representability checks.",
+    "Require independent proof funding without circular dependency on future descriptor-dependent slot; retain existing reservation/trust/input-bound comparisons at use.",
+    "Bind exact allocation ID/core and descriptor identity using restrictive composite references; enforce principal OID and stored name, epochs, scope, independent worker funding and actual use revalidation.",
+    "Authenticated bounded retry is read-only and cannot redispatch, reset or debit; retain original bytes/provenance, spent charges, fences and unknown occupancy.",
+    "Run affected inert checks and independent Database/Security changed-byte review and Root load-bearing reproduction before acceptance."
+  ],
+  "holds": "R6 STOP; both public reader guards, installation aborts, accepted evidence and spent admissions remain; SQL/native/DB/service/credential/network/install/deploy not authorized.",
+  "completion": "Source only, not final acceptance or full task completion."
+}

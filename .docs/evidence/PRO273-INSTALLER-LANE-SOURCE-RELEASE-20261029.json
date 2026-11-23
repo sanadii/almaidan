@@ -1,0 +1,73 @@
+{
+  "milestone": "PRO273-SEL",
+  "assignment": "PRO311-HISTORY-FORGE",
+  "status": "INSTALLER_ROOT_SOURCE_COMPLETION_RELEASED_NOT_ACCEPTANCE",
+  "releasedUtc": "2026-10-29T01:07:48.7745918Z",
+  "parentRelease": "PRO273-CP-ARENA-SOURCE-AMENDMENT-RELEASE-20261029.json",
+  "ownedPaths": 31,
+  "newPathsAdded": 0,
+  "database": {
+    "path": "output/pro311-history-20261027/database/PRO273-INSTALLER-LANE-DISPOSITION-20261029.md",
+    "sha256": "5ba36bd9491907eb5b29541d2c4f44628395f871f156b4004082518ba9399834"
+  },
+  "security": {
+    "path": "output/pro311-history-20261027/security/PRO273-INSTALLER-LANE-DISPOSITION-20261029.md",
+    "sha256": "c1534263ae7b28060e12c7f4cec1bcf8e9d3b2afdb333a3500a58cbf7d82c268"
+  },
+  "expectationLane": {
+    "fields": [
+      "namespace",
+      "project",
+      "deployment",
+      "environment",
+      "kind"
+    ],
+    "kind": "INSTALLER_ROOT",
+    "rule": "Immutable independently approved exact installation lane; no default/wildcard/business inference/self-publication. Include in expectation semantic Core; authority/input/capture/charge remain provenance."
+  },
+  "trustAndWire": "Preserve five-key INSTALL_OBSERVATION lane and exact23-field wire/18-field Installation. Add only INSTALLER_ROOT branch, controlKey=expectationId, exact target principal/OID/PID/start/host/boot/tree/epochs, current independent trust/installation/source/physical proof and original capture/evidence.",
+  "slotBinding": {
+    "fields": [
+      "reservationId",
+      "expectationId",
+      "credentialEpoch",
+      "launchEpoch",
+      "phase",
+      "expectedEventKey",
+      "bindingKind"
+    ],
+    "rule": "Restrictive permanent reservation/expectation FKs; one reservation one binding. Same targetKind INSTALLER_ROOT and targetControlKey expectationId through provision/claim/assert/read-limit. Constructor and observer input/process funding remain distinct.",
+    "relation": "Pro273InstallerSlotBinding",
+    "kinds": [
+      "INSTALLER_OBSERVATION",
+      "INSTALLER_CONSTRUCTOR_INPUT"
+    ],
+    "observationPhase": "INSTALL_PROCESS"
+  },
+  "registration": "Register independently approved expectation and reservation before claims. Prefer constructorInputReservationId plus immutable expected phase/event; derive exact committed claim at use. No expectation->claim->binding->expectation cycle, no fake business PrincipalLease.",
+  "observationFunction": "pro273_installer_accept_process_observation(TEXT,TEXT,JSONB,BYTEA) RETURNS TEXT",
+  "observationArgs": [
+    "expectationId",
+    "inputClaimId",
+    "closedObservation",
+    "originalCapturedBytes"
+  ],
+  "observationOwner": "pro262_capacity_owner",
+  "observationPrivilege": "Fixed independent install-observer capability only, fixed pg_catalog path; no installer/publisher/supervisor/producer direct DML or writer grant.",
+  "observationRecord": "Immutable Pro273InstallerProcessObservation key expectationId/credentialEpoch/launchEpoch; unique receiptId/observationId; restrictive expectation/trust/claim FKs and exact actual observer/target/expected-lane/install/original capture+evidence provenance. Observer OID differs from installer.",
+  "consumers": "read_installer_input and bootstrap constructor independently rejoin SAME actual observation/lane/expected target/epochs/current trust, caller/session/backend/source/physical/install and temporal state; separately validate constructor input claim/event/charge/preinput limit/delivery. Role membership alone is not physical authority.",
+  "locks": "global -> physical -> current trust/bootstrap -> expectation -> binding/slot -> claim/observation/receipt, NOWAIT cross-boundary, compatible read fences, fresh time/currentness after waits",
+  "retry": "Exact immutable committed byte/claim/epoch retry returns original receipt before fresh target liveness where required; conflicting bytes/claim/scope deny, no duplicate charge. Unknown/cancel/expiry never release.",
+  "requiredChecks": [
+    "Exact installer lane and old three kinds unchanged",
+    "Role-only or missing/wrong/copied observation/target/trust/epoch/group/event denies",
+    "Observer and constructor input identity separation",
+    "Registration possible without circular FK",
+    "Exact-byte retry/conflict/no second charge",
+    "Actual current reader/constructor agreement and before-input denial"
+  ],
+  "runtimeAuthority": false,
+  "nativeSqlBuild": "NOT_RUN",
+  "fullTaskDone": false,
+  "credit": 0
+}

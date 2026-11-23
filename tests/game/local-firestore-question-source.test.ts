@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { createHash } from "node:crypto";
 import { loadLocalFirestoreQuestionSource, normalizeImportedQuestion } from "../../server/local-firestore-question-source.js";
 
 const loadFixture = async () => {
@@ -11,6 +12,37 @@ const loadFixture = async () => {
   const candidates = new Set(reconciliation.dispositions.filter((entry) => entry.disposition === "effective_candidate" && entry.technicalEligibility === "candidate").map((entry) => entry.contentHash));
   return (await readFile("tmp/bundle-import-20260908/bundle-question-import.documents.jsonl", "utf8")).split(/\r?\n/).filter(Boolean).map((line) => JSON.parse(line)).filter((entry) => entry.path.includes("/questions/") && candidates.has(entry.data.contentHash)).sort((left, right) => left.path.localeCompare(right.path));
 };
+
+test("local DB answers retain the primary alongside all configured aliases", async () => {
+  const [fixture] = await loadFixture();
+  const canonical = (value: unknown): unknown => Array.isArray(value)
+    ? value.map(canonical)
+    : value && typeof value === "object"
+      ? Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b)).map(([key, child]) => [key, canonical(child)]))
+      : value;
+  const hash = (value: unknown) => createHash("sha256").update(JSON.stringify(canonical(value))).digest("hex");
+  const run = (aliases: unknown[], secondary: unknown[] = [], legacy: unknown[] = []) => {
+    const entry = structuredClone(fixture);
+    entry.data.raw.accepted_answers = aliases;
+    entry.data.raw.acceptedAnswers = secondary;
+    entry.data.raw.accepted = legacy;
+    entry.data.rawCanonicalSha256 = hash(entry.data.raw);
+    entry.data.contentHash = hash({
+      kind: entry.data.recordKind,
+      raw: entry.data.raw,
+      sourceCategoryIdentifiers: Array.isArray(entry.data.sourceCategoryIdentifiers) ? entry.data.sourceCategoryIdentifiers : [],
+      sourceReviewState: entry.data.sourceReviewState,
+      approval: entry.data.approval,
+    });
+    return normalizeImportedQuestion({ path: entry.path, exists: true, data: entry.data }, entry);
+  };
+  const withAliases = run(["اسم بديل", "اسم بديل"], ["اسم ثان"], ["اسم قديم"]);
+  assert.ok(withAliases);
+  assert.deepEqual(new Set(withAliases.acceptedAnswers), new Set([withAliases.canonicalAnswer, "اسم بديل", "اسم ثان", "اسم قديم"]));
+  const withoutAliases = run([]);
+  assert.ok(withoutAliases);
+  assert.deepEqual(withoutAliases.acceptedAnswers, [withoutAliases.canonicalAnswer]);
+});
 
 test("local DB normalizer recomputes pinned raw identity and ignores diagnostic semantic text", async () => {
   const [fixture] = await loadFixture();

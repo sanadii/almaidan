@@ -1,0 +1,56 @@
+{
+  "evidence": [
+    {
+      "sha256": "f6bdaff277616441b439bc7b006c3106d2d23c1239acf93bc50633ab9d1ba806",
+      "path": "D:/projects/huroof_wa_oloof/output/pro273-modes-20261027/forge/r1/BR-CORRECTION-FREEZE.json"
+    },
+    {
+      "sha256": "7e73ae264f22ffc5f708d3e7ccb8350f9c83d3291edd8045b173607fd5ee8345",
+      "path": "D:/projects/huroof_wa_oloof/output/pro273-modes-20261027/forge/r1/BR-CORRECTION-REVIEW-MATRIX.md"
+    },
+    {
+      "sha256": "1d43b9af466fe9ded12f3859570e75e1a7416aadd05d085705a6767b3ad294c0",
+      "path": "D:/projects/huroof_wa_oloof/output/pro273-modes-20261027/database/BOUNDED-R1-FINAL-REVIEW.md"
+    },
+    {
+      "sha256": "018209d1046cdf381125db3555c4a6a9d5b73f7cee1ab2499e3979d798670272",
+      "path": "D:/projects/huroof_wa_oloof/output/pro273-modes-20261027/security/BOUNDED-R1-FINAL-REVIEW.md"
+    },
+    {
+      "sha256": "4d0ba84a2ef8ea7fdd32660d819fe6d1572f60bbb4d0930d71ccfb8224b66d95",
+      "path": "D:/projects/huroof_wa_oloof/output/pro273-modes-20261027/database/BR-CORRECTION-FINAL-REVIEW.md"
+    },
+    {
+      "sha256": "d79a0ce158dd9834b30321c97f15d98858bb77daca468fc018353451dd53e28e",
+      "path": "D:/projects/huroof_wa_oloof/output/pro273-modes-20261027/security/BR-CORRECTION-FINAL-REVIEW.md"
+    },
+    {
+      "sha256": "e47f78a51e6f01c393b699811baa47fedab2549e090d1632801f71cc73c81e33",
+      "path": "D:/projects/huroof_wa_oloof/output/pro273-modes-20261027/ROOT-BR-CORRECTION-REPRODUCTION.json"
+    },
+    {
+      "sha256": "648e8d28b126a41e446203f17e276746d3a8c7db8ccfc386b494c4f1446122d6",
+      "path": "D:/projects/huroof_wa_oloof/output/pro273-modes-20261027/ROOT-BR-CORRECTION-REPRODUCTION.log"
+    }
+  ],
+  "holds": [
+    "R6 STOP",
+    "fresh challenge initialization and paid launch denied",
+    "upstream board reconciliation and family capacity/selection equivalence unproved",
+    "fresh allocator/replacement/letter/surprise and category continuation denied",
+    "genuine supplier/policy/content evidence and map/catalog capacity unproved",
+    "guarded06/native32/installed SQL/ACL/transaction/runtime/human acceptance unproved"
+  ],
+  "status": "BOUNDED_SOURCE_SAFETY_REPAIR_ACCEPTED_FULL_TASK_HELD",
+  "rootCheck": "Affected actual integration2/2 with SDK/network guard, zero identity drift",
+  "acceptedUtc": "2026-10-27T18:39:52Z",
+  "originalRequiredSetComplete": false,
+  "sourceIdentityJoin": "56 source/dependency and14 bound evidence identities, zero mismatch; correction changes3 and retains53",
+  "reviews": "Database and Security BR corrections close their two findings; unchanged bounded conclusions retained",
+  "task": "PRO-273",
+  "completionCredit": 0,
+  "fullTaskDone": false,
+  "next": "Continue selected PRO311 V3 after source ownership transfer and fresh dependency join; PRO273 stays In Progress/Hold",
+  "workspace": "C:/Users/User/.codex/worktrees/huroof-enta-integration/huroof_wa_oloof",
+  "scope": "Bounded Source repair only; earlier check identities and scopes preserved"
+}

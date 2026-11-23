@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "decision": "APPROVED",
+  "authority": "human-owner",
+  "date": "2026-10-04",
+  "reviewedUrl": "http://127.0.0.1:4173/",
+  "exactMessage": "Home page is good now\nensure that the rest of the implementation follow the same design\nand continue",
+  "history": {
+    "path": "design/evidence/history/0026-homepage-approved.md",
+    "sha256": "37C79F145E04A193A84E66021FE324D2C712B5371669D89CD42575E135CFF2F7"
+  },
+  "immutablePredecessor": {
+    "path": "design/evidence/history/0025-product-game-names.md",
+    "sha256": "16D287B0D5ED3A5CB5C2908214351495951BC2F1096985FAB611C1F64117CF80"
+  },
+  "approvedManifest": {
+    "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\output\\homepage-approved-0026\\APPROVED-BUILD.json",
+    "sha256": "7C8DDE4CEEF7C31ECD4E74B1CD9495309DEDB1CB9C7BA92AFDD7806EFB86870C"
+  },
+  "scope": "Homepage visual direction accepted; same-design application expansion authorized. Production/content/payment gates separate."
+}

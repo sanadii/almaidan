@@ -1,0 +1,12 @@
+import { useEffect, useRef, useState } from 'react';
+import type { User } from 'firebase/auth';
+import { competitionErrorText, competitionRequest } from './competition-client';
+import { parseMediaRow } from './competition-page-client';
+import { ProtectedMedia, type PublicMedia } from './protected-media';
+export function CompetitionGradingMedia({ ids, user, token, gameId, roundId, epoch, onUnavailable }: { ids: string[]; user?: User; token?: string; gameId: string; roundId: string; epoch: string; onUnavailable: (error: unknown) => void }) {
+  const [selected, setSelected] = useState(ids[0] ?? ''), [state, setState] = useState<{ key: string; pin: PublicMedia | null; error: unknown }>({ key: '', pin: null, error: null }), fence = useRef(0), unavailable = useRef(onUnavailable); unavailable.current = onUnavailable;
+  const id = ids.includes(selected) ? selected : ids[0] ?? '', key = [user?.uid, gameId, roundId, id, epoch].join(':');
+  useEffect(() => { const generation = ++fence.current, controller = new AbortController(); setState({ key, pin: null, error: null }); if (id && Boolean(user) !== Boolean(token)) void competitionRequest(token ? `/capability/media/${id}/metadata` : `/matches/${gameId}/rounds/${roundId}/grading/media/${id}/metadata`, token ? { token } : { user: user! }, controller.signal).then(value => { const pin = parseMediaRow(value); if (pin.id !== id) throw new Error('MALFORMED_RESPONSE'); if (generation === fence.current && !controller.signal.aborted) setState({ key, pin, error: null }); }).catch(error => { if (generation === fence.current && !controller.signal.aborted) { setState({ key, pin: null, error }); unavailable.current(error); } }); return () => { fence.current++; controller.abort(); }; }, [key, user, token]);
+  const current = state.key === key ? state : { key, pin: null, error: null };
+  return <section><label>وسائط الإجابة<select value={id} onChange={event => setSelected(event.target.value)}>{ids.map((value, ordinal) => <option key={value} value={value}>وسائط {ordinal + 1}</option>)}</select></label>{current.pin ? <ProtectedMedia pin={current.pin} authority={token ? { token, competition: true } : { user, gameId, gradingRoundId: roundId, competition: true }} epoch={key} label="وسائط دليل الحكم" onUnavailable={onUnavailable} /> : current.error ? <p role="alert">{competitionErrorText(current.error)}</p> : id ? <p role="status">جارٍ تحميل وسائط الإجابة…</p> : null}</section>;
+}

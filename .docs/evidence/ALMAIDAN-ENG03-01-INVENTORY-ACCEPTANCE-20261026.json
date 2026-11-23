@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 1,
+  "task": "ALMAIDAN-ENG03-01",
+  "parentIssue": "PRO-259",
+  "decision": "ACCEPTED_CURRENT_SOURCE_INVENTORY_WITH_LIMITS",
+  "acceptedAtKuwait": "2026-10-26T12:53:19.003912+03:00",
+  "owner": "Root existing integration coordinator",
+  "authority": "Direct owner continue after accepted ENG02; ROOT-INTAKE.json, canonical technical plan ENG03-01",
+  "games": [
+    "الخليّة / HUROOF",
+    "إنت صح / ENTA"
+  ],
+  "scope": "Exact current-source inventory and both-engine22obligation producer-consumer/role/routine/profile baseline plus bounded future3file proposal, no application/schema implementation",
+  "candidate": {
+    "freezeSHA256": "ed8ef34d476091efab32960cd823ab15f30e99b3f6a3da144ac2e8133c6366e0",
+    "crosswalkSHA256": "bcf9cfc6c1a510443ef20d4895b421855c1344a30074abb523a05698d7b9b5ff",
+    "reportSHA256": "9e589150689a2e9a6601ad3ad52ca546f896966f966217b01621977d15f561dc",
+    "frozenMembers": 44
+  },
+  "reviews": {
+    "database": {
+      "metadataPath": "output\\pro259-eng03-01-20261026\\database\\FINAL-METADATA-R3.json",
+      "metadataSHA256": "8b44149a67c364e972055a4f686d074f4c6e899fa3c5e01c30f84440b60b6d77",
+      "reviewPath": "output\\pro259-eng03-01-20261026\\database\\FINAL-REVIEW-R3.md",
+      "reviewSHA256": "33d1d9b9e6867ab6fd74e55dc1b070b883481fdf42feec750e5592bd6891a9f0",
+      "verdict": "CONCUR",
+      "freezeClaim": "ed8ef34d476091efab32960cd823ab15f30e99b3f6a3da144ac2e8133c6366e0",
+      "requiredFindings": []
+    },
+    "security": {
+      "metadataPath": "output\\pro259-eng03-01-20261026\\security\\FINAL-METADATA-R3.json",
+      "metadataSHA256": "35a08de53e87c15febc818c8f450e13905fa699352f7a5e72305d62264914587",
+      "reviewPath": "output\\pro259-eng03-01-20261026\\security\\FINAL-REVIEW-R3.md",
+      "reviewSHA256": "866c0d809f6ec431f80ab45be23e8bac7ffa067ba3f5451d7237c40289901b8a",
+      "verdict": "CONCUR",
+      "freezeClaim": "ed8ef34d476091efab32960cd823ab15f30e99b3f6a3da144ac2e8133c6366e0",
+      "requiredFindings": []
+    }
+  },
+  "requiredFindingsRemaining": [],
+  "checks": {
+    "lexicalActualHelper": {
+      "passed": 13,
+      "receipt": "LEXICAL-CONTROLS-R2.json",
+      "retained": true,
+      "meaning": "bounded lexical controls, not SQLsyntax/AST/runtime proof"
+    },
+    "R2Structure": {
+      "passed": 8,
+      "receipt": "STATIC-IDENTITY-CHECK-R2.json",
+      "retained": true,
+      "meaning": "identity/structure only"
+    },
+    "R3AffectedIntegration": {
+      "passed": 12,
+      "receipt": "R3-SOURCE-BASELINE-CHECK.json",
+      "meaning": "cohort/provenance/manifest joins, semantic source audits separate"
+    },
+    "domainSourceJoins": {
+      "passed": 180,
+      "retained": 178,
+      "freshCorrected": 2,
+      "originalFailuresPreserved": true,
+      "meaning": "exact hash/range/excerpt joins; not180behavioral tests"
+    },
+    "rootActualHelperSubset": {
+      "passed": 2,
+      "receipt": "ROOT-R2-ACTUAL-HELPER-CHECK.json",
+      "meaning": "independent actual int7settings/deferredtrigger subset, no extra unique suite credit"
+    },
+    "sourceBaseline": {
+      "obligations": 22,
+      "cohorts": {
+        "Root": 1,
+        "Database": 11,
+        "Security": 10
+      },
+      "citationOccurrences": 714,
+      "meaning": "audited Sourcebaseline; repeated citations are not independent tests"
+    },
+    "sourceIdentity": {
+      "prismaTextFiles": 30,
+      "SQLFiles": 28,
+      "acceptedPins": 60,
+      "priorRootSignatureJoins": 289,
+      "compatibleOriginalPassesRetained": true
+    },
+    "freezeContainment": {
+      "members": 44,
+      "mismatches": 0,
+      "integrationGitStatusUnchanged": true
+    }
+  },
+  "evidence": {
+    "output/pro259-eng03-01-20261026/R3-REVIEW-FREEZE.json": "ed8ef34d476091efab32960cd823ab15f30e99b3f6a3da144ac2e8133c6366e0",
+    "output/pro259-eng03-01-20261026/SOURCE-BASELINE-CROSSWALK-R3.json": "bcf9cfc6c1a510443ef20d4895b421855c1344a30074abb523a05698d7b9b5ff",
+    "output/pro259-eng03-01-20261026/ENG03-01-SOURCE-BASELINE-R3.md": "9e589150689a2e9a6601ad3ad52ca546f896966f966217b01621977d15f561dc",
+    "output/pro259-eng03-01-20261026/R3-SOURCE-BASELINE-CHECK.json": "811389ea7edd88e7badf75959c993b650b5dde0690aa2eb554fa0d545c1f6e1e",
+    "output/pro259-eng03-01-20261026/ROOT-FINAL-REVIEW-JOINS.json": "b9e92d1170c6f8c7716dd5a250f0f063f925f2143b76db9326c8f82a373d1a7b",
+    "output/pro259-eng03-01-20261026/ROOT-R3-FREEZE-CONTAINMENT.json": "60792abacf597dd01e41eff9e6b94e26b454be32b7d49f59d48189383d7fd51d",
+    "output/pro259-eng03-01-20261026/ROOT-DOMAIN-FACT-JOINS.json": "d64e87ee4a590ee7dabdfc1c9b88dc049ec1d800d575bbdf48fcd6d5d3cdc0a5",
+    "output/pro259-eng03-01-20261026/ROOT-DOMAIN-FACT-JOINS-R1.json": "6ca5e7e2aad30e8af79ead7216decdacb5dcc74ccf677625a05f54224427dd8f",
+    "output/pro259-eng03-01-20261026/ROOT-R2-ACTUAL-HELPER-CHECK.json": "8ceeef3d21692ae172493f689cbd3906d7b5e24f37dad59bee736b97e6d74f37",
+    "output/pro259-eng03-01-20261026/ROOT-O01-SOURCE-FACTS.json": "5261f6291bb619c074d27194d3aa049de30692ff9a690f33babd2e26c24dfeaf",
+    "output/pro259-eng03-01-20261026/database/FINAL-REVIEW-R3.md": "33d1d9b9e6867ab6fd74e55dc1b070b883481fdf42feec750e5592bd6891a9f0",
+    "output/pro259-eng03-01-20261026/database/FINAL-METADATA-R3.json": "8b44149a67c364e972055a4f686d074f4c6e899fa3c5e01c30f84440b60b6d77",
+    "output/pro259-eng03-01-20261026/security/FINAL-REVIEW-R3.md": "866c0d809f6ec431f80ab45be23e8bac7ffa067ba3f5451d7237c40289901b8a",
+    "output/pro259-eng03-01-20261026/security/FINAL-METADATA-R3.json": "35a08de53e87c15febc818c8f450e13905fa699352f7a5e72305d62264914587",
+    "output/pro259-eng03-01-20261026/COMPACT-WORKFLOW-SELECTED-TASK.json": "7b7de76c4d067b01814296513ac8d8b45149b5cd409ade3e2e11f5b91b723237"
+  },
+  "factsCorrected": [
+    "int7 gameplay history/rematch mounted through current Enta router; separate guarded reader unmounted",
+    "native competitive SQL branch distinct from fallback TS policy denial",
+    "Huroof production createRoom resolves paid proof; Firebase private game flow remains current baseline",
+    "separate2exact SourceText punctuation errata, original facts/failures preserved",
+    "two Root fact ranges explicitly extended, no inherited prior selected-range credit"
+  ],
+  "advisoryDisposition": "Generic legacy-boundary label is read as legacy/separate guarded history-rematch modules; explicit R3 mounted-int7 correction governs. Both domains treat wording clarification as nonblocking.",
+  "nextStage": {
+    "id": "ALMAIDAN-ENG03-02",
+    "scope": "exact additive schema/role/routine Source design then pre-edit Database/Security review",
+    "futureManifest": [
+      {
+        "reviewOrder": 1,
+        "path": "services/enta/server/prisma/schema.prisma",
+        "preimageSha256": "e82e49dfcbf4accd95a8fe57acbb960a4867b26bf14069e34ec7dc70dd37638a",
+        "exists": true,
+        "operation": "additive declarations only",
+        "prerequisites": [
+          "retain existing namespace/identity/financial/catalog keys and timestamp meaning",
+          "new object/FK/immutability names NEEDS_SOURCE_DESIGN"
+        ],
+        "checks": [
+          "pinned preimage/scoped additive diff",
+          "type/compiler validation only later exact source admission"
+        ],
+        "currentExistence": "PRESENT_PREIMAGE_VERIFIED",
+        "reviewOrderMeaning": "Source review dependency order only. Three files co-designed before future source release. Role prerequisites precede OWNER/GRANT; grants on new objects follow definitions. Operational order is HELD; exact new bodies NEEDS_SOURCE_DESIGN."
+      },
+      {
+        "reviewOrder": 2,
+        "path": "services/enta/server/prisma/migrations/20261026100000_eng03_02_huroof_owned_history/migration.sql",
+        "exists": false,
+        "operation": "new additive SQL SOURCE proposal",
+        "prerequisites": [
+          "DeploymentNamespace/FirebaseIdentity/Wallet/Admission/Reservation/catalog receipt identities as source-bound above",
+          "new Huroof/raw/history/projection/outbox names/keys/immutable operations NEEDS_SOURCE_DESIGN",
+          "separate operation-role prerequisites before OWNER/GRANT; no role provisioning authority inferred"
+        ],
+        "checks": [
+          "exact SQL declaration/constraint/owner/privilege/header source review",
+          "restrictive same-owner/engine/namespace FKs",
+          "receipt order, wallet/child locks and deferred completeness",
+          "no existing timestamp/raw/result rewrite or blanket backfill",
+          "no SQL apply/parser/runtime during inventory"
+        ],
+        "currentExistence": "CHECKED_ABSENT",
+        "reviewOrderMeaning": "Source review dependency order only. Three files co-designed before future source release. Role prerequisites precede OWNER/GRANT; grants on new objects follow definitions. Operational order is HELD; exact new bodies NEEDS_SOURCE_DESIGN."
+      },
+      {
+        "reviewOrder": 3,
+        "path": "services/enta/server/prisma/roles/eng03_02_huroof_runtime_roles.sql",
+        "exists": false,
+        "operation": "separately provisioned role-contract SOURCE proposal",
+        "prerequisites": [
+          "NOLOGIN groups versus eventual LOGIN membership NEEDS_SOURCE_DESIGN",
+          "creation/prerequisite section distinct from object-dependent grants",
+          "preserve existing issuer/content/financial/runtime separation"
+        ],
+        "checks": [
+          "narrow fixed routine signature grants and PUBLIC revocation",
+          "no mixed owner/runtime membership or runtime financial/content DML/schema CREATE/ownership",
+          "Database/Security exact pre-edit review"
+        ],
+        "currentExistence": "CHECKED_ABSENT",
+        "reviewOrderMeaning": "Source review dependency order only. Three files co-designed before future source release. Role prerequisites precede OWNER/GRANT; grants on new objects follow definitions. Operational order is HELD; exact new bodies NEEDS_SOURCE_DESIGN."
+      }
+    ],
+    "newObjectRoleBodies": "NEEDS_SOURCE_DESIGN",
+    "preEditApprovalGranted": false,
+    "implementationStarted": false
+  },
+  "limitations": [
+    "No app/schema/auth/ACL/config source change or database provisioning/application/rename/deletion/migration",
+    "Installed DB/operator/schema/membership/ACL/profile/version/native/custody/financial/runtime/physical fit UNKNOWN or held",
+    "All32futureparitycases NOT_RUN; zero future edges implemented",
+    "No inferred account/history migration, Firestore deletion, legacy callback retirement or restore over purchases",
+    "Original CFG01/SRC-CLOSE/CONTENT01/raw/native20/result1/UTC/index/capacity/custody/issuer and whole-parent gates preserved"
+  ],
+  "R6": "STOP",
+  "parentDone": false,
+  "downstreamTasksStarted": false,
+  "usage": {
+    "recordedElapsedSeconds": 4574,
+    "initialEstimateMinutes": [
+      60,
+      120
+    ],
+    "elapsedMeaning": "Since recorded ROOT-INTAKE; earlier setup not independently timed",
+    "logicalAgentContextsByConfiguredModel": {
+      "GPT-6.1 Sol medium": [
+        "Root",
+        "Database",
+        "Security"
+      ],
+      "GPT-6 Luna": [
+        "Forge medium",
+        "Scout low"
+      ]
+    },
+    "providerSessionsAndTokens": "unavailable; no token estimates",
+    "capacityFailure": "One Database turn interrupted by capacity; same assignment/route resumed, no fallback"
+  }
+}

@@ -1,0 +1,196 @@
+/* INT-074.W: the application-wide outer page template.
+   New pages opt in with data-page-layout="wide" and .page-rail; use
+   .page-readable only inside a rail for prose/forms, never as the page cap. */
+:root {
+  --page-layout-unit: clamp(16px, calc(16px + (100vw - 1920px) * 0.014651), 60px);
+  --page-gutter: var(--page-layout-unit);
+  --page-canvas-max: calc(80.063 * var(--page-layout-unit));
+  --page-readable-size: 560px;
+  --page-join-size: 520px;
+  --page-account-size: 1000px;
+  --page-prose-size: 760px;
+  --page-header-height: 64px;
+  --page-panel-padding: 20px;
+}
+/* The historical 320px body minimum must not include a vertical scrollbar. */
+html, body { min-inline-size: 0; }
+@media (min-width: 576px) { :root { --page-gutter: calc(1.5 * var(--page-layout-unit)); } }
+@media (min-width: 1280px) { :root { --page-layout-unit: max(17px, clamp(16px, calc(16px + (100vw - 1920px) * 0.014651), 60px)); } }
+@media (min-width: 1536px) { :root { --page-layout-unit: max(19px, clamp(16px, calc(16px + (100vw - 1920px) * 0.014651), 60px)); } }
+@media (orientation: landscape) and (max-width: 1023px) and (min-height: 501.5px) { :root { --page-layout-unit: 14px; } }
+@media (orientation: landscape) and (max-height: 501px) { :root { --page-layout-unit: 12px; } }
+@media (min-width: 64rem) { :root { --page-header-height: 72px; --page-panel-padding: 24px; } }
+
+main#main-content[data-page-layout="wide"] {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: none;
+  min-inline-size: 0;
+  margin-inline: 0;
+}
+main#main-content[data-page-layout="wide"] .page-rail,
+main#main-content[data-page-layout="wide"] :is(.maydan-host-setup, .maydan-rules, .maydan-credits, .maydan-status-panel, .auth-panel, .maydan-join-card),
+main#main-content[data-page-layout="wide"].spatial-shell > :is(.status-panel, .lobby-page, .results-page, .host-layout),
+main#main-content[data-page-layout="wide"].spatial-admin > :is(.admin-layout, .admin-state),
+main#main-content[data-page-layout="wide"].local-import-review > :not(.app-header) {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: none;
+  min-inline-size: 0;
+  margin-inline: auto;
+}
+.page-readable { inline-size: 100%; max-inline-size: var(--page-readable-size); min-inline-size: 0; }
+[data-page-kind="join"] .page-readable { max-inline-size: var(--page-join-size); }
+[data-page-kind="account"] .page-readable { max-inline-size: var(--page-account-size); }
+.page-prose { inline-size: 100%; max-inline-size: var(--page-prose-size); min-inline-size: 0; }
+
+/* Room, setup and result content follows the ordinary content width. */
+main#main-content[data-page-layout="wide"].enta-page .enta-rail,
+main#main-content[data-page-layout="wide"].spatial-shell > .results-page {
+  max-inline-size: var(--page-canvas-max);
+}
+
+/* Full-bleed section backgrounds and original art remain intact. */
+main#main-content[data-page-layout="wide"].maydan-home-page :is(.maydan-header__inner, .maydan-hero__inner, .maydan-section, .maydan-catalogue, .maydan-footer) {
+  box-sizing: border-box;
+  inline-size: 100%;
+  width: 100%;
+  max-inline-size: none;
+  max-width: none;
+  padding-inline: var(--page-gutter);
+}
+main#main-content[data-page-layout="wide"].maydan-home-page .maydan-footer::before { inset-inline: var(--page-gutter); }
+/* Keep the hero photograph full bleed and the remaining homepage content contained. */
+main#main-content[data-page-layout="wide"].maydan-home-page :is(.maydan-section, .maydan-catalogue, .maydan-footer) {
+  max-inline-size: var(--page-canvas-max);
+  max-width: var(--page-canvas-max);
+  margin-inline: auto;
+}
+@media (min-width: 68rem) {
+  /* Reserve the original scroll-gather travel within the wide section rail. */
+  main#main-content[data-page-layout="wide"].maydan-home-page .maydan-showcase__examples { padding-inline: 48px; }
+}
+
+/* Task rails share the header's edges; readable inner controls retain caps. */
+main#main-content[data-page-layout="wide"] > .app-header.maydan-app-header,
+main#main-content[data-page-layout="wide"] > .admin-topbar { box-sizing: border-box; inline-size: 100%; max-inline-size: none; padding-inline: 0; }
+main#main-content[data-page-layout="wide"].auth-page .auth-panel,
+main#main-content[data-page-layout="wide"].maydan-join-page .maydan-join-card {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  justify-items: center;
+}
+main#main-content[data-page-layout="wide"] :is(.auth-panel, .maydan-join-card) > .page-readable {
+  box-sizing: border-box;
+  display: grid;
+  gap: 24px;
+  padding: 24px;
+  border: 1px solid var(--app-border);
+  border-radius: 20px;
+  background: var(--app-surface);
+}
+main#main-content[data-page-layout="wide"] .auth-page__footer { max-inline-size: none; inline-size: 100%; padding-inline: var(--page-gutter); }
+main#main-content[data-page-layout="wide"] .maydan-rules__board { max-inline-size: 640px; justify-self: center; inline-size: 100%; }
+main#main-content[data-page-layout="wide"] :is(.maydan-credits, .maydan-status-panel) > div { max-inline-size: 75ch; }
+main#main-content[data-page-layout="wide"] .timing-fields__control { max-inline-size: var(--page-readable-size); }
+
+/* Gameplay uses the same outer rail without changing board sizing or intent. */
+main#main-content[data-page-layout="wide"].spatial-shell > .lobby-page { padding-inline: 0; }
+main#main-content[data-page-layout="wide"].spatial-shell > .status-panel { text-align: start; }
+main#main-content[data-page-layout="wide"].spatial-shell > .status-panel > p { max-inline-size: 75ch; }
+
+main#main-content[data-page-layout="wide"].spatial-stage,
+main#main-content[data-page-layout="wide"].spatial-player {
+  padding-inline: max(var(--page-gutter), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+}
+main#main-content[data-page-layout="wide"].spatial-stage > :is(.game-arena__header, .stage-game, .question-band) { inline-size: 100%; max-inline-size: none; min-inline-size: 0; }
+
+/* Every admin child route inherits one workspace rail from AdminShell. */
+main#main-content[data-page-layout="wide"].spatial-admin > :is(.admin-layout, .admin-state) {
+  padding-inline: 0;
+}
+main#main-content[data-page-layout="wide"].spatial-admin .admin-workspace { padding-inline-start: 24px; padding-inline-end: 0; }
+main#main-content[data-page-layout="wide"].spatial-admin :is(.admin-surface, .admin-published-detail) { max-inline-size: none; min-inline-size: 0; }
+main#main-content[data-page-layout="wide"].spatial-admin .admin-topbar { flex-wrap: wrap; }
+main#main-content[data-page-layout="wide"].spatial-admin .admin-topbar > * { min-inline-size: 0; overflow-wrap: anywhere; }
+main#main-content[data-page-layout="wide"].spatial-admin :is(.admin-form, .admin-form fieldset, .admin-form label, .admin-toolbar label) { min-inline-size: 0; }
+main#main-content[data-page-layout="wide"].spatial-admin :is(.admin-form input:not([type="checkbox"]), .admin-form textarea, .admin-form select, .admin-toolbar input, .admin-toolbar select) { box-sizing: border-box; inline-size: 100%; min-inline-size: 0; }
+main#main-content[data-page-layout="wide"].spatial-admin .admin-table-wrap { min-inline-size: 0; max-inline-size: 100%; overflow-x: auto; }
+
+main#main-content[data-page-layout="wide"].local-import-review :is(.local-import-review__filters label, .local-import-review__filters input, .local-import-review__filters select) { box-sizing: border-box; min-inline-size: 0; inline-size: 100%; }
+main#main-content[data-page-layout="wide"].local-import-review .local-import-review__pager > span { flex-shrink: 1; white-space: normal; }
+@media (max-width: 61rem) {
+  main#main-content[data-page-layout="wide"].spatial-admin .admin-workspace { padding-inline: 0; }
+}
+@media (max-width: 48rem) {
+  main#main-content[data-page-layout="wide"].spatial-shell--host .host-stage { block-size: auto; }
+  main#main-content[data-page-layout="wide"].spatial-shell--host .host-board:not(.host-board--media) { block-size: auto; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto auto; }
+  main#main-content[data-page-layout="wide"].spatial-shell--host .host-board:not(.host-board--media) > .host-game-board { inline-size: 100%; block-size: auto; min-inline-size: 0; }
+  main#main-content[data-page-layout="wide"].spatial-shell--host .board-status-strip { inline-size: 100%; max-inline-size: 100%; min-inline-size: 0; }
+  main#main-content[data-page-layout="wide"].spatial-admin .admin-table--published { min-inline-size: 0; }
+}
+@media (max-width: 360px) {
+  main#main-content[data-page-layout="wide"].maydan-home-page .maydan-header { height: auto; }
+  main#main-content[data-page-layout="wide"].maydan-home-page .maydan-header__inner { flex-wrap: wrap; gap: 8px; padding-block: 8px; }
+  main#main-content[data-page-layout="wide"].maydan-home-page .maydan-wordmark { flex-basis: 100%; }
+  main#main-content[data-page-layout="wide"].maydan-home-page .maydan-header__nav { inline-size: 100%; justify-content: space-between; }
+}
+
+/* Contained page canvases; only the homepage hero spans the viewport. */
+@media (max-width: 360px) { main#main-content[data-page-layout="wide"] :is(.auth-panel, .maydan-join-card) > .page-readable { padding: 16px; } }
+@media (min-width: 64rem) { main#main-content[data-page-layout="wide"] :is(.auth-panel, .maydan-join-card) > .page-readable { padding: 32px; } }
+main#main-content[data-page-layout="wide"]:not(.maydan-home-page),
+main.local-content-admin,
+main.challenge-frame {
+  box-sizing: border-box;
+  inline-size: min(100%, var(--page-canvas-max));
+  max-inline-size: var(--page-canvas-max);
+  min-inline-size: 0;
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+html body > .app-header.stable-header.maydan-app-header {
+  box-sizing: border-box;
+  inset-inline: 0;
+  inline-size: min(100%, var(--page-canvas-max));
+  max-inline-size: var(--page-canvas-max);
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+main#main-content[data-page-layout="wide"].maydan-home-page :is(.maydan-section, .maydan-catalogue, .maydan-footer) {
+  inline-size: min(100%, var(--page-canvas-max));
+  width: min(100%, var(--page-canvas-max));
+  padding-inline: var(--page-gutter);
+}
+main#main-content[data-page-layout="wide"].maydan-home-page .maydan-hero__inner {
+  inline-size: min(100%, var(--page-canvas-max));
+  width: min(100%, var(--page-canvas-max));
+  max-inline-size: var(--page-canvas-max);
+  padding-inline: var(--page-gutter);
+  margin-inline: auto;
+}
+
+/* Inner pages share the product canvas, including the viewport outside their rail. */
+html:has(main:not(.maydan-home-page)),
+body:has(main:not(.maydan-home-page)) {
+  background-color: var(--app-canvas);
+  background-image: none;
+}
+
+/* Non-arena Huroof screens use the same theme surfaces as other inner pages. */
+.app-page.spatial-shell:not(.game-arena) {
+  --khaliah-canvas: var(--app-canvas);
+  --khaliah-surface: var(--app-surface);
+  --khaliah-surface-alt: var(--app-subtle);
+  --khaliah-navy: var(--app-ink);
+  --khaliah-ink-muted: var(--app-muted);
+  --khaliah-border: var(--app-border);
+  --khaliah-line: var(--app-border);
+  --khaliah-blue: var(--app-action);
+  --khaliah-cyan: var(--app-accent);
+  --khaliah-focus: var(--app-focus);
+}
+
+/* Preserve device safe areas for focused game surfaces. */
+main#main-content[data-page-layout="wide"].spatial-stage, main#main-content[data-page-layout="wide"].spatial-player { padding-inline: max(var(--page-gutter), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)); }

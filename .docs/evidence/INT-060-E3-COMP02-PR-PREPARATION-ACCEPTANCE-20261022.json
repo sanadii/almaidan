@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-10-22T21:02:23.404361+03:00",
+  "task": "INT-060.E3.COMP02.PR",
+  "parentIssue": "PRO-259",
+  "decision": "ACCEPTED_WITH_LIMITS_FOR_COMPLETE_INERT_PR01_PR04_PREPARATION",
+  "tasks": {
+    "PR01": "PREPARATION_ACCEPTED_WITH_LIMITS",
+    "PR02": "PREPARATION_ACCEPTED_WITH_LIMITS",
+    "PR03": "PREPARATION_ACCEPTED_WITH_LIMITS",
+    "PR04": "PREPARATION_ACCEPTED_WITH_LIMITS"
+  },
+  "manifest": {
+    "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-prerequisites-20261022\\package\\FROZEN-MANIFEST-R2.json",
+    "sha256": "5fa172433451aa2f990b5362ce433a8091cffc2d5af05d17e358ffa7f98b202d",
+    "members": 53
+  },
+  "reviews": {
+    "database": {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-prerequisites-20261022\\database\\FINAL-PREPARATION-REVIEW-R2.md",
+      "sha256": "2f8af2748b89b023d10e002be76f9005d770111bd83a966badb6c7d8db7c4603",
+      "disposition": "CONCUR_WITH_LIMITS_PREPARATION_ONLY"
+    },
+    "security": {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-prerequisites-20261022\\security\\FINAL-PREPARATION-REVIEW-R2.md",
+      "sha256": "651781a92a1b73af710783ddcc2db5236555c6d1686294a5f55ad7bc68e496d2",
+      "disposition": "CONCUR_WITH_LIMITS_PREPARATION_ONLY"
+    }
+  },
+  "rootReview": {
+    "identityCheck": {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-prerequisites-20261022\\ROOT-PACKAGE-R2-HASH-JOIN.json",
+      "sha256": "af4bc5a234e299a707834bc19585b3fbf95901353d1365053cf54a6b8fc584b7"
+    },
+    "semanticReview": "Read integrated PR03/PR04 and five-member metadata impact; source contracts, gate partition, disabled bounded three-domain qualification and private dossier limits meet adopted preparation scope. All R1 findings closed by both exact domain reviews."
+  },
+  "retainedEvidence": {
+    "R1": "25/25 exact preserved preimages; five changed current members and20 unchanged",
+    "sourceIdentities": "63/63 retained under compatible unchanged identity",
+    "privateCards": "12/12 exact held source cards; decisions null; no editorial approval",
+    "R0": "nine original preimages retained",
+    "R3": "Previously accepted exact inert repair/pure-module checks retain original scope; no app suites rerun"
+  },
+  "limits": {
+    "applicationAuthority": "NOT_GRANTED",
+    "contentApproval": "NOT_GRANTED; actual complete R/rights/suitability/media/selector repeat proof absent",
+    "installedQualification": "NOT_PERFORMED",
+    "runtimeAuthority": "NOT_GRANTED",
+    "R6": "STOP",
+    "parentDone": false,
+    "downstreamStarted": false
+  },
+  "D-PREQ-01": {
+    "decision": "RETAIN_SOURCE_APPLICATION_HOLD_PENDING_EXACT_CHANGED_BYTE_SLICE_AND_DOMAIN_CONCURRENCE",
+    "reason": "Preparation specifies requirements; it is not a reviewed successor policy/schema/auth/ACL or reader application postimage. Next isolate exact symbolic source slice, immutable premises/exclusions and affected source checks, obtain required pre-edit reviews and record exact release. Missing actual R/installation is not a blanket barrier to conditional source design."
+  },
+  "failuresPreserved": "R1 findings, writer failed completeness predicate, Root omitted checkpoint members path read; affected corrections recorded, no failed operation counted as pass.",
+  "usage": {
+    "startKuwait": "2026-10-22T20:18:19+03:00",
+    "finishKuwait": "2026-10-22T21:02:23.404361+03:00",
+    "models": "Astra medium planner1; Luna medium Forge1 reused; Sol6.1 medium Database1 and Security1 reused plus Root",
+    "providerTokens": "unavailable",
+    "providerSessionElapsed": "unavailable"
+  }
+}

@@ -1,0 +1,300 @@
+{
+  "schemaVersion": "maydan-int4-enta-raw-tier-observation-v1",
+  "sourceArtifactSha256": "32a1bd7788d4f7d919af0e676c84b11d8a76e7f63d7752af535a5e1982ff1604",
+  "sourceCommit": "a009328442c7469937b073b6a8fe3ce4ce115160",
+  "interpretation": "Unreviewed authoring-source counts only; no editorial, rights, semantic-distinctness or gameplay eligibility.",
+  "categoryCount": 29,
+  "sourceRows": 1273,
+  "categories": [
+    {
+      "name": "أبطال خارقين",
+      "sourceRows": 24,
+      "tiers": {
+        "200": 8,
+        "400": 8,
+        "600": 8
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "أدب وثقافة",
+      "sourceRows": 74,
+      "tiers": {
+        "200": 25,
+        "400": 25,
+        "600": 24
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "أرقام وإحصائيات كروية",
+      "sourceRows": 24,
+      "tiers": {
+        "200": 8,
+        "400": 8,
+        "600": 8
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "الدوري الإيطالي",
+      "sourceRows": 24,
+      "tiers": {
+        "200": 8,
+        "400": 8,
+        "600": 8
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "تاريخ",
+      "sourceRows": 74,
+      "tiers": {
+        "200": 25,
+        "400": 25,
+        "600": 24
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "تراث خليجي",
+      "sourceRows": 73,
+      "tiers": {
+        "200": 25,
+        "400": 25,
+        "600": 23
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "تشكيلة الفريق",
+      "sourceRows": 24,
+      "tiers": {
+        "200": 8,
+        "400": 8,
+        "600": 8
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "تكنولوجيا",
+      "sourceRows": 74,
+      "tiers": {
+        "200": 25,
+        "400": 25,
+        "600": 24
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "جغرافيا",
+      "sourceRows": 74,
+      "tiers": {
+        "200": 25,
+        "400": 25,
+        "600": 24
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "دول وعواصم",
+      "sourceRows": 24,
+      "tiers": {
+        "200": 8,
+        "400": 8,
+        "600": 8
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "رسم وتخمين",
+      "sourceRows": 50,
+      "tiers": {
+        "200": 17,
+        "400": 17,
+        "600": 16
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "رمضانيات",
+      "sourceRows": 50,
+      "tiers": {
+        "200": 17,
+        "400": 17,
+        "600": 16
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "رياضة",
+      "sourceRows": 74,
+      "tiers": {
+        "200": 25,
+        "400": 25,
+        "600": 24
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "سيرة ذاتية",
+      "sourceRows": 24,
+      "tiers": {
+        "200": 8,
+        "400": 8,
+        "600": 8
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "سينما وأفلام",
+      "sourceRows": 74,
+      "tiers": {
+        "200": 25,
+        "400": 25,
+        "600": 24
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "عالم الأطفال",
+      "sourceRows": 50,
+      "tiers": {
+        "200": 17,
+        "400": 17,
+        "600": 16
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "عالم الحيوان",
+      "sourceRows": 24,
+      "tiers": {
+        "200": 8,
+        "400": 8,
+        "600": 8
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "عالم الشعر",
+      "sourceRows": 24,
+      "tiers": {
+        "200": 8,
+        "400": 8,
+        "600": 8
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "علوم",
+      "sourceRows": 74,
+      "tiers": {
+        "200": 25,
+        "400": 25,
+        "600": 24
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "فن وموسيقى",
+      "sourceRows": 74,
+      "tiers": {
+        "200": 25,
+        "400": 25,
+        "600": 24
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "قرآن كريم",
+      "sourceRows": 24,
+      "tiers": {
+        "200": 8,
+        "400": 8,
+        "600": 8
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "قصص الأنبياء",
+      "sourceRows": 24,
+      "tiers": {
+        "200": 8,
+        "400": 8,
+        "600": 8
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "كأس العالم 2026",
+      "sourceRows": 24,
+      "tiers": {
+        "200": 8,
+        "400": 8,
+        "600": 8
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "كأس العالم عبر السنين",
+      "sourceRows": 24,
+      "tiers": {
+        "200": 8,
+        "400": 8,
+        "600": 8
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "كرة قدم عامة",
+      "sourceRows": 24,
+      "tiers": {
+        "200": 8,
+        "400": 8,
+        "600": 8
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "كورة عالمية",
+      "sourceRows": 24,
+      "tiers": {
+        "200": 8,
+        "400": 8,
+        "600": 8
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "مسيرة لاعب",
+      "sourceRows": 24,
+      "tiers": {
+        "200": 8,
+        "400": 8,
+        "600": 8
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "مطاعم الكويت",
+      "sourceRows": 24,
+      "tiers": {
+        "200": 8,
+        "400": 8,
+        "600": 8
+      },
+      "invalidPoints": 0
+    },
+    {
+      "name": "معلومات عامة",
+      "sourceRows": 74,
+      "tiers": {
+        "200": 25,
+        "400": 25,
+        "600": 24
+      },
+      "invalidPoints": 0
+    }
+  ]
+}

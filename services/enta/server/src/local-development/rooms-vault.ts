@@ -1,0 +1,7 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+import {createCipheriv,createDecipheriv,randomBytes} from 'node:crypto';
+import {assertLocalDevelopment} from './guard';
+const path='D:/projects/huroof_wa_oloof/local/almaidan/room-grant-key.private';
+function key(){assertLocalDevelopment();try{const value=readFileSync(path);if(value.length!==32)throw Error('ROOM_KEY_INVALID');return value;}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;try{writeFileSync(path,randomBytes(32),{flag:'wx',mode:0o600});}catch(failure){if((failure as NodeJS.ErrnoException).code!=='EEXIST')throw failure;}const value=readFileSync(path);if(value.length!==32)throw Error('ROOM_KEY_INVALID');return value;}}
+export function sealRoomGrant(token:string,binding:string){const iv=randomBytes(12),cipher=createCipheriv('aes-256-gcm',key(),iv);cipher.setAAD(Buffer.from(binding));const encrypted=Buffer.concat([cipher.update(token,'utf8'),cipher.final()]);return Buffer.concat([iv,cipher.getAuthTag(),encrypted]).toString('base64url');}
+export function openRoomGrant(value:string,binding:string){const bytes=Buffer.from(value,'base64url');if(bytes.length!==71)throw Error('ROOM_GRANT_INVALID');const decipher=createDecipheriv('aes-256-gcm',key(),bytes.subarray(0,12));decipher.setAAD(Buffer.from(binding));decipher.setAuthTag(bytes.subarray(12,28));return Buffer.concat([decipher.update(bytes.subarray(28)),decipher.final()]).toString('utf8');}

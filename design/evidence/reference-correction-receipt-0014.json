@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "maydan-reference-correction-2026-10-02-014",
+  "recordedAt": "2026-10-02",
+  "selectionAuthority": "human-product-owner",
+  "decision": "golden-violet-live-homepage-rejected; selected-warm-poster-direction-refined-to-owner-specified-reference",
+  "selectedProductNameAr": "ميدان",
+  "selectedConceptId": "INT-2R-A",
+  "previousImmutableRecord": {
+    "recordId": "design-history-0013",
+    "path": "design/evidence/history/0013-maydan-warm-poster-color-feedback.md",
+    "sha256": "CAADA4F3F98FCFF4797830FFC18EBF5F2FAE84F5D955014E8C8379A96E339DA1"
+  },
+  "ownerReference": {
+    "url": "https://images.refero.design/styles/fictional-typeface.com/5f5fd099-866e-4681-917b-0254a3883980/preview_0.jpg",
+    "referoStyleId": "5f5fd099-866e-4681-917b-0254a3883980",
+    "observedDimensions": "1440x900"
+  },
+  "rejectedRender": {
+    "path": "design/evidence/review/0014-rejected-golden-violet-desktop.png",
+    "sha256": "C663994CD796A3E08B5E29C8C1DDCB1AC827A78FF81F431261235026A51CE195"
+  },
+  "directionRecord": {
+    "recordId": "design-history-0014",
+    "path": "design/evidence/history/0014-maydan-fictional-reference-correction.md",
+    "sha256": "963A6BBBB2DC9FCB0060FFF909277AB13A90400F622EBC566E428FC5D6CB012E"
+  },
+  "scope": "Correct the selected Warm poster combined homepage to the owner-specified reference. Visual expansion requires later human live approval of the corrected page.",
+  "validationRule": "Validate exact numbered 0013/0014 record bytes and rejected-render bytes listed here. Never compare an old receipt with mutable whole-history content. Deterministic checks do not certify aesthetic quality."
+}

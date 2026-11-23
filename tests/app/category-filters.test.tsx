@@ -1,11 +1,13 @@
 import { expect, it } from 'vitest';
 import { availableCategoryCatalog, categoryCatalog } from '../../src/data/category-catalog';
+import sourceCategoryCovers from '../../src/data/tahadani-games-category-covers.public.json';
 import {
   categoryTopicIdForCategory,
   categoryTopics,
   filterCategories,
   normalizeCategoryFilterText,
 } from '../../src/data/category-filters';
+import { sourceTopicCoverage } from '../../src/data/category-topic-taxonomy';
 
 it('assigns every imported category to one browse topic exactly once', () => {
   const topicIdSet = new Set(categoryTopics.map((topic) => topic.id));
@@ -85,4 +87,47 @@ it('keeps documented newer categories and unknown Firebase labels in exactly one
   ))).toBe(true);
   expect(filterCategories(categories, { query: '', selectedIds: [], selectedOnly: false, topicId: 'science' }).map((category) => category.id)).toEqual(['future-science']);
   expect(filterCategories(categories, { query: '', selectedIds: [], selectedOnly: false, topicId: 'other' }).map((category) => category.id)).toEqual(['future-kitchen', 'firebase-175']);
+});
+
+it('keeps every reviewed source category meaningful when Firebase supplies a different runtime ID', () => {
+  expect(sourceTopicCoverage).toEqual({ categoryIds: 558, normalizedLabels: 544 });
+
+  const sourceTopics = sourceCategoryCovers.categories.map((category) =>
+    categoryTopicIdForCategory({ id: category.categoryId, displayNameAr: category.normalizedNameAr }),
+  );
+  const runtimeLabelTopics = sourceCategoryCovers.categories.map((category) =>
+    categoryTopicIdForCategory({ id: `firebase-${category.sourceIndex}`, displayNameAr: category.normalizedNameAr }),
+  );
+
+  expect(sourceTopics).not.toContain('other');
+  expect(runtimeLabelTopics).toEqual(sourceTopics);
+});
+
+it('uses reviewed content parents for mixed Gulf collections and quiz formats', () => {
+  const topicFor = (displayNameAr: string) => categoryTopicIdForCategory({
+    id: `runtime-${displayNameAr}`,
+    displayNameAr,
+  });
+
+  expect(topicFor('نادي القادسية')).toBe('sports');
+  expect(topicFor('مطاعم الكويت')).toBe('restaurants');
+  expect(topicFor('دبي مول')).toBe('lifestyle');
+  expect(topicFor('يوتيوب سعودي')).toBe('digital');
+  expect(topicFor('يوم التأسيس')).toBe('history');
+  expect(topicFor('كلمات كويتية قديمة')).toBe('literature');
+  expect(topicFor('مدينة برشلونة')).toBe('geography');
+  expect(topicFor('غزوات ومعارك')).toBe('religion');
+  expect(topicFor('حروف اسلامي')).toBe('religion');
+  expect(topicFor('توقع الحيوان')).toBe('science');
+  expect(topicFor('خمن الصورة كُروية')).toBe('sports');
+  expect(topicFor('خليجي')).toBe('sports');
+  expect(topicFor('من أنا / شخصيات كويتية')).toBe('screen');
+});
+
+it('aligns reviewed legacy labels with their source-parent assignments', () => {
+  const legacyByLabel = new Map(categoryCatalog.map((category) => [category.displayNameAr, category]));
+
+  expect(categoryTopicIdForCategory(legacyByLabel.get('تاريخ')!)).toBe('history');
+  expect(categoryTopicIdForCategory(legacyByLabel.get('سيارات')!)).toBe('lifestyle');
+  expect(categoryTopicIdForCategory(legacyByLabel.get('منوعات شعرية')!)).toBe('literature');
 });

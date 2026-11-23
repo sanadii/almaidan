@@ -29,8 +29,21 @@ const unavailableAuthContext: FirebaseAuthContextValue = {
 
 export const FirebaseAuthContext = createContext<FirebaseAuthContextValue>(unavailableAuthContext);
 
+// Reserve the runtime before its lazy SDK/provider mounts. Nested route shells
+// must not start another owner lease while their parent is still loading.
+const FirebaseAuthRuntimeContext = createContext(false);
+export function FirebaseAuthRuntimeBoundary({ children }: { children: ReactNode }) {
+  return <FirebaseAuthRuntimeContext.Provider value={true}>{children}</FirebaseAuthRuntimeContext.Provider>;
+}
+
 /** Keeps public routes interactive while the optional Firebase SDK loads in a separate chunk. */
 export function DeferredFirebaseAuthProvider({ children, enabled = true }: { children: ReactNode; enabled?: boolean }) {
+  const inherited = useContext(FirebaseAuthRuntimeContext);
+  if (inherited) return <>{children}</>;
+  return <FirebaseAuthRuntimeBoundary><OwnedDeferredFirebaseAuthProvider enabled={enabled}>{children}</OwnedDeferredFirebaseAuthProvider></FirebaseAuthRuntimeBoundary>;
+}
+
+function OwnedDeferredFirebaseAuthProvider({ children, enabled }: { children: ReactNode; enabled: boolean }) {
   const [Provider, setProvider] = useState<((props: { children: ReactNode }) => ReactNode) | null>(null);
   useEffect(() => {
     if (!enabled || Provider) return undefined;

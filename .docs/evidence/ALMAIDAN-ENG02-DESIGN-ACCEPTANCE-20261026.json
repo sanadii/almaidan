@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "task": "ALMAIDAN-ENG02",
+  "parentIssue": "PRO-259",
+  "acceptedAtKuwait": "2026-10-26T11:14:26.019563+03:00",
+  "decision": "ACCEPTED_DESIGN_WITH_LIMITS",
+  "owner": "Root existing integration coordinator",
+  "sourceOfAuthority": "ROOT-INTAKE.json exact26October human ENG02instruction, accepted CFG01 staged plan",
+  "scope": "Reviewed both-game design for one PostgreSQL application database named almaidan; current source mapping and target contracts only",
+  "games": [
+    "الخليّة / internal HUROOF",
+    "إنت صح / internal ENTA"
+  ],
+  "checks": {
+    "G01": {
+      "result": "PASS",
+      "scope": "37 mapped plus23 supplemental source/contract identity and range entries, not behavior; retained passes and original failures preserved",
+      "evidence": [
+        "G01-R0-RESULT.json",
+        "G01-R1-RESULT.json",
+        "G01-S-R0-RESULT.json",
+        "G01-S-R1-RESULT.json"
+      ]
+    },
+    "G02": {
+      "result": "PASS",
+      "scope": "22 obligations cover both games, nine Enta modes and12admin families with owners, dependencies and32future parity cases",
+      "evidence": [
+        "G02-G03-STRUCTURE-R0.json",
+        "G02-G03-STRUCTURE-R1.json",
+        "ENG02-OBLIGATIONS-R0.json"
+      ]
+    },
+    "G03": {
+      "result": "PASS_DESIGN_ONLY",
+      "scope": "Root integrated review plus both source-backed domain concurrences for transaction/retry/locks/realtime/privacy/locator/raw/history/tournament/rollback coherence",
+      "evidence": [
+        "database/FINAL-REVIEW-R0.md",
+        "security/FINAL-REVIEW-R0.md"
+      ]
+    },
+    "G04": {
+      "result": "PASS",
+      "scope": "No application/schema/ACL/config writes or held operations; integration Git status unchanged, prior exact acceptance retained",
+      "evidence": [
+        "G04-R0-RESULT.json",
+        "ROOT-INTAKE.json"
+      ]
+    },
+    "G05": {
+      "result": "PASS_DESIGN_ONLY",
+      "scope": "Both exact independent domain reviews concur; Root7representative source joins and final12frozen-artifact/review hash joins",
+      "evidence": [
+        "G05-ROOT-JOINS-R0.json",
+        "database/FINAL-METADATA-R0.json",
+        "security/FINAL-METADATA-R0.json",
+        "R0-REVIEW-FREEZE.json"
+      ]
+    }
+  },
+  "evidence": {
+    "output/pro259-eng02-20261026/ENG02-DESIGN-PROPOSAL-R0.md": "354b67b2baaf71dac8ed26b9fd11ea8df8a4b4cc6496be9fd8d6813eacb3a3ea",
+    "output/pro259-eng02-20261026/ENG02-OBLIGATIONS-R0.json": "f33f0f5a3a8776ad0e5f4f3209bacddc813825d1bd272ce0138a1b50b08aa86b",
+    "output/pro259-eng02-20261026/G01-R0-RESULT.json": "b72f1163721e9a733c8c676576708c1a803351c56d26a667acdbaacf51441d00",
+    "output/pro259-eng02-20261026/G01-R1-RESULT.json": "2a86f58ea249fa01b03e9a081b05197bd7547a2f668b42214fe08158640ea1ca",
+    "output/pro259-eng02-20261026/G01-S-R0-RESULT.json": "312acecce9cb703e7a26f20f3b7a6f6e2cf3929cf261ccf9c543dd193e0134cd",
+    "output/pro259-eng02-20261026/G01-S-R1-RESULT.json": "d6cdf90c6d7d0b82cfd426f3c217d47f2de0faa5499149477a77cf04a9c655ec",
+    "output/pro259-eng02-20261026/G02-G03-STRUCTURE-R0.json": "0af01c7d49a6d78b90994e80c12bc2fecd8aa0e601aebfb19f681c2c9eac81eb",
+    "output/pro259-eng02-20261026/G02-G03-STRUCTURE-R1.json": "f82f26c1bd17afc8f03b3f37c947100c9f84dc7903869c146f71677615526c94",
+    "output/pro259-eng02-20261026/G04-R0-RESULT.json": "8e182283a3cee1de13eae85c69666e259c80b921b307f338e92ea59bcbeef4ac",
+    "output/pro259-eng02-20261026/G05-ROOT-JOINS-R0.json": "097d7e75b3f6ffc7de6c2c802b43944d1126a473251c64237e572efbdd64f488",
+    "output/pro259-eng02-20261026/R0-REVIEW-FREEZE.json": "39edc9b5bacf4dcf5ded13a3a90513d156cded5ffc3a5babae3559e2877e0bea",
+    "output/pro259-eng02-20261026/ROOT-INTAKE.json": "f5e12896106365f3d1ad326ce64878de9016989c5007eb1808f674951f3131df",
+    "output/pro259-eng02-20261026/database/FINAL-METADATA-R0.json": "258633b579c745b2f81faba086d2b582b4f67e4da8da33bebd15c57c7bf0bf5b",
+    "output/pro259-eng02-20261026/database/FINAL-REVIEW-R0.md": "be5ad636fcdcef73f9e9ecb035ffaf8e164b45c6322ed7f3b405f210c127feef",
+    "output/pro259-eng02-20261026/security/FINAL-METADATA-R0.json": "089cd519d9c46639e4179e8a7ec9542cba7ef515326032fa2d915ba8b2ea66a5",
+    "output/pro259-eng02-20261026/security/FINAL-REVIEW-R0.md": "67029b88650f2f0df9b1042218350351089e545901bbd3d1e3b5b2d79dac188c"
+  },
+  "frozenProposalSHA256": "354b67b2baaf71dac8ed26b9fd11ea8df8a4b4cc6496be9fd8d6813eacb3a3ea",
+  "frozenObligationsSHA256": "f33f0f5a3a8776ad0e5f4f3209bacddc813825d1bd272ce0138a1b50b08aa86b",
+  "freezeSHA256": "39edc9b5bacf4dcf5ded13a3a90513d156cded5ffc3a5babae3559e2877e0bea",
+  "reviews": {
+    "Database": "CONCUR exactR0; no required corrections",
+    "Security": "CONCUR exactR0; no required corrections"
+  },
+  "preservedAcceptance": {
+    "CFG01": "35f7627e018d7aa249eb5cef9cff3bbef2cdd2cb4868942265f65a377a7bf699",
+    "SRC_CLOSE": "86063fcc09c595114665f2a7037c0025adde1d55c76875cf056d0b7b67aa8bfe",
+    "CONTENT01": "bd633986f58c357e9a1646b14b43bd8257ef717c8e2f92c0abf5311c93250e98"
+  },
+  "futureParity": {
+    "defined": 32,
+    "executed": 0,
+    "status": "ALL_NOT_RUN"
+  },
+  "residuals": [
+    "Exact ENG03 source/routine/DTO/role/resource-envelope review and implementation remain future work",
+    "Physical almaidan target/operator/versions/grants/direct-pool identity unknown",
+    "Genuine content/release/issuer/native20/result1/custody/UTC/material/installed/production qualification unchanged",
+    "Conditional legacy unmounted payment race: settlement fence required before retained real-money use; deployed reachability unknown",
+    "No Firestore deletion/account or history backfill/database migration/rollback over purchases authorized"
+  ],
+  "R6": "STOP",
+  "implementationAuthorized": false,
+  "databaseOperationsPerformed": false,
+  "ENG03Started": false,
+  "ENG04Started": false,
+  "parentDone": false,
+  "usage": {
+    "elapsedSeconds": 2882,
+    "initialEstimateMinutes": [
+      30,
+      60
+    ],
+    "sessionsByConfiguredModel": {
+      "GPT-6.1 Sol medium": [
+        "Root coordinator",
+        "Database reviewer",
+        "Security reviewer"
+      ],
+      "GPT-6 Astra medium": [
+        "planner"
+      ],
+      "GPT-6 Luna low": [
+        "Huroof scout",
+        "Enta scout"
+      ]
+    },
+    "providerTokens": "unavailable; no estimates"
+  }
+}

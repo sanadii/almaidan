@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "maydan-replacement-visual-selection-2026-10-02-012",
+  "recordedAt": "2026-10-02",
+  "selectionAuthority": "human-product-owner",
+  "exactHumanAnswer": "A — Warm poster",
+  "selectedProductNameAr": "ميدان",
+  "selectedConceptId": "INT-2R-A",
+  "previousImmutableRecord": {
+    "recordId": "design-history-0011",
+    "path": "design/evidence/history/0011-maydan-homepage-rejection.md",
+    "sha256": "5CB986F67449FB6AB84008C86A86FE6F69D08775ECE5411788CC3687C4E9C74A"
+  },
+  "conceptSet": {
+    "path": "design/evidence/integration-reconcept-set-2026-10-02.json",
+    "sha256": "0A77A11CFB085BF956E41D5A4B6A6BEBC4F0582F553488920067E1184A4E427F"
+  },
+  "selectedImage": {
+    "path": "design/mockups/integration-2026-10-02/int-2r-direction-a-warm-poster-play.png",
+    "sha256": "1FA6BB51E67040BF24B0E8D9399D1A6324702CF31F4C6807A9661F6208D58311"
+  },
+  "directionRecord": {
+    "recordId": "design-history-0012",
+    "path": "design/evidence/history/0012-maydan-warm-poster-replacement-selection.md",
+    "sha256": "FA282D9340A22FAFE4FCDE1AEF9F2733CB5A910D11F95B82E5C37B5EB37E116D"
+  },
+  "scope": "Replacement combined homepage and entry shell implementation only. Whole-app visual expansion requires a later exact human live homepage review.",
+  "validationRule": "Validate exact numbered 0011/0012 record bytes, exact concept-set bytes and selected-image bytes listed here; never compare an old receipt with mutable whole-history content. Deterministic checks do not certify visual quality.",
+  "supersedes": "The rejected combined-homepage concept B and 0010 refinement as current visual authority, while preserving their human decisions as historical evidence and keeping the owner-confirmed ميدان name."
+}

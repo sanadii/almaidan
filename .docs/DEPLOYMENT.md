@@ -1,4 +1,85 @@
+## Doha deployment verified — 2026-09-11 15:56 UTC
+
+All nine authorized room callables are ACTIVE in me-central1 on Node.js 22. Fresh Google API readback returned exactly those nine functions and no admin endpoints. Each callable rejected an empty unauthenticated request with HTTP 401 UNAUTHENTICATED. Firestore remains me-central2. These are infrastructure and negative-boundary checks, not authenticated gameplay acceptance.
+
+Source commit 089ee2d9 changes six region defaults/preflight/test paths. Backend tests: 38/38; production preflight: 4/4; provider tests: 3/3; typecheck and Functions build passed. Gate accepted the exact compiled package, including the derived package-only gcp-build empty-string setting for Google's documented prebuilt deployment. Final package manifest SHA256: 251515399da413d82600dd1af9980d24bd34ec68f6dfbe1075661efd664d735d.
+
+runtime/activeRelease still returns 404. No question approvals, database writes, rules changes or live browser runtime switch were performed. Vercel remains the previously verified static preview. Remaining work: genuine reviewed release publication, live App Check attestation, and host/player gameplay acceptance. Do not report room creation as operational yet. Evidence: output/firebase-activation-20260911/live-verification.json and BUILDPACK-GATE-REPORT.md. Rollback: retain fixture runtime; revert the six source paths if required, and separately review any removal of the newly deployed endpoints before doing so.
+
 # Deployment and rollback plan
+
+## Doha room-service deployment authorization — 2026-09-11
+
+User replied “OK” to processing room requests in Doha (me-central1) while retaining Firestore in Dammam (me-central2), including the stated cross-region latency/cost implications. Regional decision is resolved; no further region approval is required for this scope.
+
+Scope remains only the nine reviewed room callables. Client/preflight now target Doha and reject the former Dammam Functions region. A manual endpoint check passed with the environment override, but Firebase CLI discovery did not retain that shell variable and retried Dammam. Therefore the backend defaults are being made explicitly Doha before repackaging. No deployed endpoints were created by either failed Dammam attempt. Database/rules/Auth/release approval remain unchanged.
+
+Status: rebuilding and verifying explicit Doha package; deployment and live endpoint checks pending. Production stays static preview until genuine reviewed release and authenticated App Check gameplay acceptance. Evidence continues under output/firebase-activation-20260911/.
+
+
+## Blaze activation and App Check preparation — 2026-09-11
+
+User confirmed Blaze setup; fresh Cloud Billing API check verifies billingEnabled=true. The previous billing blocker is resolved. App Check Enterprise now has a SCORE key restricted to huroof-wa-oloof.vercel.app, one-hour token TTL and 0.5 minimum score. Exact key/provider read-back passed. No debug bypass, all-domain key, IAM/rules/data change or question approval was applied.
+
+Provider source commit `debcf883`: explicit Enterprise/v3 selection, invalid-value rejection, required live key, fixture/emulator preservation and initialization before gameplay services. Six source/test paths reviewed; 3 provider tests, 3 production-preflight tests, typecheck, lint and build pass. Root reproduced provider tests; Gate PASS. Actual browser attestation is still pending a live client deployment.
+
+Initial nine-callable backend package passed Gate (10 runtime/lock files, manifest SHA2562750ff7b504838a1508dda5a5ee8d0bbfe0a83e53634c2df8dc60cfdc2ccbfad). Firebase enabled its required build/run APIs but deployment failed before creating Functions: me-central2 upload URL returned403 LOCATION_POLICY_VIOLATED, with Google directing regional access requests to sales. A repeat diagnostic confirmed Dammam403 and Doha/me-central1200. No room Functions were deployed by the failed attempt.
+
+Root requested a user decision before switching game request processing to Doha while retaining the existing Dammam database. No region change or runtime switch has been applied. Production remains the previously verified 52/83-category static preview. The active question release is still absent; genuine content review/publication and live host/player checks remain required after infrastructure setup.
+
+Evidence: output/firebase-activation-20260911/ (appcheck-prestate/configured receipts, backend/provider Gate reports, region-access-check.json). Rollback before live client use restores only the task-created provider/key state with concurrency checks. Do not delete source questions, change billing, weaken rules or synthesize approval receipts. API enablement may remain; never disable shared services without checking use.
+
+
+## Hide unavailable categories and question-count report — 2026-09-11
+
+User requests categories with insufficient questions omitted from selection and a Markdown generation backlog with counts for all categories. This supersedes the earlier disabled-card presentation, not the complete underlying inventory. Local/preview Huroof uses existing positive letter-question coverage; category mode uses existing distinct-concept eligibility. Approved Firebase catalogs use their per-mode playable flags. Filtering precedes search/topics/counts and prunes stale selections. Existing design, static-preview restriction and server-side final validation remain.
+
+Fresh metadata-only local inventory matches the checked-in projection exactly: 88 categories, 12,603 usable references, 429 held references; 52 Huroof-visible and 83 category-mode-visible. [All category counts and generation backlog](../docs/CATEGORY-QUESTION-COUNTS.md) retains all 88 rows, identifies 36 zero-Huroof and five category-mode-unavailable categories, and distinguishes held records from distinct usable questions. No question bodies, approval/database changes or backend activation.
+
+Verification/release status: Done — source accepted, pushed and production promoted. Implementation commit451aee1d96633520f11597c37c08ddc92e846085. Root reproduced11 focused tests; Forge24 setup tests and builds pass; Gate4 independent tests and reduced-tree build pass. Existing React act warnings and >500kB bundle advisory remain. Exact810-file upload manifest45ade74b8db1776864268afc835549beb3c0fdd748ad7767cc97d980619102a0. Production deploymentdpl_4uk1GFcH63gbaknWHXTjGstjMe3a. Candidate/public browser checks:52Huroof,83category-mode,Flags hidden only inHuroof,held cards omitted,deep-link cleanup/search verified. Public main bundle /assets/index-C_cGngEn.js matches reviewed candidate/local SHA25612f6b63598f0c1e5a153791c5d03ce0ccec6b9efe46260a94d89bdc66ac7444b. Retain VITE_STATIC_PREVIEW=true and VITE_GAME_RUNTIME=fixture. Rollback: promote dpl_2kkkGnRsUawu7WLpQgi3oDXfD2oo; revert only this bounded source delta. Evidence directory: output/category-question-report-20260911.
+
+
+## Live rooms and full-question review authorization — 2026-09-11
+
+User explicitly requests live rooms/gameplay and approval of all questions. This authorizes completing the existing T-14.4–6/T17.3 production sequence, with actual approval provenance and validation; it does not establish that every record is correct or erase unsupported/missing-media findings. No invented reviewer identities, signatures or factual-review receipts. Preserve existing intake/history and the current 88-category preview while prerequisites remain incomplete.
+
+Fresh read-only evidence: `output/live-game-release-20260911/preflight.json` at 14:21 UTC confirms billing disabled, zero Functions and absent active release. Anonymous Auth is enabled and the public Vercel domain is authorized. App Check HTTP 200 default config responses alone do not prove a registered usable provider/site key; that remains to be verified. The user was asked to enable Blaze in their account; independent preparation continues.
+
+Implementation now adds authenticated/App Check metadata-only approved catalog discovery, selector-derived per-mode readiness, immutable release identity pinning and authoritative selected-scope validation at creation. Firebase setup uses the approved release instead of forcing demo. Root verified all 38 compiled Functions tests (including private media fixtures) and five Firebase setup tests; Forge app/Functions builds, typecheck, seven adapter tests and 23 local setup tests pass. Final source Gate PASS for the exact twelve code/test paths; root reproduced six Firebase UI tests after the final homepage fix and the final static build. Source manifest SHA256 d97c53f0dcaca941238f46485f87f54ba9c9842b34ae3d62b79ab3920b88684d. Source implementation commit: `419b28f0` on `codex/app-update-2026-09-07`. No backend activation, active pointer or approval writes have been made. Production remains the verified static preview; code readiness is not live service readiness.
+
+Content audit: 12,752 SQLite rows remain draft; 20,084 reconciled source revisions represent 14,024 candidate IDs, not that many distinct approved questions. Recovered 15 missing exact-original photos; prepared package v2 has 1,741 hash/MIME-verified assets, four unresolved remote photo entries and eight overlapping unresolved source references. Nine rebuilt-question records separately lack supplied images. Private package remains prepared-only; no status was changed to approved. Actual authenticated review/attestations and an immutable active release remain required. Evidence: output/live-game-release-20260911/IMPLEMENTATION-EVIDENCE.md and CONTENT-READINESS.md.
+
+App Check Enterprise preparation plan was reviewed, but no service/key/provider mutation was applied. It must be paired with the correct client provider and actual attestation checks before activation. Billing, provider setup, approved release publication and real multi-client gameplay verification remain open. Existing T-14.4–6 acceptance and rollback govern the next actions.
+
+## Full category catalog correction — 2026-09-11
+
+Authorized follow-up: production shows only eight fixture categories; user requests all available categories implemented, pushed and deployed. Read-only local inventory confirms 88 categories, 83 locally eligible. Scope is a metadata-only public catalog and consistent homepage/setup discovery; no question payload, database mutation, backend activation or redesign. Preserve existing preview restrictions and distinguish local content availability from live playability.
+
+Execution: Forge implements and tests in the prior clean isolated release clone; root reviews the delta and verifies exact inventory coverage; Gate reviews public payload and preview guards; root pushes the bounded fix, deploys with `VITE_STATIC_PREVIEW=true` and `VITE_GAME_RUNTIME=fixture`, verifies the candidate and promotes. Acceptance: all 88 inventory IDs represented once, both homepage and setup can discover categories beyond the original eight, unavailable states remain accurate, filters and category links work, artwork loads, and public production confirms the full count. Rollback: promote prior deployment `dpl_3QoqdRZT9iRPCzQoYJWwF9PEk72x`; revert only task-owned commits if necessary. Status: **Done — verified and promoted 2026-09-11.**
+
+Release source commit: `66765eb0f3918fe4a7df698453e2f8a045c73811`, pushed to `codex/app-update-2026-09-07`. Production deployment: `dpl_2kkkGnRsUawu7WLpQgi3oDXfD2oo`, serving https://huroof-wa-oloof.vercel.app. Candidate and public production browser checks confirm 88 category images loaded, zero broken images, all-topic count 88, five held entries disabled, working search, and a retained deep-linked category outside the old eight. Homepage exposes all categories through its 88-category expansion control.
+
+Verification: exact metadata projection 88/83/5; app typecheck, changed-file ESLint, static build, 27 focused tests reproduced by root, and four independent Gate checks passed. Gate rebuilt the 809-file reduced upload and verified its manifest `3f10a57245e1aa07cfc9b36974d2b9a5dc681ed690424a5fd7093c56972de259`. Public main bundle `/assets/index-D3t6TePY.js` matches local/candidate SHA256 `ed05e9f20ee42af76482713cf1ce97606e0ed559ff0115e79606372a31c295d3`. Evidence: `output/category-catalog-release-20260911/IMPLEMENTATION-EVIDENCE.md`, `GATE-REPORT.md`, `ROOT-BROWSER-CHECK.md`, manifests and candidate verification. Existing React act warnings, Vite chunk advisory, and unrelated request/tough-cookie type mismatch under standalone script checking remain; scoped script checking with skipLibCheck passes.
+
+Refresh after future inventory changes: obtain the metadata-only local inventory using the existing authenticated/origin-checked local API, then run `npm run refresh:public-category-inventory -- --input <metadata.json> --write`; verify with `--check`, test and redeploy the reviewed catalog. The exporter explicitly selects public metadata fields and rejects duplicate IDs/invalid fields. Do not pass question payloads or publish the local input receipt. Source integration preserved concurrent work; no backend activation or database writes occurred.
+
+## GitHub and Vercel production update — 2026-09-11
+
+User authorization: “Update GitHub and vercel production.” This authorizes publishing the current completed application changes and updating the existing Vercel production project. Root coordinates under the existing GitHub/Vercel publication contract below; Forge prepares an isolated source snapshot and explicit file allowlist, then Gate reviews the exact package before root push/deployment.
+
+Scope: completed application, category artwork, accepted T17 runtime support, matching tests and release documentation. Inspect changed files and dependencies before selection. Exclude private question bodies, databases, source-media originals, import receipts, credentials and unaccepted in-progress Firebase consolidation tooling. Preserve all concurrent working-tree changes. No mass question approval, database migration or Firebase release activation is implied by this frontend publication.
+
+Sequence and acceptance: verify remote branch/project/environment identity; capture immutable selected-file hashes; build/typecheck/test isolated Git source and the reduced Vercel upload; pass the release Gate including private-payload checks; publish intentional asset/implementation/documentation commits; deploy a production candidate with delayed domain assignment when supported; check HTTP/browser/deep links and matching build; promote and verify production alias. Retain the currently configured runtime unless live backend/release prerequisites support an explicit change. Record the exact runtime and any limitations without describing a static frontend as an online database deployment.
+
+Rollback: restore the verified previous Vercel production deployment by promotion/rollback. Revert only task-owned Git commits if needed; never reset the mixed workspace or restore a whole database. Root owns final acceptance and updates this section with evidence. Status: **Done — verified and promoted 2026-09-11.**
+
+Publication evidence: GitHub branch `codex/app-update-2026-09-07` was updated with asset commit `2a350696`, implementation commit `b14a62d8`, and release-source commit `7cc0cd48ac54cfbce52a545b704c01793ed4f48c`. Vercel project `prj_LlhlcNrvjFJnmPkIFPzc2mkzu6Ni` production deployment `dpl_3QoqdRZT9iRPCzQoYJWwF9PEk72x` is READY and promoted at https://huroof-wa-oloof.vercel.app. The immutable deployment URL remains protected by Vercel authentication; authenticated CLI candidate checks succeeded without changing protection. The main public alias resolves to this deployment and serves the verified build.
+
+Acceptance evidence: 677 selected source files and 808 upload files were independently rehashed without mismatch; Gate private-data/credential scan passed. Typecheck, source/reduced-upload/Functions builds, 80 focused checks and two independent preview tests passed. All 762 independent build outputs match. Candidate and public production main bundle SHA256 is `71ef0861abbee7ec74b3e8ff755870698fccc72eeca99953dc98a6151684dfaf`. Public `/` and `/host/new` return HTTP 200. Browser verification confirmed the new homepage, eight loaded category images with zero broken images, disabled join/create controls, and blocked `/local-import-review`.
+
+Runtime limitation: Production uses `VITE_STATIC_PREVIEW=true` and `VITE_GAME_RUNTIME=fixture`, explicitly saved to Production settings and supplied at build. It displays the eight fixture categories; the local database and its full category/question inventory were not published. Fresh read-only Firebase checks found billing disabled, zero deployed Functions and no active release. Broader private-media integration tests require deliberately excluded private registries; those tests could not run in the public snapshot. Existing bundle-size advisory remains. No database, Firebase activation or private source upload occurred.
+
+Rollback target: `dpl_8VHpcpYTk2H2AoaZNqmvWRowWmgB`. Detailed local evidence: `output/release-production-20260911/PACKAGING-REPORT.md`, `GATE-REPORT.md`, final source/upload manifests, `production-after.json`, and candidate/production bundle copies. Original mixed workspace was preserved; publication used an isolated clone. The following documentation-only receipt commit does not change deployed application bytes.
 
 ## Authority and current state
 
@@ -80,3 +161,35 @@ Vercel Preview READY: https://huroof-wa-oloof-ql23s3kp6-sanad-general.vercel.app
 Verification: clean Git and stripped195-file Vercel source builds/typechecks pass;31focusedUI checks; independent Gate2/2; Node22.23.2 Functions compile; production-only audit0. Root browser verified both setup kinds and direct room/admin/import-review guards with zero API/callable requests. Protected live HTTP homepage/deep-link/mainJS200; deployed mainJS SHA2565742314062cd74a219647d177116979d73de237789af923be473d4d603bbfb20 matches the browser-tested candidate. Vercel adds its standard preview feedback script to HTML. Existing large-vendor-chunk warning remains. Full online gameplay remains blocked by the activation sequence above; this publication does not change draft approvals or enable a backend.
 
 Local evidence: output/release-20260909/packaging-report.md and gate-release-package.md. Local database-backed app remains available on127.0.0.1:8787. Next authorized action: after user billing setup, recheck Firebase billing and complete App Check, immutable catalog binding and genuine reviewed-release preparation before deployment/activation.
+
+## Vercel Doha-client update — 2026-09-11
+
+Production updated and promoted to dpl_GjvN4Rcmhnyo18Rho8wkc7remnCd, https://huroof-wa-oloof-4b4lrlbnj-sanad-general.vercel.app. CLI resolved https://huroof-wa-oloof.vercel.app to this Ready deployment after promotion. Source e92102ec326750f3b4cdb3f7e3e4dc9a0f463edb; exact810file static-client package manifest42b8dd0108c07122403d64a6a0ee7e29ff6e0e1d9cd161f0bf253aecdee3caf4. Only client.ts and vite-env.d.ts differ from previous accepted static package (Enterprise provider and Doha configuration support).
+
+Independent Gate passed inventory/privacy/source checks and TypeScript/Vite build. Remote production build Ready. Actual browser setup page loads, shows52Huroofcategories and correctly disables room creation in preview. Production env remains VITE_STATIC_PREVIEW=true and VITE_GAME_RUNTIME=fixture. Owner approval is recorded but current publisher/runtime does not consume that record and no active playable release exists. No live gameplay claim.
+
+Rollback: promote previous deployment dpl_4uk1GFcH63gbaknWHXTjGstjMe3a if needed; no database rollback or source deletion required. Evidence: output/vercel-doha-20260911/upload-manifest.json and gate-report.txt. No private question content or environment payload uploaded.
+
+
+## T-14.5 live game activation verified — 2026-09-11
+
+Done for owner-authorized text gameplay. Production https://huroof-wa-oloof.vercel.app now uses Firebase, with static preview disabled, Doha callables and Node 22. Final Vercel deployment: dpl_8qRaEaE7o4npCPRMbQCWL9AfCQsL (huroof-wa-oloof-ecl46u3p9-sanad-general.vercel.app). Code pushed and remote-verified: 9afe7fdbcbe90cbdc8bdd66f4da55192b0d05f0e, branch codex/app-update-2026-09-07.
+
+Activated owner-release-3b46a28072ec92a4ed3be4941bf7a818: 10,686 technical-valid owner-approved text revisions across 67 categories; 10,821 release documents independently read back, active pointer verified. All 18,698 source revisions retain owner approval and immutable original provenance. Technical exclusions remain excluded; this does not claim specialist factual review or activation of unsupported media.
+
+Root cause included preview runtime and disabled firebaseappcheck.googleapis.com. API now enabled; real browser attestation succeeds. Auth, App Check enforcement, exact domain restriction and score threshold 0.5 remain intact. Intermediate HTTP400 ceased after propagation/rebuild; no separate cause is asserted. Eight sensitive Vercel values are intentionally hidden in env pull; the final build successfully uses persisted production settings without CLI build-env overrides.
+
+Actual production browser evidence: category room LQU8YWLJ created with huroof-068/069/088, started, round prepared, question loaded, and independent Chrome player joined/connected. Final clean deployment: letters room KECE6Q4K created, started, round prepared and selected letter question loaded. These are smoke-test rooms, not a full completed-match endurance test. Catalog displays 67 available categories. Temporary diagnostic wrapper was removed before final deployment.
+
+Checks: publisher 5 tests, Functions build and 28 game tests, client build and 10 focused UI/provider checks; final restored provider 3 tests and app typecheck passed. Database and release Gate accepted the scoped changes; final 810-file client manifest verified. Firebase catalog function update succeeded; CLI subsequently reported an artifact-retention-policy warning, with no retention policy changed.
+
+Detailed local evidence: output/owner-live-release-20260911/verify-result.json, gate-owner-final-report.txt, gate-backend-report.txt, gate-clean-client-report.txt, final-upload-manifest.json and final-production-inspect.txt. Final upload manifest SHA256: 38e47f8b67d34ef59beaaf80cd2737828a04ed24ba3cc1ca947538b4a13f29b8.
+
+Rollback remains conditional owner-release pointer rollback-none with operation reference; preserve immutable content/audits. Prior Vercel deployment may be promoted if required, but prior static builds do not provide gameplay. Next work is only separately requested content/media or full-match acceptance expansion; room creation is no longer blocked.
+
+
+### Unanswered-question recovery follow-up — 2026-09-11
+
+Done: failed questions now offer an explicit next-letter/category action and restore board focus; ending the entire match requires an in-page confirmation with safe cancellation focus. Completed host screens explain the ending and offer a same-settings new game. No backend/state/scoring/rules changes. The reported Chrome room was already endedWithoutWinner; it is not silently reopened.
+
+Production verification: Chrome room F3LG7S8N unanswered timeout -> recovery -> different letter question loaded, zero points awarded; confirmation cancellation preserved the match. In-app room B32H8Y2L also verified the final in-page confirmation and cancellation. Original host tabs refreshed. Code pushed through 424327cba8dbe58b8d5511b8a772485dda127e69; Vercel dpl_6K44t8o26vvEaxXeRB8AKic1cDxr promoted. 28 focused UI checks, timeout service regression, 10 domain tests, typecheck/lint and independent release Gate passed. Two unrelated full-service tests lack private media fixture manifests in the release snapshot. Details: [repair evidence](../output/unanswered-game-fix-20260911/RESULT.md).

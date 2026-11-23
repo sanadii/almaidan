@@ -1,0 +1,26 @@
+{
+  "assignmentId": "PRO311-HISTORY-FORGE",
+  "taskId": "PRO273-SEL",
+  "disposition": "BOUNDED SOURCE IMPLEMENTATION ONLY",
+  "proposal": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\planner\\PRO311-INITIAL-PARSER-ABI-20261101.md",
+  "sha256": "c1aa1946c4fefb8687b5d685058fd6599da7b6c2690b3f0ae2025d31c879c0bc",
+  "review": "Database and Security conditional concurrence",
+  "clarifications": [
+    "Semantic core validity timestamps use exact UTC milliseconds; actual backend start identity retains full stored precision in explicit UTC, no truncation or rounding.",
+    "Actual pg_current_xact_id populates all new creation xids; same-transaction launch/session/binding/claim/preinput admission denied at consuming binder, not creating transaction. Preinput post-COMMIT receipt reauthenticates actual receiver and protected tuple.",
+    "Private preinput receipt has exact closed string response {schemaVersion,phase,nonce,receiptId,inputClaimId,sessionClaimId,attemptId,receiverIdentity,creationTransactionId} with schemaVersion pro273-initial-receipt-v1 and phase INITIAL_ADMISSION_COMMITTED. Private publication receipt has exact closed string response {schemaVersion,phase,nonce,receiptId,inputClaimId,targetId,coreHash,capturedHash,evidenceHash,constructionTransactionId}, same schemaVersion and phase INITIAL_PUBLICATION_COMMITTED. Nonce comes from fixed receiver, is correlation only; receipt function authenticates original protected caller and exact rows, separate later transaction, bounds response before materialization, no retry/redispatch.",
+    "A visible receipt is not unused capture authority: independently qualified durable capture/dispatch fence is consumed before first use, used/unknown denies; read-only outcome lookup never renews.",
+    "For first layout compare calculated/expected LayoutCore hash to baseline.expectedFutureLayoutCoreHash without requiring existing layout; allocation requires allocation.layoutCoreHash = existing layout.coreHash = baseline.expectedFutureLayoutCoreHash.",
+    "Route then acquire global/physical and complete deduplicated sorted mutable trust set, baseline/lifecycle and exact claim records in released order, revalidate routing and time; do not call old session-first assertion before prelocks or acquire new trust during reentry.",
+    "Existing independently prepaid operation charge uses domain pro273.control-plane.charge.v1, purpose QUALIFIER_BASELINE_INITIAL and protected expected core/evidence/inputClaim/event; exact binding/claim/actual charge equality and no extra debit.",
+    "Bound every grammar/decoder/sort/canonical and JSONB representation peak plus simultaneously held W/S buffers against independently qualified existing baseline, with pre-growth allocation/index checks; no double credit or invented pool. Missing overhead qualification denies.",
+    "Preserve semantic kernel behavior for existing installer; scoped decoded duplicate rejection applies to INITIAL envelope/core, no generic external parser or caller limits. Atomic publication and complete exact original receipt/bytes on lookup; no repair of missing rows.",
+    "Independent Database/Security changed-byte review and Root reproduction required; SQL concurrency, runtime, installed resources/fences/ACL and real receiver remain unverified.",
+    "Fixed private functions are pro273_initial_admission_receipt(inputClaimId TEXT,nonce TEXT) RETURNS JSONB and pro273_initial_publication_receipt(inputClaimId TEXT,nonce TEXT) RETURNS JSONB; phase is fixed by function, no caller mode.",
+    "Admission function joins full immutable claim/reservation/baseline/core/session/attempt/event/receiver actual OID/name/epochs/PID/start/source/install/charge. Publication joins that same claim and admission to exact target kind/ID, expected core/evidence and complete original capture/provenance. targetId, nonce or receipt ID alone authorizes nothing.",
+    "Each receipt compares stored actual admission/publication creation xid to current pg_current_xact_id inside the function and rejects equality; response xid string is correlation only. Publication receiptId is distinct in meaning from preinput receipt.",
+    "Bound and validate nonce and escaped response before allocation, closed type/hash/xid decode, no identity truncation. Receiver compares independently admitted identities; lookup never mutates, reconstructs, recaptures, redispatches or renews a fence."
+  ],
+  "holds": "R6 STOP; both public reader guards, installation aborts, all accepted evidence, spent admissions and UNKNOWN occupancy remain; no SQL/native/DB/OS/service/network/install/deploy authority.",
+  "receiptReview": "Database and Security conditional concurrence on exact closed response projections; full stored provenance and independent receiver identity remain mandatory."
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "visual-selection-2026-10-01-008",
+  "recordedAt": "2026-10-01",
+  "selectedConceptId": "INT-CONCEPT-B",
+  "selectedConceptNameAr": "ميدان",
+  "selectedProductNameAr": "ميدان",
+  "selectionAuthority": "human-product-owner",
+  "exactHumanAnswer": "ميدان",
+  "historyPrefix": {
+    "recordId": "design-history-0007",
+    "path": "design/evidence/history/0007-spatial-studio-whole-app-rollout.md",
+    "sha256": "B6FF90DD167B0813A1118C23AC030B71260D66A71DCCC38B077643DE8EFB7510"
+  },
+  "conceptSet": {
+    "path": "design/evidence/integration-concept-set-2026-10-01.json",
+    "sha256": "BA0FB9D388417EECF4967366D6556AADED4A3CEF2F5E769D65267EC19DD5B187"
+  },
+  "selectedImage": {
+    "path": "design/mockups/integration-2026-10-01/concept-b-maydan.png",
+    "sha256": "F9C9FC2D199B83BB2B6BEE583489BB29977D0A3E177ACCC4805C74AF8AEE9B28"
+  },
+  "directionRecord": {
+    "recordId": "design-history-0008",
+    "path": "design/evidence/history/0008-maydan-combined-homepage-direction.md",
+    "sha256": "2BF3A1828EFEEFDC51B0DC0419D1E1AB2A2158CA98D9D377A39FC33EBB05A499"
+  },
+  "scope": "Combined homepage and entry shell implementation only. Whole-app visual rollout requires an exact later human live homepage review.",
+  "validationRule": "Validate only the immutable numbered record and exact concept-set and selected-image artifacts listed here. Never validate this receipt against a later mutable directory or whole-history hash.",
+  "supersedes": "Incompatible combined-homepage visual and product-name clauses of prior Huroof visual authority, while preserving historic design records and game invariants."
+}

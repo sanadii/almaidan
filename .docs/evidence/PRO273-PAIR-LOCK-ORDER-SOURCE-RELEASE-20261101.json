@@ -1,0 +1,19 @@
+{
+  "assignmentId": "PRO311-HISTORY-FORGE",
+  "taskId": "PRO273-SEL",
+  "disposition": "BOUNDED SOURCE IMPLEMENTATION ONLY",
+  "proposal": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\database\\PRO311-PAIR-LOCK-ORDER-20261101.md",
+  "sha256": "2b7c62b0780e71ebeab844d78c845640b1b49be89813e6ef3a06dcd32b032cc5",
+  "basis": "Database traced explicit SHARE NOWAIT row locks; Security conditionally concurred. No SQL concurrency behavior established.",
+  "rootRefinement": "Two-phase ordering: independently funded installer metadata parsing then authenticated target discovery; never claim global order over undiscovered identities.",
+  "conditions": [
+    "Require READ COMMITTED at fixed installer/constructor entry; unsupported isolation denies, no automatic serialization retry.",
+    "Use immutable routing records as hints only; identify complete relied-upon mutable trust set, deduplicate and sort by (trustId,generation), acquire global then physical and all trust locks NOWAIT; reread and validate all routing relationships; newly discovered trust, missing or changed identity denies.",
+    "Constructor acquires strongest required global/physical modes before any context/parser; no late upgrade. Preserve all authentication, charge, previous-transaction and currentness checks, and recheck fresh time after locks.",
+    "Only replace row locks on explicitly proven immutable records after confirming source owner, UPDATE/DELETE triggers, TRUNCATE/direct/default privileges, membership/SET ROLE and definer mutation paths. Keep mutable trust, global/physical, lifecycle and baseline locks. Installed ACL proof remains unverified.",
+    "Repeated parser reentry uses the same authenticated authority set and does not add locks or upgrades; no caller JSON, GUC or lock flag may confer authority. Missing immutable row denies without wait/retry.",
+    "All mutable target/accounting writers must use corresponding serialization boundary; deterministic order and NOWAIT for each authenticated target lock set; preserve compatible prior parser evidence.",
+    "Verify nested call trace, routing substitution, reverse/duplicate trust IDs, isolation denial, revoke/expiry, missing and same-transaction records, late upgrade, privilege and owner paths, retry/rollback; native SQL concurrency remains NOT_RUN."
+  ],
+  "holds": "R6 STOP, both public reader guards, install aborts, accepted evidence and spent admissions unchanged; no SQL/native/DB/OS/service/network/install/deploy authority; independent changed-byte Database/Security reviews and Root acceptance remain required."
+}

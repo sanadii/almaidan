@@ -1,0 +1,135 @@
+{
+  "decision": "PART1_INT062_E1_SOURCE_ACCEPTED_DONE_WITH_LIMITS",
+  "acceptedUTC": "2026-10-16T17:15:17.168992+00:00",
+  "acceptedKuwait": "2026-10-16T20:15:17.168992+03:00",
+  "scope": "Exact repository SOURCE implementation and permitted local TS/jsdom/type/source checks for Part1 INT-062.E1/CAP-C5 only; not whole-app/installed/native/human/production acceptance.",
+  "packet": {
+    "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\output\\int062e1-lifelines-corrections-20261007\\cap-c5-applied-20261016\\APPLIED-SOURCE-REVIEW-PACKET-20261016.json",
+    "sha256": "57ca00168780c619bc1d78c4af5fa220467a2a265c28c5954aff35268ee27138"
+  },
+  "sourceFiles": [
+    {
+      "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\services\\enta\\server\\prisma\\migrations\\20261007220000_int9_competitive\\migration.sql",
+      "sha256": "72cba1553fffb5ed0b517f4692958d093a771c40b032e2a29d5099d98d801de2"
+    },
+    {
+      "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\services\\enta\\server\\tests\\enta-competition-bounds.test.ts",
+      "sha256": "43b78ceda030e94b2f3c0eddc5d2505d7fea8cc4fc3b1891ea9934b51e1ba3bf"
+    }
+  ],
+  "reviews": [
+    {
+      "role": "Database",
+      "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\output\\int062e1-lifelines-corrections-20261007\\database\\C5-OCT16\\CAP-C5-APPLIED-DATABASE-REVIEW.md",
+      "sha256": "bb7d5315cb2a4902f66f4ae09f6c075870087ff20a69e397f0222f616e340669",
+      "disposition": "CONCUR/PASS WITH SOURCE LIMITS; complete report read by Root"
+    },
+    {
+      "role": "Security",
+      "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\output\\int062e1-lifelines-corrections-20261007\\security\\C5-OCT16\\SECURITY-APPLIED-SOURCE-REVIEW.md",
+      "sha256": "a221c13c9479f5353374fed75ac7975f05fe8587207253e8c0dd8bc00d4c05ab",
+      "disposition": "CONCUR/PASS WITH SOURCE LIMITS; complete report read by Root"
+    },
+    {
+      "role": "Gate",
+      "path": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof\\output\\int062e1-lifelines-corrections-20261007\\gate\\C5-E1-OCT16\\GATE-SOURCE-ACCEPTANCE-REVIEW.md",
+      "sha256": "aa0107f5e39015e428b1adc6fc97f6ece78429b0c00949d3db7cde4856bb79ba",
+      "disposition": "CONCUR/PASS WITH SOURCE LIMITS; complete report read by Root"
+    }
+  ],
+  "rootChecks": [
+    "D:\\projects\\huroof_wa_oloof\\output\\part1-resume-20261016\\root-c5-r2-legacy-identity.json",
+    "D:\\projects\\huroof_wa_oloof\\output\\part1-resume-20261016\\root-c5-r2-preedit-checks.json",
+    "D:\\projects\\huroof_wa_oloof\\output\\part1-resume-20261016\\root-c5-r3-preedit-checks.json",
+    "D:\\projects\\huroof_wa_oloof\\output\\part1-resume-20261016\\root-c5-applied-checks.json",
+    "D:\\projects\\huroof_wa_oloof\\output\\part1-resume-20261016\\root-c5-applied-bounds.log"
+  ],
+  "completed": [
+    "Exact six legacy tails/fresh5 prefixes and seven protected predecessors preserved",
+    "Named immutable executable imports/reads/directory membership/output enforcement with negative controls",
+    "Independent canvas Game snapshot CAS after exact positives and settlement; canvas revision remains separate",
+    "Conservative reachable MEMBER ancestor ACL closure including NOINHERIT/SET; no membership/owner/grant mutation",
+    "Full five DB/overlapping SEC/CAP/F11/dispatcher/paid retry/read-drain source composition reviewed",
+    "Narrow obsolete test reconciliation preserves exact prior counterexample/fixtures/limits and original failure history"
+  ],
+  "checks": {
+    "serverPure": {
+      "pass": 51,
+      "fail": 0,
+      "files": 7
+    },
+    "UIjsdom": {
+      "pass": 26,
+      "fail": 0,
+      "files": 2
+    },
+    "changedBounds": {
+      "pass": 3,
+      "fail": 0,
+      "independentRootAndGateReruns": "PASS"
+    },
+    "appTypecheck": "exit0 --noEmit",
+    "serverTypecheck": "exit0 --noEmit",
+    "sourceIdentity": {
+      "packetMembers": 45,
+      "actualFiles": 266,
+      "historicalObjects": 1073,
+      "directDefinitions": 159,
+      "recursiveDefinitions": 182,
+      "obligationRanges": 38
+    },
+    "C4": {
+      "expressions": 24550,
+      "maximum": 4163377,
+      "minimumSlack": 30927,
+      "limit": 4194304,
+      "interpretation": "conditional logical encoded-source material, not native memory",
+      "newGuard": 21306,
+      "sameModelDominatingFrontier": 3441463
+    }
+  },
+  "preservedFailures": [
+    "Initial R2 legacy-tail blocker and executable replay read-set failures",
+    "R2 Database/Security canvas/SET source HOLD and corrected Security conclusion",
+    "Caught CRLF intermediate; final source equals reviewed LF bytes",
+    "Initial server50/51 with unchanged1343891>1179648 withdrawn whole-context assumption; test is now explicit negative regression under existing contract670/H1/H3/H4/H5/684"
+  ],
+  "status": {
+    "CAP-C4": "Done WITH LIMITS; prior exact acceptance retained",
+    "CAP-C5.FREEZE": "Done WITH LIMITS",
+    "CAP-C5.PREEDIT": "Done WITH LIMITS",
+    "CAP-C5.REPAIR": "Done WITH LIMITS",
+    "INT-062.E1.ACCEPT": "Done WITH LIMITS",
+    "DailyPart1": "Done WITH LIMITS — SOURCE scope",
+    "Parts2–7": "Paused; new daily approval required"
+  },
+  "unverified": [
+    "Installed migration lineage/version/encoding, SQL grammar/compilation/application",
+    "Actual role/default/owner/MEMBER/SET/publisher ACLs, locks/deferred rollback/races/restore",
+    "Native SQL–TS parity, financial behavior, performance/RSS/ABI and installation DO graph/catalog scale",
+    "Controlled HTTP/runtime and human phone/desktop/TV gameplay",
+    "Genuine issuer/corpus/content rights/publication custody and production launch"
+  ],
+  "operationalBoundary": "Financial/native R6 STOP unchanged; no SQL/parser/compiler/query/apply/census/PostgreSQL/native/financial/cloud/deploy/build/server/browser action or Part2 work authorized. No live state, account, payment or game data changed.",
+  "nextAuthorizedAction": "No further implementation from this Part1 authorization. Next daily reminder asks owner for Part2 Yes/No; historical Oct10 Part2 authorization is not today approval.",
+  "rollback": "Only exact owned source/test reversal against matching postimages; preserve mixed work and any admitted5 reader/drain/history/payment facts. No database restoration over payments. No rollback executed.",
+  "usage": {
+    "configuredDelegatedModel": "GPT-6.1 Sol",
+    "roles": [
+      "Forge (same assignment reused)",
+      "Database (same assignment reused)",
+      "Security (same assignment reused)",
+      "Gate"
+    ],
+    "capturedIntervalAnchorUTC": "2026-10-16T16:00:33+00:00",
+    "capturedElapsedSeconds": 4484,
+    "originalRootEstimate": "1–3 hours if no further defects",
+    "wholeSessionElapsed": "unavailable",
+    "providerSessionCounts": "unavailable",
+    "uncachedInputTokens": "unavailable",
+    "cachedInputTokens": "unavailable",
+    "outputTokens": "unavailable",
+    "rootUsage": "unavailable",
+    "note": "Captured interval starts first current-turn Root authorization note; not provider model-session duration. No missing counts estimated."
+  }
+}

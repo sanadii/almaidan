@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createRef } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, it, vi } from 'vitest';
@@ -152,21 +152,11 @@ it('renders the two host visibility controls with an available local answer swit
   const setAnswer = vi.fn();
   const setAudienceQuestion = vi.fn();
   render(<HostVisibilityControls audienceQuestionVisible={true} disabled onAudienceQuestionChange={setAudienceQuestion} onHostAnswerChange={setAnswer} showHostAnswer={true} />);
-  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-  const options = screen.getByRole('button', { name: 'خيارات' });
-  fireEvent.click(options);
-  expect(screen.getByRole('dialog', { name: 'خيارات العرض' })).toBeVisible();
   expect(screen.getByLabelText('إظهار الإجابة للمضيف')).toBeChecked();
   expect(screen.getByLabelText('إظهار السؤال على شاشة العرض')).toBeChecked();
   expect(screen.getByLabelText('إظهار السؤال على شاشة العرض')).toBeDisabled();
   fireEvent.click(screen.getByLabelText('إظهار الإجابة للمضيف'));
   expect(setAnswer).toHaveBeenCalledWith(false);
-  fireEvent.click(screen.getByRole('button', { name: 'إغلاق' }));
-  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-  expect(options).toHaveFocus();
-  fireEvent.click(options);
-  fireEvent(screen.getByRole('dialog'), new Event('cancel', { bubbles: true, cancelable: true }));
-  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 });
 
 it('hides both private answer fields locally and reserves the audience question area when its shared setting is off', () => {
@@ -319,28 +309,25 @@ it('opens the question and buzzer from cell selection without manual host action
   expect(container.querySelector('.control-grid .host-controls__pause')).toBeNull();
 });
 
-it('offers a fresh same-cell question or a board return after nobody answers, and permits ending only while paused', async () => {
+it('makes an unanswered question continue to the next board cell and confirms full-match termination', async () => {
   const action = vi.fn();
   const teams = { horizontal: 'الأحمر', vertical: 'الأخضر' };
   const { rerender } = render(<HostActions action={action} playerCount={2} state="QUESTION_FAILED" teams={teams} />);
 
-  expect(screen.getByRole('status')).toHaveTextContent('سؤالاً جديدًا في حرفًا نفسها');
-  fireEvent.click(screen.getByRole('button', { name: 'سؤال جديد في حرفًا نفسها' }));
+  expect(screen.getByRole('status')).toHaveTextContent('اختر حرفًا آخر من اللوحة');
+  fireEvent.click(screen.getByRole('button', { name: 'استبدل الخلية واختر حرفًا آخر' }));
   expect(action).toHaveBeenCalledWith('RETRY_CELL');
-  fireEvent.click(screen.getByRole('button', { name: 'غيّر حرفًا والعودة إلى اللوحة' }));
-  expect(action).toHaveBeenLastCalledWith('RETURN_CELL');
-  expect(screen.queryByRole('button', { name: 'إنهاء المباراة كاملةً بلا فائز' })).not.toBeInTheDocument();
-  expect(screen.getByTestId('end-without-winner-dialog')).not.toHaveAttribute('open');
-  expect(action).toHaveBeenCalledTimes(2);
+  expect(screen.queryByRole('button', { name: 'أعد الخلية' })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'إنهاء المباراة كاملةً بلا فائز' }));
+  expect(screen.getByTestId('end-without-winner-dialog')).toHaveAttribute('open');
+  const cancel = screen.getByRole('button', { name: 'متابعة اللعب' });
+  await waitFor(() => expect(cancel).toHaveFocus());
+  fireEvent.click(cancel);
+  expect(action).toHaveBeenCalledTimes(1);
 
-  rerender(<><HostActions action={action} contentHold={{ reason: 'CONTENT_EXHAUSTED', operation: 'SELECT_CELL' }} playerCount={2} state="CELL_SELECTION" teams={teams} /><HostPauseAction action={action} contentHold state="CELL_SELECTION" /></>);
+  rerender(<HostActions action={action} contentHold={{ reason: 'CONTENT_EXHAUSTED', operation: 'SELECT_CELL' }} playerCount={2} state="CELL_SELECTION" teams={teams} />);
   expect(screen.getByRole('status')).toHaveTextContent('لا تتغير ملكية الخلية');
   expect(screen.queryByRole('button', { name: 'اختر حرفًا من اللوحة' })).not.toBeInTheDocument();
-  fireEvent.click(screen.getByRole('button', { name: 'إيقاف مؤقت' }));
-  expect(action).toHaveBeenLastCalledWith('PAUSE');
-
-  rerender(<><HostActions action={action} contentHold={{ reason: 'CONTENT_EXHAUSTED', operation: 'SELECT_CELL' }} playerCount={2} state="PAUSED" teams={teams} /><HostPauseAction action={action} contentHold state="PAUSED" /></>);
-  expect(screen.queryByRole('button', { name: 'استئناف' })).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'إنهاء المباراة كاملةً بلا فائز' }));
   fireEvent.click(screen.getByRole('button', { name: 'إنهاء المباراة كاملةً' }));
   expect(action).toHaveBeenLastCalledWith('END_WITHOUT_WINNER');

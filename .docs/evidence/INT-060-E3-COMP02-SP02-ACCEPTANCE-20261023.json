@@ -1,0 +1,115 @@
+{
+  "task": "INT-060.E3.COMP02.SP02",
+  "acceptedAtKuwait": "2026-10-23T01:37:53.459094+03:00",
+  "status": "ACCEPTED_WITH_LIMITS_SERVICE_CONSUMER_SOURCE_AND_OFFLINE_ONLY",
+  "scope": "Two source files types.ts/service.ts plus two new focused tests in integration checkout. Existing catalog service applies accepted structural helper to supplied exact-policy private projections after baseline guard, before Huroof/category work.",
+  "checks": {
+    "C01": "PASS exact source/evidence/containment identities, recovered R1 preimages",
+    "C02": "PASS fresh current full server noEmit; R3 strict focused noEmit",
+    "C03": "PASS current four actual repository recorder tests, full select/query/call/null/nonmutation/default legacy success/default R3E denial",
+    "C04": "PASS eight retained actual-service tests and exact R1 null-proofId assertion on unchanged source/helper/tools",
+    "database": "CONCUR WITH LIMITS exact R3",
+    "security": "CONCUR WITH LIMITS exact R3",
+    "root": "R2 12/12 reproduced actual modules; R3 changed nonmutation test1/1 reproduced; exact source/test delta and hashes reviewed"
+  },
+  "evidence": [
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-consumer-integration-20261023\\forge\\revisions\\SP02-R3\\FROZEN-MANIFEST-R3.json",
+      "sha256": "f17c8e8085685e3f6c6cd45c2af075759633b32e0e349b6cb29c3236a7ca9cd2"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-consumer-integration-20261023\\database\\FINAL-SP02-R3-REVIEW.md",
+      "sha256": "72efc4e4eeff12f2e59e6b4d1c9bda64a29a6b5e8cfe6db94d24cd205ea28e1b"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-consumer-integration-20261023\\database\\FINAL-SP02-R3-METADATA.json",
+      "sha256": "c321e663664d8bb742e489cc7c0260a64404b3462e4326a0ceb9733aea344347"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-consumer-integration-20261023\\security\\FINAL-SP02-R3-REVIEW.md",
+      "sha256": "695c138e47e9efb963435bb6625237bd88d112d538149d91fc00bad391baa100"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-consumer-integration-20261023\\security\\FINAL-SP02-R3-METADATA.json",
+      "sha256": "4dbee10c19d0dfca22e6ce9f640baa943c57c7fb42643a99c449c70312913010"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-consumer-integration-20261023\\ROOT-R3-VERIFICATION.json",
+      "sha256": "fec5765b46a230ecef5172246238ed0b9658a7b241a646d297e9ceaf3f644c22"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-consumer-integration-20261023\\ROOT-NODE22-REPRODUCTION.json",
+      "sha256": "22953ec439056dbb1d67b8e74d24e7aef0a79c66cd6ea2c7d7c80171d37c5cc7"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-consumer-integration-20261023\\ROOT-CURRENT-SERVER-NOEMIT.json",
+      "sha256": "7f5135e58d6600195873b6facf61bd4a69658f7d31d28d084d60bf36f96a0cd7"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-consumer-integration-20261023\\ROOT-CURRENT-SERVER-DEPENDENCY-JOINS.json",
+      "sha256": "6c960db2c803a07e3e69d7d5f80b161473bf08665529dbfbae8d9cbe26b158da"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-consumer-integration-20261023\\ROOT-R3-CUMULATIVE-CASE-ERRATUM.json",
+      "sha256": "c98637a8089f40ece51b0a254ee65e68939a691d9ff012f3b5038f4164d419b4"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-consumer-integration-20261023\\ROOT-R3-REVIEWED-TEST-DELTA.patch",
+      "sha256": "9cef4bb8a34f48c2a6d4d1c384288f922516027eb3f48ce92b03d4bc33477d99"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-consumer-integration-20261023\\recovery\\R1-RECOVERED-PREIMAGES.json",
+      "sha256": "1d3b76c22fdfbac337461857aa5dc2c37fe3202b8624e33b22d3f0a22f0ea115"
+    }
+  ],
+  "worktreeMembers": [
+    {
+      "path": "services/enta/server/src/catalog/types.ts",
+      "bytes": 3816,
+      "sha256": "3d4fa7765d048fab3003834a2a1e6fd9ea29e39ca4a0d1704bf572fc022ce927",
+      "scope": "owned; unchanged from R1"
+    },
+    {
+      "path": "services/enta/server/src/catalog/service.ts",
+      "bytes": 10852,
+      "sha256": "a6af7908ef4ab6f03939c8702b35b54801a0a7e4a8630ff6daa9ba454b73fab1",
+      "scope": "owned; unchanged from R1"
+    },
+    {
+      "path": "services/enta/server/tests/catalog-receipt-proof-consumer.test.ts",
+      "bytes": 13559,
+      "sha256": "2f0a029f2916940c3f30ff685f096203ef5c3ca5460e5a1ffafc3032f05d3b7f",
+      "scope": "owned; unchanged in R3"
+    },
+    {
+      "path": "services/enta/server/tests/catalog-receipt-proof-repository.integration.test.ts",
+      "bytes": 8276,
+      "sha256": "21c5798a0a03f35bc2ff271c6d7df87207f170e8fa0533bfcd07324ce3c0cc5d",
+      "scope": "owned; changed R3 nonmutation assertion"
+    },
+    {
+      "path": "services/enta/server/src/catalog/repository.ts",
+      "bytes": 4269,
+      "sha256": "1cfb24333a06ec30ae09f733e02f61e556205256f57ff0b794a661ba3e30863c",
+      "scope": "read-only pinned dependency"
+    },
+    {
+      "path": "services/enta/server/src/catalog/receipt-proof-correspondence.ts",
+      "bytes": 6797,
+      "sha256": "5f99a925e6f27fe2b8caeb750d987b7de878d3e69dfc4dce5054ece1f03c0a6c",
+      "scope": "read-only pinned dependency"
+    }
+  ],
+  "corrections": [
+    "R1 retained null-proofId is test2/pass2, source mutation line50; use ROOT-R3-CUMULATIVE-CASE-ERRATUM.json, not erroneous writer test3 label.",
+    "R3 rootCurrentServerNoEmit relative ../../ locator is incorrect; accepted exact absolute receipt is D:\\projects\\huroof_wa_oloof\\output\\comp02-consumer-integration-20261023\\ROOT-CURRENT-SERVER-NOEMIT.json; relative from R3 is ../../../ROOT-CURRENT-SERVER-NOEMIT.json. Hash matches.",
+    "Fresh current server compiler pass replaces unsupported historical32-file retention assertion; original records retained, no historical inference."
+  ],
+  "remaining": [
+    "SP02-SUPPLIER-OPEN NOT_ADMITTED: lawful actual raw-seal/proofId/seven-field proof supplier access/custody/policy/lifecycle/privacy design and separate admission",
+    "No actual source approval, authenticated producer/custody/installed/runtime/full-pipeline or gameplay release",
+    "Parent PRO-259 / MID-TRN-05 remains In Progress/Hold; downstream PRO-262,PRO-264,PRO-267 unstarted"
+  ],
+  "R6": "STOP; no DB/SQL/Prisma tooling/native/financial/HTTP/cloud/services/config/key/deploy/recovery operations",
+  "rollback": "Exact inverse scoped source/test changes only after matching accepted postimages; preserve mixed work/evidence; no database/financial/tree reset."
+}

@@ -1,0 +1,18 @@
+{
+  "assignmentId": "PRO311-HISTORY-FORGE",
+  "taskId": "PRO273-SEL",
+  "disposition": "SOURCE IMPLEMENTATION RELEASE ONLY",
+  "databaseProposal": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\database\\PRO311-PAIR-CHARGE-RECEIVER-JOINS-20261101.md",
+  "sha256": "c04611d0257348e6f27f96c11733f1d3b2ebbe3d2e917ca396239c2e4fcd1242",
+  "review": "Database code-ready mapping; Security conditional concurrence",
+  "conditions": [
+    "Invocation claim requires restrictive actual-row join to exact committed QUALIFIER attempt, descriptor/allocation, receiver and epochs plus applicable BACKEND_CONNECT admission and actual observed backend PID/start; PROCESS_LAUNCH or installer attempt is insufficient.",
+    "An invocation charge match alone is not a retry: require original schedule/dispatch attempt claim, exact charge and complete expected BodyUse set and all worker/ordinal/schedule/grant/coverage bindings; missing or conflicting operation denies. No repair of partial claims, new ordinal or redispatch.",
+    "Acquire all rows in released canonical global/physical/trust/allocations/baseline/schedule/attempt/claim/body/receipt order; ensure pair, metadata and delivery assertions do not take later locks early. NOWAIT and refresh time.",
+    "Use owner-private pro273_sel_debit_invocation(scheduleId,invocationOrdinal,claimId) only from owning constructor with derived identities; charge protected baseline.eventWorstCase exactly once including all scheduled bodies and independently authenticated coverage, preserving sibling physical accounting.",
+    "Pair constructor reuses exact existing independently prepaid constructor charge, never additional debit; authenticate exact expectation/session/input/attempt/delivery and protected provenance; atomically insert schedule, all BodySpecs, grant, pair receipt and actual transaction ID; separately committed outcome read.",
+    "Preserve full scalar mapping release, separately authenticated actual claimant and worker identity and private grants; missing prerequisite denies, no PUBLIC/direct DML/SET ROLE.",
+    "Implement released qualifier BACKEND_CONNECT attempt and committed receiver linkage; never substitute installer attempt."
+  ],
+  "holds": "R6 STOP, both reader guards, installation aborts, accepted evidence and spent admissions retained; no SQL/native/DB/service/network/install/deployment authority; independent changed-byte reviews and Root reproduction remain required."
+}

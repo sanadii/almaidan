@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "import:categories": "tsx scripts/import-tahadani-categories.ts",
     "build:category-assets": "tsx scripts/build-category-assets.ts",
@@ -57,12 +60,18 @@
     "test:storage-rules:running": "tsx tests/storage-rules.test.ts",
     "test:storage-rules": "firebase emulators:exec --only storage \"npm run test:storage-rules:running\" --project demo-huroof-wa-oloof",
     "test:firebase-rules": "firebase emulators:exec --only firestore,storage \"npm run test:firestore-rules:running && npm run test:storage-rules:running\" --project demo-huroof-wa-oloof",
-    "dev": "concurrently -k -n server,vite \"npm run dev:server\" \"vite\"",
+    "dev": "pwsh -NoProfile -File scripts/start-local-almaidan-all.ps1 -SkipAdminRestore",
     "dev:server": "tsx server/index.ts",
+    "dev:enta": "tsx services/enta/server/src/index.ts",
     "dev:full": "npm run dev",
     "start:local": "tsx server/index.ts",
-    "start": "npm run start:local",
-    "build": "tsc -p tsconfig.app.json && vite build",
+    "start": "pwsh -NoProfile -File scripts/start-local-almaidan-all.ps1 -SkipAdminRestore",
+    "build:enta": "npm run prisma:generate:enta && tsc -p services/enta/server/tsconfig.json && node services/enta/server/scripts/build-r3e-cli.cjs && node services/enta/server/scripts/build-r3e-custody.cjs && npm run build:r3e-launcher && npm run typecheck:enta-adapter",
+    "build:r3e-launcher": "node services/enta/server/scripts/build-r3e-launcher.cjs",
+    "typecheck:enta-adapter": "tsc --noEmit --module commonjs --target es2022 --moduleResolution node --esModuleInterop --strict --skipLibCheck --types node \"api/index.ts\"",
+    "prisma:generate:enta": "prisma generate --schema=services/enta/server/prisma/schema.prisma",
+    "test:enta": "tsx --test services/enta/server/tests/*.test.ts",
+    "build": "npm run build:enta && tsc -p tsconfig.app.json && vite build",
     "preflight:production": "tsx scripts/production-preflight.ts",
     "build:production": "npm run preflight:production && npm run build",
     "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit",
@@ -82,16 +91,29 @@
     "test:visual": "playwright test tests/e2e/visual.spec.ts",
     "verify": "npm run typecheck && npm run lint && npm run scan:visual && npm run test:visual-contract && npm run test:content && npm run test:ui && npm run test:game && npm run build",
     "test": "npm run test:content && npm run test:ui",
-    "check": "npm run validate:questions -- --as-of 2026-09-04 && npm run validate:authoring && npm run simulate:authoring && npm run typecheck && npm run lint && npm run test"
+    "check": "npm run validate:questions -- --as-of 2026-09-04 && npm run validate:authoring && npm run simulate:authoring && npm run typecheck && npm run lint && npm run test",
+    "build:local": "pwsh -NoProfile -File scripts/build-local-almaidan.ps1"
   },
   "dependencies": {
+    "@prisma/client": "^5.20.0",
     "ajv": "^8.17.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.22.3",
     "firebase": "^12.18.0",
+    "firebase-admin": "^14.5.0",
     "qrcode": "^1.5.4",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.3",
     "sharp": "^0.35.4"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "1.13.6",
+    "firebase-admin": {
+      "jwks-rsa": {
+        "jose": "5.10.0"
+      }
+    }
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
@@ -101,6 +123,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.7",
+    "@types/express": "^4.17.21",
     "@types/node": "^24.0.0",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^19.2.18",
@@ -109,10 +132,10 @@
     "@vitejs/plugin-react": "^5.2.0",
     "concurrently": "^10.0.5",
     "eslint": "^9.39.5",
-    "firebase-admin": "^14.3.0",
     "firebase-tools": "^15.29.0",
     "google-auth-library": "^10.9.1",
     "jsdom": "^26.1.0",
+    "prisma": "^5.20.0",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.69.0",

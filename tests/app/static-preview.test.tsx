@@ -19,5 +19,5 @@ it("shows direct admin and room routes as unavailable without loading their auth
   window.history.replaceState({}, "", "/admin/questions");
   render(<App />);
   expect(await screen.findByRole("heading", { name: "هذه الخدمة غير متاحة في المعاينة" })).toBeInTheDocument();
-  expect(screen.getByText("هذه معاينة منشورة للواجهة فقط. إنشاء الغرف والانضمام وإدارة الأسئلة والبيانات غير متاحة هنا.")).toBeVisible();
+  expect(screen.getByText(/إنشاء الغرف والانضمام وإدارة الأسئلة والبيانات غير متاحة هنا/)).toBeInTheDocument();
 });

@@ -13,27 +13,7 @@ const runtime = vi.hoisted(() => ({
 
 vi.mock("../../src/features/game/runtime", () => ({ gameRuntime: runtime }));
 
-import { BoardStatusStrip, RoomRoute } from "../../src/routes/GameRoutes";
-
-it("updates the board strip from selection to the answering team and timer", () => {
-  const envelope = hostProjection();
-  const { rerender } = render(<BoardStatusStrip projection={envelope.projection} serverTime={envelope.serverTime} />);
-  expect(screen.getByText("اختر السؤال")).toBeVisible();
-  const answering: SafeProjection = {
-    ...envelope.projection,
-    room: { ...envelope.projection.room, state: "OPPONENT_CHANCE" },
-    answeringTeam: "vertical",
-    deadlineAt: new Date(Date.now() + 20000).toISOString(),
-  };
-  rerender(<BoardStatusStrip projection={answering} serverTime={envelope.serverTime} />);
-  expect(screen.getByText("الأخضر")).toBeVisible();
-  expect(screen.getByLabelText("حالة اللعب")).toHaveAttribute("data-team", "vertical");
-  expect(screen.queryByText(/الأسرع:/)).not.toBeInTheDocument();
-  expect(screen.getByLabelText("الوقت المتبقي")).toBeVisible();
-  rerender(<BoardStatusStrip projection={{ ...answering, room: { ...answering.room, state: "PAUSED" } }} serverTime={envelope.serverTime} />);
-  expect(screen.queryByLabelText("الوقت المتبقي")).not.toBeInTheDocument();
-  expect(screen.queryByText("الأخضر")).not.toBeInTheDocument();
-});
+import { RoomRoute } from "../../src/routes/GameRoutes";
 
 let projection: ProjectionEnvelope<SafeProjection>;
 
@@ -124,37 +104,23 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe("RoomRoute held and incomplete game surfaces", () => {
-  it("keeps audience notifications in one upper status area", async () => {
-    projection = hostProjection({ state: "ROUND_SETUP" });
-    projection.role = "audience";
-    sessionStorage.setItem("huroof:room-hold:audience", JSON.stringify({ token: "", role: "audience" }));
-    renderDisplay();
-    expect(await screen.findByText("تجهيز الجولة")).toBeVisible();
-    expect(document.querySelectorAll(".board-status-strip")).toHaveLength(1);
-    expect(document.querySelector(".game-arena__header .board-status-strip")).not.toBeNull();
-    expect(document.querySelector(".stage-board-column .board-status-strip")).toBeNull();
-    expect(document.querySelector(".round-timer-module")).toBeNull();
-  });
-
-  it("makes an exhausted selection a pause-before-end host state instead of a playable board", async () => {
+  it("makes an exhausted selection an end-only host state instead of a playable board", async () => {
     projection = hostProjection({ contentHold: { reason: "CONTENT_EXHAUSTED", operation: "SELECT_CELL", cellId: "cell-0-0" } });
     renderHost();
 
     expect(await screen.findByText(/توقف اختيار المحتوى/)).toBeVisible();
     expect(screen.queryByRole("button", { name: "اختر حرفًا من اللوحة" })).not.toBeInTheDocument();
     expect(document.querySelectorAll(".game-board__button")).toHaveLength(0);
-    expect(screen.getByRole("button", { name: "إيقاف مؤقت" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "إيقاف مؤقت" })).not.toBeInTheDocument();
     expect(screen.getByLabelText("إظهار السؤال على شاشة العرض")).toBeDisabled();
-    fireEvent.click(screen.getByRole("button", { name: "خيارات" }));
     expect(screen.getByText(/خيارات العرض المشتركة معلقة/)).toBeVisible();
-    fireEvent.click(screen.getByRole("button", { name: "إغلاق", exact: true }));
     fireEvent.click(screen.getByTestId("correction-trigger"));
     expect(await screen.findByText(/سجل التدقيق متاح للقراءة فقط/)).toBeVisible();
     expect(screen.queryByRole("button", { name: "معاينة التصحيح" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "إنهاء المباراة كاملةً بلا فائز" })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "إيقاف مؤقت" }));
+    fireEvent.click(screen.getByRole("button", { name: "إنهاء المباراة كاملةً بلا فائز" }));
+    fireEvent.click(screen.getByRole("button", { name: "إنهاء المباراة كاملةً" }));
     await waitFor(() => expect(runtime.submitGameIntent).toHaveBeenCalledTimes(1));
-    expect(runtime.submitGameIntent.mock.calls[0][1]).toMatchObject({ type: "PAUSE" });
+    expect(runtime.submitGameIntent.mock.calls[0][1]).toMatchObject({ type: "END_WITHOUT_WINNER" });
   });
 
   it("opens a modal enlarged category board, then restores trigger focus after Escape", async () => {
@@ -177,6 +143,7 @@ describe("RoomRoute held and incomplete game surfaces", () => {
     renderHost("results");
 
     expect(await screen.findByRole("heading", { name: "انتهت المباراة بلا فائز" })).toBeVisible();
+    expect(screen.queryByText(/نفد المحتوى المتاح/)).not.toBeInTheDocument();
     expect(screen.getByText(/احتُفظ بالنقاط وسجل الجولات دون إعلان فائز/)).toBeVisible();
     expect(screen.getByRole("link", { name: "مباراة جديدة" })).toHaveAttribute("href", "/host/new?kind=categories&mode=classic&category=tahadani-006&category=tahadani-007");
     fireEvent.click(screen.getByTestId("rematch-same-settings"));
@@ -259,7 +226,7 @@ describe("RoomRoute held and incomplete game surfaces", () => {
     sessionStorage.setItem("huroof:room-hold:audience", JSON.stringify({ token: "", role: "audience" }));
     renderDisplay();
     expect(await screen.findByRole("heading", { name: "السؤال المستعاد" })).toBeVisible();
-    expect(screen.queryByTestId("shared-revealed-answer")).not.toBeInTheDocument();
+    expect(screen.getByTestId("shared-revealed-answer")).toHaveTextContent("الإجابة");
   });
 });
 

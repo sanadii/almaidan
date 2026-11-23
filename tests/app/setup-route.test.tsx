@@ -24,15 +24,16 @@ beforeEach(() => {
 it('shows only available categories and excludes unavailable content from browsing', async () => {
   const user = userEvent.setup();
   render(<ThemeProvider><MemoryRouter><HostNewRoute /></MemoryRouter></ThemeProvider>);
-  await waitFor(() => expect(document.title).toBe('إنشاء مباراة | الخلية'));
+  await waitFor(() => expect(document.title).toBe('إنشاء مباراة | الميدان'));
   const category = categoryButtons()[0];
   expect(screen.getAllByRole('img')).toHaveLength(9);
   expect(screen.queryByRole('button', { name: /غير متاحة للعب بعد/ })).not.toBeInTheDocument();
   expect(category).toHaveTextContent('معلومات عامة');
   expect(category).not.toHaveTextContent('جاهزية الأسئلة');
   expect(screen.getByRole('button', { name: 'جغرافيا ودول 3' })).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: 'علوم وطبيعة 3' })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'علوم وطبيعة 2' })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'ثقافة وألغاز 2' })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'أسلوب حياة 1' })).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: /رياضة/ })).not.toBeInTheDocument();
   await user.click(category);
   expect(category).toHaveAttribute('aria-pressed', 'true');
@@ -197,21 +198,11 @@ it('intersects browse filters and resets them without clearing the game selectio
   await user.click(selected);
 
   await user.click(screen.getByRole('button', { name: /جغرافيا ودول/ }));
-  await user.click(screen.getByLabelText('الفئات المختارة فقط'));
-  expect(screen.getByText('لا توجد فئات مطابقة. أعد ضبط التصفية لعرض كل الفئات.')).toBeVisible();
+  expect(screen.queryByLabelText('الفئات المختارة فقط')).not.toBeInTheDocument();
 
   await user.click(screen.getByRole('button', { name: 'إعادة ضبط التصفية' }));
   expect(screen.getByRole('button', { name: /معلومات عامة/, pressed: true })).toBeVisible();
   expect(screen.getByRole('complementary', { name: 'الفئات المختارة' })).toHaveTextContent('1 / 10');
-});
-
-it('explains selected-only filtering before a category is selected', async () => {
-  const user = userEvent.setup();
-  render(<ThemeProvider><MemoryRouter><HostNewRoute /></MemoryRouter></ThemeProvider>);
-
-  await user.click(screen.getByLabelText('الفئات المختارة فقط'));
-  expect(screen.getByText('لا توجد فئات مختارة بعد. اختر فئة ثم فعّل هذا الخيار.')).toBeVisible();
-  expect(screen.getByRole('button', { name: 'إعادة ضبط التصفية' })).toBeEnabled();
 });
 
 it('requires an explicit category choice before creating a match', async () => {

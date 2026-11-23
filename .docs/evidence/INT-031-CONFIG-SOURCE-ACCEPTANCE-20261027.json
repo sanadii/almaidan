@@ -1,0 +1,160 @@
+{
+  "issue": "PRO-267",
+  "task": "INT-031.R4.C",
+  "status": "BOUNDED_CONFIGURATION_SOURCE_ACCEPTED_FULL_TOPOLOGY_PENDING",
+  "acceptedUtc": "2026-10-27T12:32:33.3235545Z",
+  "workspace": "C:/Users/User/.codex/worktrees/huroof-enta-integration/huroof_wa_oloof",
+  "candidateMembers": 15,
+  "r1Changed": 2,
+  "r0Retained": 13,
+  "candidate": [
+    {
+      "path": "services/enta/server/src/runtime-config.ts",
+      "r0_sha256": "6fad074fd9a37378417878b504eb62fc9499c2c0a8e6f4507e8a3bad0f2a9ea6",
+      "r1_sha256": "2080a82f0d96c82354efd5fa962951f95c40fad99725c9a3f0fbf0ae160679ce",
+      "changed": true
+    },
+    {
+      "path": "services/enta/server/src/firebase-verifier.ts",
+      "r0_sha256": "bb1e819cca00a7e26c06e371ace10586bef1ed122bbcf4a63da8e5d2ad1e7bdc",
+      "r1_sha256": "35ff0b9e03f9597f64d0b92e62164f3149d38b310d960aa9b61ee0ce837aaac2",
+      "changed": true
+    },
+    {
+      "path": "services/enta/server/src/catalog/firebase-release-reader.ts",
+      "r0_sha256": "1785ee2e121f91de64266341cc76b156593d8619087cd3227392e0534d565418",
+      "r1_sha256": "1785ee2e121f91de64266341cc76b156593d8619087cd3227392e0534d565418",
+      "changed": false
+    },
+    {
+      "path": "services/enta/server/src/catalog/types.ts",
+      "r0_sha256": "a36e3c15e0b053a6142916577e150413142365b30bb033bb43db3515dcef8cc7",
+      "r1_sha256": "a36e3c15e0b053a6142916577e150413142365b30bb033bb43db3515dcef8cc7",
+      "changed": false
+    },
+    {
+      "path": "services/enta/server/src/catalog/service.ts",
+      "r0_sha256": "04c6a10db207f9d19527344c524b9b1dea25fc4de8cdc4fb58010846f3da9949",
+      "r1_sha256": "04c6a10db207f9d19527344c524b9b1dea25fc4de8cdc4fb58010846f3da9949",
+      "changed": false
+    },
+    {
+      "path": "scripts/production-preflight.ts",
+      "r0_sha256": "d2dedacbfbde390ad6f9d7adc7f0b1782ccf191a07afaf59b3ccb352ca84ecd6",
+      "r1_sha256": "d2dedacbfbde390ad6f9d7adc7f0b1782ccf191a07afaf59b3ccb352ca84ecd6",
+      "changed": false
+    },
+    {
+      "path": "vite.config.ts",
+      "r0_sha256": "0d84f31798baeb6c30c6b2f8bfc3bce812a63482adf1052f3797ed27b618f66d",
+      "r1_sha256": "0d84f31798baeb6c30c6b2f8bfc3bce812a63482adf1052f3797ed27b618f66d",
+      "changed": false
+    },
+    {
+      "path": "src/lib/firebase/client.ts",
+      "r0_sha256": "af943071f03706ea48fb23b05e7e64139aa4546fb452398d387a17c28f99efb0",
+      "r1_sha256": "af943071f03706ea48fb23b05e7e64139aa4546fb452398d387a17c28f99efb0",
+      "changed": false
+    },
+    {
+      "path": "services/enta/server/tests/runtime-config.test.ts",
+      "r0_sha256": "ccfdb46ff739f224ee0ce79e2ba3df5112a206a2cca655349ca548e0eeb02743",
+      "r1_sha256": "ccfdb46ff739f224ee0ce79e2ba3df5112a206a2cca655349ca548e0eeb02743",
+      "changed": false
+    },
+    {
+      "path": "services/enta/server/tests/firebase-verifier.test.ts",
+      "r0_sha256": "6f9bdf4a340c6bb171db518d4c7b7e2e33a04c841e7ce5fd269ffd6d865648ae",
+      "r1_sha256": "6f9bdf4a340c6bb171db518d4c7b7e2e33a04c841e7ce5fd269ffd6d865648ae",
+      "changed": false
+    },
+    {
+      "path": "services/enta/server/tests/catalog.test.ts",
+      "r0_sha256": "50d459e86a212ed2db1cf8c8fd315ce961eebf67f4e7f62bb988a92fe3df0713",
+      "r1_sha256": "50d459e86a212ed2db1cf8c8fd315ce961eebf67f4e7f62bb988a92fe3df0713",
+      "changed": false
+    },
+    {
+      "path": "tests/production-preflight.test.ts",
+      "r0_sha256": "961d78d02152e177776e634977f1784d3541efa23e2ad1e5c2ffaa42bdaf6727",
+      "r1_sha256": "961d78d02152e177776e634977f1784d3541efa23e2ad1e5c2ffaa42bdaf6727",
+      "changed": false
+    },
+    {
+      "path": "services/enta/server/tests/catalog-receipt-proof-consumer.test.ts",
+      "r0_sha256": "a2b298aa4e5041b756c9d65192ca38cf1df38fc7443fd669f9b92fbaf5979c98",
+      "r1_sha256": "a2b298aa4e5041b756c9d65192ca38cf1df38fc7443fd669f9b92fbaf5979c98",
+      "changed": false
+    },
+    {
+      "path": "services/enta/server/tests/catalog-receipt-proof-repository.integration.test.ts",
+      "r0_sha256": "c1d4f957cc63f530935236e54931248b6cac017ca1c6d74fabf3120a6f258417",
+      "r1_sha256": "c1d4f957cc63f530935236e54931248b6cac017ca1c6d74fabf3120a6f258417",
+      "changed": false
+    },
+    {
+      "path": "services/enta/server/src/config-policy.ts",
+      "r0_sha256": "6aff8c28ba1492ed8690458fff15f5dd79e44247d973a79ef4756f1dd876888e",
+      "r1_sha256": "6aff8c28ba1492ed8690458fff15f5dd79e44247d973a79ef4756f1dd876888e",
+      "changed": false
+    }
+  ],
+  "evidence": [
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro267-config-20261027\\candidate-hashes.json",
+      "sha256": "839fde0b318ecd8fa1c3d7f905464852d3d9a1dc85d61b8e40c1c63e6266f901"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro267-config-20261027\\candidate.diff",
+      "sha256": "49b14b3577c89eefef090cf767b3cde3e3f2d711b7dfb57044da88fede39d6bd"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro267-config-20261027\\FORGE-REVIEW.md",
+      "sha256": "ac3356de5dbbcba0998639fa527b9e0c027aea14cf93ae39ce690eb35f739da3"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro267-config-20261027\\r1\\candidate-hashes.json",
+      "sha256": "6e4b30aca4342993e2a1ea8ef2a0a07c1366c1d5f065310cb2fa2efd5121ce00"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro267-config-20261027\\r1\\change.diff",
+      "sha256": "dd1f43ab5b6f85d70f7d8db9182e144bd3d2ee8a3c24acbf421996d942ba9a95"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro267-config-20261027\\r1\\evidence-hashes.json",
+      "sha256": "2020cba525be43878f373c377331d163824a93205e29a596169c3d49baac03d0"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro267-config-20261027\\r1\\FORGE-REVIEW.md",
+      "sha256": "79fd850466f3278da4882eaaacc8f63d05b95dff85c2c98e0cfd6eb782a9ee63"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro267-config-20261027\\r1\\DATABASE-FINAL-REVIEW.md",
+      "sha256": "df8794c88f2149434c5e1847fcde20c7e34fd15bc80bfece949d1819068c853b"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro267-config-20261027\\r1\\SECURITY-FINAL-REVIEW.md",
+      "sha256": "a36229cbd953ef0302abb1a347c7930112a2b48cb03e2945bf5b76a29e6382ea"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro267-config-20261027\\r1\\ROOT-CHECK.json",
+      "sha256": "61da6a178bfea9d1aa7fc7fef6d4c43fec519e1817fa4390ffb4081924981b7c"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro267-config-20261027\\r1\\ROOT-REPRODUCTION.log",
+      "sha256": "57c6d2e194817bc5ad28768ee01ad44f342fbf429afe1550a91d60b153d5cab8"
+    }
+  ],
+  "checks": [
+    "R1 actual source active-policy and credentials matrix, affected03/04/05 authentication composition exit0",
+    "Root actual harness reproduction exit0",
+    "Server and focused fixture direct noEmit exit0",
+    "Verifier4/4; unchanged R0 catalog consumer8/8, preflight5/5 and client/Vite checks retained by dependency identity"
+  ],
+  "limits": [
+    "Actual production topology and old room/rules/payment compatibility remain unverified; full issue not Done",
+    "Two fixture preimages reconstructed after insertion; no historical preservation claim",
+    "No real SDK or credential provenance, SQL/DB/financial operation or deployment",
+    "R6 STOP; all native parity checks NOT_RUN"
+  ]
+}

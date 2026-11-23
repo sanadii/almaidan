@@ -1,0 +1,22 @@
+.local-content-admin{max-width:1440px;margin:auto;padding:32px 24px;color:var(--app-ink);background:var(--app-canvas);min-height:100vh}.local-content-admin header,.local-admin-session,.local-content-admin nav{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.local-content-admin h1{font-size:clamp(26px,4vw,38px)}.local-content-admin p{line-height:1.8}.local-admin-panel{background:var(--app-surface);border:1px solid var(--app-border);border-radius:18px;padding:24px;margin-block:20px}.local-content-admin form,.local-content-admin label{display:grid;gap:10px}.local-content-admin form{gap:20px}.local-content-admin input,.local-content-admin textarea,.local-content-admin select{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid var(--app-border);background:var(--app-canvas);color:var(--app-ink);font:inherit}.local-content-admin textarea{min-height:110px;resize:vertical}.local-content-admin .local-admin-search{display:flex;align-items:end;gap:16px;flex-wrap:wrap}.local-admin-search label{flex:1;min-width:220px}.local-admin-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:24px}.local-admin-question{display:grid;gap:10px;width:100%;text-align:start;padding:18px;margin-block:10px;background:var(--app-canvas);border:1px solid var(--app-border);color:var(--app-ink);border-radius:12px;font:inherit;cursor:pointer}.local-admin-question small,.local-admin-id{color:var(--app-muted);overflow-wrap:anywhere}.local-admin-question:hover{border-color:var(--app-accent)}.local-admin-revision{border-top:1px solid var(--app-border);padding-block:18px}.local-admin-revision dl>div{margin-block:12px}.local-admin-revision dt{font-weight:700}.local-admin-revision dd{margin:4px 0;white-space:pre-wrap;overflow-wrap:anywhere}.local-admin-error{border:1px solid var(--app-error);padding:12px;color:var(--app-error)}.local-content-admin button:disabled{opacity:.55;cursor:wait}@media(max-width:800px){.local-admin-grid{grid-template-columns:1fr}.local-content-admin{padding:20px 14px}.local-admin-panel{padding:18px}.local-admin-search label{min-width:100%}}
+
+.local-admin-preview dl>div{margin-block:12px}.local-admin-preview dt{font-weight:700}.local-admin-preview dd{margin:4px 0;overflow-wrap:anywhere}.local-admin-preview li{line-height:1.8}
+
+.local-content-admin .button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 18px;border:1px solid var(--app-border);border-radius:10px;background:var(--app-subtle);color:var(--app-ink);font:inherit;font-weight:600;text-decoration:none;box-shadow:none;text-shadow:none;white-space:normal;cursor:pointer}
+.local-content-admin .button--primary{background:var(--app-action);border-color:var(--app-action);color:#fff}
+.local-content-admin .button:hover:not(:disabled){filter:brightness(.96);transform:none}
+.local-admin-session span{overflow-wrap:anywhere;min-width:0}
+.local-admin-panel,.local-admin-grid>*{min-width:0}
+.local-admin-provenance{margin-block:18px;padding:14px;border:1px solid var(--app-border);border-radius:10px;background:var(--app-canvas)}
+.local-admin-provenance summary{cursor:pointer;font-weight:700}.local-admin-provenance dd{margin:4px 0;overflow-wrap:anywhere}.local-admin-revision pre,.local-admin-provenance pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;margin:4px 0;direction:ltr;text-align:start}
+
+.local-content-admin { box-sizing: border-box; max-width: var(--page-canvas-max); padding-inline: 32px; }
+.local-content-admin h1 { font-size: 36px; line-height: 1.4; }
+.local-admin-auth { box-sizing: border-box; max-width: 560px; min-height: 340px; margin-inline: auto; }
+.local-content-admin :is(input, select, .button) { min-height: 48px; }
+.local-admin-grid { align-items: start; }
+.local-admin-question:focus-visible { outline: 3px solid var(--app-accent); outline-offset: 2px; }
+@media (max-width: 1023px) { .local-content-admin { padding-inline: 24px; } }
+@media (max-width: 767px) { .local-content-admin { padding-inline: 16px; } .local-content-admin h1 { font-size: 28px; } .local-admin-panel { padding: 20px; } }
+.local-content-admin :is(small, .local-admin-id) { font-size: 14px; line-height: 1.6; }
+main.local-content-admin { padding-inline: var(--page-gutter); }

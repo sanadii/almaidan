@@ -1,3 +1,5 @@
+import { createContext } from 'react';
+import type { PgGameAdapter } from './pg-game-adapter';
 import { FixtureGameAdapter } from './fixture-game-adapter';
 import { LocalRealtimeGameAdapter } from './local-realtime-game-adapter';
 import type { GameRuntimeAdapter } from './contracts';
@@ -22,3 +24,8 @@ export function createGameRuntime(): GameRuntimeAdapter {
 
 /** One adapter instance preserves the local capability token and is the only room transport used by routes. */
 export const gameRuntime = createGameRuntime();
+
+/** Explicit injection only; null preserves all existing runtime defaults. */
+export { PgRuntimeContext } from './room-context';
+export { PgGameAdapter } from './pg-game-adapter';
+

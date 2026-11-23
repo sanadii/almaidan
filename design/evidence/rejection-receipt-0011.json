@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "recordId": "design-history-0011",
+  "recordPath": "design/evidence/history/0011-maydan-homepage-rejection.md",
+  "recordSha256": "5CB986F67449FB6AB84008C86A86FE6F69D08775ECE5411788CC3687C4E9C74A",
+  "previousRecordId": "design-history-0010",
+  "previousRecordSha256": "A477B870B44DE50CC61BCC8F6347ED36557B73E31138EB1662319D6A326D9C77",
+  "decision": "live-homepage-rejected",
+  "productName": "ميدان",
+  "visualExpansionAuthorized": false,
+  "replacementDirectionSelected": false,
+  "recordedAt": "2026-10-02"
+}

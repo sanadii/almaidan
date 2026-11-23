@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "recordId": "design-history-0020",
+  "recordPath": "design/evidence/history/0020-maydan-separate-cards-rejection.md",
+  "recordSha256": "3BD25C5631BB691EE0E3047A97B65E48E8AEDFDDF4A7264589399413B3ADF40A",
+  "previousRecordId": "design-history-0019",
+  "previousRecordSha256": "2C03B78AA9FB179349041DD5252CF2D71BDAB4782B810CB5C8AC3F51AD4F4571",
+  "previousReceiptSha256": "3816B8F1BA427758196EC78E51FBD32B9AF584A4EC8E1A5593F439FBBF96DC49",
+  "attachmentPath": "design/evidence/feedback/0020-owner-cards.png",
+  "attachmentSha256": "97B88B867DBB877B682F33170F442ABC829102E6EBFBA7EFAB3CF234D5DEB952",
+  "rejectedFreezeSha256": "1095B443FFB3F1DB8ECB95C0834C9A8CE1CF99B7C67D3BDA8C79E7018C55577E",
+  "referenceSha256": "9439A0DB8594F1E2237515928AD65BCF56D37231E1514D1F5808CE70B2340141",
+  "homepageCorrectionAuthorized": true,
+  "renderedHomepageAccepted": false,
+  "visualExpansionAuthorized": false
+}

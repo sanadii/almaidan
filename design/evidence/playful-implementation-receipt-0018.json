@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "recordId": "design-history-0018",
+  "recordPath": "design/evidence/history/0018-maydan-playful-direct-implementation.md",
+  "recordSha256": "DD7B2ADA07F1196157A5B6426EB312CF9EAEBB8003729B3EEAED995CB5720BD3",
+  "previousRecordId": "design-history-0017",
+  "previousRecordSha256": "AC43E0803CC1FF84930908F5D545B556BF2958700B4C1A40DD4CEBC1C1B59EF4",
+  "research": {
+    "path": "design/evidence/integration-playful-reference-review-2026-10-03.md",
+    "sha256": "883ABA1C937D1DD417FD757C20230ABDDB6B7C21D88733DED8490D4310EEE391"
+  },
+  "historicalConceptSet": {
+    "path": "design/evidence/integration-reconcept-set-2026-10-02.json",
+    "sha256": "0A77A11CFB085BF956E41D5A4B6A6BEBC4F0582F553488920067E1184A4E427F"
+  },
+  "decision": "direct-user-playful-homepage-implementation",
+  "exactHumanInstruction": "implement the new DESIGN DNA\nmake sure its well written\nand the home page is fully implemented including all sections and graphics / animation \n\nmake sure its properly implemented",
+  "productName": "ميدان",
+  "homepageImplementationAuthorized": true,
+  "visualExpansionAuthorized": false,
+  "renderedHomepageAccepted": false,
+  "recordedAt": "2026-10-03"
+}

@@ -1,5 +1,17 @@
 # Product & Interface Design Specification
 
+## Current owner-approved direction — 2026-11-13
+
+Container correction: [Qolbha reference measurements](docs/QOLBHA_CONTAINER_REVIEW_2026-11-13.md) supersede the older fixed1200px outer cap. Use the shared80.063×responsive-layout-unit border box and one internal gutter; preserve readable inner form/account/prose caps and full-bleed hero artwork. The reference was measured in the owner's existing tab; isolated REA access encountered Cloudflare and is not represented as an authenticated reference capture.
+
+Font correction: the owner's supplied reference replaces IBM Plex Sans Arabic / Lalezar with **Cairo** for Arabic and **Instrument Sans** for Latin, using the supplied system/emoji fallback stack. Heavy Cairo headings and wordmark use real variable-font weights; all existing theme colors and layout rules remain. The active contract below records the exact roles and local licensed assets.
+
+Product: **الميدان**. The current authority is [Almaidan redesign contract](docs/ALMAIDAN_REDESIGN_2026-11-13.md), approved for implementation by the owner. Preserve the navy/cyan/royal-blue/white identity, existing fantasy hero and illustrations, measured responsive nonhero rails, balanced Arabic typography and contextual role-aware navigation. Cover all public, authenticated, admin and gameplay route families. The linked contract defines exact responsive widths, typography, spacing, component roles, behavior boundaries and acceptance evidence.
+
+Conflicting visual directions, viewport-wide rails, pink/warm tokens and older typography below are historical context, not current implementation requirements. Archived custom workflow packets/gates remain archived. Actual data/runtime/deployment holds, role privacy and required independent safety reviews remain binding.
+
+---
+
 Product: **استوديو الحروف** · React + TypeScript + Vite · Arabic-first RTL
 
 ## Selected direction and rollout

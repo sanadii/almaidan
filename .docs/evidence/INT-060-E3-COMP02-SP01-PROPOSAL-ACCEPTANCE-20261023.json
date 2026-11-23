@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "atKuwait": "2026-10-23T00:27:51.012345+03:00",
+  "task": "INT-060.E3.COMP02.SP01",
+  "parent": "INT-060.E3.COMP02 / PRO-259",
+  "decision": "ACCEPTED_WITH_LIMITS_EXACT_INERT_SOURCE_PROPOSAL_ONLY",
+  "manifest": {
+    "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-source-proposal-20261023\\package\\revisions\\SP01-PACKAGE-R3\\FROZEN-MANIFEST-R3.json",
+    "sha256": "146d6fbfc7a5be70ec2ed2abb5b0850764a1ee681a7cb313ea07273628856d71",
+    "members": 7
+  },
+  "postimage": {
+    "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-source-proposal-20261023\\package\\revisions\\SP01-PACKAGE-R3\\postimages\\receipt-proof-correspondence.ts.txt",
+    "sha256": "5f99a925e6f27fe2b8caeb750d987b7de878d3e69dfc4dce5054ece1f03c0a6c",
+    "applied": false
+  },
+  "reviews": {
+    "database": {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-source-proposal-20261023\\database\\FINAL-SP01-REVIEW-R3.md",
+      "sha256": "57de356acd9ee97690ef729861f1f01fa20b109220742d240298a9c9ad62085d",
+      "decision": "CONCUR_WITH_LIMITS_INERT_SP01_ONLY"
+    },
+    "security": {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-source-proposal-20261023\\security\\FINAL-SP01-REVIEW-R3.md",
+      "sha256": "479835ecf5164a1582bb6aee5c462f2dd3527c7aa48c6b5ea9bbb479c1c4b4a3",
+      "decision": "CONCUR_WITH_LIMITS_INERT_SP01_ONLY"
+    }
+  },
+  "rootReview": {
+    "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-source-proposal-20261023\\ROOT-FINAL-SP01-REVIEW-R3.md",
+    "sha256": "34bc11004d348a0e5a37c30dcba0b6f83a62f3e6f7c5d67a8aa5733c3182cdb0"
+  },
+  "requiredChecks": {
+    "SP01-C01": "PASS_STATIC_ONLY",
+    "SP01-C02": "PASS_STATIC_ONLY",
+    "SP01-C03": "PASS_STATIC_ONLY",
+    "SP01-C04": "PASS_STATIC_ONLY",
+    "SP01-C05": "PASS_STATIC_ONLY",
+    "SP01-DB": "PASS_STATIC_ONLY",
+    "SP01-SEC": "PASS_STATIC_ONLY",
+    "SP01-ROOT": "PASS_STATIC_ONLY"
+  },
+  "staticScope": {
+    "symbolicCases": 66,
+    "receiptScalars": 15,
+    "proofScalars": 21,
+    "componentEqualities": 7,
+    "compilerRun": false,
+    "testsRun": false,
+    "sourceOrRuntimeExecuted": false
+  },
+  "rootEvidence": [
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-source-proposal-20261023\\ROOT-SP01-R3-IDENTITY.json",
+      "sha256": "009d684345b409fda661a7a9b829b7e746077ec80f89ce3daa2e56a71c407547"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-source-proposal-20261023\\ROOT-SP01-R3-INPUT-JOIN.json",
+      "sha256": "e3868140dded542cf337b5443e6543cd43c4bfc2a0f8c1dad4a311a8e65a28f0"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\comp02-source-proposal-20261023\\ROOT-SP01-R3-STATIC-CHECKS.json",
+      "sha256": "66fd8df972245cbd0cb1d4002b4b043a98cf87b4d0b6a9580186dcec1a5ba574"
+    }
+  ],
+  "retained": "Original R1/R2/R3 freezes, predecessor preparation acceptance, compatible source/ledger/boundary/pure checks and all failed revision evidence retained.",
+  "authority": {
+    "D-PREQ-01": "PROPOSAL_ACCEPTED_ONLY; source application NOT_RELEASED",
+    "R6": "STOP",
+    "actualContentApproval": "UNESTABLISHED",
+    "installedQualification": "UNESTABLISHED",
+    "parentDone": false,
+    "downstreamStarted": false
+  },
+  "next": "Exact bounded source-application disposition and its compiler/affected integration/input-adapter/authority check admission; full catalog/native4/5/custody/display/physical/global obligations remain open.",
+  "usage": {
+    "rootProviderTelemetry": "unavailable",
+    "delegatedProviderTokens": "unavailable",
+    "sessions": "Astra medium planner1; Luna medium continuing Forge1; Sol6.1 medium Database1 and Security1; Root continuing session",
+    "observedSavedWindowStartKuwait": "2026-10-23T00:10:38+03:00",
+    "observedSavedWindowEndKuwait": "2026-10-23T00:27:51.012345+03:00",
+    "originalEstimateMinutes": [
+      60,
+      120
+    ]
+  }
+}

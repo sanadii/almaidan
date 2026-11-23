@@ -1,0 +1,122 @@
+{
+  "task": "PRO-262 / INT-060.E3 successor composition",
+  "status": "GUARDED_SOURCE_ACCEPTED_FULL_TASK_PENDING",
+  "time": "2026-10-27T13:34:44.482186+00:00",
+  "source": [
+    {
+      "path": "services/enta/server/src/history-rematch/successor.ts",
+      "sha256": "6dca2e577900a1211ac4bed5a6e1f56b023d7ffa6ae7d2e489e1d7827c12c30c"
+    },
+    {
+      "path": "services/enta/server/src/history-rematch/successor-postgres.ts",
+      "sha256": "9b3a5ede439318b1859753407aff0e5a512db88f8c4ff385f51a371b8f6f985e"
+    },
+    {
+      "path": "services/enta/server/src/history-rematch/registry.ts",
+      "sha256": "a0b00700d94d61df41ed271eb7f8f46547a5af60f5a31da93af2090c13d93ce4"
+    },
+    {
+      "path": "services/enta/server/src/history-rematch/router.ts",
+      "sha256": "6e9720a23cfb55dc126a5270c992ec3e568e45b7fb91ddebaa2eec3fff1b0f65"
+    },
+    {
+      "path": "services/enta/server/src/history-rematch/composition.ts",
+      "sha256": "c61b19fff195e16d35d3536e33c76b3873ea5719c97cb7c11b859fc39360938a"
+    },
+    {
+      "path": "services/enta/server/src/huroof-pg/successor.ts",
+      "sha256": "aa2317b50fb14d7137c337dad545ca95f02017266141cb997e67db4026ee7479"
+    },
+    {
+      "path": "services/enta/server/src/huroof-pg/successor-postgres.ts",
+      "sha256": "d4d311f3acb603e73ed6693d79051d6959b4ecd95305b48bfbd108b3c83d96a8"
+    },
+    {
+      "path": "services/enta/server/prisma/migrations/20261027230000_eng03_06_successor_composition/migration.sql",
+      "sha256": "b2729649d82c8a73ff90520362b95b74beaea96d2aa06bccd323241cd9d7af76"
+    },
+    {
+      "path": "services/enta/server/prisma/roles/eng03_06_successor_roles.sql",
+      "sha256": "e4b79da06ba32fd9776a9cb6c5fb8dbcf1f1016cc13770506f1276d86de4ba2c"
+    },
+    {
+      "path": "services/enta/server/src/gameplay/service.ts",
+      "sha256": "eb62746b490ada2432651133819f77bf72fcb394c6380adb755e9fdbe3a94e34"
+    },
+    {
+      "path": "services/enta/server/prisma/migrations/20261027220000_int_060_e3_successor_composition/migration.sql",
+      "sha256": "7489fc692ef541ea0d90e75ffc45e0c469d59af2dc820dbbd587b38cea12fdcc"
+    },
+    {
+      "path": "services/enta/server/prisma/roles/int_060_e3_successor_roles.sql",
+      "sha256": "158ac1ed0d8113ff5b9e18702333686a8c82b9ddd22500de59c3a3139a0c589a"
+    },
+    {
+      "path": "services/enta/server/tests/e3-successor-composition.test.ts",
+      "sha256": "644fd6142ace970891ed1feb8aed7ad22bd82ddae2df5234db976494059da68f"
+    },
+    {
+      "path": "services/enta/server/tests/huroof-successor-composition.test.ts",
+      "sha256": "5c72e99f7544c13b6f450cf176b7531fff680e3957586cf0ff86609770478dc8"
+    },
+    {
+      "path": "services/enta/server/tests/successor-capacity.test.ts",
+      "sha256": "9dcb7bed35041c77061f5dfa41e88ed806e2187ca23396404acd7264ed9752bb"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro262-successor-20261027\\forge\\CANDIDATE-IDENTITY.json",
+      "sha256": "51594d299c913fd6d0cba01a5a03577e769ac1546764c130592a6033e564a544"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro262-successor-20261027\\forge\\repair-r1\\R1-IDENTITY.json",
+      "sha256": "79a29fe85d6f74ea07db0701263f50475040e3259e389b058401547a39637a44"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro262-successor-20261027\\forge\\checks\\CHECKS.json",
+      "sha256": "6eb055e591a84bc15442b15f291cd17a0b89c9c61f5a1642de48f0fa6eafac1c"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro262-successor-20261027\\database\\FINAL-SOURCE-REVIEW.md",
+      "sha256": "c3ca84c91df8fb595ba26f53c0e38e4c28fd9122c650c36ac427a23a49a3ee54"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro262-successor-20261027\\database\\R1-FINAL-REVIEW.md",
+      "sha256": "5ac9cee2be3f0254503935a923f0bee8e49cee98caa79ee0b2f2b827c8d22005"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro262-successor-20261027\\security\\FINAL-SOURCE-REVIEW.md",
+      "sha256": "a97e5e63aa12ccbfe5899adaeb64690d5b819b4fcc4c8297fce8a40975604cf0"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro262-successor-20261027\\security\\R1-FINAL-REVIEW.md",
+      "sha256": "8d4e021ef93343861e1392c5a0f289adcdb43b8d23fa3ed7c1b0faa30dbf3d61"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro262-successor-20261027\\ROOT-REPRODUCTION.json",
+      "sha256": "bcee29ef448851a7f65f7742eb1afdb79daac899b6b7279895d34f34093d3619"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro262-successor-20261027\\ROOT-REPRODUCTION.log",
+      "sha256": "3196152e1a3bbf13c1f460950b8b55b8dd4172179789857f26d3d5dd1d6abc51"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro262-successor-20261027\\ROOT-R1-REPRODUCTION.log",
+      "sha256": "a5e407c3f881161f827265ac4d8322251d949443d83412a60cb6937972b620a3"
+    }
+  ],
+  "checks": {
+    "author": "17 original Source cases cumulatively covered:15 retained and2 affected rerun; separate paid retry unit retained;4 new structural F1 regressions pass; direct noEmit retained unchanged TS inputs",
+    "root": "2 actual Enta parser/service/repository inert cases passed, plus2 structural F1 cases reproduced;20 retry inputs do not prove20 fresh/recursive paths",
+    "reviews": "Database F1 closed and Security concurs, both guarded Source only"
+  },
+  "limits": [
+    "Fresh E3 and PG capacity remains denied; PG migration and roles refuse application",
+    "Complete SQL-visible capacity authority, physical fit, genuine custody and installed SQL/ACL/locks unavailable",
+    "All20 fresh/direct-recursive and actual history/client integration not accepted",
+    "R6 STOP; no SQL parsing/execution, DB, native runtime, SDK initialization or deployment"
+  ],
+  "fullTaskDone": false,
+  "batchCompletionCredit": 0
+}

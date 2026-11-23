@@ -1,0 +1,211 @@
+{
+  "task": "PRO-311",
+  "milestone": "ALMAIDAN-ENG03-06",
+  "boundedStep": "PRO311-RP1a",
+  "status": "BOUNDED_PUBLIC_CODEC_SOURCE_ACCEPTED_FULL_TASK_HELD",
+  "acceptedUtc": "2026-10-28T06:34:29.958777+00:00",
+  "workspace": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof",
+  "fullTaskDone": false,
+  "completionCredit": 0,
+  "originalRequiredSetComplete": false,
+  "scope": "Pure public-result validator/canonical encoder and already-denied consumer integration only. No raw processing, full identity attestation, publisher, historical derivation, installation or runtime qualification.",
+  "source": [
+    {
+      "path": "services/enta/server/src/huroof-pg/history.ts",
+      "sha256": "0fb0dfcd991a3f89259c8ffe169d630f97ac7510fbc39cdaf1a3a16187925c0e",
+      "change": "CHANGE"
+    },
+    {
+      "path": "services/enta/server/src/huroof-pg/history-result-dto.ts",
+      "sha256": "78785a69ad653733f06c1669b87709237b0f1223737a0557616c159e30cd78fd",
+      "change": "NEW"
+    },
+    {
+      "path": "services/enta/server/tests/pro311-history-result-dto.test.ts",
+      "sha256": "7e95d2f4344ca80555ab09aa2f415e041854fe1a4901991ed6909ffb51cacefb",
+      "change": "NEW"
+    }
+  ],
+  "freezeSha256": "f62f73b76c2416e4ef6016b34b9d87c9132c0a88610cafd0d84ecba5b8da6ac4",
+  "freezeIdentityCount": 10,
+  "freezeIdentityFailures": [],
+  "baselineRetained": 70,
+  "baselineChanged": [
+    "services/enta/server/src/huroof-pg/history.ts"
+  ],
+  "preimageMatchesAcceptedHistory": true,
+  "checks": [
+    {
+      "id": "FORGE-CODEC-REPAIR",
+      "passed": 4,
+      "failed": 0,
+      "evidence": "forge/RESOURCE-CODEC-REPAIR-test.log"
+    },
+    {
+      "id": "SERVER-NOEMIT",
+      "result": "PASS",
+      "evidence": "forge/RESOURCE-CODEC-REPAIR-noemit.log"
+    },
+    {
+      "id": "AFFECTED-MODULE-NOEMIT",
+      "result": "PASS",
+      "evidence": "forge/RESOURCE-CODEC-REPAIR-module-noemit.log"
+    },
+    {
+      "id": "PG-NO-IO-GUARD",
+      "passed": 1,
+      "result": "RETAINED_BY_EXACT_COMPATIBILITY_JOIN",
+      "evidence": "forge/RESOURCE-CODEC-guard.log",
+      "compatibility": "Consumer, test, identity-policy, query boundary, loader unchanged; new/repaired codec is pure and never invoked before unconditional denial. Direct SQL migration unchanged."
+    },
+    {
+      "id": "DATABASE-DC1-REPAIR",
+      "passed": 4,
+      "failed": 0,
+      "result": "CONCUR_DC1_CLOSED",
+      "evidence": "database/RESOURCE-CODEC-REPAIR-REVIEW.md"
+    },
+    {
+      "id": "SECURITY-ACCESSOR-REPAIR",
+      "passed": 64,
+      "failed": 0,
+      "result": "PASS_C1_CLOSED",
+      "evidence": "security/RESOURCE-CODEC-REPAIR-REVIEW-20261028.md"
+    },
+    {
+      "id": "ROOT-CANONICAL-MAX",
+      "passed": 1,
+      "failed": 0,
+      "evidence": "ROOT-RESOURCE-CODEC-REPAIR-CHECK.log"
+    },
+    {
+      "id": "ROOT-GETTER-REGRESSION",
+      "passed": 1,
+      "failed": 0,
+      "evidence": "ROOT-RESOURCE-CODEC-GETTER-CHECK.log"
+    }
+  ],
+  "rootDiffReview": "Read exact history consumer diff and new codec/tests; reread repaired capture-once Source/test delta. Requested identity/BIGINT/public scalar domain remains, reconstructed values are validated primitives and fresh objects. No consumer/page/guard/schema/ACL expansion.",
+  "failuresPreserved": "Original DC1 failing check/log and frozen source identities remain; repair acceptance does not relabel that failure or double-credit initial suite.",
+  "retainedPriorAcceptance": ".docs/evidence/PRO311-BOUNDED-V3-SOURCE-ACCEPTANCE-20261027.json",
+  "retentionLimits": "Original evidence retains only its compatible original scope.16 original accepted Source paths unchanged; history.ts superseded by this bounded change with affected checks/reviews.70/71 baseline members unchanged. No blanket suite repeated.",
+  "unresolved": [
+    "RP1 complete resource-qualified historical extraction/decompression/transport/hash/UTF8/parser/publication mechanism",
+    "Authenticated immutable projection publisher and atomic effective PRO273 producer integration",
+    "Historical start versus missing result-time policy provenance",
+    "FINISHED/ABANDONED historical coverage contract",
+    "Original UTC/fresh20/capacity/native32/installed/full-shell/full-task gates"
+  ],
+  "holds": [
+    "R6 STOP",
+    "Application result denial retained",
+    "Direct SQL result denial byte-identical",
+    "No SQL parser/execution, database/PrismaClient, SDK init, application/server/package runtime, application network, credentials, finance, install/deploy/cutover"
+  ],
+  "evidence": [
+    {
+      "path": "output/pro311-history-20261027/forge/RESOURCE-CODEC-freeze.json",
+      "sha256": "6018fc455ea6ee8c0175d8f822fa2a7c4f56aeca8f6f730f630ddeb7d46af0bf"
+    },
+    {
+      "path": "output/pro311-history-20261027/forge/RESOURCE-CODEC-REPAIR-freeze.json",
+      "sha256": "f62f73b76c2416e4ef6016b34b9d87c9132c0a88610cafd0d84ecba5b8da6ac4"
+    },
+    {
+      "path": "output/pro311-history-20261027/forge/RESOURCE-CODEC-REPAIR-test.log",
+      "sha256": "5d05d5c24335012c1978a87fa875065ad78184ab9f2c0a2495dd4654eadc4085"
+    },
+    {
+      "path": "output/pro311-history-20261027/forge/RESOURCE-CODEC-REPAIR-noemit.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "output/pro311-history-20261027/forge/RESOURCE-CODEC-REPAIR-module-noemit.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "output/pro311-history-20261027/forge/RESOURCE-CODEC-guard.log",
+      "sha256": "a53d2032164d9771d7284368bc503751ec870e781878e5eb6e0c4afc3ff110f9"
+    },
+    {
+      "path": "output/pro311-history-20261027/database/RESOURCE-DESIGN-REVIEW-20261028.md",
+      "sha256": "bc76099b2cf962f0e9f0197b0281773a2848885a5b673e0a4c2f8a05e5073d5c"
+    },
+    {
+      "path": "output/pro311-history-20261027/security/RESOURCE-DESIGN-REVIEW-20261028.md",
+      "sha256": "30ca78afa3e0ab8d867a1f1d893439c6f01940d31ce5aea402e4ee94dc07ac23"
+    },
+    {
+      "path": "output/pro311-history-20261027/database/RESOURCE-CODEC-REVIEW.md",
+      "sha256": "6c7682db867a1c5d144ca7ff82329b901a81c982023d41085d5aa0f2d13397bc"
+    },
+    {
+      "path": "output/pro311-history-20261027/database/RESOURCE-CODEC-domain-check.log",
+      "sha256": "c90365f028317e5c87c6e9e7a29e26d7977dc9c53f97f9c46c5c23dcd9a92306"
+    },
+    {
+      "path": "output/pro311-history-20261027/database/RESOURCE-CODEC-REPAIR-REVIEW.md",
+      "sha256": "c234c5a278bb53b76aa1463f45c1ea394be00fb556ea63935dfffba717ac308a"
+    },
+    {
+      "path": "output/pro311-history-20261027/database/RESOURCE-CODEC-REPAIR-check.log",
+      "sha256": "1aca7fed403e7848ae1ed9ce4cd2f345095599f0896d309e406463cfb43271cd"
+    },
+    {
+      "path": "output/pro311-history-20261027/security/RESOURCE-CODEC-REVIEW-20261028.md",
+      "sha256": "cc53eeb628e477899e089ca6a82eaa2b987273c3a1072485e4e78e45456187c8"
+    },
+    {
+      "path": "output/pro311-history-20261027/security/RESOURCE-CODEC-REPAIR-REVIEW-20261028.md",
+      "sha256": "a8a2f4f9f80adc5aebb2e1b1607fefcde7159b2227cb4a8b3b3e1bb6b8ad586c"
+    },
+    {
+      "path": "output/pro311-history-20261027/ROOT-RESOURCE-CODEC-REPAIR-CHECK.log",
+      "sha256": "1cec27f38a88ca2a966aaa60e6af397eaf5395f6b5c8f74e2f5ba6c5ee3e8203"
+    },
+    {
+      "path": "output/pro311-history-20261027/ROOT-RESOURCE-CODEC-GETTER-CHECK.log",
+      "sha256": "4da5b7f44b8b5a4e7a5845d3adf62f8928cc0bc8f6b1b3fadb52aa5841fe2fad"
+    },
+    {
+      "path": "output/pro311-history-20261027/RESOURCE-DESIGN-BASELINE-SOURCE.json",
+      "sha256": "4906994a234f2fb0da338a43a4aa6d346bc5c43052fd596a29dd0095d46f9771"
+    },
+    {
+      "path": "output/pro311-history-20261027/ASSIGNMENT-TRANSFER-20261028.json",
+      "sha256": "2cb6383fd3baa99fa04f4d0580e8ce1115f3e20c4b5f6873caed266c6b171d28"
+    }
+  ],
+  "usage": {
+    "startedUtc": "2026-10-28T06:11:11Z",
+    "initialEstimateMinutes": [
+      60,
+      120
+    ],
+    "delegatedNativeSessions": {
+      "gpt-6-astra": {
+        "role": "planner",
+        "sessions": 1,
+        "tokens": "unavailable"
+      },
+      "gpt-6.1-terra": {
+        "role": "Forge",
+        "sessions": 1,
+        "repairRounds": 1,
+        "tokens": "unavailable"
+      },
+      "gpt-6.1-sol": {
+        "roles": [
+          "Database",
+          "Security"
+        ],
+        "sessions": 2,
+        "sameAssignmentReviewResumptions": true,
+        "tokens": "unavailable"
+      }
+    },
+    "rootModelAndTokenTelemetry": "unavailable",
+    "noTokenTotalsEstimated": true,
+    "elapsedSeconds": 1458
+  }
+}

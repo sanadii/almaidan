@@ -1,4 +1,4 @@
-import publicCatalog from "./category-catalog.public.json";
+import publicCatalog from "./category-catalog.public.json" with { type: "json" };
 
 export interface CategoryCover {
   id: string;

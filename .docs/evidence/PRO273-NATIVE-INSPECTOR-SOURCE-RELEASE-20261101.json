@@ -1,0 +1,23 @@
+{
+  "assignmentId": "PRO311-HISTORY-FORGE",
+  "taskId": "PRO273-SEL",
+  "disposition": "RELEASED FOR BOUNDED SOURCE IMPLEMENTATION ONLY",
+  "amendment": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\planner\\PRO311-NATIVE-INSPECTOR-AMENDMENT-20261101.md",
+  "amendmentSha256": "99a71fa58d13c5cdd44641f6eeda74c4aaafbb22d2b245016a859892614edc5b",
+  "startupChannel": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\planner\\PRO311-INSPECTOR-STARTUP-CHANNEL-20261101.md",
+  "startupChannelSha256": "717ea9b4eba5885507b03b7df9e23da23500a615c863c013fcb19f555d007764",
+  "review": "Security PRO311-PAIR-AUTHORITY-REVIEW and Database PRO311-PAIR-FUNDING-REVIEW conditional concurrence",
+  "conditions": [
+    "Independent qualification of inspector executable, initial loader, startup holder and Node launch precedes execution; self-inspection and registry hashes cannot prove authority or funding. Preserve Node Ed25519 permit verification before permit-authorized psql or input access.",
+    "Startup service reads original consumed starter receipt bound to exact serviceStart/qualification/holder and actual SCM incarnation; deny any new consumption/restart of same fence, preserve unknown occupancy.",
+    "Before psql spawn permit authenticates only external launch admission with intended SQL dispatch ID; after actual backend observation separately commit protected expectation/session/input/dispatch/delivery and require post-COMMIT receipt before input. Never fabricate backend identity or SQL receipt.",
+    "Correlate one logical attempt without double charging while preserving distinct prepaid service and Node launches and separately required SQL session, attempt, delivery, expectation/constructor and observer/input charges; deny alias of (kind,eventKey), distinct dispatch fence.",
+    "External attestation must prove immutable holder/vector/partition/prepayment/event allocation and permanent accounting compatibility; fixed buffers and registry hashes do not create capacity. Apply existing vector nonnegative component and dominance rules, exact DEFAULT_UTF16 canonical JSON and lossless uint64.",
+    "Bind loader qualification to startup qualification, manifest, generation and exact closures including initial, delayed and child loads; reject uncontrolled writable aliases or mutation capabilities unless qualified. Revalidate epoch/time/SCM/process identities and handles after waits and before launch/resume/dispatch.",
+    "Private inherited-channel allowlist only, actual retained process handles and exact sender/sequence/incarnation; verify process object security and deny unexpected injection/handle duplication. Parent loss, partial or unknown outcomes are spent/UNKNOWN without retry or refund.",
+    "Place installer conditional before PostgreSQL/ICU includes and target-specific CMake dependencies; preserve primitive module build and include exact independently qualified compiler/runtime/dependencies. No native build or execution follows.",
+    "Run affected inert tests with actual validators and independently review changed bytes (Security, Database) and Root check; do not claim native, installed or release acceptance."
+  ],
+  "holds": "R6 STOP; preserve both reader guards, installation aborts, accepted evidence, all spent admissions and unknown occupancy. No OS inspection/service, SQL/DB/native build or execution, network, credential, install or deployment authority granted.",
+  "externalUnknown": "actual provisioner, paid holder, service and signer identities, host/boot derivation, resource bounds, loader/ACL/fence/cleanup qualification remain unknown and fail closed."
+}

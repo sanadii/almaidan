@@ -1,0 +1,62 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": [
+      "ES2022"
+    ],
+    "outDir": "dist",
+    "rootDir": "src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "types": [
+      "node"
+    ],
+    "noEmitOnError": true
+  },
+  "files": [
+    "src/app.ts",
+    "src/index.ts",
+    "src/runtime-config.ts",
+    "src/identity.ts",
+    "src/firebase-verifier.ts",
+    "src/gateways/index.ts",
+    "src/catalog/types.ts",
+    "src/catalog/repository.ts",
+    "src/catalog/firebase-release-reader.ts",
+    "src/catalog/service.ts",
+    "src/catalog/router.ts",
+    "src/catalog/selectors.ts",
+    "src/catalog/attestation.ts",
+    "src/catalog/source-artifact.ts",
+    "src/catalog/selector-replay.ts",
+    "src/catalog/postgres-evidence-reader.ts",
+    "src/catalog/independent-evidence.ts",
+    "src/catalog/private-validator.ts",
+    "src/catalog/r3e-runtime-identity.ts",
+    "src/catalog/r3e-launch-context.ts",
+    "src/catalog/r3e-issuer-cli.ts",
+    "src/catalog/r3e-issuer-trust.ts",
+    "src/catalog/r3e-issuer.ts",
+    "src/wallet/financial-policy.ts",
+    "src/wallet/ledger.ts",
+    "src/wallet/initial-free-grant.ts",
+    "src/admission/enta-classic-start.ts",
+    "src/admission/huroof-protocol.cts",
+    "src/admission/huroof-reserve.ts",
+    "src/admission/huroof-worker.ts",
+    "src/admission/huroof-postgres.ts",
+    "src/catalog/receipt-proof-correspondence.ts",
+    "src/history-rematch/reader.ts",
+    "src/history-rematch/service.ts",
+    "src/catalog/proof-supply-contract.ts",
+    "src/catalog/proof-supply-adapter.ts",
+    "src/rounds/approved-list-content.ts"
+  ]
+}
+
+
+

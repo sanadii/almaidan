@@ -1,0 +1,833 @@
+{
+  "start": {
+    "requestKey": "competition-request-0001",
+    "logicalMatchId": "competition-logical-0001",
+    "setup": {
+      "version": 5,
+      "categories": [
+        {
+          "key": "format_category_0",
+          "promptRefs": []
+        }
+      ],
+      "teams": [
+        {
+          "name": "الفريق الأول",
+          "colorKey": "CORAL",
+          "players": [
+            "سارة",
+            "نور"
+          ],
+          "aids": [
+            "HINT",
+            "DOUBLE",
+            "PHONE"
+          ]
+        },
+        {
+          "name": "الفريق الثاني",
+          "colorKey": "SKY",
+          "players": [
+            "علي",
+            "ريم"
+          ],
+          "aids": [
+            "HINT",
+            "DOUBLE",
+            "PHONE"
+          ]
+        }
+      ],
+      "rules": {
+        "version": "enta-competitive-1",
+        "paletteVersion": "enta-team-palette-1",
+        "questionSeconds": 30,
+        "turnSeconds": 30,
+        "overallSeconds": 300,
+        "stealSeconds": 10,
+        "phoneSeconds": 60,
+        "embeddedStealCap": 200
+      }
+    }
+  },
+  "board": {
+    "id": "competition-logical-0001",
+    "requestVersion": 5,
+    "rulesVersion": "enta-competitive-1",
+    "version": 1,
+    "executionFormat": "STANDALONE_LIST",
+    "serverNow": 1800000000000,
+    "finished": false,
+    "turnTeamId": "adfcbe93-55fc-47ce-af76-f2fa0a721f89",
+    "collections": {
+      "pending": 0,
+      "rulings": 0,
+      "feedback": 0,
+      "media": 0
+    },
+    "teams": [
+      {
+        "id": "adfcbe93-55fc-47ce-af76-f2fa0a721f89",
+        "name": "الفريق الأول",
+        "colorKey": "CORAL",
+        "color": "#ff7a4d",
+        "players": [
+          {
+            "id": "adfcbe93-55fc-47ce-af76-f2fa0a721f89-p01",
+            "name": "سارة"
+          },
+          {
+            "id": "adfcbe93-55fc-47ce-af76-f2fa0a721f89-p02",
+            "name": "نور"
+          }
+        ],
+        "score": 0,
+        "aids": [
+          "HINT",
+          "DOUBLE",
+          "PHONE"
+        ]
+      },
+      {
+        "id": "d3ff54eb-0bc6-4638-9479-7256d51586c8",
+        "name": "الفريق الثاني",
+        "colorKey": "SKY",
+        "color": "#3fc6ff",
+        "players": [
+          {
+            "id": "d3ff54eb-0bc6-4638-9479-7256d51586c8-p01",
+            "name": "علي"
+          },
+          {
+            "id": "d3ff54eb-0bc6-4638-9479-7256d51586c8-p02",
+            "name": "ريم"
+          }
+        ],
+        "score": 0,
+        "aids": [
+          "HINT",
+          "DOUBLE",
+          "PHONE"
+        ]
+      }
+    ],
+    "categories": [
+      {
+        "key": "format_category_0",
+        "label": "قوائم المعرفة",
+        "format": "LIST_ITEMS",
+        "cover": {
+          "id": "cover_0",
+          "mime": "image/webp",
+          "bytes": 15208,
+          "width": 320,
+          "height": 320,
+          "durationMs": null
+        }
+      }
+    ],
+    "rounds": [
+      {
+        "id": "f49fb485-4335-4041-bf42-bd6d8c098b19",
+        "ordinal": 0,
+        "categoryKey": "format_category_0",
+        "format": "LIST_ITEMS",
+        "points": null,
+        "phase": "READY"
+      },
+      {
+        "id": "6ff1b8b8-0d8d-463a-9908-b8d52bb47c54",
+        "ordinal": 1,
+        "categoryKey": "format_category_0",
+        "format": "LIST_ITEMS",
+        "points": null,
+        "phase": "READY"
+      },
+      {
+        "id": "34000aad-e72b-4735-88c5-6706389bafc3",
+        "ordinal": 2,
+        "categoryKey": "format_category_0",
+        "format": "LIST_ITEMS",
+        "points": null,
+        "phase": "READY"
+      },
+      {
+        "id": "7908063a-0a7d-4ca6-b7d5-fbe9ba565e1f",
+        "ordinal": 3,
+        "categoryKey": "format_category_0",
+        "format": "LIST_ITEMS",
+        "points": null,
+        "phase": "READY"
+      }
+    ],
+    "currentRound": null,
+    "allowances": [],
+    "attempts": [],
+    "rulings": [],
+    "latestEffect": null,
+    "review": null,
+    "boardCorrectionRoundId": null,
+    "grants": [],
+    "result": null
+  },
+  "openedList": {
+    "id": "competition-logical-0001",
+    "requestVersion": 5,
+    "rulesVersion": "enta-competitive-1",
+    "version": 2,
+    "executionFormat": "STANDALONE_LIST",
+    "serverNow": 1800000000000,
+    "finished": false,
+    "turnTeamId": "adfcbe93-55fc-47ce-af76-f2fa0a721f89",
+    "collections": {
+      "pending": 0,
+      "rulings": 0,
+      "feedback": 0,
+      "media": 1
+    },
+    "teams": [
+      {
+        "id": "adfcbe93-55fc-47ce-af76-f2fa0a721f89",
+        "name": "الفريق الأول",
+        "colorKey": "CORAL",
+        "color": "#ff7a4d",
+        "players": [
+          {
+            "id": "adfcbe93-55fc-47ce-af76-f2fa0a721f89-p01",
+            "name": "سارة"
+          },
+          {
+            "id": "adfcbe93-55fc-47ce-af76-f2fa0a721f89-p02",
+            "name": "نور"
+          }
+        ],
+        "score": 0,
+        "aids": [
+          "HINT",
+          "DOUBLE",
+          "PHONE"
+        ]
+      },
+      {
+        "id": "d3ff54eb-0bc6-4638-9479-7256d51586c8",
+        "name": "الفريق الثاني",
+        "colorKey": "SKY",
+        "color": "#3fc6ff",
+        "players": [
+          {
+            "id": "d3ff54eb-0bc6-4638-9479-7256d51586c8-p01",
+            "name": "علي"
+          },
+          {
+            "id": "d3ff54eb-0bc6-4638-9479-7256d51586c8-p02",
+            "name": "ريم"
+          }
+        ],
+        "score": 0,
+        "aids": [
+          "HINT",
+          "DOUBLE",
+          "PHONE"
+        ]
+      }
+    ],
+    "categories": [
+      {
+        "key": "format_category_0",
+        "label": "قوائم المعرفة",
+        "format": "LIST_ITEMS",
+        "cover": {
+          "id": "cover_0",
+          "mime": "image/webp",
+          "bytes": 15208,
+          "width": 320,
+          "height": 320,
+          "durationMs": null
+        }
+      }
+    ],
+    "rounds": [
+      {
+        "id": "f49fb485-4335-4041-bf42-bd6d8c098b19",
+        "ordinal": 0,
+        "categoryKey": "format_category_0",
+        "format": "LIST_ITEMS",
+        "points": null,
+        "phase": "TURN"
+      },
+      {
+        "id": "6ff1b8b8-0d8d-463a-9908-b8d52bb47c54",
+        "ordinal": 1,
+        "categoryKey": "format_category_0",
+        "format": "LIST_ITEMS",
+        "points": null,
+        "phase": "READY"
+      },
+      {
+        "id": "34000aad-e72b-4735-88c5-6706389bafc3",
+        "ordinal": 2,
+        "categoryKey": "format_category_0",
+        "format": "LIST_ITEMS",
+        "points": null,
+        "phase": "READY"
+      },
+      {
+        "id": "7908063a-0a7d-4ca6-b7d5-fbe9ba565e1f",
+        "ordinal": 3,
+        "categoryKey": "format_category_0",
+        "format": "LIST_ITEMS",
+        "points": null,
+        "phase": "READY"
+      }
+    ],
+    "currentRound": {
+      "id": "f49fb485-4335-4041-bf42-bd6d8c098b19",
+      "version": 1,
+      "phase": "TURN",
+      "phaseOrdinal": 1,
+      "generation": 1,
+      "format": "LIST_ITEMS",
+      "prompt": "اذكر من القائمة 2 — محتوى اختبار",
+      "points": null,
+      "originalTeamId": "adfcbe93-55fc-47ce-af76-f2fa0a721f89",
+      "currentTeamId": "adfcbe93-55fc-47ce-af76-f2fa0a721f89",
+      "deadline": 1800000030000,
+      "overallDeadline": 1800000300000,
+      "pause": null,
+      "resourceStop": null,
+      "publicRevealed": false,
+      "items": [
+        {
+          "id": "item_0_1_0",
+          "ordinal": 0,
+          "consumed": false,
+          "revealed": false
+        },
+        {
+          "id": "item_0_1_1",
+          "ordinal": 1,
+          "consumed": false,
+          "revealed": false
+        },
+        {
+          "id": "item_0_1_2",
+          "ordinal": 2,
+          "consumed": false,
+          "revealed": false
+        }
+      ],
+      "hints": [],
+      "graphemeHints": [],
+      "assignment": null,
+      "pickedPlayerId": null,
+      "eligibleAids": [
+        "HINT",
+        "PASS",
+        "FREEZE",
+        "DOUBLE",
+        "PHONE"
+      ],
+      "media": [],
+      "canvas": null
+    },
+    "allowances": [
+      {
+        "id": "91ff7f72-3930-4e64-8744-c5dd612617df",
+        "teamId": "adfcbe93-55fc-47ce-af76-f2fa0a721f89",
+        "aid": "HINT",
+        "roundId": "f49fb485-4335-4041-bf42-bd6d8c098b19",
+        "consumed": false
+      },
+      {
+        "id": "020569e3-1dd1-4d00-b9f9-99938c734342",
+        "teamId": "adfcbe93-55fc-47ce-af76-f2fa0a721f89",
+        "aid": "DOUBLE",
+        "roundId": "f49fb485-4335-4041-bf42-bd6d8c098b19",
+        "consumed": false
+      },
+      {
+        "id": "de12271e-672e-4ceb-be75-ace4164a2c3e",
+        "teamId": "adfcbe93-55fc-47ce-af76-f2fa0a721f89",
+        "aid": "PHONE",
+        "roundId": "f49fb485-4335-4041-bf42-bd6d8c098b19",
+        "consumed": false
+      },
+      {
+        "id": "357d00ab-37ba-427e-9247-013005211797",
+        "teamId": "d3ff54eb-0bc6-4638-9479-7256d51586c8",
+        "aid": "HINT",
+        "roundId": "f49fb485-4335-4041-bf42-bd6d8c098b19",
+        "consumed": false
+      },
+      {
+        "id": "ba1437a3-9cd2-4532-9535-4bb041aa179f",
+        "teamId": "d3ff54eb-0bc6-4638-9479-7256d51586c8",
+        "aid": "DOUBLE",
+        "roundId": "f49fb485-4335-4041-bf42-bd6d8c098b19",
+        "consumed": false
+      },
+      {
+        "id": "c746740f-65bf-47d7-8fe5-b7c452e2515d",
+        "teamId": "d3ff54eb-0bc6-4638-9479-7256d51586c8",
+        "aid": "PHONE",
+        "roundId": "f49fb485-4335-4041-bf42-bd6d8c098b19",
+        "consumed": false
+      }
+    ],
+    "attempts": [],
+    "rulings": [],
+    "latestEffect": {
+      "id": "dd004c20-3b9d-4076-860d-71bbd064bfe8",
+      "hash": "35299268bb47064a9f17648fdc67ae7ec29efb5b3bca879c3c43d0fea97487d6",
+      "kind": "TIMING",
+      "reversible": false,
+      "postings": []
+    },
+    "review": null,
+    "boardCorrectionRoundId": null,
+    "grants": [],
+    "result": null
+  },
+  "openedMixed": {
+    "id": "competition-logical-0001",
+    "requestVersion": 5,
+    "rulesVersion": "enta-competitive-1",
+    "version": 2,
+    "executionFormat": "MIXED_BOARD",
+    "serverNow": 1800000000000,
+    "finished": false,
+    "turnTeamId": "96fab74e-5363-4159-b659-97fe5896c822",
+    "collections": {
+      "pending": 0,
+      "rulings": 0,
+      "feedback": 0,
+      "media": 1
+    },
+    "teams": [
+      {
+        "id": "96fab74e-5363-4159-b659-97fe5896c822",
+        "name": "الفريق الأول",
+        "colorKey": "CORAL",
+        "color": "#ff7a4d",
+        "players": [
+          {
+            "id": "96fab74e-5363-4159-b659-97fe5896c822-p01",
+            "name": "سارة"
+          },
+          {
+            "id": "96fab74e-5363-4159-b659-97fe5896c822-p02",
+            "name": "نور"
+          }
+        ],
+        "score": 0,
+        "aids": [
+          "PHONE_A_FRIEND",
+          "DOUBLE_ANSWER",
+          "DOUBLE_POINTS"
+        ]
+      },
+      {
+        "id": "837cd9d3-07fa-45d3-86d5-81688b223f7d",
+        "name": "الفريق الثاني",
+        "colorKey": "SKY",
+        "color": "#3fc6ff",
+        "players": [
+          {
+            "id": "837cd9d3-07fa-45d3-86d5-81688b223f7d-p01",
+            "name": "علي"
+          },
+          {
+            "id": "837cd9d3-07fa-45d3-86d5-81688b223f7d-p02",
+            "name": "ريم"
+          }
+        ],
+        "score": 0,
+        "aids": [
+          "PHONE_A_FRIEND",
+          "DOUBLE_ANSWER",
+          "DOUBLE_POINTS"
+        ]
+      }
+    ],
+    "categories": [
+      {
+        "key": "format_category_0",
+        "label": "قوائم المعرفة",
+        "format": "LIST_ITEMS",
+        "cover": {
+          "id": "cover_0",
+          "mime": "image/webp",
+          "bytes": 15208,
+          "width": 320,
+          "height": 320,
+          "durationMs": null
+        }
+      },
+      {
+        "key": "format_category_1",
+        "label": "تمثيل ومواقف",
+        "format": "ACTING_ITEMS",
+        "cover": {
+          "id": "cover_1",
+          "mime": "image/webp",
+          "bytes": 15208,
+          "width": 320,
+          "height": 320,
+          "durationMs": null
+        }
+      },
+      {
+        "key": "format_category_2",
+        "label": "ارسمها",
+        "format": "DRAWING_TARGET",
+        "cover": {
+          "id": "cover_2",
+          "mime": "image/webp",
+          "bytes": 15208,
+          "width": 320,
+          "height": 320,
+          "durationMs": null
+        }
+      },
+      {
+        "key": "format_category_3",
+        "label": "صور وأسئلة",
+        "format": "ORDINARY_TIER",
+        "cover": {
+          "id": "cover_3",
+          "mime": "image/webp",
+          "bytes": 15208,
+          "width": 320,
+          "height": 320,
+          "durationMs": null
+        }
+      },
+      {
+        "key": "format_category_4",
+        "label": "رياضة وفيديو",
+        "format": "ORDINARY_TIER",
+        "cover": {
+          "id": "cover_4",
+          "mime": "image/webp",
+          "bytes": 15208,
+          "width": 320,
+          "height": 320,
+          "durationMs": null
+        }
+      },
+      {
+        "key": "format_category_5",
+        "label": "معرفة ومغامرة",
+        "format": "ORDINARY_TIER",
+        "cover": {
+          "id": "cover_5",
+          "mime": "image/webp",
+          "bytes": 15208,
+          "width": 320,
+          "height": 320,
+          "durationMs": null
+        }
+      }
+    ],
+    "rounds": [
+      {
+        "id": "a8c5ee80-dad1-474f-a34c-a41be8ad00a9",
+        "ordinal": 0,
+        "categoryKey": "format_category_0",
+        "format": "LIST_ITEMS",
+        "points": null,
+        "phase": "READY"
+      },
+      {
+        "id": "5c2ed34a-54a0-4c67-9711-6c8d717a6c1d",
+        "ordinal": 1,
+        "categoryKey": "format_category_1",
+        "format": "ACTING_ITEMS",
+        "points": null,
+        "phase": "READY"
+      },
+      {
+        "id": "a9267894-fa42-4f3f-acae-eeb20283e67c",
+        "ordinal": 2,
+        "categoryKey": "format_category_2",
+        "format": "DRAWING_TARGET",
+        "points": 200,
+        "phase": "READY"
+      },
+      {
+        "id": "b28d56d0-5b05-4160-b324-815a4145de14",
+        "ordinal": 3,
+        "categoryKey": "format_category_2",
+        "format": "DRAWING_TARGET",
+        "points": 200,
+        "phase": "READY"
+      },
+      {
+        "id": "f932ba5c-870c-4896-af10-26fd89630c3b",
+        "ordinal": 4,
+        "categoryKey": "format_category_2",
+        "format": "DRAWING_TARGET",
+        "points": 400,
+        "phase": "READY"
+      },
+      {
+        "id": "d4fdabc8-eaf2-47d4-87b2-90f70bc59071",
+        "ordinal": 5,
+        "categoryKey": "format_category_2",
+        "format": "DRAWING_TARGET",
+        "points": 400,
+        "phase": "READY"
+      },
+      {
+        "id": "70cf1613-131f-4135-b630-ebb55fe681fc",
+        "ordinal": 6,
+        "categoryKey": "format_category_2",
+        "format": "DRAWING_TARGET",
+        "points": 600,
+        "phase": "READY"
+      },
+      {
+        "id": "9ce29dc7-332e-491c-a0f0-83fc98779e58",
+        "ordinal": 7,
+        "categoryKey": "format_category_2",
+        "format": "DRAWING_TARGET",
+        "points": 600,
+        "phase": "READY"
+      },
+      {
+        "id": "eb8787ca-1890-4f3d-ab9d-fdde446e15e2",
+        "ordinal": 8,
+        "categoryKey": "format_category_3",
+        "format": "ORDINARY_TIER",
+        "points": 200,
+        "phase": "MAIN"
+      },
+      {
+        "id": "edd59487-37e3-4aa2-abe8-56ff1df97d8e",
+        "ordinal": 9,
+        "categoryKey": "format_category_3",
+        "format": "ORDINARY_TIER",
+        "points": 200,
+        "phase": "READY"
+      },
+      {
+        "id": "729842d9-b60b-433e-b0fa-13a17394cb9d",
+        "ordinal": 10,
+        "categoryKey": "format_category_3",
+        "format": "ORDINARY_TIER",
+        "points": 400,
+        "phase": "READY"
+      },
+      {
+        "id": "572b2415-f782-479e-9e21-310eabb51ce4",
+        "ordinal": 11,
+        "categoryKey": "format_category_3",
+        "format": "ORDINARY_TIER",
+        "points": 400,
+        "phase": "READY"
+      },
+      {
+        "id": "715dc198-41e6-47eb-aeb6-245333fa77f5",
+        "ordinal": 12,
+        "categoryKey": "format_category_3",
+        "format": "ORDINARY_TIER",
+        "points": 600,
+        "phase": "READY"
+      },
+      {
+        "id": "03e0fd16-71ca-4acf-a78d-2ec290622bb6",
+        "ordinal": 13,
+        "categoryKey": "format_category_3",
+        "format": "ORDINARY_TIER",
+        "points": 600,
+        "phase": "READY"
+      },
+      {
+        "id": "49441e4b-15d5-48f4-968c-054b103f37cb",
+        "ordinal": 14,
+        "categoryKey": "format_category_4",
+        "format": "ORDINARY_TIER",
+        "points": 200,
+        "phase": "READY"
+      },
+      {
+        "id": "965a5943-cab2-46cb-be9b-d3d1cb3e3fed",
+        "ordinal": 15,
+        "categoryKey": "format_category_4",
+        "format": "ORDINARY_TIER",
+        "points": 200,
+        "phase": "READY"
+      },
+      {
+        "id": "dbc47259-844f-4172-96c3-d0251b1d0799",
+        "ordinal": 16,
+        "categoryKey": "format_category_4",
+        "format": "ORDINARY_TIER",
+        "points": 400,
+        "phase": "READY"
+      },
+      {
+        "id": "b4509e7e-8c8f-4542-9993-b1db4ca76890",
+        "ordinal": 17,
+        "categoryKey": "format_category_4",
+        "format": "ORDINARY_TIER",
+        "points": 400,
+        "phase": "READY"
+      },
+      {
+        "id": "ce7cdbe8-2a77-4143-92b3-8d8a10ff1a52",
+        "ordinal": 18,
+        "categoryKey": "format_category_4",
+        "format": "ORDINARY_TIER",
+        "points": 600,
+        "phase": "READY"
+      },
+      {
+        "id": "2dd52a29-8e45-4717-ab38-21e338099893",
+        "ordinal": 19,
+        "categoryKey": "format_category_4",
+        "format": "ORDINARY_TIER",
+        "points": 600,
+        "phase": "READY"
+      },
+      {
+        "id": "1ac81a9c-b22c-4e2c-b3d8-3af78f46ef80",
+        "ordinal": 20,
+        "categoryKey": "format_category_5",
+        "format": "ORDINARY_TIER",
+        "points": 200,
+        "phase": "READY"
+      },
+      {
+        "id": "2c6bda11-1ca7-4c01-a819-274af2a87079",
+        "ordinal": 21,
+        "categoryKey": "format_category_5",
+        "format": "ORDINARY_TIER",
+        "points": 200,
+        "phase": "READY"
+      },
+      {
+        "id": "5a6aa118-4a18-496a-b885-c97f59901d14",
+        "ordinal": 22,
+        "categoryKey": "format_category_5",
+        "format": "ORDINARY_TIER",
+        "points": 400,
+        "phase": "READY"
+      },
+      {
+        "id": "884e9ee9-7627-42b4-98c7-34dfa732f262",
+        "ordinal": 23,
+        "categoryKey": "format_category_5",
+        "format": "ORDINARY_TIER",
+        "points": 400,
+        "phase": "READY"
+      },
+      {
+        "id": "d2a3dead-5f7a-4393-a3b9-b81e53385231",
+        "ordinal": 24,
+        "categoryKey": "format_category_5",
+        "format": "ORDINARY_TIER",
+        "points": 600,
+        "phase": "READY"
+      },
+      {
+        "id": "df290e19-6a55-4c6c-a995-ea4f8337ee18",
+        "ordinal": 25,
+        "categoryKey": "format_category_5",
+        "format": "ORDINARY_TIER",
+        "points": 600,
+        "phase": "READY"
+      }
+    ],
+    "currentRound": {
+      "id": "eb8787ca-1890-4f3d-ab9d-fdde446e15e2",
+      "version": 1,
+      "phase": "MAIN",
+      "phaseOrdinal": 1,
+      "generation": 1,
+      "format": "ORDINARY_TIER",
+      "prompt": "سؤال مصوّر — اختبار",
+      "points": 200,
+      "originalTeamId": "96fab74e-5363-4159-b659-97fe5896c822",
+      "currentTeamId": "96fab74e-5363-4159-b659-97fe5896c822",
+      "deadline": 1800000030000,
+      "overallDeadline": null,
+      "pause": null,
+      "resourceStop": null,
+      "publicRevealed": false,
+      "items": [],
+      "hints": [],
+      "graphemeHints": [],
+      "assignment": null,
+      "pickedPlayerId": null,
+      "eligibleAids": [
+        "PHONE_A_FRIEND",
+        "DOUBLE_ANSWER",
+        "MORE_HINT",
+        "TRAP",
+        "PICK_ANSWERER",
+        "STEAL_POINTS",
+        "DOUBLE_POINTS"
+      ],
+      "media": [],
+      "canvas": null
+    },
+    "allowances": [
+      {
+        "id": "dd118ebe-58f7-4ed8-b4c3-748a344b3959",
+        "teamId": "96fab74e-5363-4159-b659-97fe5896c822",
+        "aid": "PHONE_A_FRIEND",
+        "roundId": null,
+        "consumed": false
+      },
+      {
+        "id": "349095d7-b3c6-45da-9ce6-d8c27aaad806",
+        "teamId": "96fab74e-5363-4159-b659-97fe5896c822",
+        "aid": "DOUBLE_ANSWER",
+        "roundId": null,
+        "consumed": false
+      },
+      {
+        "id": "3dc85c7c-f6ce-4844-a6ab-b150da17f752",
+        "teamId": "96fab74e-5363-4159-b659-97fe5896c822",
+        "aid": "DOUBLE_POINTS",
+        "roundId": null,
+        "consumed": false
+      },
+      {
+        "id": "d04b1739-61b8-4336-896c-49da9490cb01",
+        "teamId": "837cd9d3-07fa-45d3-86d5-81688b223f7d",
+        "aid": "PHONE_A_FRIEND",
+        "roundId": null,
+        "consumed": false
+      },
+      {
+        "id": "83c5f9fc-d0a3-4710-b0c6-949bf88a3376",
+        "teamId": "837cd9d3-07fa-45d3-86d5-81688b223f7d",
+        "aid": "DOUBLE_ANSWER",
+        "roundId": null,
+        "consumed": false
+      },
+      {
+        "id": "2a7225ed-d763-4d3a-8175-00f518979df1",
+        "teamId": "837cd9d3-07fa-45d3-86d5-81688b223f7d",
+        "aid": "DOUBLE_POINTS",
+        "roundId": null,
+        "consumed": false
+      }
+    ],
+    "attempts": [],
+    "rulings": [],
+    "latestEffect": {
+      "id": "acd27dce-e4a2-4ab0-b97b-e90e98adce19",
+      "hash": "d3a7996c1d0b9ed9b9bbcd0bf8d0c5ab2ae8f655769d4c29aa9465bbad7f564c",
+      "kind": "TIMING",
+      "reversible": false,
+      "postings": []
+    },
+    "review": null,
+    "boardCorrectionRoundId": null,
+    "grants": [],
+    "result": null
+  }
+}

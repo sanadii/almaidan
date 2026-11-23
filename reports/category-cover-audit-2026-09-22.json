@@ -1,0 +1,4698 @@
+{
+  "schemaVersion": 1,
+  "sourceCatalog": "content/source-catalog/tahadani-games-catalog.v1.json",
+  "totals": {
+    "sourceEntries": 558,
+    "uniqueNormalizedNames": 544,
+    "existingCoverMatches": 111,
+    "generatedReviewOriginals": 433,
+    "unresolved": 0
+  },
+  "categories": [
+    {
+      "normalizedKey": "مناناصحابه",
+      "canonicalCategoryId": "tahadani-games-001",
+      "canonicalLabelAr": "من أنا / صحابة",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-001.png"
+    },
+    {
+      "normalizedKey": "مناناتنس",
+      "canonicalCategoryId": "tahadani-games-002",
+      "canonicalLabelAr": "من أنا / تنس",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-002.png"
+    },
+    {
+      "normalizedKey": "مناناشخصياتعمانيه",
+      "canonicalCategoryId": "tahadani-games-003",
+      "canonicalLabelAr": "من أنا / شخصيات عمانيه",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-003.png"
+    },
+    {
+      "normalizedKey": "مناناكرهيد",
+      "canonicalCategoryId": "tahadani-games-004",
+      "canonicalLabelAr": "من أنا / كرة يد",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-004.png"
+    },
+    {
+      "normalizedKey": "منانادول",
+      "canonicalCategoryId": "tahadani-games-005",
+      "canonicalLabelAr": "من أنا / دول",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-005.png"
+    },
+    {
+      "normalizedKey": "مناناانبياء",
+      "canonicalCategoryId": "tahadani-games-006",
+      "canonicalLabelAr": "من أنا / أنبياء",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-006.png"
+    },
+    {
+      "normalizedKey": "منانامدربينكرهقدم",
+      "canonicalCategoryId": "tahadani-games-007",
+      "canonicalLabelAr": "من أنا / مدربين كرة قدم",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-007.png"
+    },
+    {
+      "normalizedKey": "مناناشخصياتبحرينيه",
+      "canonicalCategoryId": "tahadani-games-008",
+      "canonicalLabelAr": "من أنا / شخصيات بحرينية",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-008.png"
+    },
+    {
+      "normalizedKey": "مناناشعراءوادباء",
+      "canonicalCategoryId": "tahadani-games-009",
+      "canonicalLabelAr": "من أنا / شعراء وأدباء",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-009.png"
+    },
+    {
+      "normalizedKey": "مناناشخصياتاماراتيه",
+      "canonicalCategoryId": "tahadani-games-010",
+      "canonicalLabelAr": "من أنا / شخصيات إماراتية",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-010.png"
+    },
+    {
+      "normalizedKey": "مناناممثلين",
+      "canonicalCategoryId": "tahadani-games-011",
+      "canonicalLabelAr": "من أنا / ممثلين",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-011.png"
+    },
+    {
+      "normalizedKey": "منانااكلات",
+      "canonicalCategoryId": "tahadani-games-012",
+      "canonicalLabelAr": "من أنا / أكلات",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-012.png"
+    },
+    {
+      "normalizedKey": "منانامطربين",
+      "canonicalCategoryId": "tahadani-games-013",
+      "canonicalLabelAr": "من أنا / مطربين",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-013.png"
+    },
+    {
+      "normalizedKey": "منانامنتخباتكرهقدم",
+      "canonicalCategoryId": "tahadani-games-014",
+      "canonicalLabelAr": "من أنا / منتخبات كرة قدم",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-014.png"
+    },
+    {
+      "normalizedKey": "منانامشاهيرسوشيالميديا",
+      "canonicalCategoryId": "tahadani-games-015",
+      "canonicalLabelAr": "من أنا / مشاهير سوشيال ميديا",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-015.png"
+    },
+    {
+      "normalizedKey": "مناناالخلفاء",
+      "canonicalCategoryId": "tahadani-games-016",
+      "canonicalLabelAr": "من أنا / الخلفاء",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-016.png"
+    },
+    {
+      "normalizedKey": "مناناشخصياتكويتيه",
+      "canonicalCategoryId": "tahadani-games-017",
+      "canonicalLabelAr": "من أنا / شخصيات كويتية",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-017.png"
+    },
+    {
+      "normalizedKey": "مناناشخصياتسعوديه",
+      "canonicalCategoryId": "tahadani-games-018",
+      "canonicalLabelAr": "من أنا / شخصيات سعودية",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-018.png"
+    },
+    {
+      "normalizedKey": "مناناشخصياتقطريه",
+      "canonicalCategoryId": "tahadani-games-019",
+      "canonicalLabelAr": "من أنا / شخصيات قطريه",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-019.png"
+    },
+    {
+      "normalizedKey": "منانااعوام",
+      "canonicalCategoryId": "tahadani-games-020",
+      "canonicalLabelAr": "من أنا / أعوام",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-020.png"
+    },
+    {
+      "normalizedKey": "مناناحيوانات",
+      "canonicalCategoryId": "tahadani-games-021",
+      "canonicalLabelAr": "من أنا / حيوانات",
+      "groupId": "guess-me",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-2350f70254d00b7c745e.webp",
+        "web640": "assets/categories/tahadani/640/cover-2350f70254d00b7c745e.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "منانامسلسلاتعربيه",
+      "canonicalCategoryId": "tahadani-games-022",
+      "canonicalLabelAr": "من أنا / مسلسلات عربيه",
+      "groupId": "guess-me",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-5a54ef54aa7e69207f4b.webp",
+        "web640": "assets/categories/tahadani/640/cover-5a54ef54aa7e69207f4b.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "منانامسلسلاتخليجيه",
+      "canonicalCategoryId": "tahadani-games-023",
+      "canonicalLabelAr": "من أنا / مسلسلات خليجية",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-023.png"
+    },
+    {
+      "normalizedKey": "منانالاعبينكرهقدم",
+      "canonicalCategoryId": "tahadani-games-024",
+      "canonicalLabelAr": "من أنا / لاعبين كرة قدم",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-024.png"
+    },
+    {
+      "normalizedKey": "مناناكرهسله",
+      "canonicalCategoryId": "tahadani-games-025",
+      "canonicalLabelAr": "من أنا / كرة سلة",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-025.png"
+    },
+    {
+      "normalizedKey": "مناناانديهكرهقدم",
+      "canonicalCategoryId": "tahadani-games-026",
+      "canonicalLabelAr": "من أنا / أندية كرة قدم",
+      "groupId": "guess-me",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-026.png"
+    },
+    {
+      "normalizedKey": "فالكون",
+      "canonicalCategoryId": "tahadani-games-027",
+      "canonicalLabelAr": "فالكون",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-027.png"
+    },
+    {
+      "normalizedKey": "باور",
+      "canonicalCategoryId": "tahadani-games-028",
+      "canonicalLabelAr": "باور",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-028.png"
+    },
+    {
+      "normalizedKey": "علمنفس",
+      "canonicalCategoryId": "tahadani-games-029",
+      "canonicalLabelAr": "علم نفس",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-029.png"
+    },
+    {
+      "normalizedKey": "ملامحمشهوراجنبي",
+      "canonicalCategoryId": "tahadani-games-030",
+      "canonicalLabelAr": "ملامح مشهور (اجنبي)",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-030.png"
+    },
+    {
+      "normalizedKey": "ملامحمشهورعربي",
+      "canonicalCategoryId": "tahadani-games-031",
+      "canonicalLabelAr": "ملامح مشهور (عربي)",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-031.png"
+    },
+    {
+      "normalizedKey": "اكثردوله",
+      "canonicalCategoryId": "tahadani-games-032",
+      "canonicalLabelAr": "أكثر دولة",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-032.png"
+    },
+    {
+      "normalizedKey": "شعارالابلكيشن",
+      "canonicalCategoryId": "tahadani-games-033",
+      "canonicalLabelAr": "شعار الابلكيشن",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-033.png"
+    },
+    {
+      "normalizedKey": "booktokالعربي",
+      "canonicalCategoryId": "tahadani-games-034",
+      "canonicalLabelAr": "Booktok العربي",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-034.png"
+    },
+    {
+      "normalizedKey": "الشعارالصحيح",
+      "canonicalCategoryId": "tahadani-games-035",
+      "canonicalLabelAr": "الشعار الصحيح",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-035.png"
+    },
+    {
+      "normalizedKey": "صححالخطا",
+      "canonicalCategoryId": "tahadani-games-036",
+      "canonicalLabelAr": "صحح الخطأ",
+      "groupId": "general",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-9a05cf475d7cdd579a49.webp",
+        "web640": "assets/categories/tahadani/640/cover-9a05cf475d7cdd579a49.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "ميمز",
+      "canonicalCategoryId": "tahadani-games-037",
+      "canonicalLabelAr": "ميمز",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-037.png"
+    },
+    {
+      "normalizedKey": "اكملالفراغ",
+      "canonicalCategoryId": "tahadani-games-038",
+      "canonicalLabelAr": "أكمل الفراغ",
+      "groupId": "general",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-0178ca37a4917e45ad2a.webp",
+        "web640": "assets/categories/tahadani/640/cover-0178ca37a4917e45ad2a.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "معاركوحروب",
+      "canonicalCategoryId": "tahadani-games-039",
+      "canonicalLabelAr": "معارك وحروب",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-039.png"
+    },
+    {
+      "normalizedKey": "صوتفنانعربي",
+      "canonicalCategoryId": "tahadani-games-040",
+      "canonicalLabelAr": "صوت فنان عربي",
+      "groupId": "general",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-1a51178f0920f75878a4.webp",
+        "web640": "assets/categories/tahadani/640/cover-1a51178f0920f75878a4.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "صوتفناناجنبي",
+      "canonicalCategoryId": "tahadani-games-041",
+      "canonicalLabelAr": "صوت فنان أجنبي",
+      "groupId": "general",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-e39a138da19c1596b02f.webp",
+        "web640": "assets/categories/tahadani/640/cover-e39a138da19c1596b02f.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "اختصاراتانجليزيه",
+      "canonicalCategoryId": "tahadani-games-042",
+      "canonicalLabelAr": "اختصارات إنجليزية",
+      "groupId": "general",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-b0fa8185ae3fbb89fe59.webp",
+        "web640": "assets/categories/tahadani/640/cover-b0fa8185ae3fbb89fe59.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "تكنولوجيا",
+      "canonicalCategoryId": "tahadani-games-043",
+      "canonicalLabelAr": "تكنولوجيا",
+      "groupId": "general",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-e5e64a79314d046fe288.webp",
+        "web640": "assets/categories/tahadani/640/cover-e5e64a79314d046fe288.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "اولمن",
+      "canonicalCategoryId": "tahadani-games-044",
+      "canonicalLabelAr": "أول من؟",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-044.png"
+    },
+    {
+      "normalizedKey": "فيايعام",
+      "canonicalCategoryId": "tahadani-games-045",
+      "canonicalLabelAr": "في أي عام؟",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-045.png"
+    },
+    {
+      "normalizedKey": "عالمالساعات",
+      "canonicalCategoryId": "tahadani-games-046",
+      "canonicalLabelAr": "عالم الساعات",
+      "groupId": "general",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-246a0663732a7ee3d99b.webp",
+        "web640": "assets/categories/tahadani/640/cover-246a0663732a7ee3d99b.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "الفضاء",
+      "canonicalCategoryId": "tahadani-games-047",
+      "canonicalLabelAr": "الفضاء",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-047.png"
+    },
+    {
+      "normalizedKey": "صورالـai",
+      "canonicalCategoryId": "tahadani-games-048",
+      "canonicalLabelAr": "صور الـ AI",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-048.png"
+    },
+    {
+      "normalizedKey": "دراجاتناريه",
+      "canonicalCategoryId": "tahadani-games-049",
+      "canonicalLabelAr": "دراجات نارية",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-049.png"
+    },
+    {
+      "normalizedKey": "اسمالشخصيه",
+      "canonicalCategoryId": "tahadani-games-050",
+      "canonicalLabelAr": "إسم الشخصية",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-050.png"
+    },
+    {
+      "normalizedKey": "جيلالطيبين",
+      "canonicalCategoryId": "tahadani-games-051",
+      "canonicalLabelAr": "جيل الطيبين",
+      "groupId": "general",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-e8ff609716bbf5280975.webp",
+        "web640": "assets/categories/tahadani/640/cover-e8ff609716bbf5280975.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "لغهالجسد",
+      "canonicalCategoryId": "tahadani-games-052",
+      "canonicalLabelAr": "لغة الجسد",
+      "groupId": "general",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-e5984f38f29e7f9e84ce.webp",
+        "web640": "assets/categories/tahadani/640/cover-e5984f38f29e7f9e84ce.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "منوالمشهورالعربي",
+      "canonicalCategoryId": "tahadani-games-053",
+      "canonicalLabelAr": "منو المشهور (العربي)",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-053.png"
+    },
+    {
+      "normalizedKey": "منوالمشهورالاجنبي",
+      "canonicalCategoryId": "tahadani-games-054",
+      "canonicalLabelAr": "منو المشهور (الأجنبي)",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-054.png"
+    },
+    {
+      "normalizedKey": "عطورعالميه",
+      "canonicalCategoryId": "tahadani-games-055",
+      "canonicalLabelAr": "عطور عالمية",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-055.png"
+    },
+    {
+      "normalizedKey": "عطورعربيه",
+      "canonicalCategoryId": "tahadani-games-056",
+      "canonicalLabelAr": "عطور عربية",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-056.png"
+    },
+    {
+      "normalizedKey": "كتبومولفون",
+      "canonicalCategoryId": "tahadani-games-057",
+      "canonicalLabelAr": "كتب ومؤلفون",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-057.png"
+    },
+    {
+      "normalizedKey": "سوشلميديا",
+      "canonicalCategoryId": "tahadani-games-058",
+      "canonicalLabelAr": "سوشل ميديا",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-058.png"
+    },
+    {
+      "normalizedKey": "توقعني",
+      "canonicalCategoryId": "tahadani-games-059",
+      "canonicalLabelAr": "توقعني؟",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-059.png"
+    },
+    {
+      "normalizedKey": "طفولهلاعبين",
+      "canonicalCategoryId": "tahadani-games-060",
+      "canonicalLabelAr": "طفولة لاعبين",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-060.png"
+    },
+    {
+      "normalizedKey": "سوالفالتيكتوك",
+      "canonicalCategoryId": "tahadani-games-061",
+      "canonicalLabelAr": "سوالف التيك توك",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-061.png"
+    },
+    {
+      "normalizedKey": "طفولهالمشاهير",
+      "canonicalCategoryId": "tahadani-games-062",
+      "canonicalLabelAr": "طفولة المشاهير",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-062.png"
+    },
+    {
+      "normalizedKey": "اقتصادوتكنولوجيا",
+      "canonicalCategoryId": "tahadani-games-063",
+      "canonicalLabelAr": "اقتصاد وتكنولوجيا",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-063.png"
+    },
+    {
+      "normalizedKey": "ربعالبحر",
+      "canonicalCategoryId": "tahadani-games-064",
+      "canonicalLabelAr": "ربع البحر",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-064.png"
+    },
+    {
+      "normalizedKey": "جيلالثمانينات",
+      "canonicalCategoryId": "tahadani-games-065",
+      "canonicalLabelAr": "جيل الثمانينات",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-065.png"
+    },
+    {
+      "normalizedKey": "تاريخ",
+      "canonicalCategoryId": "tahadani-games-066",
+      "canonicalLabelAr": "تاريخ",
+      "groupId": "general",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-ed4e811ec0cb3ee16ccd.webp",
+        "web640": "assets/categories/tahadani/640/cover-ed4e811ec0cb3ee16ccd.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "منوالمشهور",
+      "canonicalCategoryId": "tahadani-games-067",
+      "canonicalLabelAr": "منو المشهور",
+      "groupId": "general",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-e27a8d260da3efb7fb17.webp",
+        "web640": "assets/categories/tahadani/640/cover-e27a8d260da3efb7fb17.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "شعارات",
+      "canonicalCategoryId": "tahadani-games-068",
+      "canonicalLabelAr": "شعارات",
+      "groupId": "general",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-72fa293b9dd5abfe9dbb.webp",
+        "web640": "assets/categories/tahadani/640/cover-72fa293b9dd5abfe9dbb.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "منوعاتشعريه",
+      "canonicalCategoryId": "tahadani-games-069",
+      "canonicalLabelAr": "منوعات شعرية",
+      "groupId": "general",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-1f04b3c5d5d997a6c97b.webp",
+        "web640": "assets/categories/tahadani/640/cover-1f04b3c5d5d997a6c97b.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "معلوماتعامه",
+      "canonicalCategoryId": "tahadani-games-070",
+      "canonicalLabelAr": "معلومات عامة",
+      "groupId": "general",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-65d35a5beb4222e96f1a.webp",
+        "web640": "assets/categories/tahadani/640/cover-65d35a5beb4222e96f1a.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "صوتالمشهور",
+      "canonicalCategoryId": "tahadani-games-071",
+      "canonicalLabelAr": "صوت المشهور",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-071.png"
+    },
+    {
+      "normalizedKey": "لغهوادب",
+      "canonicalCategoryId": "tahadani-games-072",
+      "canonicalLabelAr": "لغة وأدب",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-072.png"
+    },
+    {
+      "normalizedKey": "سيارات",
+      "canonicalCategoryId": "tahadani-games-073",
+      "canonicalLabelAr": "سيارات",
+      "groupId": "general",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-64a611253ef5aa402df8.webp",
+        "web640": "assets/categories/tahadani/640/cover-64a611253ef5aa402df8.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "عالمالحيوان",
+      "canonicalCategoryId": "tahadani-games-074",
+      "canonicalLabelAr": "عالم الحيوان",
+      "groupId": "general",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-16f8ebd9c6407f101616.webp",
+        "web640": "assets/categories/tahadani/640/cover-16f8ebd9c6407f101616.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "منتجات",
+      "canonicalCategoryId": "tahadani-games-075",
+      "canonicalLabelAr": "منتجات",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-075.png"
+    },
+    {
+      "normalizedKey": "اكلاتوطبخات",
+      "canonicalCategoryId": "tahadani-games-076",
+      "canonicalLabelAr": "أكلات وطبخات",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-076.png"
+    },
+    {
+      "normalizedKey": "طبوصيدله",
+      "canonicalCategoryId": "tahadani-games-077",
+      "canonicalLabelAr": "طب وصيدلة",
+      "groupId": "general",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-077.png"
+    },
+    {
+      "normalizedKey": "حروفمتحركهجغرافيا",
+      "canonicalCategoryId": "tahadani-games-078",
+      "canonicalLabelAr": "حروف متحركة جغرافيا",
+      "groupId": "letters",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-078.png"
+    },
+    {
+      "normalizedKey": "حروفموقته",
+      "canonicalCategoryId": "tahadani-games-079",
+      "canonicalLabelAr": "حروف مؤقته",
+      "groupId": "letters",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-079.png"
+    },
+    {
+      "normalizedKey": "حروفمتحركه",
+      "canonicalCategoryId": "tahadani-games-080",
+      "canonicalLabelAr": "حروف متحركه",
+      "groupId": "letters",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-080.png"
+    },
+    {
+      "normalizedKey": "حروفاسلامي",
+      "canonicalCategoryId": "tahadani-games-081",
+      "canonicalLabelAr": "حروف اسلامي",
+      "groupId": "letters",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-081.png"
+    },
+    {
+      "normalizedKey": "حروفغناوي",
+      "canonicalCategoryId": "tahadani-games-082",
+      "canonicalLabelAr": "حروف غناوي",
+      "groupId": "letters",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-082.png"
+    },
+    {
+      "normalizedKey": "حروففنخليجي",
+      "canonicalCategoryId": "tahadani-games-083",
+      "canonicalLabelAr": "حروف فن خليجي",
+      "groupId": "letters",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-083.png"
+    },
+    {
+      "normalizedKey": "حروفانمي",
+      "canonicalCategoryId": "tahadani-games-084",
+      "canonicalLabelAr": "حروف أنمي",
+      "groupId": "letters",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-084.png"
+    },
+    {
+      "normalizedKey": "حروفكرهقدم",
+      "canonicalCategoryId": "tahadani-games-085",
+      "canonicalLabelAr": "حروف كرة قدم",
+      "groupId": "letters",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-085.png"
+    },
+    {
+      "normalizedKey": "حروف",
+      "canonicalCategoryId": "tahadani-games-086",
+      "canonicalLabelAr": "حروف",
+      "groupId": "letters",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-ab2431b5b0000b31a0cd.webp",
+        "web640": "assets/categories/tahadani/640/cover-ab2431b5b0000b31a0cd.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "تفسير",
+      "canonicalCategoryId": "tahadani-games-087",
+      "canonicalLabelAr": "تفسير",
+      "groupId": "islamic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-087.png"
+    },
+    {
+      "normalizedKey": "اولمناسلامي",
+      "canonicalCategoryId": "tahadani-games-088",
+      "canonicalLabelAr": "أول من - إسلامي",
+      "groupId": "islamic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-088.png"
+    },
+    {
+      "normalizedKey": "رتبهااسلامي",
+      "canonicalCategoryId": "tahadani-games-089",
+      "canonicalLabelAr": "رتبها - إسلامي",
+      "groupId": "islamic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-089.png"
+    },
+    {
+      "normalizedKey": "اسماءاللهالحسني",
+      "canonicalCategoryId": "tahadani-games-090",
+      "canonicalLabelAr": "أسماء الله الحسنى",
+      "groupId": "islamic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-090.png"
+    },
+    {
+      "normalizedKey": "جزءتبارك",
+      "canonicalCategoryId": "tahadani-games-091",
+      "canonicalLabelAr": "جزء تبارك",
+      "groupId": "islamic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-091.png"
+    },
+    {
+      "normalizedKey": "جزءعم",
+      "canonicalCategoryId": "tahadani-games-092",
+      "canonicalLabelAr": "جزء عم",
+      "groupId": "islamic",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-f973343f8db584414b19.webp",
+        "web640": "assets/categories/tahadani/640/cover-f973343f8db584414b19.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "غزواتالرسول",
+      "canonicalCategoryId": "tahadani-games-093",
+      "canonicalLabelAr": "غزوات الرسول",
+      "groupId": "islamic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-093.png"
+    },
+    {
+      "normalizedKey": "منالقاري",
+      "canonicalCategoryId": "tahadani-games-094",
+      "canonicalLabelAr": "من القارئ",
+      "groupId": "islamic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-094.png"
+    },
+    {
+      "normalizedKey": "احاديث",
+      "canonicalCategoryId": "tahadani-games-095",
+      "canonicalLabelAr": "أحاديث",
+      "groupId": "islamic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-095.png"
+    },
+    {
+      "normalizedKey": "اناشيد",
+      "canonicalCategoryId": "tahadani-games-096",
+      "canonicalLabelAr": "أناشيد",
+      "groupId": "islamic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-096.png"
+    },
+    {
+      "normalizedKey": "غزواتومعارك",
+      "canonicalCategoryId": "tahadani-games-097",
+      "canonicalLabelAr": "غزوات ومعارك",
+      "groupId": "islamic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-097.png"
+    },
+    {
+      "normalizedKey": "قصصالانبياء",
+      "canonicalCategoryId": "tahadani-games-098",
+      "canonicalLabelAr": "قصص الأنبياء",
+      "groupId": "islamic",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-572ae94f526eef2c5b69.webp",
+        "web640": "assets/categories/tahadani/640/cover-572ae94f526eef2c5b69.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "الدينالاسلامي",
+      "canonicalCategoryId": "tahadani-games-099",
+      "canonicalLabelAr": "الدين الإسلامي",
+      "groupId": "islamic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-099.png"
+    },
+    {
+      "normalizedKey": "القرانالكريم",
+      "canonicalCategoryId": "tahadani-games-100",
+      "canonicalLabelAr": "القرآن الكريم",
+      "groupId": "islamic",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-1382bcd0bfccd4b19012.webp",
+        "web640": "assets/categories/tahadani/640/cover-1382bcd0bfccd4b19012.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "السيرهالنبويه",
+      "canonicalCategoryId": "tahadani-games-101",
+      "canonicalLabelAr": "السيرة النبوية",
+      "groupId": "islamic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-101.png"
+    },
+    {
+      "normalizedKey": "حيواناتولاكلمه",
+      "canonicalCategoryId": "tahadani-games-102",
+      "canonicalLabelAr": "حيوانات / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-102.png"
+    },
+    {
+      "normalizedKey": "اغانياجنبيهولاكلمه",
+      "canonicalCategoryId": "tahadani-games-103",
+      "canonicalLabelAr": "أغاني أجنبية / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-103.png"
+    },
+    {
+      "normalizedKey": "اغانيخليجيهولاكلمه",
+      "canonicalCategoryId": "tahadani-games-104",
+      "canonicalLabelAr": "أغاني خليجية / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-104.png"
+    },
+    {
+      "normalizedKey": "اغانيعربيهولاكلمه",
+      "canonicalCategoryId": "tahadani-games-105",
+      "canonicalLabelAr": "أغاني عربية / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-105.png"
+    },
+    {
+      "normalizedKey": "انميولاكلمه",
+      "canonicalCategoryId": "tahadani-games-106",
+      "canonicalLabelAr": "أنمي / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-106.png"
+    },
+    {
+      "normalizedKey": "دولولاكلمه",
+      "canonicalCategoryId": "tahadani-games-107",
+      "canonicalLabelAr": "دول / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-107.png"
+    },
+    {
+      "normalizedKey": "ولاكلمهعامه",
+      "canonicalCategoryId": "tahadani-games-108",
+      "canonicalLabelAr": "ولا كلمة عامة",
+      "groupId": "no-word",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-ebcc90987fc1e56a405d.webp",
+        "web640": "assets/categories/tahadani/640/cover-ebcc90987fc1e56a405d.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "فنخليجيولاكلمه",
+      "canonicalCategoryId": "tahadani-games-109",
+      "canonicalLabelAr": "فن خليجي / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-109.png"
+    },
+    {
+      "normalizedKey": "فنعربيولاكلمه",
+      "canonicalCategoryId": "tahadani-games-110",
+      "canonicalLabelAr": "فن عربي / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-110.png"
+    },
+    {
+      "normalizedKey": "كرتونولاكلمه",
+      "canonicalCategoryId": "tahadani-games-111",
+      "canonicalLabelAr": "كرتون / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-111.png"
+    },
+    {
+      "normalizedKey": "لاعبيناجانبولاكلمه",
+      "canonicalCategoryId": "tahadani-games-112",
+      "canonicalLabelAr": "لاعبين أجانب / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-112.png"
+    },
+    {
+      "normalizedKey": "لاعبينعربولاكلمه",
+      "canonicalCategoryId": "tahadani-games-113",
+      "canonicalLabelAr": "لاعبين عرب / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-113.png"
+    },
+    {
+      "normalizedKey": "مشاهيراجانبولاكلمه",
+      "canonicalCategoryId": "tahadani-games-114",
+      "canonicalLabelAr": "مشاهير أجانب / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-114.png"
+    },
+    {
+      "normalizedKey": "مشاهيرعربولاكلمه",
+      "canonicalCategoryId": "tahadani-games-115",
+      "canonicalLabelAr": "مشاهير عرب / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-115.png"
+    },
+    {
+      "normalizedKey": "مصارعهولاكلمه",
+      "canonicalCategoryId": "tahadani-games-116",
+      "canonicalLabelAr": "مصارعة / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-116.png"
+    },
+    {
+      "normalizedKey": "جغرافياولاكلمه",
+      "canonicalCategoryId": "tahadani-games-117",
+      "canonicalLabelAr": "جغرافيا / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-117.png"
+    },
+    {
+      "normalizedKey": "فناجنبيولاكلمه",
+      "canonicalCategoryId": "tahadani-games-118",
+      "canonicalLabelAr": "فن أجنبي / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-118.png"
+    },
+    {
+      "normalizedKey": "منوعاتعربيهولاكلمه",
+      "canonicalCategoryId": "tahadani-games-119",
+      "canonicalLabelAr": "منوعات عربية / ولا كلمة",
+      "groupId": "no-word",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-119.png"
+    },
+    {
+      "normalizedKey": "وجهصاحبك",
+      "canonicalCategoryId": "tahadani-games-120",
+      "canonicalLabelAr": "وجّه صاحبك",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-120.png"
+    },
+    {
+      "normalizedKey": "شنوالرابط",
+      "canonicalCategoryId": "tahadani-games-121",
+      "canonicalLabelAr": "شنو الرابط؟",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-121.png"
+    },
+    {
+      "normalizedKey": "صيدالمختفي",
+      "canonicalCategoryId": "tahadani-games-122",
+      "canonicalLabelAr": "صيد المختفي",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-122.png"
+    },
+    {
+      "normalizedKey": "ركبالجمله",
+      "canonicalCategoryId": "tahadani-games-123",
+      "canonicalLabelAr": "ركب الجمله",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-123.png"
+    },
+    {
+      "normalizedKey": "ركزعليالكلمات",
+      "canonicalCategoryId": "tahadani-games-124",
+      "canonicalLabelAr": "ركز على الكلمات",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-124.png"
+    },
+    {
+      "normalizedKey": "رسم",
+      "canonicalCategoryId": "tahadani-games-125",
+      "canonicalLabelAr": "رسم",
+      "groupId": "puzzles",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-d835d15714d77b2a6cd3.webp",
+        "web640": "assets/categories/tahadani/640/cover-d835d15714d77b2a6cd3.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "emojis",
+      "canonicalCategoryId": "tahadani-games-126",
+      "canonicalLabelAr": "Emoji's",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-126.png"
+    },
+    {
+      "normalizedKey": "الجزءالمفقود",
+      "canonicalCategoryId": "tahadani-games-127",
+      "canonicalLabelAr": "الجزء المفقود",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-127.png"
+    },
+    {
+      "normalizedKey": "كلماتبالمقلوب",
+      "canonicalCategoryId": "tahadani-games-128",
+      "canonicalLabelAr": "كلمات بالمقلوب",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-128.png"
+    },
+    {
+      "normalizedKey": "خمنالصورهكرويه",
+      "canonicalCategoryId": "tahadani-games-129",
+      "canonicalLabelAr": "خمن الصورة كُروية",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-129.png"
+    },
+    {
+      "normalizedKey": "توقعالحيوان",
+      "canonicalCategoryId": "tahadani-games-130",
+      "canonicalLabelAr": "توقع الحيوان",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-130.png"
+    },
+    {
+      "normalizedKey": "صورهملخبطهاجنبي",
+      "canonicalCategoryId": "tahadani-games-131",
+      "canonicalLabelAr": "صورة ملخبطة (أجنبي)",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-131.png"
+    },
+    {
+      "normalizedKey": "لونالصوره",
+      "canonicalCategoryId": "tahadani-games-132",
+      "canonicalLabelAr": "لون الصورة",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-132.png"
+    },
+    {
+      "normalizedKey": "صورهملخبطهعربي",
+      "canonicalCategoryId": "tahadani-games-133",
+      "canonicalLabelAr": "صورة ملخبطة (عربي)",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-133.png"
+    },
+    {
+      "normalizedKey": "خمنالصوره",
+      "canonicalCategoryId": "tahadani-games-134",
+      "canonicalLabelAr": "خمن الصورة",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-134.png"
+    },
+    {
+      "normalizedKey": "شنوهذا",
+      "canonicalCategoryId": "tahadani-games-135",
+      "canonicalLabelAr": "شنو هذا؟",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-135.png"
+    },
+    {
+      "normalizedKey": "يبيلهاتركيز",
+      "canonicalCategoryId": "tahadani-games-136",
+      "canonicalLabelAr": "يبيلها تركيز",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-136.png"
+    },
+    {
+      "normalizedKey": "رتبهم",
+      "canonicalCategoryId": "tahadani-games-137",
+      "canonicalLabelAr": "رتّبهم",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-137.png"
+    },
+    {
+      "normalizedKey": "رياضياتوعلوم",
+      "canonicalCategoryId": "tahadani-games-138",
+      "canonicalLabelAr": "رياضيات وعلوم",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-138.png"
+    },
+    {
+      "normalizedKey": "لخبطه",
+      "canonicalCategoryId": "tahadani-games-139",
+      "canonicalLabelAr": "لخبطة",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-139.png"
+    },
+    {
+      "normalizedKey": "الغاز",
+      "canonicalCategoryId": "tahadani-games-140",
+      "canonicalLabelAr": "ألغاز",
+      "groupId": "puzzles",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-ea16f8ed819f52ab48d1.webp",
+        "web640": "assets/categories/tahadani/640/cover-ea16f8ed819f52ab48d1.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "امثالوغطاوي",
+      "canonicalCategoryId": "tahadani-games-141",
+      "canonicalLabelAr": "أمثال وغطاوي",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-141.png"
+    },
+    {
+      "normalizedKey": "صيدالفرق",
+      "canonicalCategoryId": "tahadani-games-142",
+      "canonicalLabelAr": "صيد الفرق",
+      "groupId": "puzzles",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-142.png"
+    },
+    {
+      "normalizedKey": "حيواناتايلا",
+      "canonicalCategoryId": "tahadani-games-143",
+      "canonicalLabelAr": "حيوانات / اي لا",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-143.png"
+    },
+    {
+      "normalizedKey": "فنخليجيايلا",
+      "canonicalCategoryId": "tahadani-games-144",
+      "canonicalLabelAr": "فن خليجي / إي لا",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-144.png"
+    },
+    {
+      "normalizedKey": "فنعربيايلا",
+      "canonicalCategoryId": "tahadani-games-145",
+      "canonicalLabelAr": "فن عربي / إي لا",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-145.png"
+    },
+    {
+      "normalizedKey": "اغانيخليجيهايلا",
+      "canonicalCategoryId": "tahadani-games-146",
+      "canonicalLabelAr": "أغاني خليجية / إي لا",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-146.png"
+    },
+    {
+      "normalizedKey": "اغانياجنبيهايلا",
+      "canonicalCategoryId": "tahadani-games-147",
+      "canonicalLabelAr": "أغاني أجنبية / إي لا",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-147.png"
+    },
+    {
+      "normalizedKey": "اغانيعربيهايلا",
+      "canonicalCategoryId": "tahadani-games-148",
+      "canonicalLabelAr": "أغاني عربية / إي لا",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-148.png"
+    },
+    {
+      "normalizedKey": "انميايلا",
+      "canonicalCategoryId": "tahadani-games-149",
+      "canonicalLabelAr": "أنمي / إي لا",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-149.png"
+    },
+    {
+      "normalizedKey": "مشاهيرعربايلا",
+      "canonicalCategoryId": "tahadani-games-150",
+      "canonicalLabelAr": "مشاهير عرب / إي لا",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-150.png"
+    },
+    {
+      "normalizedKey": "مشاهيراجانبايلا",
+      "canonicalCategoryId": "tahadani-games-151",
+      "canonicalLabelAr": "مشاهير أجانب / إي لا",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-151.png"
+    },
+    {
+      "normalizedKey": "دولايلا",
+      "canonicalCategoryId": "tahadani-games-152",
+      "canonicalLabelAr": "دول / إي لا",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-152.png"
+    },
+    {
+      "normalizedKey": "لاعبينعربايلا",
+      "canonicalCategoryId": "tahadani-games-153",
+      "canonicalLabelAr": "لاعبين عرب / إي لا",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-153.png"
+    },
+    {
+      "normalizedKey": "لاعبيناجانبايلا",
+      "canonicalCategoryId": "tahadani-games-154",
+      "canonicalLabelAr": "لاعبين أجانب / إي لا",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-154.png"
+    },
+    {
+      "normalizedKey": "ايلاعام",
+      "canonicalCategoryId": "tahadani-games-155",
+      "canonicalLabelAr": "إي لا عام",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-155.png"
+    },
+    {
+      "normalizedKey": "كرتونايلا",
+      "canonicalCategoryId": "tahadani-games-156",
+      "canonicalLabelAr": "كرتون / إي لا",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-156.png"
+    },
+    {
+      "normalizedKey": "مصارعهايلا",
+      "canonicalCategoryId": "tahadani-games-157",
+      "canonicalLabelAr": "مصارعة / إي لا",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-157.png"
+    },
+    {
+      "normalizedKey": "جغرافياايلا",
+      "canonicalCategoryId": "tahadani-games-158",
+      "canonicalLabelAr": "جغرافيا / إي لا",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-158.png"
+    },
+    {
+      "normalizedKey": "فناجنبيايلا",
+      "canonicalCategoryId": "tahadani-games-159",
+      "canonicalLabelAr": "فن أجنبي / إي لا",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-159.png"
+    },
+    {
+      "normalizedKey": "منوعاتايلا",
+      "canonicalCategoryId": "tahadani-games-160",
+      "canonicalLabelAr": "منوعات إي لأ",
+      "groupId": "yes-no",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-160.png"
+    },
+    {
+      "normalizedKey": "السدالقطري",
+      "canonicalCategoryId": "tahadani-games-161",
+      "canonicalLabelAr": "السد القطري",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-161.png"
+    },
+    {
+      "normalizedKey": "النصرالسعودي",
+      "canonicalCategoryId": "tahadani-games-162",
+      "canonicalLabelAr": "النصر السعودي",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-162.png"
+    },
+    {
+      "normalizedKey": "الهلال",
+      "canonicalCategoryId": "tahadani-games-163",
+      "canonicalLabelAr": "الهلال",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-163.png"
+    },
+    {
+      "normalizedKey": "شنوالرابطكرهقدم",
+      "canonicalCategoryId": "tahadani-games-164",
+      "canonicalLabelAr": "شنو الرابط كرة قدم",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-164.png"
+    },
+    {
+      "normalizedKey": "كريستيانورونالدو",
+      "canonicalCategoryId": "tahadani-games-165",
+      "canonicalLabelAr": "كريستيانو رونالدو",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-165.png"
+    },
+    {
+      "normalizedKey": "ميسي",
+      "canonicalCategoryId": "tahadani-games-166",
+      "canonicalLabelAr": "ميسي",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-166.png"
+    },
+    {
+      "normalizedKey": "كاسالعالم2026",
+      "canonicalCategoryId": "tahadani-games-167",
+      "canonicalLabelAr": "كأس العالم 2026",
+      "groupId": "football",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-eea75433f2f7890b8419.webp",
+        "web640": "assets/categories/tahadani/640/cover-eea75433f2f7890b8419.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "رونالدينيو",
+      "canonicalCategoryId": "tahadani-games-168",
+      "canonicalLabelAr": "رونالدينيو",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-168.png"
+    },
+    {
+      "normalizedKey": "بدرالمطوع",
+      "canonicalCategoryId": "tahadani-games-169",
+      "canonicalLabelAr": "بدر المطوع",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-169.png"
+    },
+    {
+      "normalizedKey": "ناديالكويت",
+      "canonicalCategoryId": "tahadani-games-170",
+      "canonicalLabelAr": "نادي الكويت",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-170.png"
+    },
+    {
+      "normalizedKey": "ابطالاوروبا2526",
+      "canonicalCategoryId": "tahadani-games-171",
+      "canonicalLabelAr": "أبطال أوروبا 25 / 26",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-171.png"
+    },
+    {
+      "normalizedKey": "ملامحمشهورلاعب",
+      "canonicalCategoryId": "tahadani-games-172",
+      "canonicalLabelAr": "ملامح مشهور (لاعب)",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-172.png"
+    },
+    {
+      "normalizedKey": "مانشستريونايتد",
+      "canonicalCategoryId": "tahadani-games-173",
+      "canonicalLabelAr": "مانشستر يونايتد",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-173.png"
+    },
+    {
+      "normalizedKey": "مانشسترسيتي",
+      "canonicalCategoryId": "tahadani-games-174",
+      "canonicalLabelAr": "مانشستر سيتي",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-174.png"
+    },
+    {
+      "normalizedKey": "اتليتكومدريد",
+      "canonicalCategoryId": "tahadani-games-175",
+      "canonicalLabelAr": "اتليتكو مدريد",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-175.png"
+    },
+    {
+      "normalizedKey": "برشلونه",
+      "canonicalCategoryId": "tahadani-games-176",
+      "canonicalLabelAr": "برشلونة",
+      "groupId": "football",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-3c824a5b4907f52cb5e3.webp",
+        "web640": "assets/categories/tahadani/640/cover-3c824a5b4907f52cb5e3.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "ريالمدريد",
+      "canonicalCategoryId": "tahadani-games-177",
+      "canonicalLabelAr": "ريال مدريد",
+      "groupId": "football",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-4c2bacc658750e836281.webp",
+        "web640": "assets/categories/tahadani/640/cover-4c2bacc658750e836281.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "كاسالعرب2025",
+      "canonicalCategoryId": "tahadani-games-178",
+      "canonicalLabelAr": "كأس العرب 2025",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-178.png"
+    },
+    {
+      "normalizedKey": "امماوروبا",
+      "canonicalCategoryId": "tahadani-games-179",
+      "canonicalLabelAr": "أمم أوروبا",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-179.png"
+    },
+    {
+      "normalizedKey": "كوباامريكا",
+      "canonicalCategoryId": "tahadani-games-180",
+      "canonicalLabelAr": "كوبا أمريكا",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-180.png"
+    },
+    {
+      "normalizedKey": "النتيجهالنهاييه",
+      "canonicalCategoryId": "tahadani-games-181",
+      "canonicalLabelAr": "النتيجة النهائية",
+      "groupId": "football",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-3fb19d82b317951c9eca.webp",
+        "web640": "assets/categories/tahadani/640/cover-3fb19d82b317951c9eca.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "انتقالاتالدوريالكويتي",
+      "canonicalCategoryId": "tahadani-games-182",
+      "canonicalLabelAr": "انتقالات الدوري الكويتي",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-182.png"
+    },
+    {
+      "normalizedKey": "pl2526",
+      "canonicalCategoryId": "tahadani-games-183",
+      "canonicalLabelAr": "PL 25 / 26",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-183.png"
+    },
+    {
+      "normalizedKey": "laliga2526",
+      "canonicalCategoryId": "tahadani-games-184",
+      "canonicalLabelAr": "La Liga 25 / 26",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-184.png"
+    },
+    {
+      "normalizedKey": "صوتالمعلق",
+      "canonicalCategoryId": "tahadani-games-185",
+      "canonicalLabelAr": "صوت المعلق",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-185.png"
+    },
+    {
+      "normalizedKey": "ديربيالغضب",
+      "canonicalCategoryId": "tahadani-games-186",
+      "canonicalLabelAr": "ديربي الغضب",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-186.png"
+    },
+    {
+      "normalizedKey": "كرهقدماسبانيه",
+      "canonicalCategoryId": "tahadani-games-187",
+      "canonicalLabelAr": "كرة قدم إسبانية",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-187.png"
+    },
+    {
+      "normalizedKey": "aiكرويه",
+      "canonicalCategoryId": "tahadani-games-188",
+      "canonicalLabelAr": "AI كُروية",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-188.png"
+    },
+    {
+      "normalizedKey": "رياضيغيرواضح",
+      "canonicalCategoryId": "tahadani-games-189",
+      "canonicalLabelAr": "رياضي غير واضح",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-189.png"
+    },
+    {
+      "normalizedKey": "رقموتيشيرتلاعب",
+      "canonicalCategoryId": "tahadani-games-190",
+      "canonicalLabelAr": "رقم وتيشيرت لاعب",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-190.png"
+    },
+    {
+      "normalizedKey": "اينيلعب",
+      "canonicalCategoryId": "tahadani-games-191",
+      "canonicalLabelAr": "أين يلعب",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-191.png"
+    },
+    {
+      "normalizedKey": "الناديالمشترك",
+      "canonicalCategoryId": "tahadani-games-192",
+      "canonicalLabelAr": "النادي المشترك",
+      "groupId": "football",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-56958b561d87aac197fe.webp",
+        "web640": "assets/categories/tahadani/640/cover-56958b561d87aac197fe.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "رتبهمكرهقدم",
+      "canonicalCategoryId": "tahadani-games-193",
+      "canonicalLabelAr": "رتّبهم (كرة قدم)",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-193.png"
+    },
+    {
+      "normalizedKey": "كرهقدمايطاليه",
+      "canonicalCategoryId": "tahadani-games-194",
+      "canonicalLabelAr": "كرة قدم ايطالية",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-194.png"
+    },
+    {
+      "normalizedKey": "تشكيلات",
+      "canonicalCategoryId": "tahadani-games-195",
+      "canonicalLabelAr": "تشكيلات",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-195.png"
+    },
+    {
+      "normalizedKey": "منهواللاعب",
+      "canonicalCategoryId": "tahadani-games-196",
+      "canonicalLabelAr": "من هو اللاعب",
+      "groupId": "football",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-b63aa23da9f1f9c2bece.webp",
+        "web640": "assets/categories/tahadani/640/cover-b63aa23da9f1f9c2bece.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "الهلالوالنصر",
+      "canonicalCategoryId": "tahadani-games-197",
+      "canonicalLabelAr": "الهلال والنصر",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-197.png"
+    },
+    {
+      "normalizedKey": "منسجلالهدف",
+      "canonicalCategoryId": "tahadani-games-198",
+      "canonicalLabelAr": "من سجل الهدف",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-198.png"
+    },
+    {
+      "normalizedKey": "كاسالعالم",
+      "canonicalCategoryId": "tahadani-games-199",
+      "canonicalLabelAr": "كأس العالم",
+      "groupId": "football",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-ab5b42ba82d3fa7c1b21.webp",
+        "web640": "assets/categories/tahadani/640/cover-ab5b42ba82d3fa7c1b21.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "ناديالقادسيه",
+      "canonicalCategoryId": "tahadani-games-200",
+      "canonicalLabelAr": "نادي القادسية",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-200.png"
+    },
+    {
+      "normalizedKey": "الناديالعربي",
+      "canonicalCategoryId": "tahadani-games-201",
+      "canonicalLabelAr": "النادي العربي",
+      "groupId": "football",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-4f028fceac10febfb16c.webp",
+        "web640": "assets/categories/tahadani/640/cover-4f028fceac10febfb16c.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "وينالكره",
+      "canonicalCategoryId": "tahadani-games-202",
+      "canonicalLabelAr": "وين الكرة؟",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-202.png"
+    },
+    {
+      "normalizedKey": "اسماللاعب",
+      "canonicalCategoryId": "tahadani-games-203",
+      "canonicalLabelAr": "اسم اللاعب",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-203.png"
+    },
+    {
+      "normalizedKey": "منواللاعبالخليجي",
+      "canonicalCategoryId": "tahadani-games-204",
+      "canonicalLabelAr": "منو اللاعب الخليجي",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-204.png"
+    },
+    {
+      "normalizedKey": "مسيرهمدرب",
+      "canonicalCategoryId": "tahadani-games-205",
+      "canonicalLabelAr": "مسيرة مدرب",
+      "groupId": "football",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-5eae752a8596f9e3c7c4.webp",
+        "web640": "assets/categories/tahadani/640/cover-5eae752a8596f9e3c7c4.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "توقعاللاعب",
+      "canonicalCategoryId": "tahadani-games-206",
+      "canonicalLabelAr": "توقع اللاعب",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-206.png"
+    },
+    {
+      "normalizedKey": "ميسيوكرستيانو",
+      "canonicalCategoryId": "tahadani-games-207",
+      "canonicalLabelAr": "ميسي وكرستيانو",
+      "groupId": "football",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-85de10cfb42c2f3dc426.webp",
+        "web640": "assets/categories/tahadani/640/cover-85de10cfb42c2f3dc426.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "خليجي",
+      "canonicalCategoryId": "tahadani-games-208",
+      "canonicalLabelAr": "خليجي",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-208.png"
+    },
+    {
+      "normalizedKey": "شعاراتكرويه",
+      "canonicalCategoryId": "tahadani-games-209",
+      "canonicalLabelAr": "شعارات كُروية",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-209.png"
+    },
+    {
+      "normalizedKey": "ريالمدريدvsبرشلونه",
+      "canonicalCategoryId": "tahadani-games-210",
+      "canonicalLabelAr": "ريال مدريد vs برشلونة",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-210.png"
+    },
+    {
+      "normalizedKey": "اسمالدوري",
+      "canonicalCategoryId": "tahadani-games-211",
+      "canonicalLabelAr": "اسم الدوري",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-211.png"
+    },
+    {
+      "normalizedKey": "كرهقدمعالميه",
+      "canonicalCategoryId": "tahadani-games-212",
+      "canonicalLabelAr": "كرة قدم عالمية",
+      "groupId": "football",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-8e49882a684786f8f8aa.webp",
+        "web640": "assets/categories/tahadani/640/cover-8e49882a684786f8f8aa.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "كرهقدمكويتيه",
+      "canonicalCategoryId": "tahadani-games-213",
+      "canonicalLabelAr": "كرة قدم كويتية",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-213.png"
+    },
+    {
+      "normalizedKey": "كرهقدمسعوديه",
+      "canonicalCategoryId": "tahadani-games-214",
+      "canonicalLabelAr": "كرة قدم سعودية",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-214.png"
+    },
+    {
+      "normalizedKey": "كرهقدمقطريه",
+      "canonicalCategoryId": "tahadani-games-215",
+      "canonicalLabelAr": "كرة قدم قطرية",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-215.png"
+    },
+    {
+      "normalizedKey": "كرهقدمبحرينيه",
+      "canonicalCategoryId": "tahadani-games-216",
+      "canonicalLabelAr": "كرة قدم بحرينية",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-216.png"
+    },
+    {
+      "normalizedKey": "كرهقدمعمانيه",
+      "canonicalCategoryId": "tahadani-games-217",
+      "canonicalLabelAr": "كرة قدم عمانية",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-217.png"
+    },
+    {
+      "normalizedKey": "كرهقدماماراتيه",
+      "canonicalCategoryId": "tahadani-games-218",
+      "canonicalLabelAr": "كرة قدم إماراتية",
+      "groupId": "football",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-218.png"
+    },
+    {
+      "normalizedKey": "منوعاتكرهقدم",
+      "canonicalCategoryId": "tahadani-games-219",
+      "canonicalLabelAr": "منوعات كرة قدم",
+      "groupId": "football",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-91e5f890546273107317.webp",
+        "web640": "assets/categories/tahadani/640/cover-91e5f890546273107317.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "مسيرهلاعب",
+      "canonicalCategoryId": "tahadani-games-220",
+      "canonicalLabelAr": "مسيرة لاعب",
+      "groupId": "football",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-95e53882ebcd946b1030.webp",
+        "web640": "assets/categories/tahadani/640/cover-95e53882ebcd946b1030.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "وايلكفوري",
+      "canonicalCategoryId": "tahadani-games-221",
+      "canonicalLabelAr": "وائل كفوري",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-221.png"
+    },
+    {
+      "normalizedKey": "عبدالعزيزالمعني",
+      "canonicalCategoryId": "tahadani-games-222",
+      "canonicalLabelAr": "عبدالعزيز المعنى",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-222.png"
+    },
+    {
+      "normalizedKey": "تامرعاشور",
+      "canonicalCategoryId": "tahadani-games-223",
+      "canonicalLabelAr": "تامر عاشور",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-223.png"
+    },
+    {
+      "normalizedKey": "اغانيلبنانيه",
+      "canonicalCategoryId": "tahadani-games-224",
+      "canonicalLabelAr": "أغاني لبنانية",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-224.png"
+    },
+    {
+      "normalizedKey": "ذكري",
+      "canonicalCategoryId": "tahadani-games-225",
+      "canonicalLabelAr": "ذكرى",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-225.png"
+    },
+    {
+      "normalizedKey": "فضلشاكر",
+      "canonicalCategoryId": "tahadani-games-226",
+      "canonicalLabelAr": "فضل شاكر",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-226.png"
+    },
+    {
+      "normalizedKey": "اغانيمصريه",
+      "canonicalCategoryId": "tahadani-games-227",
+      "canonicalLabelAr": "أغاني مصرية",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-227.png"
+    },
+    {
+      "normalizedKey": "اغانيالزمنالجميل",
+      "canonicalCategoryId": "tahadani-games-228",
+      "canonicalLabelAr": "أغاني الزمن الجميل",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-228.png"
+    },
+    {
+      "normalizedKey": "فرقهالاخوه",
+      "canonicalCategoryId": "tahadani-games-229",
+      "canonicalLabelAr": "فرقة الأخوة",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-229.png"
+    },
+    {
+      "normalizedKey": "عبدالكريمعبدالقادر",
+      "canonicalCategoryId": "tahadani-games-230",
+      "canonicalLabelAr": "عبدالكريم عبدالقادر",
+      "groupId": "music",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-1fa806bb5373d057f057.webp",
+        "web640": "assets/categories/tahadani/640/cover-1fa806bb5373d057f057.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "ابوبكرسالم",
+      "canonicalCategoryId": "tahadani-games-231",
+      "canonicalLabelAr": "أبوبكر سالم",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-231.png"
+    },
+    {
+      "normalizedKey": "اغانيخليجيه",
+      "canonicalCategoryId": "tahadani-games-232",
+      "canonicalLabelAr": "أغاني خليجية",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-232.png"
+    },
+    {
+      "normalizedKey": "بلقيس",
+      "canonicalCategoryId": "tahadani-games-233",
+      "canonicalLabelAr": "بلقيس",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-233.png"
+    },
+    {
+      "normalizedKey": "احلام",
+      "canonicalCategoryId": "tahadani-games-234",
+      "canonicalLabelAr": "أحلام",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-234.png"
+    },
+    {
+      "normalizedKey": "خالدعبدالرحمن",
+      "canonicalCategoryId": "tahadani-games-235",
+      "canonicalLabelAr": "خالد عبدالرحمن",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-235.png"
+    },
+    {
+      "normalizedKey": "شيرين",
+      "canonicalCategoryId": "tahadani-games-236",
+      "canonicalLabelAr": "شيرين",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-236.png"
+    },
+    {
+      "normalizedKey": "بدرالشعيبي",
+      "canonicalCategoryId": "tahadani-games-237",
+      "canonicalLabelAr": "بدر الشعيبي",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-237.png"
+    },
+    {
+      "normalizedKey": "ادم",
+      "canonicalCategoryId": "tahadani-games-238",
+      "canonicalLabelAr": "آدم",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-238.png"
+    },
+    {
+      "normalizedKey": "مطرفالمطرف",
+      "canonicalCategoryId": "tahadani-games-239",
+      "canonicalLabelAr": "مطرف المطرف",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-239.png"
+    },
+    {
+      "normalizedKey": "اغانيوطنيه",
+      "canonicalCategoryId": "tahadani-games-240",
+      "canonicalLabelAr": "أغاني وطنية",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-240.png"
+    },
+    {
+      "normalizedKey": "انتالمطرب",
+      "canonicalCategoryId": "tahadani-games-241",
+      "canonicalLabelAr": "أنت المطرب",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-241.png"
+    },
+    {
+      "normalizedKey": "حسينالجسمي",
+      "canonicalCategoryId": "tahadani-games-242",
+      "canonicalLabelAr": "حسين الجسمي",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-242.png"
+    },
+    {
+      "normalizedKey": "اغانيعراقيه",
+      "canonicalCategoryId": "tahadani-games-243",
+      "canonicalLabelAr": "أغاني عراقية",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-243.png"
+    },
+    {
+      "normalizedKey": "انغام",
+      "canonicalCategoryId": "tahadani-games-244",
+      "canonicalLabelAr": "أنغام",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-244.png"
+    },
+    {
+      "normalizedKey": "اصاله",
+      "canonicalCategoryId": "tahadani-games-245",
+      "canonicalLabelAr": "أصالة",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-245.png"
+    },
+    {
+      "normalizedKey": "سمرات",
+      "canonicalCategoryId": "tahadani-games-246",
+      "canonicalLabelAr": "سمرات",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-246.png"
+    },
+    {
+      "normalizedKey": "عايض",
+      "canonicalCategoryId": "tahadani-games-247",
+      "canonicalLabelAr": "عايض",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-247.png"
+    },
+    {
+      "normalizedKey": "فرقهميامي",
+      "canonicalCategoryId": "tahadani-games-248",
+      "canonicalLabelAr": "فرقة ميامي",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-248.png"
+    },
+    {
+      "normalizedKey": "امكلثوم",
+      "canonicalCategoryId": "tahadani-games-249",
+      "canonicalLabelAr": "أم كلثوم",
+      "groupId": "music",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-9ad64d7897dad304f1b4.webp",
+        "web640": "assets/categories/tahadani/640/cover-9ad64d7897dad304f1b4.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "عدنيات",
+      "canonicalCategoryId": "tahadani-games-250",
+      "canonicalLabelAr": "عدنيات",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-250.png"
+    },
+    {
+      "normalizedKey": "اهلالطرب",
+      "canonicalCategoryId": "tahadani-games-251",
+      "canonicalLabelAr": "أهل الطرب",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-251.png"
+    },
+    {
+      "normalizedKey": "اغاني",
+      "canonicalCategoryId": "tahadani-games-252",
+      "canonicalLabelAr": "أغاني",
+      "groupId": "music",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-252.png"
+    },
+    {
+      "normalizedKey": "اغانياجنبيه",
+      "canonicalCategoryId": "tahadani-games-253",
+      "canonicalLabelAr": "أغاني أجنبية",
+      "groupId": "music",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-18f417ac46f334d3acc8.webp",
+        "web640": "assets/categories/tahadani/640/cover-18f417ac46f334d3acc8.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "حقايبنساييه",
+      "canonicalCategoryId": "tahadani-games-254",
+      "canonicalLabelAr": "حقائب نسائية",
+      "groupId": "ladies",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-c4be2c537cba48179e48.webp",
+        "web640": "assets/categories/tahadani/640/cover-c4be2c537cba48179e48.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "بناتقطر",
+      "canonicalCategoryId": "tahadani-games-255",
+      "canonicalLabelAr": "بنات قطر",
+      "groupId": "ladies",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-255.png"
+    },
+    {
+      "normalizedKey": "بناتالامارات",
+      "canonicalCategoryId": "tahadani-games-256",
+      "canonicalLabelAr": "بنات الإمارات",
+      "groupId": "ladies",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-256.png"
+    },
+    {
+      "normalizedKey": "بناتالسعوديه",
+      "canonicalCategoryId": "tahadani-games-257",
+      "canonicalLabelAr": "بنات السعودية",
+      "groupId": "ladies",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-257.png"
+    },
+    {
+      "normalizedKey": "براندات",
+      "canonicalCategoryId": "tahadani-games-258",
+      "canonicalLabelAr": "براندات",
+      "groupId": "ladies",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-258.png"
+    },
+    {
+      "normalizedKey": "امومه",
+      "canonicalCategoryId": "tahadani-games-259",
+      "canonicalLabelAr": "أمومة",
+      "groupId": "ladies",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-259.png"
+    },
+    {
+      "normalizedKey": "بناتالكويت",
+      "canonicalCategoryId": "tahadani-games-260",
+      "canonicalLabelAr": "بنات الكويت",
+      "groupId": "ladies",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-260.png"
+    },
+    {
+      "normalizedKey": "بوتيكات",
+      "canonicalCategoryId": "tahadani-games-261",
+      "canonicalLabelAr": "بوتيكات",
+      "groupId": "ladies",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-261.png"
+    },
+    {
+      "normalizedKey": "بيوتي",
+      "canonicalCategoryId": "tahadani-games-262",
+      "canonicalLabelAr": "بيوتي",
+      "groupId": "ladies",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-262.png"
+    },
+    {
+      "normalizedKey": "ديوانيهبنات",
+      "canonicalCategoryId": "tahadani-games-263",
+      "canonicalLabelAr": "ديوانية بنات",
+      "groupId": "ladies",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-263.png"
+    },
+    {
+      "normalizedKey": "خرايطالمحترفين",
+      "canonicalCategoryId": "tahadani-games-265",
+      "canonicalLabelAr": "خرايط المحترفين",
+      "groupId": "geography",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-265.png"
+    },
+    {
+      "normalizedKey": "روساءدول",
+      "canonicalCategoryId": "tahadani-games-266",
+      "canonicalLabelAr": "رؤساء دول",
+      "groupId": "geography",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-266.png"
+    },
+    {
+      "normalizedKey": "لونالعلم",
+      "canonicalCategoryId": "tahadani-games-267",
+      "canonicalLabelAr": "لون العلم",
+      "groupId": "geography",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-267.png"
+    },
+    {
+      "normalizedKey": "اعلامقديمه",
+      "canonicalCategoryId": "tahadani-games-268",
+      "canonicalLabelAr": "أعلام قديمة",
+      "groupId": "geography",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-268.png"
+    },
+    {
+      "normalizedKey": "حددالوجهه",
+      "canonicalCategoryId": "tahadani-games-269",
+      "canonicalLabelAr": "حدد الوجهة",
+      "groupId": "geography",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-269.png"
+    },
+    {
+      "normalizedKey": "لغهتركيه",
+      "canonicalCategoryId": "tahadani-games-270",
+      "canonicalLabelAr": "لغة تركية",
+      "groupId": "geography",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-270.png"
+    },
+    {
+      "normalizedKey": "توقعنيدول",
+      "canonicalCategoryId": "tahadani-games-271",
+      "canonicalLabelAr": "توقعني (دول)",
+      "groupId": "geography",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-271.png"
+    },
+    {
+      "normalizedKey": "عملات",
+      "canonicalCategoryId": "tahadani-games-272",
+      "canonicalLabelAr": "عملات",
+      "groupId": "geography",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-3b09b52be5060ebdab5e.webp",
+        "web640": "assets/categories/tahadani/640/cover-3b09b52be5060ebdab5e.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "لغاتولهجات",
+      "canonicalCategoryId": "tahadani-games-273",
+      "canonicalLabelAr": "لغات ولهجات",
+      "groupId": "geography",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-711b88bbcdf19d4d3526.webp",
+        "web640": "assets/categories/tahadani/640/cover-711b88bbcdf19d4d3526.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "خرايط",
+      "canonicalCategoryId": "tahadani-games-274",
+      "canonicalLabelAr": "خرايط",
+      "groupId": "geography",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-39133f04e6e3d633f63c.webp",
+        "web640": "assets/categories/tahadani/640/cover-39133f04e6e3d633f63c.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "اليابان",
+      "canonicalCategoryId": "tahadani-games-275",
+      "canonicalLabelAr": "اليابان",
+      "groupId": "geography",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-275.png"
+    },
+    {
+      "normalizedKey": "النشيدالوطني",
+      "canonicalCategoryId": "tahadani-games-276",
+      "canonicalLabelAr": "النشيد الوطني",
+      "groupId": "geography",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-276.png"
+    },
+    {
+      "normalizedKey": "عواصم",
+      "canonicalCategoryId": "tahadani-games-277",
+      "canonicalLabelAr": "عواصم",
+      "groupId": "geography",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-08fafea7f444767b625c.webp",
+        "web640": "assets/categories/tahadani/640/cover-08fafea7f444767b625c.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "عالمالطيران",
+      "canonicalCategoryId": "tahadani-games-278",
+      "canonicalLabelAr": "عالم الطيران",
+      "groupId": "geography",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-4d88c8c753b4b3a902d1.webp",
+        "web640": "assets/categories/tahadani/640/cover-4d88c8c753b4b3a902d1.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "جوازات",
+      "canonicalCategoryId": "tahadani-games-279",
+      "canonicalLabelAr": "جوازات",
+      "groupId": "geography",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-279.png"
+    },
+    {
+      "normalizedKey": "اعلام",
+      "canonicalCategoryId": "tahadani-games-280",
+      "canonicalLabelAr": "أعلام",
+      "groupId": "geography",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-f0ae92ac58f955eaf813.webp",
+        "web640": "assets/categories/tahadani/640/cover-f0ae92ac58f955eaf813.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "جغرافيا",
+      "canonicalCategoryId": "tahadani-games-281",
+      "canonicalLabelAr": "جغرافيا",
+      "groupId": "geography",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-ccbad42a9337573f0e50.webp",
+        "web640": "assets/categories/tahadani/640/cover-ccbad42a9337573f0e50.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "حددمنالخريطه",
+      "canonicalCategoryId": "tahadani-games-282",
+      "canonicalLabelAr": "حدد من الخريطة",
+      "groupId": "geography",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-282.png"
+    },
+    {
+      "normalizedKey": "دولوعواصم",
+      "canonicalCategoryId": "tahadani-games-283",
+      "canonicalLabelAr": "دول و عواصم",
+      "groupId": "geography",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-59ef1da2f4b5d7d701fa.webp",
+        "web640": "assets/categories/tahadani/640/cover-59ef1da2f4b5d7d701fa.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "لندن",
+      "canonicalCategoryId": "tahadani-games-284",
+      "canonicalLabelAr": "لندن",
+      "groupId": "travel",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-284.png"
+    },
+    {
+      "normalizedKey": "كان",
+      "canonicalCategoryId": "tahadani-games-285",
+      "canonicalLabelAr": "كان",
+      "groupId": "travel",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-285.png"
+    },
+    {
+      "normalizedKey": "ماربيا",
+      "canonicalCategoryId": "tahadani-games-286",
+      "canonicalLabelAr": "ماربيا",
+      "groupId": "travel",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-286.png"
+    },
+    {
+      "normalizedKey": "مدينهبرشلونه",
+      "canonicalCategoryId": "tahadani-games-287",
+      "canonicalLabelAr": "مدينة برشلونة",
+      "groupId": "travel",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-287.png"
+    },
+    {
+      "normalizedKey": "مصر",
+      "canonicalCategoryId": "tahadani-games-288",
+      "canonicalLabelAr": "مصر",
+      "groupId": "travel",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-f468e988a2932d922cd1.webp",
+        "web640": "assets/categories/tahadani/640/cover-f468e988a2932d922cd1.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "ميكانوس",
+      "canonicalCategoryId": "tahadani-games-289",
+      "canonicalLabelAr": "ميكانوس",
+      "groupId": "travel",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-289.png"
+    },
+    {
+      "normalizedKey": "مبتعثينمصر",
+      "canonicalCategoryId": "tahadani-games-290",
+      "canonicalLabelAr": "مبتعثين مصر",
+      "groupId": "travel",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-290.png"
+    },
+    {
+      "normalizedKey": "مبتعثينامريكا",
+      "canonicalCategoryId": "tahadani-games-291",
+      "canonicalLabelAr": "مبتعثين أمريكا",
+      "groupId": "travel",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-291.png"
+    },
+    {
+      "normalizedKey": "مبتعثينبريطانيا",
+      "canonicalCategoryId": "tahadani-games-292",
+      "canonicalLabelAr": "مبتعثين بريطانيا",
+      "groupId": "travel",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-292.png"
+    },
+    {
+      "normalizedKey": "سياحهوسفر",
+      "canonicalCategoryId": "tahadani-games-293",
+      "canonicalLabelAr": "سياحة وسفر",
+      "groupId": "travel",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-293.png"
+    },
+    {
+      "normalizedKey": "القانونالكويتي",
+      "canonicalCategoryId": "tahadani-games-295",
+      "canonicalLabelAr": "القانون الكويتي",
+      "groupId": "kuwait",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-295.png"
+    },
+    {
+      "normalizedKey": "خريطهالمنطقه",
+      "canonicalCategoryId": "tahadani-games-296",
+      "canonicalLabelAr": "خريطة المنطقة",
+      "groupId": "kuwait",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-296.png"
+    },
+    {
+      "normalizedKey": "شتاءالكويت",
+      "canonicalCategoryId": "tahadani-games-297",
+      "canonicalLabelAr": "شتاء الكويت",
+      "groupId": "kuwait",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-297.png"
+    },
+    {
+      "normalizedKey": "مجمعالافنيوز",
+      "canonicalCategoryId": "tahadani-games-298",
+      "canonicalLabelAr": "مجمع الأفنيوز",
+      "groupId": "kuwait",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-298.png"
+    },
+    {
+      "normalizedKey": "مجمعاتالكويت",
+      "canonicalCategoryId": "tahadani-games-300",
+      "canonicalLabelAr": "مجمعات الكويت",
+      "groupId": "kuwait",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-300.png"
+    },
+    {
+      "normalizedKey": "مناطقالكويت",
+      "canonicalCategoryId": "tahadani-games-302",
+      "canonicalLabelAr": "مناطق الكويت",
+      "groupId": "kuwait",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-302.png"
+    },
+    {
+      "normalizedKey": "لوكيشنالكويت",
+      "canonicalCategoryId": "tahadani-games-303",
+      "canonicalLabelAr": "لوكيشن الكويت",
+      "groupId": "kuwait",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-303.png"
+    },
+    {
+      "normalizedKey": "الداخليهوالعسكريه",
+      "canonicalCategoryId": "tahadani-games-304",
+      "canonicalLabelAr": "الداخلية والعسكرية",
+      "groupId": "kuwait",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-304.png"
+    },
+    {
+      "normalizedKey": "دعاياتوترندات",
+      "canonicalCategoryId": "tahadani-games-305",
+      "canonicalLabelAr": "دعايات وترندات",
+      "groupId": "kuwait",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-305.png"
+    },
+    {
+      "normalizedKey": "كلماتكويتيهقديمه",
+      "canonicalCategoryId": "tahadani-games-306",
+      "canonicalLabelAr": "كلمات كويتية قديمة",
+      "groupId": "kuwait",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-306.png"
+    },
+    {
+      "normalizedKey": "الكويت",
+      "canonicalCategoryId": "tahadani-games-307",
+      "canonicalLabelAr": "الكويت",
+      "groupId": "kuwait",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-23a25bbfa096525d998e.webp",
+        "web640": "assets/categories/tahadani/640/cover-23a25bbfa096525d998e.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "مجلسالامه",
+      "canonicalCategoryId": "tahadani-games-308",
+      "canonicalLabelAr": "مجلس الأمة",
+      "groupId": "kuwait",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-308.png"
+    },
+    {
+      "normalizedKey": "مطاعمالكويت",
+      "canonicalCategoryId": "tahadani-games-310",
+      "canonicalLabelAr": "مطاعم الكويت",
+      "groupId": "kuwait",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-8dc8794fd918f790c091.webp",
+        "web640": "assets/categories/tahadani/640/cover-8dc8794fd918f790c091.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "مجمعاتالسعوديه",
+      "canonicalCategoryId": "tahadani-games-313",
+      "canonicalLabelAr": "مجمعات السعودية",
+      "groupId": "ksa",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-313.png"
+    },
+    {
+      "normalizedKey": "يومالتاسيس",
+      "canonicalCategoryId": "tahadani-games-314",
+      "canonicalLabelAr": "يوم التأسيس",
+      "groupId": "ksa",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-314.png"
+    },
+    {
+      "normalizedKey": "يوتيوبسعودي",
+      "canonicalCategoryId": "tahadani-games-315",
+      "canonicalLabelAr": "يوتيوب سعودي",
+      "groupId": "ksa",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-315.png"
+    },
+    {
+      "normalizedKey": "جيلالطيبينسعودي",
+      "canonicalCategoryId": "tahadani-games-316",
+      "canonicalLabelAr": "(جيل الطيبين (سعودي",
+      "groupId": "ksa",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-316.png"
+    },
+    {
+      "normalizedKey": "شعاراتسعوديه",
+      "canonicalCategoryId": "tahadani-games-317",
+      "canonicalLabelAr": "شعارات سعودية",
+      "groupId": "ksa",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-317.png"
+    },
+    {
+      "normalizedKey": "معالمالسعوديه",
+      "canonicalCategoryId": "tahadani-games-319",
+      "canonicalLabelAr": "معالم السعودية",
+      "groupId": "ksa",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-7fd1a023f51a2a9b4c6b.webp",
+        "web640": "assets/categories/tahadani/640/cover-7fd1a023f51a2a9b4c6b.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "التلفزيونالسعودي",
+      "canonicalCategoryId": "tahadani-games-320",
+      "canonicalLabelAr": "التلفزيون السعودي",
+      "groupId": "ksa",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-320.png"
+    },
+    {
+      "normalizedKey": "موسمالرياض",
+      "canonicalCategoryId": "tahadani-games-321",
+      "canonicalLabelAr": "موسم الرياض",
+      "groupId": "ksa",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-e0c033f4019f30ad6d6c.webp",
+        "web640": "assets/categories/tahadani/640/cover-e0c033f4019f30ad6d6c.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "السعوديه",
+      "canonicalCategoryId": "tahadani-games-322",
+      "canonicalLabelAr": "السعودية",
+      "groupId": "ksa",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-1385a5ab5c9d1be30515.webp",
+        "web640": "assets/categories/tahadani/640/cover-1385a5ab5c9d1be30515.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "مطاعمالسعوديه",
+      "canonicalCategoryId": "tahadani-games-324",
+      "canonicalLabelAr": "مطاعم السعودية",
+      "groupId": "ksa",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-324.png"
+    },
+    {
+      "normalizedKey": "لوكيشنقطر",
+      "canonicalCategoryId": "tahadani-games-326",
+      "canonicalLabelAr": "لوكيشن قطر",
+      "groupId": "qatar",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-326.png"
+    },
+    {
+      "normalizedKey": "معالمقطر",
+      "canonicalCategoryId": "tahadani-games-327",
+      "canonicalLabelAr": "معالم قطر",
+      "groupId": "qatar",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-327.png"
+    },
+    {
+      "normalizedKey": "شعاراتقطريه",
+      "canonicalCategoryId": "tahadani-games-328",
+      "canonicalLabelAr": "شعارات قطرية",
+      "groupId": "qatar",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-328.png"
+    },
+    {
+      "normalizedKey": "قطر",
+      "canonicalCategoryId": "tahadani-games-329",
+      "canonicalLabelAr": "قطر",
+      "groupId": "qatar",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-ca4f67181ac91ce00cb7.webp",
+        "web640": "assets/categories/tahadani/640/cover-ca4f67181ac91ce00cb7.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "مطاعمقطر",
+      "canonicalCategoryId": "tahadani-games-331",
+      "canonicalLabelAr": "مطاعم قطر",
+      "groupId": "qatar",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-331.png"
+    },
+    {
+      "normalizedKey": "دبيمول",
+      "canonicalCategoryId": "tahadani-games-332",
+      "canonicalLabelAr": "دبي مول",
+      "groupId": "uae",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-332.png"
+    },
+    {
+      "normalizedKey": "شعاراتاماراتيه",
+      "canonicalCategoryId": "tahadani-games-333",
+      "canonicalLabelAr": "شعارات إماراتية",
+      "groupId": "uae",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-333.png"
+    },
+    {
+      "normalizedKey": "الامارات",
+      "canonicalCategoryId": "tahadani-games-334",
+      "canonicalLabelAr": "الإمارات",
+      "groupId": "uae",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-334.png"
+    },
+    {
+      "normalizedKey": "مطاعمالامارات",
+      "canonicalCategoryId": "tahadani-games-336",
+      "canonicalLabelAr": "مطاعم الإمارات",
+      "groupId": "uae",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-336.png"
+    },
+    {
+      "normalizedKey": "سوبرماركتالبحرين",
+      "canonicalCategoryId": "tahadani-games-337",
+      "canonicalLabelAr": "سوبر ماركت البحرين",
+      "groupId": "bahrain",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-337.png"
+    },
+    {
+      "normalizedKey": "شعاراتبحرينيه",
+      "canonicalCategoryId": "tahadani-games-338",
+      "canonicalLabelAr": "شعارات بحرينية",
+      "groupId": "bahrain",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-338.png"
+    },
+    {
+      "normalizedKey": "مطاعمالبحرين",
+      "canonicalCategoryId": "tahadani-games-339",
+      "canonicalLabelAr": "مطاعم البحرين",
+      "groupId": "bahrain",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-339.png"
+    },
+    {
+      "normalizedKey": "البحرين",
+      "canonicalCategoryId": "tahadani-games-340",
+      "canonicalLabelAr": "البحرين",
+      "groupId": "bahrain",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-340.png"
+    },
+    {
+      "normalizedKey": "شعاراتعمانيه",
+      "canonicalCategoryId": "tahadani-games-342",
+      "canonicalLabelAr": "شعارات عمانية",
+      "groupId": "oman",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-342.png"
+    },
+    {
+      "normalizedKey": "امثالعمانيه",
+      "canonicalCategoryId": "tahadani-games-343",
+      "canonicalLabelAr": "أمثال عمانية",
+      "groupId": "oman",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-343.png"
+    },
+    {
+      "normalizedKey": "عمان",
+      "canonicalCategoryId": "tahadani-games-344",
+      "canonicalLabelAr": "عمان",
+      "groupId": "oman",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-344.png"
+    },
+    {
+      "normalizedKey": "مسرحالمظفر",
+      "canonicalCategoryId": "tahadani-games-346",
+      "canonicalLabelAr": "مسرح المظفر",
+      "groupId": "masarh",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-346.png"
+    },
+    {
+      "normalizedKey": "مسرحالمانع",
+      "canonicalCategoryId": "tahadani-games-347",
+      "canonicalLabelAr": "مسرح المانع",
+      "groupId": "masarh",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-347.png"
+    },
+    {
+      "normalizedKey": "بوستراتمسرحطفل",
+      "canonicalCategoryId": "tahadani-games-348",
+      "canonicalLabelAr": "بوسترات مسرح طفل",
+      "groupId": "masarh",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-348.png"
+    },
+    {
+      "normalizedKey": "بوستراتمسرحيات",
+      "canonicalCategoryId": "tahadani-games-349",
+      "canonicalLabelAr": "بوسترات مسرحيات",
+      "groupId": "masarh",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-349.png"
+    },
+    {
+      "normalizedKey": "backstageاعمال",
+      "canonicalCategoryId": "tahadani-games-350",
+      "canonicalLabelAr": "Backstage أعمال",
+      "groupId": "masarh",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-350.png"
+    },
+    {
+      "normalizedKey": "ديكورالمسرحيه",
+      "canonicalCategoryId": "tahadani-games-351",
+      "canonicalLabelAr": "ديكور المسرحية",
+      "groupId": "masarh",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-351.png"
+    },
+    {
+      "normalizedKey": "مسرحالرشود",
+      "canonicalCategoryId": "tahadani-games-352",
+      "canonicalLabelAr": "مسرح الرشود",
+      "groupId": "masarh",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-352.png"
+    },
+    {
+      "normalizedKey": "مسرحطارق",
+      "canonicalCategoryId": "tahadani-games-353",
+      "canonicalLabelAr": "مسرح طارق",
+      "groupId": "masarh",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-353.png"
+    },
+    {
+      "normalizedKey": "مدرسهالمشاغبين",
+      "canonicalCategoryId": "tahadani-games-354",
+      "canonicalLabelAr": "مدرسة المشاغبين",
+      "groupId": "masarh",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-354.png"
+    },
+    {
+      "normalizedKey": "العيالكبرت",
+      "canonicalCategoryId": "tahadani-games-355",
+      "canonicalLabelAr": "العيال كبرت",
+      "groupId": "masarh",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-355.png"
+    },
+    {
+      "normalizedKey": "مسرحياتزين",
+      "canonicalCategoryId": "tahadani-games-356",
+      "canonicalLabelAr": "مسرحيات زين",
+      "groupId": "masarh",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-aaaec91ff234f2d5f2fa.webp",
+        "web640": "assets/categories/tahadani/640/cover-aaaec91ff234f2d5f2fa.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "البيتالمسكون",
+      "canonicalCategoryId": "tahadani-games-357",
+      "canonicalLabelAr": "البيت المسكون",
+      "groupId": "masarh",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-357.png"
+    },
+    {
+      "normalizedKey": "قروبالبلام",
+      "canonicalCategoryId": "tahadani-games-358",
+      "canonicalLabelAr": "قروب البلام",
+      "groupId": "masarh",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-0d8d6c6461a8859d12e3.webp",
+        "web640": "assets/categories/tahadani/640/cover-0d8d6c6461a8859d12e3.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "مسرحيات",
+      "canonicalCategoryId": "tahadani-games-359",
+      "canonicalLabelAr": "مسرحيات",
+      "groupId": "masarh",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-359.png"
+    },
+    {
+      "normalizedKey": "سسترفخريه",
+      "canonicalCategoryId": "tahadani-games-360",
+      "canonicalLabelAr": "سستر فخرية",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-360.png"
+    },
+    {
+      "normalizedKey": "مسلسلاترمضان2026",
+      "canonicalCategoryId": "tahadani-games-361",
+      "canonicalLabelAr": "مسلسلات رمضان 2026",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-361.png"
+    },
+    {
+      "normalizedKey": "شارعالاعشي2",
+      "canonicalCategoryId": "tahadani-games-362",
+      "canonicalLabelAr": "شارع الاعشى 2",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-362.png"
+    },
+    {
+      "normalizedKey": "لقطاتمسلسلخليجي",
+      "canonicalCategoryId": "tahadani-games-363",
+      "canonicalLabelAr": "لقطات مسلسل خليجي",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-363.png"
+    },
+    {
+      "normalizedKey": "الغميضه",
+      "canonicalCategoryId": "tahadani-games-364",
+      "canonicalLabelAr": "الغميضة",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-364.png"
+    },
+    {
+      "normalizedKey": "قصهمسلسل",
+      "canonicalCategoryId": "tahadani-games-365",
+      "canonicalLabelAr": "قصة مسلسل",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-365.png"
+    },
+    {
+      "normalizedKey": "بوستراترمضان2026",
+      "canonicalCategoryId": "tahadani-games-366",
+      "canonicalLabelAr": "بوسترات رمضان 2026",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-366.png"
+    },
+    {
+      "normalizedKey": "عليالدنياالسلام",
+      "canonicalCategoryId": "tahadani-games-367",
+      "canonicalLabelAr": "على الدنيا السلام",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-367.png"
+    },
+    {
+      "normalizedKey": "كانانسان",
+      "canonicalCategoryId": "tahadani-games-368",
+      "canonicalLabelAr": "كان إنسان",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-368.png"
+    },
+    {
+      "normalizedKey": "العاصوف",
+      "canonicalCategoryId": "tahadani-games-369",
+      "canonicalLabelAr": "العاصوف",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-369.png"
+    },
+    {
+      "normalizedKey": "قطاعالطرق",
+      "canonicalCategoryId": "tahadani-games-370",
+      "canonicalLabelAr": "قطاع الطرق",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-370.png"
+    },
+    {
+      "normalizedKey": "صيف99",
+      "canonicalCategoryId": "tahadani-games-371",
+      "canonicalLabelAr": "صيف 99",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-371.png"
+    },
+    {
+      "normalizedKey": "دفعهبيروت",
+      "canonicalCategoryId": "tahadani-games-372",
+      "canonicalLabelAr": "دفعة بيروت",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-372.png"
+    },
+    {
+      "normalizedKey": "سوقالمقاصيص",
+      "canonicalCategoryId": "tahadani-games-373",
+      "canonicalLabelAr": "سوق المقاصيص",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-373.png"
+    },
+    {
+      "normalizedKey": "شاهد",
+      "canonicalCategoryId": "tahadani-games-374",
+      "canonicalLabelAr": "شاهد",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-374.png"
+    },
+    {
+      "normalizedKey": "امراخلاء",
+      "canonicalCategoryId": "tahadani-games-375",
+      "canonicalLabelAr": "أمر إخلاء",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-375.png"
+    },
+    {
+      "normalizedKey": "امي",
+      "canonicalCategoryId": "tahadani-games-376",
+      "canonicalLabelAr": "أمي",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-376.png"
+    },
+    {
+      "normalizedKey": "اغانيالشاشهالخليجيه",
+      "canonicalCategoryId": "tahadani-games-377",
+      "canonicalLabelAr": "أغاني الشاشة الخليجية",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-377.png"
+    },
+    {
+      "normalizedKey": "حالمناير",
+      "canonicalCategoryId": "tahadani-games-378",
+      "canonicalLabelAr": "حال مناير",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-378.png"
+    },
+    {
+      "normalizedKey": "كنهالشام",
+      "canonicalCategoryId": "tahadani-games-379",
+      "canonicalLabelAr": "كنة الشام",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-379.png"
+    },
+    {
+      "normalizedKey": "سوالفطفاش",
+      "canonicalCategoryId": "tahadani-games-380",
+      "canonicalLabelAr": "سوالف طفاش",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-380.png"
+    },
+    {
+      "normalizedKey": "مسلسلاتالطيبين",
+      "canonicalCategoryId": "tahadani-games-381",
+      "canonicalLabelAr": "مسلسلات الطيبين",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-381.png"
+    },
+    {
+      "normalizedKey": "شخصيهفنيهعربي",
+      "canonicalCategoryId": "tahadani-games-382",
+      "canonicalLabelAr": "شخصية فنية (عربي)",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-382.png"
+    },
+    {
+      "normalizedKey": "سيلفي",
+      "canonicalCategoryId": "tahadani-games-383",
+      "canonicalLabelAr": "سيلفي",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-383.png"
+    },
+    {
+      "normalizedKey": "اليابيوامي",
+      "canonicalCategoryId": "tahadani-games-384",
+      "canonicalLabelAr": "إلى أبي وأمي",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-384.png"
+    },
+    {
+      "normalizedKey": "ام44",
+      "canonicalCategoryId": "tahadani-games-385",
+      "canonicalLabelAr": "أم 44",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-385.png"
+    },
+    {
+      "normalizedKey": "شارعالاعشي",
+      "canonicalCategoryId": "tahadani-games-386",
+      "canonicalLabelAr": "شارع الأعشى",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-386.png"
+    },
+    {
+      "normalizedKey": "عبدالرحمنالعقل",
+      "canonicalCategoryId": "tahadani-games-387",
+      "canonicalLabelAr": "عبدالرحمن العقل",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-387.png"
+    },
+    {
+      "normalizedKey": "منشارعالهرم",
+      "canonicalCategoryId": "tahadani-games-388",
+      "canonicalLabelAr": "من شارع الهرم",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-388.png"
+    },
+    {
+      "normalizedKey": "هديحسين",
+      "canonicalCategoryId": "tahadani-games-389",
+      "canonicalLabelAr": "هدى حسين",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-389.png"
+    },
+    {
+      "normalizedKey": "داودحسين",
+      "canonicalCategoryId": "tahadani-games-390",
+      "canonicalLabelAr": "داود حسين",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-390.png"
+    },
+    {
+      "normalizedKey": "خريفالقلب",
+      "canonicalCategoryId": "tahadani-games-391",
+      "canonicalLabelAr": "خريف القلب",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-391.png"
+    },
+    {
+      "normalizedKey": "خالدالنفيسي",
+      "canonicalCategoryId": "tahadani-games-392",
+      "canonicalLabelAr": "خالد النفيسي",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-392.png"
+    },
+    {
+      "normalizedKey": "عبدالحسينعبدالرضا",
+      "canonicalCategoryId": "tahadani-games-393",
+      "canonicalLabelAr": "عبدالحسين عبدالرضا",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-393.png"
+    },
+    {
+      "normalizedKey": "ذكرياتلاتموت",
+      "canonicalCategoryId": "tahadani-games-394",
+      "canonicalLabelAr": "ذكريات لا تموت",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-394.png"
+    },
+    {
+      "normalizedKey": "سعادوحياه",
+      "canonicalCategoryId": "tahadani-games-395",
+      "canonicalLabelAr": "سعاد و حياة",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-395.png"
+    },
+    {
+      "normalizedKey": "امنارويحهالجنه",
+      "canonicalCategoryId": "tahadani-games-396",
+      "canonicalLabelAr": "أمنا رويحة الجنة",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-396.png"
+    },
+    {
+      "normalizedKey": "صديقاتالعمر",
+      "canonicalCategoryId": "tahadani-games-397",
+      "canonicalLabelAr": "صديقات العمر",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-397.png"
+    },
+    {
+      "normalizedKey": "امالبنات",
+      "canonicalCategoryId": "tahadani-games-398",
+      "canonicalLabelAr": "أم البنات",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-398.png"
+    },
+    {
+      "normalizedKey": "ساهرالليل",
+      "canonicalCategoryId": "tahadani-games-399",
+      "canonicalLabelAr": "ساهر الليل",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-399.png"
+    },
+    {
+      "normalizedKey": "طاشماطاش",
+      "canonicalCategoryId": "tahadani-games-400",
+      "canonicalLabelAr": "طاش ماطاش",
+      "groupId": "movies_gcc",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-91afdedac9c083d6f567.webp",
+        "web640": "assets/categories/tahadani/640/cover-91afdedac9c083d6f567.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "اميمه",
+      "canonicalCategoryId": "tahadani-games-401",
+      "canonicalLabelAr": "أميمة",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-401.png"
+    },
+    {
+      "normalizedKey": "شبابالبومب",
+      "canonicalCategoryId": "tahadani-games-402",
+      "canonicalLabelAr": "شباب البومب",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-402.png"
+    },
+    {
+      "normalizedKey": "زوارهخميس",
+      "canonicalCategoryId": "tahadani-games-403",
+      "canonicalLabelAr": "زوارة خميس",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-403.png"
+    },
+    {
+      "normalizedKey": "الحياله",
+      "canonicalCategoryId": "tahadani-games-404",
+      "canonicalLabelAr": "الحيالة",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-404.png"
+    },
+    {
+      "normalizedKey": "خالتيقماشه",
+      "canonicalCategoryId": "tahadani-games-405",
+      "canonicalLabelAr": "خالتي قماشة",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-405.png"
+    },
+    {
+      "normalizedKey": "فنخليجي",
+      "canonicalCategoryId": "tahadani-games-406",
+      "canonicalLabelAr": "فن خليجي",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-406.png"
+    },
+    {
+      "normalizedKey": "مقاطعفنخليجي",
+      "canonicalCategoryId": "tahadani-games-407",
+      "canonicalLabelAr": "مقاطع فن خليجي",
+      "groupId": "movies_gcc",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-407.png"
+    },
+    {
+      "normalizedKey": "بوستراتفنخليجي",
+      "canonicalCategoryId": "tahadani-games-408",
+      "canonicalLabelAr": "بوسترات فن خليجي",
+      "groupId": "movies_gcc",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-0cd0366e14ecd403a012.webp",
+        "web640": "assets/categories/tahadani/640/cover-0cd0366e14ecd403a012.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "عمرودياب",
+      "canonicalCategoryId": "tahadani-games-409",
+      "canonicalLabelAr": "عمرو دياب",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-409.png"
+    },
+    {
+      "normalizedKey": "لقطاتمسلسلمصري",
+      "canonicalCategoryId": "tahadani-games-410",
+      "canonicalLabelAr": "لقطات مسلسل مصري",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-410.png"
+    },
+    {
+      "normalizedKey": "فيلمبرشامه",
+      "canonicalCategoryId": "tahadani-games-411",
+      "canonicalLabelAr": "فيلم برشامة",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-411.png"
+    },
+    {
+      "normalizedKey": "الدبور",
+      "canonicalCategoryId": "tahadani-games-412",
+      "canonicalLabelAr": "الدبور",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-412.png"
+    },
+    {
+      "normalizedKey": "سيدالناس",
+      "canonicalCategoryId": "tahadani-games-413",
+      "canonicalLabelAr": "سيد الناس",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-413.png"
+    },
+    {
+      "normalizedKey": "اسر",
+      "canonicalCategoryId": "tahadani-games-414",
+      "canonicalLabelAr": "آسر",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-414.png"
+    },
+    {
+      "normalizedKey": "اغانيالشاشهالعربيه",
+      "canonicalCategoryId": "tahadani-games-415",
+      "canonicalLabelAr": "أغاني الشاشة العربية",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-415.png"
+    },
+    {
+      "normalizedKey": "اشغالشاقه",
+      "canonicalCategoryId": "tahadani-games-416",
+      "canonicalLabelAr": "أشغال شاقة",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-416.png"
+    },
+    {
+      "normalizedKey": "نيلليوشريهان",
+      "canonicalCategoryId": "tahadani-games-417",
+      "canonicalLabelAr": "نيللي وشريهان",
+      "groupId": "movies_arabic",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-8895e281411508517910.webp",
+        "web640": "assets/categories/tahadani/640/cover-8895e281411508517910.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "حكايهفيلمعربي",
+      "canonicalCategoryId": "tahadani-games-418",
+      "canonicalLabelAr": "حكاية فيلم (عربي)",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-418.png"
+    },
+    {
+      "normalizedKey": "الكبيراوي",
+      "canonicalCategoryId": "tahadani-games-419",
+      "canonicalLabelAr": "الكبير أوي",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-419.png"
+    },
+    {
+      "normalizedKey": "اللعبه",
+      "canonicalCategoryId": "tahadani-games-420",
+      "canonicalLabelAr": "اللعبة",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-420.png"
+    },
+    {
+      "normalizedKey": "الهيبه",
+      "canonicalCategoryId": "tahadani-games-421",
+      "canonicalLabelAr": "الهيبة",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-421.png"
+    },
+    {
+      "normalizedKey": "عادلامام",
+      "canonicalCategoryId": "tahadani-games-422",
+      "canonicalLabelAr": "عادل إمام",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-422.png"
+    },
+    {
+      "normalizedKey": "محمدرمضان",
+      "canonicalCategoryId": "tahadani-games-423",
+      "canonicalLabelAr": "محمد رمضان",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-423.png"
+    },
+    {
+      "normalizedKey": "جميلوهناء",
+      "canonicalCategoryId": "tahadani-games-424",
+      "canonicalLabelAr": "جميل وهناء",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-424.png"
+    },
+    {
+      "normalizedKey": "العميل",
+      "canonicalCategoryId": "tahadani-games-425",
+      "canonicalLabelAr": "العميل",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-425.png"
+    },
+    {
+      "normalizedKey": "بابالحاره",
+      "canonicalCategoryId": "tahadani-games-426",
+      "canonicalLabelAr": "باب الحارة",
+      "groupId": "movies_arabic",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-63c10279e0aade756c84.webp",
+        "web640": "assets/categories/tahadani/640/cover-63c10279e0aade756c84.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "الزيرسالم",
+      "canonicalCategoryId": "tahadani-games-427",
+      "canonicalLabelAr": "الزير سالم",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-427.png"
+    },
+    {
+      "normalizedKey": "فنعربي",
+      "canonicalCategoryId": "tahadani-games-428",
+      "canonicalLabelAr": "فن عربي",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-428.png"
+    },
+    {
+      "normalizedKey": "مقاطعفنعربي",
+      "canonicalCategoryId": "tahadani-games-429",
+      "canonicalLabelAr": "مقاطع فن عربي",
+      "groupId": "movies_arabic",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-cdcd097413fccbf6cf6d.webp",
+        "web640": "assets/categories/tahadani/640/cover-cdcd097413fccbf6cf6d.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "بوستراتفنعربي",
+      "canonicalCategoryId": "tahadani-games-430",
+      "canonicalLabelAr": "بوسترات فن عربي",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-430.png"
+    },
+    {
+      "normalizedKey": "فنسوري",
+      "canonicalCategoryId": "tahadani-games-431",
+      "canonicalLabelAr": "فن سوري",
+      "groupId": "movies_arabic",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-431.png"
+    },
+    {
+      "normalizedKey": "المدينهالبعيده",
+      "canonicalCategoryId": "tahadani-games-432",
+      "canonicalLabelAr": "المدينة البعيدة",
+      "groupId": "turkish",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-432.png"
+    },
+    {
+      "normalizedKey": "حلماشرف",
+      "canonicalCategoryId": "tahadani-games-433",
+      "canonicalLabelAr": "حلم أشرف",
+      "groupId": "turkish",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-433.png"
+    },
+    {
+      "normalizedKey": "بوستراتفنتركي",
+      "canonicalCategoryId": "tahadani-games-434",
+      "canonicalLabelAr": "بوسترات فن تركي",
+      "groupId": "turkish",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-434.png"
+    },
+    {
+      "normalizedKey": "واديالذياب",
+      "canonicalCategoryId": "tahadani-games-435",
+      "canonicalLabelAr": "وادي الذئاب",
+      "groupId": "turkish",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-435.png"
+    },
+    {
+      "normalizedKey": "الموسسعثمان",
+      "canonicalCategoryId": "tahadani-games-436",
+      "canonicalLabelAr": "المؤسس عثمان",
+      "groupId": "turkish",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-7d6f32449420dbfc55a4.webp",
+        "web640": "assets/categories/tahadani/640/cover-7d6f32449420dbfc55a4.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "قيامهارطغرل",
+      "canonicalCategoryId": "tahadani-games-437",
+      "canonicalLabelAr": "قيامة أرطغرل",
+      "groupId": "turkish",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-437.png"
+    },
+    {
+      "normalizedKey": "الحفره",
+      "canonicalCategoryId": "tahadani-games-438",
+      "canonicalLabelAr": "الحفرة",
+      "groupId": "turkish",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-438.png"
+    },
+    {
+      "normalizedKey": "فنتركي",
+      "canonicalCategoryId": "tahadani-games-439",
+      "canonicalLabelAr": "فن تركي",
+      "groupId": "turkish",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-439.png"
+    },
+    {
+      "normalizedKey": "spidernoir",
+      "canonicalCategoryId": "tahadani-games-440",
+      "canonicalLabelAr": "spider noir",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-440.png"
+    },
+    {
+      "normalizedKey": "succession",
+      "canonicalCategoryId": "tahadani-games-441",
+      "canonicalLabelAr": "Succession",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-441.png"
+    },
+    {
+      "normalizedKey": "ريتروافلام",
+      "canonicalCategoryId": "tahadani-games-442",
+      "canonicalLabelAr": "ريترو أفلام",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-442.png"
+    },
+    {
+      "normalizedKey": "obsession",
+      "canonicalCategoryId": "tahadani-games-443",
+      "canonicalLabelAr": "Obsession",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-443.png"
+    },
+    {
+      "normalizedKey": "بوستراتافلامرعب",
+      "canonicalCategoryId": "tahadani-games-444",
+      "canonicalLabelAr": "بوسترات أفلام رعب",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-444.png"
+    },
+    {
+      "normalizedKey": "brooklyn99",
+      "canonicalCategoryId": "tahadani-games-445",
+      "canonicalLabelAr": "Brooklyn 99",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-445.png"
+    },
+    {
+      "normalizedKey": "لقطهفيلماجنبي",
+      "canonicalCategoryId": "tahadani-games-446",
+      "canonicalLabelAr": "لقطة فيلم أجنبي",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-446.png"
+    },
+    {
+      "normalizedKey": "بوستراتفنكوري",
+      "canonicalCategoryId": "tahadani-games-447",
+      "canonicalLabelAr": "بوسترات فن كوري",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-447.png"
+    },
+    {
+      "normalizedKey": "starwars",
+      "canonicalCategoryId": "tahadani-games-448",
+      "canonicalLabelAr": "Star Wars",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-448.png"
+    },
+    {
+      "normalizedKey": "netflix",
+      "canonicalCategoryId": "tahadani-games-449",
+      "canonicalLabelAr": "Netflix",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-449.png"
+    },
+    {
+      "normalizedKey": "himym",
+      "canonicalCategoryId": "tahadani-games-450",
+      "canonicalLabelAr": "HIMYM",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-450.png"
+    },
+    {
+      "normalizedKey": "blacklist",
+      "canonicalCategoryId": "tahadani-games-451",
+      "canonicalLabelAr": "Blacklist",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-a1c0dc2d694a49c4ca25.webp",
+        "web640": "assets/categories/tahadani/640/cover-a1c0dc2d694a49c4ca25.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "htgawm",
+      "canonicalCategoryId": "tahadani-games-452",
+      "canonicalLabelAr": "HTGAWM",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-452.png"
+    },
+    {
+      "normalizedKey": "حكايهفيلماجنبي",
+      "canonicalCategoryId": "tahadani-games-453",
+      "canonicalLabelAr": "حكاية فيلم (أجنبي)",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-453.png"
+    },
+    {
+      "normalizedKey": "thesopranos",
+      "canonicalCategoryId": "tahadani-games-454",
+      "canonicalLabelAr": "The Sopranos",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-454.png"
+    },
+    {
+      "normalizedKey": "افلامكلاسيك",
+      "canonicalCategoryId": "tahadani-games-455",
+      "canonicalLabelAr": "أفلام كلاسيك",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-a1c256bd215ed5aeef54.webp",
+        "web640": "assets/categories/tahadani/640/cover-a1c256bd215ed5aeef54.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "شخصيهفنيهاجنبي",
+      "canonicalCategoryId": "tahadani-games-456",
+      "canonicalLabelAr": "شخصية فنية (أجنبي)",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-456.png"
+    },
+    {
+      "normalizedKey": "مشاهدفيلماجنبي",
+      "canonicalCategoryId": "tahadani-games-457",
+      "canonicalLabelAr": "مشاهد فيلم أجنبي",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-457.png"
+    },
+    {
+      "normalizedKey": "افلامرعب",
+      "canonicalCategoryId": "tahadani-games-458",
+      "canonicalLabelAr": "أفلام رعب",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-3030dd494b7d7225acb3.webp",
+        "web640": "assets/categories/tahadani/640/cover-3030dd494b7d7225acb3.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "vampirediaries",
+      "canonicalCategoryId": "tahadani-games-459",
+      "canonicalLabelAr": "Vampire Diaries",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-459.png"
+    },
+    {
+      "normalizedKey": "طاقمالفيلم",
+      "canonicalCategoryId": "tahadani-games-460",
+      "canonicalLabelAr": "طاقم الفيلم",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-460.png"
+    },
+    {
+      "normalizedKey": "فنكوري",
+      "canonicalCategoryId": "tahadani-games-461",
+      "canonicalLabelAr": "فن كوري",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-461.png"
+    },
+    {
+      "normalizedKey": "seinfeld",
+      "canonicalCategoryId": "tahadani-games-462",
+      "canonicalLabelAr": "Seinfeld",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-462.png"
+    },
+    {
+      "normalizedKey": "greysanatomy",
+      "canonicalCategoryId": "tahadani-games-463",
+      "canonicalLabelAr": "Grey's Anatomy",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-624d973a6558f60c6e47.webp",
+        "web640": "assets/categories/tahadani/640/cover-624d973a6558f60c6e47.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "toystory",
+      "canonicalCategoryId": "tahadani-games-464",
+      "canonicalLabelAr": "Toy Story",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-a75429f78e2c9ca38bd8.webp",
+        "web640": "assets/categories/tahadani/640/cover-a75429f78e2c9ca38bd8.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "lost",
+      "canonicalCategoryId": "tahadani-games-465",
+      "canonicalLabelAr": "Lost",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-8a3e43d6fd0572ac5cd6.webp",
+        "web640": "assets/categories/tahadani/640/cover-8a3e43d6fd0572ac5cd6.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "bettercallsaul",
+      "canonicalCategoryId": "tahadani-games-466",
+      "canonicalLabelAr": "Better Call Saul",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-466.png"
+    },
+    {
+      "normalizedKey": "cobrakai",
+      "canonicalCategoryId": "tahadani-games-467",
+      "canonicalLabelAr": "Cobra Kai",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-467.png"
+    },
+    {
+      "normalizedKey": "bigbangtheory",
+      "canonicalCategoryId": "tahadani-games-468",
+      "canonicalLabelAr": "Big Bang Theory",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-468.png"
+    },
+    {
+      "normalizedKey": "squidgame",
+      "canonicalCategoryId": "tahadani-games-469",
+      "canonicalLabelAr": "Squid Game",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-469.png"
+    },
+    {
+      "normalizedKey": "bollywood",
+      "canonicalCategoryId": "tahadani-games-470",
+      "canonicalLabelAr": "Bollywood",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-0bfbdf32517a803d99ca.webp",
+        "web640": "assets/categories/tahadani/640/cover-0bfbdf32517a803d99ca.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "gossipgirl",
+      "canonicalCategoryId": "tahadani-games-471",
+      "canonicalLabelAr": "Gossip Girl",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-471.png"
+    },
+    {
+      "normalizedKey": "suits",
+      "canonicalCategoryId": "tahadani-games-472",
+      "canonicalLabelAr": "Suits",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-472.png"
+    },
+    {
+      "normalizedKey": "vikings",
+      "canonicalCategoryId": "tahadani-games-473",
+      "canonicalLabelAr": "Vikings",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-060270a1fd89af713c25.webp",
+        "web640": "assets/categories/tahadani/640/cover-060270a1fd89af713c25.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "theboys",
+      "canonicalCategoryId": "tahadani-games-474",
+      "canonicalLabelAr": "The Boys",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-474.png"
+    },
+    {
+      "normalizedKey": "interstellar",
+      "canonicalCategoryId": "tahadani-games-475",
+      "canonicalLabelAr": "Interstellar",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-475.png"
+    },
+    {
+      "normalizedKey": "from",
+      "canonicalCategoryId": "tahadani-games-476",
+      "canonicalLabelAr": "FROM",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-2a19ba5c906b2dac4808.webp",
+        "web640": "assets/categories/tahadani/640/cover-2a19ba5c906b2dac4808.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "peakyblinders",
+      "canonicalCategoryId": "tahadani-games-477",
+      "canonicalLabelAr": "Peaky Blinders",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-98d94e555d7e77df5a5e.webp",
+        "web640": "assets/categories/tahadani/640/cover-98d94e555d7e77df5a5e.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "lordoftherings",
+      "canonicalCategoryId": "tahadani-games-478",
+      "canonicalLabelAr": "Lord of the Rings",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-478.png"
+    },
+    {
+      "normalizedKey": "thewalkingdead",
+      "canonicalCategoryId": "tahadani-games-479",
+      "canonicalLabelAr": "The Walking Dead",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-06224b5f4827081f5557.webp",
+        "web640": "assets/categories/tahadani/640/cover-06224b5f4827081f5557.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "dark",
+      "canonicalCategoryId": "tahadani-games-480",
+      "canonicalLabelAr": "Dark",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-2c68e84d00ab8c214b7f.webp",
+        "web640": "assets/categories/tahadani/640/cover-2c68e84d00ab8c214b7f.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "strangerthings",
+      "canonicalCategoryId": "tahadani-games-481",
+      "canonicalLabelAr": "Stranger Things",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-7b2b136f388b6ed7dd33.webp",
+        "web640": "assets/categories/tahadani/640/cover-7b2b136f388b6ed7dd33.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "theoffice",
+      "canonicalCategoryId": "tahadani-games-482",
+      "canonicalLabelAr": "The Office",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-49f097f32b28ae58cf68.webp",
+        "web640": "assets/categories/tahadani/640/cover-49f097f32b28ae58cf68.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "harrypotter",
+      "canonicalCategoryId": "tahadani-games-483",
+      "canonicalLabelAr": "Harry Potter",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-cace073e9054e89621f4.webp",
+        "web640": "assets/categories/tahadani/640/cover-cace073e9054e89621f4.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "dexter",
+      "canonicalCategoryId": "tahadani-games-484",
+      "canonicalLabelAr": "Dexter",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-484.png"
+    },
+    {
+      "normalizedKey": "lacasadepapel",
+      "canonicalCategoryId": "tahadani-games-485",
+      "canonicalLabelAr": "La Casa De Papel",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-f3922aec94770b034c5f.webp",
+        "web640": "assets/categories/tahadani/640/cover-f3922aec94770b034c5f.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "breakingbad",
+      "canonicalCategoryId": "tahadani-games-486",
+      "canonicalLabelAr": "Breaking Bad",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-22b2b1f95e6a79a3140d.webp",
+        "web640": "assets/categories/tahadani/640/cover-22b2b1f95e6a79a3140d.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "prisonbreak",
+      "canonicalCategoryId": "tahadani-games-487",
+      "canonicalLabelAr": "Prison Break",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-29c16a008c5e40b2e480.webp",
+        "web640": "assets/categories/tahadani/640/cover-29c16a008c5e40b2e480.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "gilmoregirls",
+      "canonicalCategoryId": "tahadani-games-488",
+      "canonicalLabelAr": "Gilmore Girls",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-5abe681d3bdab0822c85.webp",
+        "web640": "assets/categories/tahadani/640/cover-5abe681d3bdab0822c85.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "houseofthedragon",
+      "canonicalCategoryId": "tahadani-games-489",
+      "canonicalLabelAr": "House of the Dragon",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-489.png"
+    },
+    {
+      "normalizedKey": "gameofthrones",
+      "canonicalCategoryId": "tahadani-games-490",
+      "canonicalLabelAr": "Game Of Thrones",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-56081b28257fa1403891.webp",
+        "web640": "assets/categories/tahadani/640/cover-56081b28257fa1403891.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "friends",
+      "canonicalCategoryId": "tahadani-games-491",
+      "canonicalLabelAr": "Friends",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-0c419b4a62fc61cb5986.webp",
+        "web640": "assets/categories/tahadani/640/cover-0c419b4a62fc61cb5986.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "marvel",
+      "canonicalCategoryId": "tahadani-games-492",
+      "canonicalLabelAr": "Marvel",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-492.png"
+    },
+    {
+      "normalizedKey": "dc",
+      "canonicalCategoryId": "tahadani-games-493",
+      "canonicalLabelAr": "DC",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-493.png"
+    },
+    {
+      "normalizedKey": "فناجنبي",
+      "canonicalCategoryId": "tahadani-games-494",
+      "canonicalLabelAr": "فن أجنبي",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-494.png"
+    },
+    {
+      "normalizedKey": "مقاطعفناجنبي",
+      "canonicalCategoryId": "tahadani-games-495",
+      "canonicalLabelAr": "مقاطع فن أجنبي",
+      "groupId": "movies_english",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-81994fca380e2ed7ceb5.webp",
+        "web640": "assets/categories/tahadani/640/cover-81994fca380e2ed7ceb5.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "بوستراتفناجنبي",
+      "canonicalCategoryId": "tahadani-games-496",
+      "canonicalLabelAr": "بوسترات فن أجنبي",
+      "groupId": "movies_english",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-496.png"
+    },
+    {
+      "normalizedKey": "ninjago",
+      "canonicalCategoryId": "tahadani-games-497",
+      "canonicalLabelAr": "Ninjago",
+      "groupId": "anime",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-497.png"
+    },
+    {
+      "normalizedKey": "بوستراتانمي",
+      "canonicalCategoryId": "tahadani-games-498",
+      "canonicalLabelAr": "بوسترات أنمي",
+      "groupId": "anime",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-498.png"
+    },
+    {
+      "normalizedKey": "fullmetalalchemist",
+      "canonicalCategoryId": "tahadani-games-499",
+      "canonicalLabelAr": "FULLMETAL ALCHEMIST",
+      "groupId": "anime",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-df890d7f401b00054647.webp",
+        "web640": "assets/categories/tahadani/640/cover-df890d7f401b00054647.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "myheroacademia",
+      "canonicalCategoryId": "tahadani-games-500",
+      "canonicalLabelAr": "My Hero Academia",
+      "groupId": "anime",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-500.png"
+    },
+    {
+      "normalizedKey": "jujutsukaisen",
+      "canonicalCategoryId": "tahadani-games-501",
+      "canonicalLabelAr": "Jujutsu Kaisen",
+      "groupId": "anime",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-c4673b49b6f93160750d.webp",
+        "web640": "assets/categories/tahadani/640/cover-c4673b49b6f93160750d.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "معالمورموزانمي",
+      "canonicalCategoryId": "tahadani-games-502",
+      "canonicalLabelAr": "معالم ورموز أنمي",
+      "groupId": "anime",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-502.png"
+    },
+    {
+      "normalizedKey": "blackclover",
+      "canonicalCategoryId": "tahadani-games-503",
+      "canonicalLabelAr": "Black Clover",
+      "groupId": "anime",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-503.png"
+    },
+    {
+      "normalizedKey": "sololeveling",
+      "canonicalCategoryId": "tahadani-games-504",
+      "canonicalLabelAr": "Solo Leveling",
+      "groupId": "anime",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-18b1c81d794e8bf73067.webp",
+        "web640": "assets/categories/tahadani/640/cover-18b1c81d794e8bf73067.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "bleach",
+      "canonicalCategoryId": "tahadani-games-505",
+      "canonicalLabelAr": "Bleach",
+      "groupId": "anime",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-cf9d038b13b60554f576.webp",
+        "web640": "assets/categories/tahadani/640/cover-cf9d038b13b60554f576.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "اغانيانمي",
+      "canonicalCategoryId": "tahadani-games-506",
+      "canonicalLabelAr": "أغاني أنمي",
+      "groupId": "anime",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-506.png"
+    },
+    {
+      "normalizedKey": "hunterhunter",
+      "canonicalCategoryId": "tahadani-games-507",
+      "canonicalLabelAr": "Hunter × Hunter",
+      "groupId": "anime",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-507.png"
+    },
+    {
+      "normalizedKey": "توقعنيانمي",
+      "canonicalCategoryId": "tahadani-games-508",
+      "canonicalLabelAr": "توقعني (أنمي)",
+      "groupId": "anime",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-508.png"
+    },
+    {
+      "normalizedKey": "demonslayer",
+      "canonicalCategoryId": "tahadani-games-509",
+      "canonicalLabelAr": "Demon Slayer",
+      "groupId": "anime",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-f9f7e2bdea876b961ce7.webp",
+        "web640": "assets/categories/tahadani/640/cover-f9f7e2bdea876b961ce7.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "كونان",
+      "canonicalCategoryId": "tahadani-games-510",
+      "canonicalLabelAr": "كونان",
+      "groupId": "anime",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-510.png"
+    },
+    {
+      "normalizedKey": "deathnote",
+      "canonicalCategoryId": "tahadani-games-511",
+      "canonicalLabelAr": "Death Note",
+      "groupId": "anime",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-70c8fbaf83a65561a2dc.webp",
+        "web640": "assets/categories/tahadani/640/cover-70c8fbaf83a65561a2dc.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "attackontitan",
+      "canonicalCategoryId": "tahadani-games-512",
+      "canonicalLabelAr": "Attack on Titan",
+      "groupId": "anime",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-512.png"
+    },
+    {
+      "normalizedKey": "dragonball",
+      "canonicalCategoryId": "tahadani-games-513",
+      "canonicalLabelAr": "Dragon Ball",
+      "groupId": "anime",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-513.png"
+    },
+    {
+      "normalizedKey": "naruto",
+      "canonicalCategoryId": "tahadani-games-514",
+      "canonicalLabelAr": "Naruto",
+      "groupId": "anime",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-514.png"
+    },
+    {
+      "normalizedKey": "onepiece",
+      "canonicalCategoryId": "tahadani-games-515",
+      "canonicalLabelAr": "One Piece",
+      "groupId": "anime",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-515.png"
+    },
+    {
+      "normalizedKey": "عالمالبوكيمون",
+      "canonicalCategoryId": "tahadani-games-516",
+      "canonicalLabelAr": "عالم البوكيمون",
+      "groupId": "anime",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-516.png"
+    },
+    {
+      "normalizedKey": "انمي",
+      "canonicalCategoryId": "tahadani-games-517",
+      "canonicalLabelAr": "أنمي",
+      "groupId": "anime",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-517.png"
+    },
+    {
+      "normalizedKey": "roblox",
+      "canonicalCategoryId": "tahadani-games-518",
+      "canonicalLabelAr": "Roblox",
+      "groupId": "games",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-518.png"
+    },
+    {
+      "normalizedKey": "لعبهpubg",
+      "canonicalCategoryId": "tahadani-games-519",
+      "canonicalLabelAr": "لعبة PUBG",
+      "groupId": "games",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-18218e34ce2544e52033.webp",
+        "web640": "assets/categories/tahadani/640/cover-18218e34ce2544e52033.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "marvelrivals",
+      "canonicalCategoryId": "tahadani-games-520",
+      "canonicalLabelAr": "MARVEL RIVALS",
+      "groupId": "games",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-520.png"
+    },
+    {
+      "normalizedKey": "leagueoflegends",
+      "canonicalCategoryId": "tahadani-games-521",
+      "canonicalLabelAr": "League of legends",
+      "groupId": "games",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-4026e40fe2e9e31f794e.webp",
+        "web640": "assets/categories/tahadani/640/cover-4026e40fe2e9e31f794e.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "residentevil",
+      "canonicalCategoryId": "tahadani-games-522",
+      "canonicalLabelAr": "RESIDENT EVIL",
+      "groupId": "games",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-522.png"
+    },
+    {
+      "normalizedKey": "العابالطفوله",
+      "canonicalCategoryId": "tahadani-games-523",
+      "canonicalLabelAr": "العاب الطفولة",
+      "groupId": "games",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-b8e9b004109ffa28163a.webp",
+        "web640": "assets/categories/tahadani/640/cover-b8e9b004109ffa28163a.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "fut26",
+      "canonicalCategoryId": "tahadani-games-524",
+      "canonicalLabelAr": "FUT 26",
+      "groupId": "games",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-2dc391ea38cef6571829.webp",
+        "web640": "assets/categories/tahadani/640/cover-2dc391ea38cef6571829.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "rocketleague",
+      "canonicalCategoryId": "tahadani-games-525",
+      "canonicalLabelAr": "Rocket League",
+      "groupId": "games",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-d5cda9fd13b22163ed91.webp",
+        "web640": "assets/categories/tahadani/640/cover-d5cda9fd13b22163ed91.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "موسيقيالعاب",
+      "canonicalCategoryId": "tahadani-games-526",
+      "canonicalLabelAr": "موسيقى ألعاب",
+      "groupId": "games",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-526.png"
+    },
+    {
+      "normalizedKey": "counterstrike",
+      "canonicalCategoryId": "tahadani-games-527",
+      "canonicalLabelAr": "Counter Strike",
+      "groupId": "games",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-82502c9d1f028625d777.webp",
+        "web640": "assets/categories/tahadani/640/cover-82502c9d1f028625d777.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "valorant",
+      "canonicalCategoryId": "tahadani-games-528",
+      "canonicalLabelAr": "Valorant",
+      "groupId": "games",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-e31b840c51643913c0fc.webp",
+        "web640": "assets/categories/tahadani/640/cover-e31b840c51643913c0fc.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "لعبهالشطرنج",
+      "canonicalCategoryId": "tahadani-games-529",
+      "canonicalLabelAr": "لعبة الشطرنج",
+      "groupId": "games",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-529.png"
+    },
+    {
+      "normalizedKey": "لعبهالبلوت",
+      "canonicalCategoryId": "tahadani-games-530",
+      "canonicalLabelAr": "لعبة البلوت",
+      "groupId": "games",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-49a671755d2f02fe2a7d.webp",
+        "web640": "assets/categories/tahadani/640/cover-49a671755d2f02fe2a7d.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "soulsgame",
+      "canonicalCategoryId": "tahadani-games-531",
+      "canonicalLabelAr": "Souls Game",
+      "groupId": "games",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-531.png"
+    },
+    {
+      "normalizedKey": "شخصيهلعبهالكترونيه",
+      "canonicalCategoryId": "tahadani-games-532",
+      "canonicalLabelAr": "شخصية لعبة الكترونية",
+      "groupId": "games",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-937c1992424eb691ec14.webp",
+        "web640": "assets/categories/tahadani/640/cover-937c1992424eb691ec14.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "fortnite",
+      "canonicalCategoryId": "tahadani-games-533",
+      "canonicalLabelAr": "Fortnite",
+      "groupId": "games",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-a7ea4f34a30abbff3974.webp",
+        "web640": "assets/categories/tahadani/640/cover-a7ea4f34a30abbff3974.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "minecraft",
+      "canonicalCategoryId": "tahadani-games-534",
+      "canonicalLabelAr": "Minecraft",
+      "groupId": "games",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-17613b1e3cce14f5f0eb.webp",
+        "web640": "assets/categories/tahadani/640/cover-17613b1e3cce14f5f0eb.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "overwatch",
+      "canonicalCategoryId": "tahadani-games-535",
+      "canonicalLabelAr": "Overwatch",
+      "groupId": "games",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-34e704eb60e2ae35686d.webp",
+        "web640": "assets/categories/tahadani/640/cover-34e704eb60e2ae35686d.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "callofduty",
+      "canonicalCategoryId": "tahadani-games-536",
+      "canonicalLabelAr": "Call of Duty",
+      "groupId": "games",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-94496c5a57a0019a3cce.webp",
+        "web640": "assets/categories/tahadani/640/cover-94496c5a57a0019a3cce.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "بوستراتالعاب",
+      "canonicalCategoryId": "tahadani-games-537",
+      "canonicalLabelAr": "بوسترات ألعاب",
+      "groupId": "games",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-f50916b0ae75f02035f9.webp",
+        "web640": "assets/categories/tahadani/640/cover-f50916b0ae75f02035f9.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "العاب",
+      "canonicalCategoryId": "tahadani-games-538",
+      "canonicalLabelAr": "ألعاب",
+      "groupId": "games",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-538.png"
+    },
+    {
+      "normalizedKey": "شخصياتكرتونيه",
+      "canonicalCategoryId": "tahadani-games-539",
+      "canonicalLabelAr": "شخصيات كرتونية",
+      "groupId": "cartoon",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-539.png"
+    },
+    {
+      "normalizedKey": "بوستراتدزني",
+      "canonicalCategoryId": "tahadani-games-540",
+      "canonicalLabelAr": "بوسترات دزني",
+      "groupId": "cartoon",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-540.png"
+    },
+    {
+      "normalizedKey": "monsterinc",
+      "canonicalCategoryId": "tahadani-games-541",
+      "canonicalLabelAr": "Monster INC",
+      "groupId": "cartoon",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-541.png"
+    },
+    {
+      "normalizedKey": "mbc3",
+      "canonicalCategoryId": "tahadani-games-542",
+      "canonicalLabelAr": "MBC 3",
+      "groupId": "cartoon",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-542.png"
+    },
+    {
+      "normalizedKey": "اغانيكارتون",
+      "canonicalCategoryId": "tahadani-games-543",
+      "canonicalLabelAr": "أغاني كارتون",
+      "groupId": "cartoon",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-543.png"
+    },
+    {
+      "normalizedKey": "عالمدزني",
+      "canonicalCategoryId": "tahadani-games-544",
+      "canonicalLabelAr": "عالم دزني",
+      "groupId": "cartoon",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-544.png"
+    },
+    {
+      "normalizedKey": "بباياتقديمه",
+      "canonicalCategoryId": "tahadani-games-545",
+      "canonicalLabelAr": "ببايات قديمة",
+      "groupId": "cartoon",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-545.png"
+    },
+    {
+      "normalizedKey": "بباي",
+      "canonicalCategoryId": "tahadani-games-546",
+      "canonicalLabelAr": "بباي",
+      "groupId": "cartoon",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-546.png"
+    },
+    {
+      "normalizedKey": "سبيستون",
+      "canonicalCategoryId": "tahadani-games-547",
+      "canonicalLabelAr": "سبيستون",
+      "groupId": "cartoon",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-547.png"
+    },
+    {
+      "normalizedKey": "توقعنيرياضه",
+      "canonicalCategoryId": "tahadani-games-548",
+      "canonicalLabelAr": "توقعني (رياضة)",
+      "groupId": "sports",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-548.png"
+    },
+    {
+      "normalizedKey": "لعبهالبادل",
+      "canonicalCategoryId": "tahadani-games-549",
+      "canonicalLabelAr": "لعبة البادل",
+      "groupId": "sports",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-549.png"
+    },
+    {
+      "normalizedKey": "الفنونالقتاليه",
+      "canonicalCategoryId": "tahadani-games-550",
+      "canonicalLabelAr": "الفنون القتالية",
+      "groupId": "sports",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-550.png"
+    },
+    {
+      "normalizedKey": "تنس",
+      "canonicalCategoryId": "tahadani-games-551",
+      "canonicalLabelAr": "تنس",
+      "groupId": "sports",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-7d039b94d3aacfc0ac3f.webp",
+        "web640": "assets/categories/tahadani/640/cover-7d039b94d3aacfc0ac3f.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "كرهيد",
+      "canonicalCategoryId": "tahadani-games-552",
+      "canonicalLabelAr": "كرة يد",
+      "groupId": "sports",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-552.png"
+    },
+    {
+      "normalizedKey": "ufc",
+      "canonicalCategoryId": "tahadani-games-553",
+      "canonicalLabelAr": "UFC",
+      "groupId": "sports",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-0c1df57b75819ed4984c.webp",
+        "web640": "assets/categories/tahadani/640/cover-0c1df57b75819ed4984c.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "formula1",
+      "canonicalCategoryId": "tahadani-games-554",
+      "canonicalLabelAr": "Formula 1",
+      "groupId": "sports",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-554.png"
+    },
+    {
+      "normalizedKey": "المصارعهالحره",
+      "canonicalCategoryId": "tahadani-games-555",
+      "canonicalLabelAr": "المصارعة الحرة",
+      "groupId": "sports",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-9c44db40e1548f0f9fa5.webp",
+        "web640": "assets/categories/tahadani/640/cover-9c44db40e1548f0f9fa5.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "ربعالحديد",
+      "canonicalCategoryId": "tahadani-games-556",
+      "canonicalLabelAr": "ربع الحديد",
+      "groupId": "sports",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-556.png"
+    },
+    {
+      "normalizedKey": "nba",
+      "canonicalCategoryId": "tahadani-games-557",
+      "canonicalLabelAr": "NBA",
+      "groupId": "sports",
+      "existingCover": {
+        "web320": "assets/categories/tahadani/320/cover-8d7aba04569e79e923c2.webp",
+        "web640": "assets/categories/tahadani/640/cover-8d7aba04569e79e923c2.webp"
+      },
+      "generatedReviewOriginal": null
+    },
+    {
+      "normalizedKey": "رياضه",
+      "canonicalCategoryId": "tahadani-games-558",
+      "canonicalLabelAr": "رياضة",
+      "groupId": "sports",
+      "existingCover": null,
+      "generatedReviewOriginal": "design/category-covers/tahadani-games-review-2026-09-22/tahadani-games-558.png"
+    }
+  ]
+}

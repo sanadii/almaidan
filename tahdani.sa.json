@@ -1,0 +1,180 @@
+{
+  "source": "https://tahdani.sa/verify?redirect=%2Fstart-game",
+  "capturedSources": [
+    "https://tahdani.sa/",
+    "https://tahdani.sa/trivia-game",
+    "https://tahdani.sa/wasalha"
+  ],
+  "capturedAt": "2026-09-13",
+  "limitations": [
+    "Requested URL redirects to login; private verification/setup/game screens were not inspected.",
+    "Playwright library used with explicit user authorization instead of Playwright MCP.",
+    "Homepage promotional overlay dismissed with its visible close button.",
+    "DOM sectionGaps and grid are empty; screenshot and targeted box measurements supply layout evidence.",
+    "Source colors are documentary only and must not be adopted."
+  ],
+  "tokens": {
+    "spacing": {
+      "scale": [
+        4,
+        6,
+        8,
+        12,
+        16,
+        24,
+        32,
+        40,
+        48,
+        56,
+        80
+      ],
+      "base_unit": null
+    },
+    "typography": {
+      "families": [
+        "Graphik Arabic"
+      ],
+      "scale": [
+        {
+          "role": "section",
+          "size": "48px",
+          "weight": "600",
+          "family": "Graphik Arabic"
+        },
+        {
+          "role": "section-label",
+          "size": "40px",
+          "weight": "700",
+          "family": "Graphik Arabic"
+        },
+        {
+          "role": "support",
+          "size": "24px",
+          "weight": "500",
+          "family": "Graphik Arabic"
+        },
+        {
+          "role": "button",
+          "size": "20px",
+          "weight": "600",
+          "family": "Graphik Arabic"
+        }
+      ]
+    },
+    "colors": [
+      {
+        "role": "source-brand",
+        "value": "#f27a3d"
+      },
+      {
+        "role": "source-canvas",
+        "value": "#f4fce2"
+      },
+      {
+        "role": "source-ink",
+        "value": "#064e3b"
+      }
+    ],
+    "radius": [
+      "8px",
+      "20.4px",
+      "24px",
+      "40px",
+      "80px",
+      "999px"
+    ],
+    "shadows": [
+      "0 2px 1.5px rgba(0,0,0,.25), inset 0 -2px 4px rgba(0,0,0,.25)",
+      "0 4px 4px rgba(0,0,0,.25)"
+    ],
+    "image_ratios": [
+      {
+        "usage": "hero-card",
+        "ratio": "0.80:1"
+      },
+      {
+        "usage": "phone",
+        "ratio": "0.61:1"
+      },
+      {
+        "usage": "category",
+        "ratio": "0.75:1"
+      },
+      {
+        "usage": "logo",
+        "ratio": "2.77:1"
+      }
+    ],
+    "grid": {
+      "max_width": "1240px",
+      "columns": null,
+      "gutter": "24px"
+    }
+  },
+  "taste": [
+    {
+      "name": "Curved sections set the pace",
+      "trigger": "Moving between introduction and detailed game information",
+      "decision": "Use broad curved color boundaries instead of enclosing every section in a card",
+      "reason": "The reader can recognize a new topic before reading its heading",
+      "evidence": [
+        "1440px wide hero",
+        "989px homepage hero height",
+        "curved cream transition in home-clear-viewport.jpeg"
+      ]
+    },
+    {
+      "name": "Buttons feel pressable",
+      "trigger": "Giving a short call to action visual priority",
+      "decision": "Use 48–56px pills with inset lower shading instead of a flat text link",
+      "reason": "The action has a distinct physical silhouette among the illustrations",
+      "evidence": [
+        "56px navigation buttons",
+        "999px radius tokens",
+        "0 2px 1.5px rgba(0,0,0,.25) plus inset 0 -2px 4px rgba(0,0,0,.25)"
+      ]
+    },
+    {
+      "name": "Portrait images carry the game choice",
+      "trigger": "Explaining two games before entry",
+      "decision": "Pair portrait artwork with short copy instead of long feature inventories",
+      "reason": "Pictures establish the subject quickly while copy explains the next action",
+      "evidence": [
+        "hero art 683×853 and 681×855",
+        "phone art 775×1263",
+        "category covers rendered 269×359"
+      ]
+    },
+    {
+      "name": "One Arabic family is enough",
+      "trigger": "Distinguishing navigation, display copy and explanations",
+      "decision": "Use one Arabic family with size and weight changes instead of mixing display families",
+      "reason": "Arabic letter rhythm stays consistent across the long page",
+      "evidence": [
+        "Graphik Arabic across captured typography",
+        "40px/700 and 48px/600 headings",
+        "24px frequent text size",
+        "400/500/600/700 weights"
+      ]
+    }
+  ],
+  "adaptation": {
+    "name": "الخلية",
+    "palette": {
+      "brand": "#2456d6",
+      "canvas": "#f4f7ff",
+      "ink": "#14284b",
+      "surface": "#ffffff",
+      "accent": "#80dfef"
+    },
+    "font": "IBM Plex Sans Arabic",
+    "logo": "Original Arabic outlined wordmark, with angular backing and offset depth; no source wordmark",
+    "imagery": "Preserved project category covers, tilted portrait composites and original vector board illustrations",
+    "preserve": [
+      "real question inventory",
+      "letter and category game modes",
+      "team ownership semantics",
+      "all existing auth and role boundaries"
+    ]
+  }
+}

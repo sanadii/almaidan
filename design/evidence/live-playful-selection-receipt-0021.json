@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "recordId": "design-history-0021",
+  "recordPath": "design/evidence/history/0021-maydan-live-playful-selection.md",
+  "recordSha256": "9474CD97404697EABDB184893761ABCBBB0DE7F32DFEEED59DE6D8676E6754B4",
+  "previousRecordId": "design-history-0020",
+  "previousRecordSha256": "3BD25C5631BB691EE0E3047A97B65E48E8AEDFDDF4A7264589399413B3ADF40A",
+  "previousReceiptSha256": "1FC85BA165FFCA6A328C0F9C85F7AE5607177E6B6F9AB457CED268DDC8B613E3",
+  "rejectedFreezeSha256": "27E15A0762CE906B174D3A8B778583D6C88F7253CAB1494C5E6443B2F692ED4D",
+  "selectedSource": "https://playful.app/",
+  "referenceManifest": "design/evidence/playful-live-reference-manifest-0021.json",
+  "referenceManifestSha256": "EAA34717F5884686545D591823AF063F3D6EBED077DE579F1959F683AE4A21FE",
+  "homepageCorrectionAuthorized": true,
+  "renderedHomepageAccepted": false,
+  "visualExpansionAuthorized": false
+}

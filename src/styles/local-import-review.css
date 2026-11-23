@@ -1,0 +1,9 @@
+main#main-content[data-page-layout="wide"].local-import-review > :not(.app-header) { inline-size: calc(100% - 2 * var(--page-gutter, 16px)); max-inline-size: var(--page-canvas-max, 1200px); }
+.local-import-review h1 { font-size: 36px; line-height: 1.4; }
+.local-import-review :is(.local-import-review__counts > div, .local-import-review__notice, .local-import-review__detail) { border-radius: 16px; padding: 24px; min-inline-size: 0; }
+.local-import-review__table-wrap { min-inline-size: 0; max-inline-size: 100%; }
+.local-import-review__filters :is(input, select) { min-block-size: 48px; border-radius: 10px; }
+.local-import-review__detail { overflow-wrap: anywhere; }
+@media (max-width: 767px) { .local-import-review h1 { font-size: 28px; } .local-import-review :is(.local-import-review__counts > div, .local-import-review__notice, .local-import-review__detail) { padding: 20px; } }
+/* The shared main supplies the page gutter. */
+main#main-content[data-page-layout="wide"].local-import-review > :not(.app-header) { inline-size: 100%; }

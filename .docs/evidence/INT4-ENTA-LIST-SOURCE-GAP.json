@@ -1,0 +1,26 @@
+{
+  "kind": "INT-4 fresh-database LIST source inventory",
+  "entaCommit": "a009328442c7469937b073b6a8fe3ce4ce115160",
+  "seedSource": {
+    "path": "server/prisma/seed.ts",
+    "sha256": "a2b1614c3d075a5c8badc992e904a2d8edfa5e64793519b39410827f809abb78",
+    "populatedCategoryDefs": 30,
+    "listCategoryDefs": 0,
+    "questionAnswerWrites": 0,
+    "evidence": "The populated category loop writes one Question text/answer per row; no LIST type or QuestionAnswer creation occurs in this seed."
+  },
+  "extraBank": {
+    "path": "server/prisma/data/extraQuestions.json",
+    "sha256": "32a1bd7788d4f7d919af0e676c84b11d8a76e7f63d7752af535a5e1982ff1604",
+    "categoryArrays": 29,
+    "questionRows": 1273,
+    "rowsWithMultiAnswerArray": 0
+  },
+  "runtimeSource": {
+    "listPicker": "client/src/pages/game/ListPicker.tsx:16-44",
+    "listRead": "server/src/routes/categories.ts:78-100",
+    "behavior": "The picker requests LIST categories with questions. The read route returns only LIST questions with at least one QuestionAnswer child."
+  },
+  "newDatabaseImplication": "With no old Enta database migration, the pinned source seed/extra bank alone supplies zero playable LIST questions for standalone list/acting or board-embedded list flows. New reviewed multi-answer content or a separately approved rights-cleared import is required.",
+  "limits": "Source inventory, not a production database audit. The old live database may contain admin-authored LIST content; its contents were not read or migrated. No question, answer, customer or secret data is included."
+}

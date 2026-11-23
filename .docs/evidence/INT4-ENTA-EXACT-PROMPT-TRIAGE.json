@@ -1,0 +1,287 @@
+{
+  "kind": "INT-4 normalized same-category prompt triage (metadata only)",
+  "sourceCommit": "a009328442c7469937b073b6a8fe3ce4ce115160",
+  "sourcePath": "server/prisma/data/extraQuestions.json",
+  "sourceSha256": "32a1bd7788d4f7d919af0e676c84b11d8a76e7f63d7752af535a5e1982ff1604",
+  "method": "NFKC, lowercase, strip Arabic diacritics/tatweel, replace Unicode punctuation/symbols with spaces, collapse whitespace; hash parsed rows with UTF-8 JSON.stringify. Classification requires mode-aware editorial review.",
+  "groups": [
+    {
+      "category": "معلومات عامة",
+      "normalizedPromptSha256": "5bad8db50d2787588458efd3d3e29ebb1779328e3f6c716f7a0f2974aba51f20",
+      "rowRefs": [
+        {
+          "index": 0,
+          "points": 200,
+          "rowSha256": "afcb879c9b264d1cc8740a6bc735cc3f3977246534feab7791043ff53b893455"
+        },
+        {
+          "index": 5,
+          "points": 200,
+          "rowSha256": "6ab3aea36e93a5bda9f1a8a65c2479beaa19d0f5384acac8263a4bfafca205c6"
+        }
+      ],
+      "distinctNormalizedAnswerStrings": 2,
+      "classification": "factual_duplicate_candidate"
+    },
+    {
+      "category": "رسم وتخمين",
+      "normalizedPromptSha256": "996ee892f08615b5d43afd6324be71b013bfaf3b25c3173ad0f428213799dbd0",
+      "rowRefs": [
+        {
+          "index": 0,
+          "points": 200,
+          "rowSha256": "f73ffc3c6179b4317fa09614e5169d0c6b0a964c8354432e2c91484e1a8dff39"
+        },
+        {
+          "index": 1,
+          "points": 200,
+          "rowSha256": "af20959819af297914df80b2f3de31a801c419664804b78c530126400ae816c5"
+        },
+        {
+          "index": 2,
+          "points": 200,
+          "rowSha256": "e09608720ffe1114673f0e30fec9036f3711195b8ea234100d893551b4c2a4a1"
+        },
+        {
+          "index": 3,
+          "points": 200,
+          "rowSha256": "fb7b7e18dea7212f757faa05b63135d875e0e040f3423f9f0b974eb10f067090"
+        },
+        {
+          "index": 4,
+          "points": 200,
+          "rowSha256": "89d16c9d8a220746341060dc08165914f425795031ea864880685786894ef789"
+        },
+        {
+          "index": 5,
+          "points": 200,
+          "rowSha256": "e84d768ed68b0669ebd1cc8dcec5467e3559cda8627e523d06cfef7b62508138"
+        },
+        {
+          "index": 6,
+          "points": 200,
+          "rowSha256": "15f56c167ab587fc2098265e1937b02f688512da1ff3486369cfe2aa21363d12"
+        },
+        {
+          "index": 7,
+          "points": 200,
+          "rowSha256": "6aff5b6e7250e7e46c17f2e5efc4e9b969aaad1e6e0764a572feb9a305c86e26"
+        },
+        {
+          "index": 8,
+          "points": 200,
+          "rowSha256": "61076dc58c962024bbf09e7561426267e079966cb6dcfff8e61d3bb930be3a56"
+        },
+        {
+          "index": 9,
+          "points": 200,
+          "rowSha256": "24d3e6d37500d1b4d063ddc5e9af387526d8e8d044fab74807c20aac4ed6838a"
+        },
+        {
+          "index": 10,
+          "points": 200,
+          "rowSha256": "9556950d79993c978e2073731a7262fcd415b9f083cee1e9c91999526b71e754"
+        },
+        {
+          "index": 11,
+          "points": 200,
+          "rowSha256": "4d566f68a46424df81d55f9ab200ac3f86e30c432c8da2a7bb2dba8369126f91"
+        },
+        {
+          "index": 12,
+          "points": 200,
+          "rowSha256": "396440d7edd165cc898da2cd4eb358a9224770e786b2a287284a562a295a95bf"
+        },
+        {
+          "index": 13,
+          "points": 200,
+          "rowSha256": "73f3e1ede2730b33d6a7557e8620efb1dd57418ebd99c3a06bf220e3de41bf50"
+        },
+        {
+          "index": 14,
+          "points": 200,
+          "rowSha256": "34916da9c3ecdc68a15748bc38fa339e8301232e04c1f370344ccbf3b33df519"
+        },
+        {
+          "index": 15,
+          "points": 200,
+          "rowSha256": "33e3a663cc7687f9b47455235fb7f66d69751129cd1154d5e76d4a98ee113294"
+        },
+        {
+          "index": 16,
+          "points": 200,
+          "rowSha256": "c15f9124bcb4b8aca32c41640cc225eb184300800cc3ecf50a37905bb324aaea"
+        },
+        {
+          "index": 17,
+          "points": 400,
+          "rowSha256": "966682ac6cecbb24bee44f3ee72aec4102c1b266f38839244b7b9a9d4540b454"
+        },
+        {
+          "index": 18,
+          "points": 400,
+          "rowSha256": "ce010a7409ab573471a1f52c94195851fddff45394edd3f904fa8960923058dc"
+        },
+        {
+          "index": 19,
+          "points": 400,
+          "rowSha256": "068dc8932e535e4d0d17f0d33b69ed71ed60b4df78b8c7ecea2dcd6b196a125f"
+        },
+        {
+          "index": 20,
+          "points": 400,
+          "rowSha256": "6fa43bce060551763a6c4c1ebb25ac1a56f6df8c1527a501a273e0c9f6d4653a"
+        },
+        {
+          "index": 21,
+          "points": 400,
+          "rowSha256": "e101762ac48fe106b14c1bcf6535fef0d9a162d208e51acc8ee8c8733974a99f"
+        },
+        {
+          "index": 22,
+          "points": 400,
+          "rowSha256": "1bdbe554399fad220363bcadacc551750ef9bb4a821e2805cb483ca96e0aaeca"
+        },
+        {
+          "index": 23,
+          "points": 400,
+          "rowSha256": "8010322244eb657c3eb67fe8a5a19b9df9f777d43df3f284d7bc2a36de18d428"
+        },
+        {
+          "index": 24,
+          "points": 400,
+          "rowSha256": "b8f2e68bbb6b372ae41bb53e13ff534c2d4cf643d3c3e62beced133b5c0094a5"
+        },
+        {
+          "index": 25,
+          "points": 400,
+          "rowSha256": "a99a4b9bacd0004501894fcc1218787653e8f2a0074a07a0b6016fa649d4d00b"
+        },
+        {
+          "index": 26,
+          "points": 400,
+          "rowSha256": "951926a1ff0c5e47afc7e9e01d49a7089339803ae0c56e5013e49f693c57b805"
+        },
+        {
+          "index": 27,
+          "points": 400,
+          "rowSha256": "e8c561bc7339d6a7d4a8ae0196e6354a22733ac295f1f8f3b7033f73be62fa64"
+        },
+        {
+          "index": 28,
+          "points": 400,
+          "rowSha256": "d6df0930fffb2d8e8dee71cce744cf02240a451175d4dbbc5ec0791ed0afb46f"
+        },
+        {
+          "index": 29,
+          "points": 400,
+          "rowSha256": "593784c26bf62030d2c1aeee058c073bc4343091edeb2594c871943f77056be7"
+        },
+        {
+          "index": 30,
+          "points": 400,
+          "rowSha256": "ba9479bafe24859107e0a61deed9d730efa7f87ca2756cc694aa418ecb1fb18f"
+        },
+        {
+          "index": 31,
+          "points": 400,
+          "rowSha256": "939e55435bf5d05722f7a37d50a7c1d51f118069289b9e982b4982fee7b1a240"
+        },
+        {
+          "index": 32,
+          "points": 400,
+          "rowSha256": "c8bdab542f7447d74085f24dd995c62ec9debdb8769a32518431adce2eadd4cb"
+        },
+        {
+          "index": 33,
+          "points": 400,
+          "rowSha256": "88ba503a79606d72b8ccc2ece18c14e172156c3e6889b713f35579648da86536"
+        },
+        {
+          "index": 34,
+          "points": 600,
+          "rowSha256": "d2e2ea19906c57ad5b8269ccd864c9f8854350059f293312bb436ad2670ed94f"
+        },
+        {
+          "index": 35,
+          "points": 600,
+          "rowSha256": "7888893d239fa568656da1e35dfc085a681d2a59d43a014dfe3b172846874da1"
+        },
+        {
+          "index": 36,
+          "points": 600,
+          "rowSha256": "25d3e89ea36d823979efd601650f368bbe94243dc12e905b7bca97c99ff5c9ce"
+        },
+        {
+          "index": 37,
+          "points": 600,
+          "rowSha256": "a74b4f400896126c13cff40c99120bbe13c6519fb17bebbdcd32d9f48d907b96"
+        },
+        {
+          "index": 38,
+          "points": 600,
+          "rowSha256": "c37c87719eb0575c0b32c7ce7026b6b4621002c3e3755cb6e865f0f6f548ad55"
+        },
+        {
+          "index": 39,
+          "points": 600,
+          "rowSha256": "38b20421a987d29d654e14182c6d33aa814467a0512c0bd41435d81eecdac9f1"
+        },
+        {
+          "index": 40,
+          "points": 600,
+          "rowSha256": "2e572319cc5cf7672af017cfd771155bb68a70e657708d21a5188f5cd7c31c29"
+        },
+        {
+          "index": 41,
+          "points": 600,
+          "rowSha256": "525bae0d7068e12c6e2e06cea25bcef82b3aa58d637e630fa3ee8c168040cde0"
+        },
+        {
+          "index": 42,
+          "points": 600,
+          "rowSha256": "507d610928dcfb56bc5b97ab25259277ec3eebf7f86e36858618d1405b4068b2"
+        },
+        {
+          "index": 43,
+          "points": 600,
+          "rowSha256": "8a5721d7ce738a13c65d6818332e9009b693f5e73778916991e4a037816b76d5"
+        },
+        {
+          "index": 44,
+          "points": 600,
+          "rowSha256": "46ce1c8708a9059025f0b2d9a093ac3ea3479b823be5c9da9f7d858ad8ab1c2d"
+        },
+        {
+          "index": 45,
+          "points": 600,
+          "rowSha256": "2f8e5c076b2b31871f93fdc818b23d5390cda0ed0e95d192db761f673f497e3b"
+        },
+        {
+          "index": 46,
+          "points": 600,
+          "rowSha256": "4163d896464ef1aef5fde4c216c22e81e61b251cd65615dad2a9193212fd7ab2"
+        },
+        {
+          "index": 47,
+          "points": 600,
+          "rowSha256": "63dc4d7bccc92d8a006af900418d10c4213378d0211f6d4ba9bd8467e7e4b897"
+        },
+        {
+          "index": 48,
+          "points": 600,
+          "rowSha256": "0a6c3247a060daaa108a718b65ac93448f57fa3b17b4aa8cfb54f94aeb3dd899"
+        },
+        {
+          "index": 49,
+          "points": 600,
+          "rowSha256": "c4634cbd4bf3eecda6e83ddc6b91a0eb585171ed2c19db076fc5a0bbd4578269"
+        }
+      ],
+      "distinctNormalizedAnswerStrings": 50,
+      "classification": "modality_shared_instruction"
+    }
+  ],
+  "sameAnswerGroups": 0,
+  "releaseApprovedRows": 0
+}

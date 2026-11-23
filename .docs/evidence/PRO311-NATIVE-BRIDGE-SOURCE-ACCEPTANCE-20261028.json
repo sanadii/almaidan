@@ -1,0 +1,257 @@
+{
+  "task": "PRO-311",
+  "milestone": "ALMAIDAN-ENG03-06",
+  "step": "RP1b\u2013RP4 native historical bridge",
+  "status": "CONDITIONAL_NATIVE_BRIDGE_SOURCE_IMPLEMENTATION_ACCEPTED_OPERATIONAL_QUALIFICATION_HELD",
+  "acceptedUtc": "2026-10-28T17:34:19.363671+00:00",
+  "sourceRoot": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof",
+  "fullTaskDone": false,
+  "completionCredit": 0,
+  "originalRequiredSetComplete": false,
+  "owned": {
+    "services/enta/server/src/huroof-pg/history-archive-resource.ts": "21c93a9f62eea801a8d676c16c87ec919a58797d46a929fab15a2240c19041dc",
+    "services/enta/server/src/huroof-pg/history-archive-postgres.ts": "173d5f365d769aed87b65d6f0aa36c87ff62000be02b0baf72f0f29603f7e46e",
+    "services/enta/server/src/huroof-pg/history-terminal-dto.ts": "53018e8f58bfe8c2cbd4e962e51a2560b1ff394c58745330fa1ea5ff59ab4b29",
+    "services/enta/server/prisma/migrations/20261028120000_pro311_result_attestation/migration.sql": "db0795dec7ceff981dda86e29f60207ae7785d8602de9d5afd0491105425c8b0",
+    "services/enta/server/prisma/roles/pro311_result_attestation_roles.sql": "494ec67089890127866f1d5d3632233a9f7165c4308b40170da89325a72d18df",
+    "services/enta/server/tests/pro311-history-archive-resource.test.ts": "f1d01c533c63a3fb811bd86a1b368f80884175d3d1cb42c25c3e751f57b39d70",
+    "services/enta/server/tests/pro311-history-archive-postgres.test.ts": "fc0099c663590ef5c102a5facfd143b7dbf5d9f1a8a0d5ccd6278bb473a1d309",
+    "services/enta/server/tests/pro311-history-terminal-dto.test.ts": "e66faf593bc04fb3b11ed56e571c1cb92308912a43543d2e0e2d7bbe90625581"
+  },
+  "dependencies": {
+    "DESIGN-DNA.md": "4bf77b0711ea522c120098f9513ac8f51545cd8b29907017926f0234ee021f0d",
+    "services/enta/server/prisma/migrations/20261002130000_immutable_catalog_revisions/migration.sql": "9cae7f579d57143032adcf045942c62fc2a7e62b48a46e5d4bb6ce1e05dc9577",
+    "services/enta/server/prisma/migrations/20261002150000_int5a_wallet_admission/migration.sql": "5529bdb709fefc548f8ae333e0d58f3ce91aef620bdbd68033063d9d935e2221",
+    "services/enta/server/prisma/migrations/20261003100000_int5b_huroof_admission/migration.sql": "0db97b603ebf0ac910cbcd752f36a89d2087953310e7bb63a410d6310a64c878",
+    "services/enta/server/prisma/migrations/20261007130000_int6_classic_gameplay/migration.sql": "be70843bae31b57e97cbd9c7743127c751e54a783fec762cd134098f7fc3f1ee",
+    "services/enta/server/prisma/migrations/20261007150000_int7_kids_history_rematch/migration.sql": "1af1bf45ca6a99a98cfd3a06a7b1bb0a88dfb7dd7ef1e7c227ad7eb76f9fae47",
+    "services/enta/server/prisma/migrations/20261007170000_int8_formats_rounds/migration.sql": "20e30d9adb0682011bf83a84a5b810ac6c0b0c1de60707f410d5d02463d50569",
+    "services/enta/server/prisma/migrations/20261007220000_int9_competitive/migration.sql": "72cba1553fffb5ed0b517f4692958d093a771c40b032e2a29d5099d98d801de2",
+    "services/enta/server/prisma/migrations/20261026100000_eng03_02_huroof_owned_history/migration.sql": "a4303a34028fa61fcc7e6b8f49a668a3af3f9f07420f1ae9bbef06e9ac0f1b7c",
+    "services/enta/server/prisma/migrations/20261027100000_eng03_03_huroof_service_boundary/migration.sql": "d3364f63e92ef6d29597b8fec41374edce599b239730843c26bf038cd798f62d",
+    "services/enta/server/prisma/migrations/20261027220000_int_060_e3_successor_composition/migration.sql": "7489fc692ef541ea0d90e75ffc45e0c469d59af2dc820dbbd587b38cea12fdcc",
+    "services/enta/server/prisma/migrations/20261027230000_eng03_06_successor_composition/migration.sql": "b2729649d82c8a73ff90520362b95b74beaea96d2aa06bccd323241cd9d7af76",
+    "services/enta/server/prisma/migrations/20261028000000_pro311_history/migration.sql": "e6d8f158af261951a7e4fa7cc75a140cdaf67b8fecc0e7e61b64d7e1b62ee15f",
+    "services/enta/server/prisma/roles/eng03_02_huroof_runtime_roles.sql": "8f5fd75c9ca8a1a61adf756729ba633823b632023bf9b0df669cfc8efad204a8",
+    "services/enta/server/prisma/roles/eng03_03_huroof_service_roles.sql": "52234216a6ebd9cf2ac3e83ef49de4c2e445481c49943eb9338023c09020f6e9",
+    "services/enta/server/prisma/roles/int_060_e3_successor_roles.sql": "158ac1ed0d8113ff5b9e18702333686a8c82b9ddd22500de59c3a3139a0c589a",
+    "services/enta/server/prisma/roles/pro311_history_roles.sql": "b95a98f3ed036f05642914933a7cd09f75b3f09bf77fea980c9dd171c120eaf9",
+    "services/enta/server/prisma/schema.prisma": "c94657592bd185f90ddd97d5973f2cb1b69a1bb7c32bfb1d3088a89878cee6a8",
+    "services/enta/server/src/app.ts": "e8b9fbafff90e3490b5dc62ac053e07baf9f3c00848c95876c5ba6117190cff9",
+    "services/enta/server/src/firebase-verifier.ts": "35ff0b9e03f9597f64d0b92e62164f3149d38b310d960aa9b61ee0ce837aaac2",
+    "services/enta/server/src/gameplay/postgres.ts": "54c72307bb2f62ff94f88c27a93639992f9d9406f657f869acbc7e4f57e0cf1f",
+    "services/enta/server/src/gameplay/router.ts": "bd81de8ba73f8626b49f875f1fa6bc182a9b8a2e5d6a06c935944bf8718fc426",
+    "services/enta/server/src/history-rematch/composition.ts": "c61b19fff195e16d35d3536e33c76b3873ea5719c97cb7c11b859fc39360938a",
+    "services/enta/server/src/history-rematch/core.ts": "ab3bbe8ae09c5f14a03fd7eed3c6ed5b63f2ab1a57810b2053dcd2874a02593a",
+    "services/enta/server/src/history-rematch/cursor.ts": "a66fe4a07c17d4ef67cbba0cfb4b2bd565c93ce201e59c6f0130824c8e7e3ab2",
+    "services/enta/server/src/history-rematch/dto.ts": "f1bbe01b5ac86330ed13ee4981771dafde90c3d1366bcc037dfd420c3838f808",
+    "services/enta/server/src/history-rematch/history-composition.ts": "2d55d785670b2950c48c2f1239cde5d6ff47b0190e87807ed1642c21c746cf06",
+    "services/enta/server/src/history-rematch/history-router.ts": "3c6bcc8a9e1facc5af7e53e55229bf43d893031e0759fac2c4d269086e69afc2",
+    "services/enta/server/src/history-rematch/keyring.ts": "6d7e12ab12e5be754f95c8f47281538a794b22cc7989ac7c0449ac76cc2ab8b8",
+    "services/enta/server/src/history-rematch/postgres.ts": "c1e03a69d5fd1e606388668c16ea5d8317622a8ebbaf26cbcb5e92f089927005",
+    "services/enta/server/src/history-rematch/reader.ts": "20ec9b33ff4410801f90e701d90c0e71e1b23b51f5b445cb9f70bdfc4533c7d2",
+    "services/enta/server/src/history-rematch/registry.ts": "a0b00700d94d61df41ed271eb7f8f46547a5af60f5a31da93af2090c13d93ce4",
+    "services/enta/server/src/history-rematch/result.ts": "0d62e31add1be62d01e7cbd0649f6ad8b3d79e57b7e5c629a890e6c486a03d27",
+    "services/enta/server/src/history-rematch/router.ts": "6e9720a23cfb55dc126a5270c992ec3e568e45b7fb91ddebaa2eec3fff1b0f65",
+    "services/enta/server/src/history-rematch/service.ts": "f0e70b19f2c129d8778a8c0465ca208edb5a44caedbf01486619826ae6bde9e3",
+    "services/enta/server/src/history-rematch/strict-json.ts": "5b46df32ea4d69a1c79474c30ad2bed9fc2fdb746433f86c278eabad18a14a89",
+    "services/enta/server/src/history-rematch/successor-postgres.ts": "9b3a5ede439318b1859753407aff0e5a512db88f8c4ff385f51a371b8f6f985e",
+    "services/enta/server/src/history-rematch/successor.ts": "6dca2e577900a1211ac4bed5a6e1f56b023d7ffa6ae7d2e489e1d7827c12c30c",
+    "services/enta/server/src/huroof-pg/history-result-dto.ts": "78785a69ad653733f06c1669b87709237b0f1223737a0557616c159e30cd78fd",
+    "services/enta/server/src/huroof-pg/history.ts": "0fb0dfcd991a3f89259c8ffe169d630f97ac7510fbc39cdaf1a3a16187925c0e",
+    "services/enta/server/src/huroof-pg/identity-policy.ts": "d9bd781fc3e47df9f76ab4beca210a6026660d16990907998ccaecab2c8d9f00",
+    "services/enta/server/src/huroof-pg/postgres.ts": "4b365054de35de5ecf87ca00f366f3e6113e8e08fcb42ab667aa64ad08720280",
+    "services/enta/server/src/huroof-pg/reducer.ts": "8905fc3d10ba6b4df669c8144d3712e4ec0e51d25e47eda97182ce1874ede295",
+    "services/enta/server/src/huroof-pg/service.ts": "08534bc04a8c2ac9e92e03bd5b9c23dce84f1d7416b17a3c5121738275d4ae5d",
+    "services/enta/server/src/huroof-pg/successor-postgres.ts": "d4d311f3acb603e73ed6693d79051d6959b4ecd95305b48bfbd108b3c83d96a8",
+    "services/enta/server/src/huroof-pg/successor.ts": "aa2317b50fb14d7137c337dad545ca95f02017266141cb997e67db4026ee7479",
+    "services/enta/server/src/identity.ts": "256877b668ccc78ed4a5b6732c27cd5e0d3b70fb59ec04afa5b14e48edb97935",
+    "services/enta/server/src/rounds/competition-projection.ts": "3e812a9936ec2654a4d8eb2f6b73e44707aa03a97bb51d6c1726f2a8f1f74b1b",
+    "services/enta/server/src/rounds/competition-router.ts": "4d70dd5675a4af03f89326df0ebf9712d3c5950e0246bf262a97ab58a0226f71",
+    "services/enta/server/src/rounds/competition-service.ts": "ea140d7f3256778265dc6a180f1b61295ee4e536e96524c7a0d2f5ecfdf2b5d8",
+    "services/enta/server/src/rounds/projection.ts": "30aeb393c630d741b6ee88867c617ccbf6337278a1486aac6a3ea7e3be114bff",
+    "services/enta/server/src/rounds/router.ts": "dbceeabf9df0a905ac68c35920ed5227ba27ac19589504e36d9fad3ee54ec790",
+    "services/enta/server/tests/history-reader-service.test.ts": "cd75f8f83703dcab8e4a36003aedbd557cfff10a7b80cbf6caaae700de97bf45",
+    "services/enta/server/tests/pro311-history-result-dto.test.ts": "7e95d2f4344ca80555ab09aa2f415e041854fe1a4901991ed6909ffb51cacefb",
+    "services/enta/server/tests/pro311-history.test.ts": "87ae28288bd44c2dca98523fc93e2a1bb3f32c34ec657855f789abd2963e2684",
+    "src/app/App.tsx": "6ca4e323d4554081c620528a7f0ae9a6c3846253b188c694180e9db08ed2a5d0",
+    "src/features/enta/CompetitionRoutes.tsx": "403594a9f6af5e6c5c918f254052219be9ca214fa7cd87c01b74c1d63d9291e5",
+    "src/features/enta/HistoryRoutes.tsx": "3dd84d4ef1cd72d5848621a30d84822ae67ec78de5dcf701a89f10dab152407e",
+    "src/features/enta/OriginalResultRoute.tsx": "b69b21f1ea88e802e45adbe96fb810ad846720dc0199a928c22db30e737abb87",
+    "src/features/enta/RoundRoutes.tsx": "28b0d44c83bc7123bd2aa5150c37a0eac6fe3bcc35dec587a4845d06fd88b26e",
+    "src/features/enta/client.ts": "0ec7e31883f0f640ff89478d8c162f572f89d6830af1003a190dade8b1558900",
+    "src/features/enta/competition-client.ts": "f9e61cbcfa8affb7fd66086c892ac9409d51a652e739ba6a45568e6de0818c99",
+    "src/features/enta/history.ts": "c05b4bf07ae4e32874fbc419f90ce98a98b788d3eec4db67ee11cb644592687b",
+    "src/features/enta/original-result.ts": "4c0878cf072fd701cd7447a69153d01a94b07a604f5985ac2647d2808e1d4a23",
+    "src/features/enta/pending-start.ts": "e24f0c6d4f85ef3ac752b1d7df182708c0958ffb1e3ef2447fac89980361a157",
+    "src/features/enta/round-client.ts": "b739b6d8310ce98305789ea67e477e8abb6804c8c7863fb816ee2da47b7cf43e",
+    "src/features/enta/use-competition-match.ts": "98e9bd67a4d1349a4a17f8ecce208ac4dd908d990fdda9642b31408ffac7eec7",
+    "src/features/enta/use-match.ts": "96576bd5b6e84d9bbd9f2c48cad55e758e8fd0649a0075577da9d7f80339dbb1",
+    "src/features/enta/use-round-match.ts": "dae8037e18860940d7a973e5aeaf131ccd1a71705bea405b89e98e6ec1856ac0",
+    "src/features/game/domain/board.ts": "b4e9a3d97069e21e0e07e49ee3868c3a13f18ec609619b7a3d17b9886100c030",
+    "src/features/game/domain/lifecycle.ts": "2490c25b9f562461e526bf42303269fee8811661a3378fbf5f87f6fa844d3a1e",
+    "src/routes/EntaRoutes.tsx": "9598d1e3a4392ad03fae2e17a71ad0461869865d5a23f090e712ff60a5b86455",
+    "tests/app/enta-history.test.tsx": "b0f8fec64c79a3226566374e08ca262256501c3fa41286d9ad1295dcacb10822",
+    "services/enta/server/prisma/migrations/20261028090000_pro273_huroof_modes/migration.sql": "e95d405f4a04a5c81b2d0d16c9b0b9da8d38fd01d64fe7c749e2ff562ca002ca",
+    "services/enta/server/prisma/roles/pro273_huroof_modes_roles.sql": "6aa98a7436cf2ebc8cf3016cd8dec400d5d7e3c8d4db57b0e7eaa628924c4abb",
+    "services/enta/server/tsconfig.json": "8e22c6f78704317f99b626e3f3da31d6b81363c7e51dd82efbd576311262ba7c",
+    "package-lock.json": "66cc5643476227eff9e57a954be033192e932e1a846cae2bbe071efb09adada5",
+    "node_modules/typescript/package.json": "822ef7ca6452205657b6288b066481ecf508bfbf43455d715cf7d3ec457561e6",
+    "node_modules/tsx/package.json": "3ace2493a0acd26fc72a8433a38113ee04d5a1976910a3f40815f9e779d5c426"
+  },
+  "identityChecks": {
+    "matched": 87,
+    "failures": []
+  },
+  "scope": "Eight additive Source paths: resource/session adapter and terminal union, migration/private native derivation/immutable publication/inventory/producer successor, exact roles/ACL closure and tests. Both public guards and all accepted predecessor Source untouched.",
+  "findings": {
+    "DB1": "CLOSED: fresh pre-raw admission after waits",
+    "DB2": "CLOSED: stable committed inventory retries",
+    "DB3": "CLOSED: R2 worker NOWAIT plus R3 target/trigger NOWAIT and revoked direct cancellation UPDATE",
+    "DB4": "CLOSED for conditional Source: global durable ledger including jobs/future/control/index/WAL",
+    "NB-S1": "CLOSED at Source level, native sizing unqualified",
+    "NB-S2": "CLOSED at Source level, installed ACL unqualified"
+  },
+  "checks": {
+    "forgeAdapter": {
+      "passed": 13,
+      "scope": "Actual modules, external I/O inert; retained exact Source/tool identities"
+    },
+    "forgeResource": {
+      "passed": 3,
+      "retained": true
+    },
+    "forgeTerminal": {
+      "passed": 2,
+      "retained": true
+    },
+    "serverNoEmit": "PASS retained from matching repaired TS/config/compiler identities",
+    "affectedModuleNoEmit": "PASS retained",
+    "databaseActualModules": {
+      "passed": 4,
+      "retained": true
+    },
+    "databaseAdapterRetry": {
+      "passed": 1,
+      "retained": true
+    },
+    "securityActualModules": {
+      "passed": 5,
+      "retained": true
+    },
+    "securityContentionAdapter": {
+      "passed": 6,
+      "retained": true
+    },
+    "rootAdapter": {
+      "passed": 2,
+      "retained": "Actual TS modules and selected cases unchanged; SQL delta inspected independently"
+    },
+    "rootInventoryAdapter": {
+      "passed": 1,
+      "scope": "Fixed stable boundary/response mapping with database I/O inert, not native SQL idempotence"
+    },
+    "rootR3": "87 hashes and actual changed migration/roles inspected; both domain reverse-byte proofs joined"
+  },
+  "rootReview": "Integrated candidate TS/SQL/roles read; exact normalized effective PRO273 successor diff reviewed; R1 storage/ACL/lock contract and R2/R3 Source changes inspected. Final reviewers independently close all original findings.",
+  "excludedEvidence": [
+    "ROOT-NATIVE-BRIDGE-R2-CHECK.log selected no named test and is not credited",
+    "Preliminary forge/NATIVE-BRIDGE-R3-impact.json predates final two-file delta; ROOT-NATIVE-BRIDGE-R3-IMPACT.json and final freeze/reviews control"
+  ],
+  "preservation": "All original failed candidates/reviews and compatible passes retained by exact identity, no blanket suite replay, assignment/ledger reset, commit or deployment.",
+  "holds": [
+    "R6 STOP",
+    "Both public reader guards unchanged",
+    "SQL parsing/execution NOT_RUN",
+    "Native heap/stack/parser/lock/race/rollback/cleanup/resource sizing NOT_RUN",
+    "Installed roles/ACL/version/driver/process containment qualification NOT_RUN",
+    "Operational complete historical inventory NOT_RUN",
+    "Historical UTC/fresh20/native32/full-shell/full-task gates remain",
+    "No full PRO311 completion or PRO312 entry"
+  ],
+  "evidence": [
+    {
+      "path": "output/pro311-history-20261027/forge/NATIVE-BRIDGE-source-freeze.json",
+      "sha256": "4b49e6bd2e96bd6e6a62d586f7e502a28712dd193948a2da43288deb85d5f198"
+    },
+    {
+      "path": "output/pro311-history-20261027/forge/NATIVE-BRIDGE-REPAIR-source-freeze.json",
+      "sha256": "2afc582b63c83ef2c57b702c25368447205014d2b28030812d00e4c2d211562c"
+    },
+    {
+      "path": "output/pro311-history-20261027/forge/NATIVE-BRIDGE-R2-source-freeze.json",
+      "sha256": "57962a952b1309cace55058355e6b1d7d294bb6c0832d8818b5efcad90794801"
+    },
+    {
+      "path": "output/pro311-history-20261027/forge/NATIVE-BRIDGE-R3-source-freeze.json",
+      "sha256": "d654fdcfb4933e567f6cc484423a6157ed6b1c5d80ad1e753e8af6844da3848a"
+    },
+    {
+      "path": "output/pro311-history-20261027/database/NATIVE-BRIDGE-FINAL-REVIEW.md",
+      "sha256": "9bc31fdab4cd2d883603f53909b3c1870f9b48fdc39b0eb6d57c52abcd199e43"
+    },
+    {
+      "path": "output/pro311-history-20261027/database/NATIVE-BRIDGE-REPAIR-REVIEW.md",
+      "sha256": "2a8c59d30b4a9c072dc352d891b255c4fe7e73edcfd8ac0bb84fa20fdb2a651b"
+    },
+    {
+      "path": "output/pro311-history-20261027/database/NATIVE-BRIDGE-R2-REVIEW.md",
+      "sha256": "052772c719663be5acd3acea7817c3c7887d07d47a92d00e9c29cfdb2aa64f1c"
+    },
+    {
+      "path": "output/pro311-history-20261027/database/NATIVE-BRIDGE-R3-REVIEW.md",
+      "sha256": "43a7dcd5d2b71258ea36e8973bf81746e3c9bf8164af5ccb4de62f88f2a5e6ed"
+    },
+    {
+      "path": "output/pro311-history-20261027/database/NATIVE-BRIDGE-R3-check.log",
+      "sha256": "0291cbeaf428a55a94deb88c7d0b9f5e86d505e6671f644ba83cd14d305980ba"
+    },
+    {
+      "path": "output/pro311-history-20261027/security/NATIVE-BRIDGE-FINAL-REVIEW-20261028.md",
+      "sha256": "e07f6d9bc6b19aed3645075d39352de4a0c0ecf7abd521d5f6fb23fbdc11594b"
+    },
+    {
+      "path": "output/pro311-history-20261027/security/NATIVE-BRIDGE-R2-REVIEW.md",
+      "sha256": "1020958d8e4ec62b663c57439b931953bf5e65e6748b3c7bad034d02db7f55fc"
+    },
+    {
+      "path": "output/pro311-history-20261027/security/NATIVE-BRIDGE-R3-REVIEW.md",
+      "sha256": "fa9743ebd5c199a5db561ddcd4876cbaeddbc90bbdb23dac900e2a66f996896d"
+    },
+    {
+      "path": "output/pro311-history-20261027/ROOT-NATIVE-BRIDGE-REVIEW.json",
+      "sha256": "27d16c137650305f07a23df90aa9a9de06ba30e319cc280b935490125b603a8b"
+    },
+    {
+      "path": "output/pro311-history-20261027/ROOT-NATIVE-BRIDGE-R3-IMPACT.json",
+      "sha256": "1c305540d6c0c84ab635693a29a0a59ec7cb9973e9065cb8bb3bc215f9a9cc6b"
+    },
+    {
+      "path": "output/pro311-history-20261027/ROOT-NATIVE-BRIDGE-ADAPTER-CHECK.log",
+      "sha256": "20df6bed78347ff7d2e7a42017f448eb1b1fbf9438e958d38a128e0a799fb6b0"
+    },
+    {
+      "path": "output/pro311-history-20261027/ROOT-NATIVE-BRIDGE-INVENTORY-CHECK.log",
+      "sha256": "93001b27cf94399e8a62f73b82d925283d44c53ed76feebbee46ce5fced5d290"
+    }
+  ],
+  "usage": {
+    "provider": "OpenAI",
+    "coordinator": "gpt-6.1-sol after explicit refresh; earlier host-reported Terra interval preserved as checkpoint",
+    "existingAgentAssignments": 4,
+    "models": {
+      "planner": "gpt-6-astra",
+      "Forge": "gpt-6.1-terra",
+      "Database": "gpt-6.1-sol",
+      "Security": "gpt-6.1-sol"
+    },
+    "tokenTelemetry": "unavailable for all sessions; no totals estimated",
+    "initialEstimateMinutes": [
+      60,
+      120
+    ],
+    "continuationStartedUtc": "2026-10-28T07:27:03Z",
+    "elapsedWallSeconds": 36436,
+    "activeVersusWait": "unavailable; wall includes human/model-selection/interruption waits"
+  }
+}

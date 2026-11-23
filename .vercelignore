@@ -6,16 +6,13 @@
 docs/
 tests/
 scripts/
+!scripts/
+scripts/**
+!scripts/production-preflight.ts
 functions/
 server/**
 !server/local-admin-guard.ts
 content/
-/data/
-/reports/
-/resources/
-design/mockups/
-tahdani.sa.json
-tahdani.sa.md
 public/assets/questions/
 output/
 tmp/
@@ -36,3 +33,6 @@ functions/lib/
 *.log
 .env*
 !.env.example
+
+/old_app/
+/local/

@@ -1,0 +1,1073 @@
+diff --git a/src/routes/AuthRoutes.tsx b/src/routes/AuthRoutes.tsx
+index ebbb8495..d8d9523d 100644
+--- a/src/routes/AuthRoutes.tsx
++++ b/src/routes/AuthRoutes.tsx
+@@ -39,7 +39,7 @@ export function LoginRoute() {
+   return <AuthShell>
+     <p className="eyebrow">الحساب</p>
+     <h1>سجّل دخولك عندما تحتاجه</h1>
+-    <p>سجّل عبر Google أو بالبريد الإلكتروني. اللعب وإنشاء الغرف متاحان للضيوف أيضاً.</p>
++    <p>استضافة المباراة تتطلب حساباً موثقاً. ويمكن للضيوف الانضمام إلى الغرف.</p>
+     <p className="auth-status" aria-live="polite">{error?.message ?? statusCopy(status)}</p>
+     {hasGoogleIdentity ? <Link className="button button--primary" to="/account">إدارة الحساب</Link> : <>
+       <button className="button button--primary auth-google-button" disabled={disabled} onClick={() => void signInWithGoogle()}>{pendingAction === 'signIn' ? 'جارٍ تسجيل الدخول…' : 'المتابعة مع Google'}</button>
+diff --git a/src/routes/EntryRoute.tsx b/src/routes/EntryRoute.tsx
+index a926e76e..bc387ae4 100644
+--- a/src/routes/EntryRoute.tsx
++++ b/src/routes/EntryRoute.tsx
+@@ -1,6 +1,7 @@
+ import { FormEvent, useEffect, useRef, useState } from 'react';
+ import { useNavigate, useSearchParams } from 'react-router-dom';
+ import { HomeSurface } from './HomeSurface';
++import { DeferredFirebaseAuthProvider } from '../features/auth/auth-context';
+ import {
+   isStaticPreviewBuild,
+   staticPreviewNotice,
+@@ -15,16 +16,14 @@ export function validateJoinDisplayName(value: unknown) {
+   return name && name.length <= 48 && !/\p{Cc}/u.test(name) ? name : undefined;
+ }
+ 
+-export function EntryRoute() {
+-  useEffect(() => { document.title = 'الرئيسية | الخلية'; }, []);
++function EntryContent({ staticPreview }: { staticPreview: boolean }) {
++  useEffect(() => { document.title = 'ميدان | حروف وإنت صح'; }, []);
+   const [search] = useSearchParams();
+   const queryRoomCode = normalizeRoomCode(search.get('room') ?? '');
+   const [roomCode, setRoomCode] = useState(queryRoomCode);
+   const [roomCodeError, setRoomCodeError] = useState('');
+   const roomCodeControl = useRef<HTMLInputElement>(null);
+   const navigate = useNavigate();
+-  const staticPreview = isStaticPreviewBuild();
+-
+   useEffect(() => {
+     if (queryRoomCode && !staticPreview)
+       navigate(`/room/${queryRoomCode}/join`, { replace: true });
+@@ -78,3 +77,8 @@ export function EntryRoute() {
+     />
+   );
+ }
++
++export function EntryRoute({ staticPreview: previewOverride }: { staticPreview?: boolean } = {}) {
++  const staticPreview = previewOverride ?? isStaticPreviewBuild();
++  return <DeferredFirebaseAuthProvider enabled={!staticPreview}><EntryContent staticPreview={staticPreview} /></DeferredFirebaseAuthProvider>;
++}
+diff --git a/src/routes/HomeSurface.tsx b/src/routes/HomeSurface.tsx
+index a68c8342..266c59f9 100644
+--- a/src/routes/HomeSurface.tsx
++++ b/src/routes/HomeSurface.tsx
+@@ -1,22 +1,11 @@
+ import { type ReactNode, useEffect, useMemo, useState } from "react";
+ import { Link } from "react-router-dom";
+-import { InternalHeader } from "../design-system/InternalHeader";
+-import { BrandMark } from "../design-system/BrandMark";
++import { ThemeToggle } from "../design-system/ThemeToggle";
+ import { gameRuntime } from "../features/game/runtime";
+-import { availableCategoryCatalog } from "../data/category-catalog";
+-import {
+-  catalogCategoryCovers,
+-  fetchLocalQuestionInventory,
+-  inventoryCategoryCovers,
+-  staticPreviewQuestionInventory,
+-  type LocalQuestionInventory,
+-} from "../data/local-question-inventory";
++import { useFirebaseAuth } from "../features/auth/auth-context";
++import { catalogCategoryCovers, fetchLocalQuestionInventory, inventoryCategoryCovers, type LocalQuestionInventory } from "../data/local-question-inventory";
+ import type { ApprovedReleaseCatalog } from "../features/game/runtime/contracts";
+-import {
+-  approvedCategoryPlayable,
+-  localCategoryPlayable,
+-} from "../data/category-playability";
+-import { categoryReadinessLabel } from "../features/game/setup-options";
++import { approvedCategoryPlayable, localCategoryPlayable } from "../data/category-playability";
+ 
+ type HomeSurfaceProps = {
+   joinForm: ReactNode;
+@@ -24,6 +13,10 @@ type HomeSurfaceProps = {
+   staticPreview?: boolean;
+ };
+ 
++function GameMark({ letter }: { letter: string }) {
++  return <span aria-hidden="true" className="maydan-choice__mark">{letter}</span>;
++}
++
+ function CategoryChooser({ staticPreview }: { staticPreview: boolean }) {
+   const [query, setQuery] = useState("");
+   const [showAll, setShowAll] = useState(false);
+@@ -32,6 +25,7 @@ function CategoryChooser({ staticPreview }: { staticPreview: boolean }) {
+   const [approvedCatalog, setApprovedCatalog] = useState<ApprovedReleaseCatalog>();
+   const [approvedCatalogError, setApprovedCatalogError] = useState("");
+   const [approvedCatalogAttempt, setApprovedCatalogAttempt] = useState(0);
++
+   useEffect(() => {
+     if (staticPreview || gameRuntime.kind !== "local") return;
+     let active = true;
+@@ -42,147 +36,195 @@ function CategoryChooser({ staticPreview }: { staticPreview: boolean }) {
+         setInventoryError("");
+       })
+       .catch(() => {
+-        if (active) setInventoryError("تعذر تحديث فهرس الفئات المحلي.");
++        if (active) setInventoryError("تعذر تحديث الفهرس المحلي حالياً.");
+       });
+-    return () => {
+-      active = false;
+-    };
++    return () => { active = false; };
+   }, [staticPreview]);
++
+   useEffect(() => {
+     if (staticPreview || gameRuntime.kind !== "firebase") return;
+     let active = true;
+     void (gameRuntime.getApprovedReleaseCatalog?.() ?? Promise.reject(new Error("APPROVED_RELEASE_CATALOG_UNAVAILABLE")))
+-      .then((catalog) => { if (active) { setApprovedCatalog(catalog); setApprovedCatalogError(""); } })
+-      .catch(() => { if (active) { setApprovedCatalog(undefined); setApprovedCatalogError("لا تتوفر حزمة معتمدة نشطة للعب المباشر حالياً."); } });
++      .then((catalog) => {
++        if (!active) return;
++        setApprovedCatalog(catalog);
++        setApprovedCatalogError("");
++      })
++      .catch(() => {
++        if (!active) return;
++        setApprovedCatalog(undefined);
++        setApprovedCatalogError("لا تتوفر حزمة فئات معتمدة للعب حالياً.");
++      });
+     return () => { active = false; };
+   }, [approvedCatalogAttempt, staticPreview]);
+-  const activeInventory = inventory ?? (staticPreview ? staticPreviewQuestionInventory : undefined);
+-  const inventoryById = useMemo(
+-    () => new Map(activeInventory?.categories.map((category) => [category.id, category]) ?? []),
+-    [activeInventory],
+-  );
+-  const categoryCatalogue = useMemo(
+-    () => gameRuntime.kind === "firebase"
+-      ? approvedCatalog ? catalogCategoryCovers(approvedCatalog.categories) : []
+-      : activeInventory ? inventoryCategoryCovers(activeInventory) : availableCategoryCatalog,
+-    [activeInventory, approvedCatalog],
+-  );
+-  const catalogue = useMemo(
+-    () => categoryCatalogue.filter((category) => {
+-      if (gameRuntime.kind === "firebase")
+-        return approvedCategoryPlayable(
+-          approvedCatalog?.categories.find((candidate) => candidate.id === category.id),
+-          "categories",
+-          approvedCatalog?.challengeAvailability?.enabledMechanics ?? [],
+-        );
+-      if (!activeInventory) return true;
++
++  const categoryCatalogue = useMemo(() => {
++    if (gameRuntime.kind === "firebase") return approvedCatalog
++      ? catalogCategoryCovers(approvedCatalog.categories.map(({ id, labelAr }) => ({ id, labelAr })))
++      : [];
++    return inventory ? inventoryCategoryCovers(inventory) : [];
++  }, [approvedCatalog, inventory]);
++
++  const eligibleCategories = useMemo(() => categoryCatalogue.filter((category) => {
++      if (gameRuntime.kind === "firebase") return approvedCategoryPlayable(
++        approvedCatalog?.categories.find((candidate) => candidate.id === category.id),
++        "categories",
++        approvedCatalog?.challengeAvailability?.enabledMechanics ?? [],
++      );
+       return localCategoryPlayable(
+-        inventoryById.get(category.id),
++        inventory?.categories.find((candidate) => candidate.id === category.id),
+         "categories",
+-        activeInventory.huroofAvailable,
++        inventory?.huroofAvailable ?? false,
+       );
+-    }),
+-    [activeInventory, approvedCatalog, categoryCatalogue, inventoryById],
+-  );
++    }), [approvedCatalog, categoryCatalogue, inventory]);
++
+   const categories = useMemo(() => {
+     const normalized = query.trim().toLocaleLowerCase("ar");
+     return normalized
+-      ? catalogue.filter((category) => `${category.displayNameAr} ${category.id}`.toLocaleLowerCase("ar").includes(normalized))
+-      : catalogue;
+-  }, [catalogue, query]);
++      ? eligibleCategories.filter((category) => `${category.displayNameAr} ${category.id}`.toLocaleLowerCase("ar").includes(normalized))
++      : eligibleCategories;
++  }, [eligibleCategories, query]);
++
++  const waiting = !staticPreview && (gameRuntime.kind === "firebase"
++    ? !approvedCatalog && !approvedCatalogError
++    : gameRuntime.kind === "local" && !inventory && !inventoryError);
+ 
+   return (
+-    <section className="spatial-home__catalogue" data-home-region="category-chooser" aria-labelledby="category-chooser-title">
+-      <div>
+-        <p className="spatial-home__eyebrow">فهرس الفئات</p>
+-        <h2 id="category-chooser-title">اختر نقطة انطلاق للإعداد</h2>
+-        <p>تعكس حالة الجاهزية السجل المتاح حالياً. {catalogue.length} فئة في الفهرس.</p>
++    <section className="maydan-catalogue" data-home-region="category-chooser" aria-labelledby="category-chooser-title">
++      <div className="maydan-section-heading">
++        <p className="maydan-eyebrow">تصفح عام</p>
++        <h2 id="category-chooser-title">فئات حروف الجاهزة</h2>
++        <p>نعرض هنا الفئات الموجودة في سجل اللعب الحالي فقط.</p>
+       </div>
+-      <label className="spatial-home__filter">
+-        <span>تصفية الفئات</span>
+-        <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ابحث باسم الفئة" />
+-      </label>
+-      {categories.length === 0 ? (
+-        <p className="spatial-home__empty" role="status">لا توجد فئات مطابقة للبحث. امسح البحث لعرض الفئات المتاحة.</p>
+-      ) : (
+-        <ul className="spatial-home__categories">
+-          {categories.slice(0, showAll || query ? categories.length : 8).map((category) => (
+-            <li key={category.id}>
+-              <Link to={`/host/new?kind=categories&category=${encodeURIComponent(category.id)}`}>
+-                <img alt="" src={category.cover.web320} />
+-                <strong>{category.displayNameAr}</strong>
+-                <span>{!activeInventory && gameRuntime.kind !== "firebase"
+-                  ? categoryReadinessLabel(category.questionReadiness)
+-                  : staticPreview
+-                    ? "محتوى محلي مدرج في معاينة الواجهة فقط"
+-                    : "جاهزة للعبة الفئات"}</span>
+-              </Link>
+-            </li>
+-          ))}
+-        </ul>
+-      )}
+-      {!query && categories.length > 8 ? (
+-        <button className="spatial-home__show-more" onClick={() => setShowAll((current) => !current)} type="button">
+-          {showAll ? "عرض الفئات المختصرة" : `عرض كل الفئات (${categories.length})`}
+-        </button>
++      {staticPreview ? <p className="maydan-status" role="status">معاينة الواجهة لا تحتوي على فئات لعب منشورة.</p> : null}
++      {waiting ? <p className="maydan-status" role="status">جارٍ التحقق من الفئات المتاحة…</p> : null}
++      {inventoryError ? <p className="maydan-status" role="status">{inventoryError}</p> : null}
++      {gameRuntime.kind === "firebase" && approvedCatalogError ? (
++        <p className="maydan-status" role="status">
++          {approvedCatalogError}{" "}
++          <button className="maydan-inline-action" onClick={() => setApprovedCatalogAttempt((attempt) => attempt + 1)} type="button">أعد المحاولة</button>
++        </p>
++      ) : null}
++      {!staticPreview && !waiting && eligibleCategories.length === 0 && !inventoryError && !approvedCatalogError ? (
++        <p className="maydan-status" role="status">لا توجد فئات جاهزة للعرض حالياً.</p>
++      ) : null}
++      {eligibleCategories.length > 0 ? (
++        <>
++          <label className="maydan-filter">
++            <span>تصفية الفئات</span>
++            <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ابحث باسم الفئة" />
++          </label>
++          {categories.length === 0 ? <p className="maydan-status" role="status">لا توجد فئات تطابق البحث.</p> : (
++            <ul className="maydan-categories">
++              {categories.slice(0, showAll || query ? categories.length : 6).map((category) => (
++                <li key={category.id}>
++                  <Link to={`/host/new?kind=categories&category=${encodeURIComponent(category.id)}`}>
++                    <span aria-hidden="true" className="maydan-category__index">فئة</span>
++                    <strong>{category.displayNameAr}</strong>
++                    <span>افتح إعداد الفئات</span>
++                  </Link>
++                </li>
++              ))}
++            </ul>
++          )}
++          {!query && categories.length > 6 ? (
++            <button className="maydan-inline-action" onClick={() => setShowAll((current) => !current)} type="button">
++              {showAll ? "عرض الفئات المختصرة" : `عرض الفئات الأخرى (${categories.length - 6})`}
++            </button>
++          ) : null}
++        </>
+       ) : null}
+-      {inventoryError ? <p className="spatial-home__empty" role="status">{inventoryError}</p> : null}
+-      {gameRuntime.kind === "firebase" && !approvedCatalog ? <p className="spatial-home__empty" role="status">{approvedCatalogError || "جارٍ التحقق من فهرس الحزمة المعتمدة…"} {approvedCatalogError ? <button className="spatial-home__show-more" onClick={() => setApprovedCatalogAttempt((attempt) => attempt + 1)} type="button">أعد المحاولة</button> : null}</p> : null}
+     </section>
+   );
+ }
+ 
++function hostStatusCopy(status: ReturnType<typeof useFirebaseAuth>["status"], staticPreview: boolean, canHost: boolean) {
++  if (staticPreview) return "هذه معاينة واجهة. الاستضافة والانضمام غير متاحين هنا.";
++  if (status === "loading") return "جارٍ التحقق من حالة الحساب…";
++  if (canHost) return "حسابك جاهز للاستضافة. الانضمام متاح للضيوف أيضاً.";
++  if (status === "anonymous") return "حساب الضيف للانضمام. استضافة المباراة تتطلب Google أو بريداً موثقاً.";
++  if (status === "password" || status === "google") return "استضافة المباراة تتطلب Google أو بريداً موثقاً.";
++  if (status === "error") return "تعذر التحقق من الحساب الآن. أعد المحاولة قبل الاستضافة.";
++  return "استضافة المباراة تتطلب Google أو بريداً موثقاً. يمكنك الانضمام كضيف.";
++}
++
+ export function HomeSurface({ joinForm, joinMessage, staticPreview = false }: HomeSurfaceProps) {
++  const { status, user } = useFirebaseAuth();
++  const canHost = Boolean(!staticPreview && user && !user.isAnonymous && user.emailVerified);
++  const hostStatus = hostStatusCopy(status, staticPreview, canHost);
++  const disabledHost = staticPreview || status === "loading" || status === "unavailable" || status === "error";
++
+   return (
+-    <main className="spatial-home-page" id="main-content">
+-      <a className="skip-link" href="#join-room">تجاوز إلى الانضمام</a>
+-      <div className="spatial-home__stage-canvas">
+-      <InternalHeader home hideAccount={staticPreview} />
+-
+-      <section className="spatial-home__hero" data-home-region="spatial-stage" aria-labelledby="spatial-home-title">
+-        <div className="spatial-home__title">
+-          <BrandMark className="spatial-home__hero-mark" />
+-          <p className="spatial-home__eyebrow">لعبة معرفة عربية لفريقين</p>
+-          <h1 id="spatial-home-title">اجمع فريقك وابدأ التحدي</h1>
+-          <p>اختاروا الحروف أو الفئات، وتنافسوا في ليلة أسئلة خفيفة حتى تصنعوا المسار الفائز.</p>
+-          <Link className="button button--primary spatial-home__hero-action" to="/host/new">ابدأ مباراة</Link>
+-        </div>
+-      </section>
+-      </div>
++    <main className="maydan-home-page" id="main-content">
++      <a className="maydan-skip-link" href="#game-choice-title">تجاوز إلى اختيار اللعبة</a>
++      <header className="maydan-header" data-home-region="header">
++        <Link aria-label="ميدان، الصفحة الرئيسية" className="maydan-wordmark" to="/">
++          <span aria-hidden="true" className="maydan-wordmark__mark">م</span>
++          <span>ميدان</span>
++        </Link>
++        <nav aria-label="روابط الصفحة" className="maydan-header__nav">
++          <Link to="/how-to-play">كيف تلعب؟</Link>
++          {staticPreview ? <span className="maydan-preview-account" aria-disabled="true">الحساب غير متاح في المعاينة</span> : (
++            <Link to={user && !user.isAnonymous ? "/account" : "/login"}>
++              {user && !user.isAnonymous ? "الحساب" : "تسجيل الدخول"}
++            </Link>
++          )}
++          <ThemeToggle compact iconOnly />
++        </nav>
++      </header>
+ 
+-      <section className="spatial-home__choices" aria-labelledby="game-choices-title">
+-        <div className="spatial-home__section-heading">
+-          <p className="spatial-home__eyebrow">اختاروا طريقتكم</p>
+-          <h2 id="game-choices-title">لعبتان، ووقت واحد ممتع</h2>
++      <section className="maydan-stage" data-home-region="spatial-stage" aria-labelledby="game-choice-title">
++        <div className="maydan-stage__intro">
++          <p className="maydan-eyebrow maydan-eyebrow--stage">ساحة واحدة، ولعبتان</p>
++          <h1 id="game-choice-title">اختر لعبتك</h1>
++          <p>اجتمعوا حول مباراة عربية مباشرة. اختر حروف الآن؛ إنت صح ستظهر هنا بعد اكتمال دمج اللعب.</p>
+         </div>
+-        <div className="spatial-home__choice-grid">
+-          <Link className="spatial-home__choice spatial-home__choice--letters" to="/host/new?kind=huroof">
+-            <img alt="حروف" src="/assets/game-types/huroof.png" />
+-            <span className="spatial-home__choice-copy"><strong>حروف</strong><span>أجب عن سؤال يبدأ بالحرف الذي تختاره.</span></span>
+-          </Link>
+-          <Link className="spatial-home__choice spatial-home__choice--categories" to="/host/new?kind=categories">
+-            <img alt="بعض المجموعات" src="/assets/game-types/categories.png" />
+-            <span className="spatial-home__choice-copy"><strong>بعض المجموعات</strong><span>اختر فئة ونافس فريقك بأسئلتها.</span></span>
+-          </Link>
++
++        <div className="maydan-choices" aria-label="الألعاب">
++          <article className="maydan-choice maydan-choice--selected" aria-labelledby="huroof-choice-title">
++            <div className="maydan-choice__topline"><span>اللعبة المتاحة</span><span aria-hidden="true" className="maydan-choice__check">✓</span></div>
++            <GameMark letter="ح" />
++            <h2 id="huroof-choice-title">حروف</h2>
++            <p>اختبروا معلوماتكم على لوحة الحروف. تعرض صفحة الإعداد الخيارات المتاحة فعلاً.</p>
++          </article>
++          <article className="maydan-choice maydan-choice--unavailable" aria-labelledby="enta-choice-title">
++            <div className="maydan-choice__topline"><span>قريباً</span><span className="maydan-choice__state">غير متاحة بعد</span></div>
++            <GameMark letter="إ" />
++            <h2 id="enta-choice-title">إنت صح</h2>
++            <p>تكامل اللعب لم يكتمل بعد. لن نبدأ مباراة قبل أن يصبح جاهزاً.</p>
++          </article>
+         </div>
+       </section>
+ 
+-      <section className="spatial-home__join-band" data-home-region="create-join-dock" id="join-room" aria-labelledby="join-room-title">
+-        <div><p className="spatial-home__eyebrow">عندك رمز؟</p><h2 id="join-room-title">انضم إلى غرفة فريقك</h2><p>أدخل رمز الغرفة الذي شاركه معك المضيف.</p></div>
+-        <div className="spatial-home__join-form">{joinForm}{joinMessage}</div>
++      <section className="maydan-actions" data-home-region="create-join-dock" aria-label="إنشاء مباراة أو الانضمام إليها">
++        <section className="maydan-action maydan-action--create" aria-labelledby="create-match-title">
++          <p className="maydan-eyebrow">استضافة</p>
++          <h2 id="create-match-title">أنشئ مباراة حروف</h2>
++          <p className="maydan-action__note" id="host-requirement">{hostStatus}</p>
++          {canHost ? <Link aria-describedby="host-requirement" className="maydan-button maydan-button--primary" to="/host/new?kind=huroof">إنشاء مباراة</Link>
++            : disabledHost ? <button aria-busy={status === "loading" || undefined} aria-describedby="host-requirement" className="maydan-button maydan-button--primary" disabled type="button">{status === "loading" ? "جارٍ التحقق…" : "الاستضافة غير متاحة"}</button>
++              : <Link aria-describedby="host-requirement" className="maydan-button maydan-button--primary" to="/login">تسجيل الدخول للاستضافة</Link>}
++        </section>
++        <section className="maydan-action maydan-action--join" aria-labelledby="join-room-title">
++          <p className="maydan-eyebrow">انضمام</p>
++          <h2 id="join-room-title">عندك رمز غرفة؟</h2>
++          <p className="maydan-action__note">الانضمام متاح للضيف. أدخل الرمز الذي شاركه المضيف.</p>
++          <div className="maydan-join-form">{joinForm}{joinMessage}</div>
++        </section>
+       </section>
+ 
+-      <CategoryChooser staticPreview={staticPreview} />
++      <aside className="maydan-account-note" aria-label="متطلبات اللعب">
++        <span className="maydan-account-note__mark" aria-hidden="true">i</span>
++        <p>رصيد المباريات غير متاح في هذه النسخة. لا نعرض رصيداً تقديرياً.</p>
++      </aside>
+ 
+-      <section className="spatial-home__how" aria-labelledby="how-title">
+-        <div><p className="spatial-home__eyebrow">بكل بساطة</p><h2 id="how-title">كيف تبدأون؟</h2></div>
+-        <ol><li><b>١</b><span>أنشئ غرفة واختر نوع المباراة.</span></li><li><b>٢</b><span>شارك رمز الغرفة مع الفريقين.</span></li><li><b>٣</b><span>ابدأوا وجمعوا المسار الفائز.</span></li></ol>
+-        <details><summary>هل أحتاج حساباً للعب؟</summary><p>لا. يمكنك إنشاء الغرفة أو الانضمام إليها كضيف، وحساب Google اختياري.</p></details>
+-      </section>
++      <CategoryChooser staticPreview={staticPreview} />
+ 
+-      <footer className="spatial-home__footer" data-home-region="footer">
+-        <p><BrandMark /> لعبة معرفة عربية مباشرة بلوحات الحروف والفئات.</p>
+-        <nav aria-label="روابط المساعدة"><Link to="/how-to-play">قواعد اللعب</Link><Link to="/host/new">إعداد مباراة</Link><Link to="/media-credits">اعتمادات الصور</Link></nav>
++      <footer className="maydan-footer" data-home-region="footer">
++        <Link className="maydan-wordmark maydan-wordmark--footer" to="/" aria-label="ميدان، الصفحة الرئيسية">
++          <span aria-hidden="true" className="maydan-wordmark__mark">م</span><span>ميدان</span>
++        </Link>
++        <nav aria-label="معلومات إضافية"><Link to="/how-to-play">قواعد اللعب</Link><Link to="/media-credits">اعتمادات الصور</Link></nav>
+       </footer>
+     </main>
+   );
+diff --git a/src/styles/khaliah.css b/src/styles/khaliah.css
+index f91ddc83..ccf98db4 100644
+--- a/src/styles/khaliah.css
++++ b/src/styles/khaliah.css
+@@ -74,6 +74,420 @@ html[data-theme="light"] .spatial-home-page .spatial-home__catalogue p:not(.spat
+ 
+ :root { --khaliah-content-max: 84rem; --khaliah-page-gutter: clamp(1.5rem, 2.5vw, 2rem); }
+ 
++/* INT-3B approved ميدان entry surface. Kept route-scoped until human live review. */
++.maydan-home-page {
++  --maydan-ink: #171717;
++  --maydan-paper: #fff;
++  --maydan-canvas: #f7f7f5;
++  --maydan-line: #3e3e3e;
++  --maydan-muted: #525252;
++  --maydan-accent: #c0005b;
++  --maydan-accent-contrast: #fff;
++  background: var(--maydan-canvas);
++  color: var(--maydan-ink);
++  font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif;
++  min-block-size: 100svh;
++  overflow-wrap: anywhere;
++}
++
++html[data-theme="dark"] .maydan-home-page {
++  --maydan-ink: #f5f5f5;
++  --maydan-paper: #1b1b1b;
++  --maydan-canvas: #111;
++  --maydan-line: #777;
++  --maydan-muted: #c4c4c4;
++  --maydan-accent: #c0005b;
++  --maydan-accent-contrast: #fff;
++}
++
++.maydan-home-page,
++.maydan-home-page * { box-sizing: border-box; }
++.maydan-home-page :is(a, button, input, summary):focus-visible {
++  outline: 3px solid var(--maydan-accent);
++  outline-offset: 3px;
++}
++.maydan-skip-link {
++  background: var(--maydan-paper);
++  border: 2px solid var(--maydan-line);
++  color: var(--maydan-ink);
++  inset-block-start: 8px;
++  inset-inline-start: 8px;
++  padding: 8px 12px;
++  position: absolute;
++  transform: translateY(-160%);
++  z-index: 2;
++}
++.maydan-skip-link:focus { transform: translateY(0); }
++.maydan-header {
++  align-items: center;
++  background: #171717;
++  color: #fff;
++  display: flex;
++  gap: 24px;
++  justify-content: space-between;
++  min-block-size: 68px;
++  padding: 8px max(16px, calc((100vw - 1160px) / 2));
++}
++.maydan-wordmark {
++  align-items: center;
++  color: inherit;
++  display: inline-flex;
++  font-size: 1.4rem;
++  font-weight: 700;
++  gap: 8px;
++  line-height: 1.2;
++  text-decoration: none;
++}
++.maydan-wordmark__mark {
++  align-items: center;
++  border: 1px solid currentColor;
++  display: inline-flex;
++  font-size: 1rem;
++  inline-size: 30px;
++  justify-content: center;
++  min-block-size: 30px;
++}
++.maydan-header__nav {
++  align-items: center;
++  display: flex;
++  gap: 8px;
++}
++.maydan-header__nav > a,
++.maydan-preview-account {
++  align-items: center;
++  color: inherit;
++  display: inline-flex;
++  font-size: .95rem;
++  min-block-size: 44px;
++  padding-inline: 12px;
++  text-decoration: none;
++}
++.maydan-header__nav > a:hover { text-decoration: underline; text-underline-offset: 4px; }
++.maydan-preview-account { color: #dedede; }
++.maydan-header .account-control { color: inherit; text-decoration: none; }
++.maydan-header .theme-toggle--compact > summary {
++  border-color: #d0d0d0;
++  color: inherit;
++  min-block-size: 44px;
++  min-inline-size: 44px;
++}
++html[data-theme="dark"] .maydan-header .theme-toggle--compact > summary {
++  border-color: var(--maydan-line);
++  color: #fff;
++}
++.maydan-header .theme-toggle__choices {
++  background: var(--maydan-paper);
++  border: 1px solid var(--maydan-line);
++  color: var(--maydan-ink);
++  inset-inline-end: 0;
++  inset-inline-start: auto;
++}
++.maydan-stage,
++.maydan-actions,
++.maydan-account-note,
++.maydan-catalogue,
++.maydan-footer {
++  margin-inline: auto;
++  max-inline-size: 1160px;
++  padding-inline: 24px;
++}
++.maydan-stage { padding-block: 36px 28px; }
++.maydan-stage__intro { margin-block-end: 24px; }
++.maydan-eyebrow {
++  color: var(--maydan-muted);
++  font-size: .875rem;
++  font-weight: 600;
++  margin: 0 0 8px;
++}
++.maydan-eyebrow--stage {
++  background: var(--maydan-paper);
++  border: 1px solid var(--maydan-accent);
++  box-shadow: 2px 2px 0 var(--maydan-accent);
++  display: inline-flex;
++  padding: 4px 10px;
++  transform: rotate(-1deg);
++}
++.maydan-stage h1,
++.maydan-section-heading h2 {
++  font-size: clamp(2.25rem, 5vw, 3.5rem);
++  font-weight: 700;
++  letter-spacing: normal;
++  line-height: 1.25;
++  margin: 0;
++}
++.maydan-stage__intro > p:last-child,
++.maydan-section-heading > p:last-child {
++  color: var(--maydan-muted);
++  font-size: 1rem;
++  line-height: 1.7;
++  margin: 12px 0 0;
++  max-inline-size: 50rem;
++}
++.maydan-choices {
++  display: grid;
++  gap: 16px;
++  grid-template-columns: repeat(2, minmax(0, 1fr));
++}
++.maydan-choice {
++  background: var(--maydan-paper);
++  border: 1px solid var(--maydan-line);
++  display: grid;
++  grid-template-columns: minmax(0, 1fr) auto;
++  grid-template-rows: auto auto 1fr;
++  min-block-size: 210px;
++  padding: 20px;
++}
++.maydan-choice--selected { border: 2px solid var(--maydan-accent); }
++.maydan-choice--unavailable { border-color: color-mix(in srgb, var(--maydan-line) 65%, var(--maydan-canvas)); }
++.maydan-choice__topline {
++  align-items: center;
++  color: var(--maydan-muted);
++  display: flex;
++  font-size: .875rem;
++  font-weight: 600;
++  grid-column: 1 / -1;
++  justify-content: space-between;
++  min-block-size: 28px;
++}
++.maydan-choice__check {
++  align-items: center;
++  background: var(--maydan-accent);
++  color: var(--maydan-accent-contrast);
++  display: inline-flex;
++  font-size: .875rem;
++  inline-size: 24px;
++  justify-content: center;
++  min-block-size: 24px;
++}
++.maydan-choice__state {
++  border: 1px solid var(--maydan-line);
++  color: var(--maydan-ink);
++  padding: 4px 8px;
++}
++.maydan-choice__mark {
++  align-items: center;
++  align-self: center;
++  border: 2px solid var(--maydan-ink);
++  display: inline-flex;
++  font-size: 1.6rem;
++  font-weight: 700;
++  grid-column: 2;
++  grid-row: 3;
++  inline-size: 72px;
++  justify-content: center;
++  min-block-size: 72px;
++}
++.maydan-choice--selected .maydan-choice__mark {
++  clip-path: polygon(50% 0, 94% 25%, 94% 75%, 50% 100%, 6% 75%, 6% 25%);
++  border: 0;
++  background: var(--maydan-ink);
++  color: var(--maydan-paper);
++  outline: 2px solid var(--maydan-ink);
++  outline-offset: -2px;
++}
++.maydan-choice h2 {
++  align-self: stretch;
++  background: var(--maydan-ink);
++  color: var(--maydan-paper);
++  font-size: clamp(1.5rem, 2.7vw, 2rem);
++  grid-column: 1 / -1;
++  grid-row: 2;
++  line-height: 1.35;
++  margin: 0 -20px;
++  padding: 8px 20px;
++}
++.maydan-choice--selected h2 { border-inline-start: 4px solid var(--maydan-accent); padding-inline-start: 16px; }
++.maydan-choice--unavailable h2 { background: color-mix(in srgb, var(--maydan-ink) 82%, var(--maydan-muted)); }
++.maydan-choice p {
++  align-self: start;
++  color: var(--maydan-muted);
++  font-size: .95rem;
++  grid-column: 1;
++  grid-row: 3;
++  line-height: 1.6;
++  margin: 8px 0 0;
++  max-inline-size: 34rem;
++}
++.maydan-actions {
++  display: grid;
++  gap: 16px;
++  grid-template-columns: repeat(2, minmax(0, 1fr));
++  padding-block: 8px 24px;
++}
++.maydan-action {
++  background: var(--maydan-paper);
++  border: 1px solid var(--maydan-line);
++  display: flex;
++  flex-direction: column;
++  min-inline-size: 0;
++  padding: 20px;
++}
++.maydan-action--create { border-block-start: 4px solid var(--maydan-accent); }
++.maydan-action h2 {
++  font-size: 1.375rem;
++  font-weight: 600;
++  line-height: 1.4;
++  margin: 0;
++}
++.maydan-action__note {
++  color: var(--maydan-muted);
++  line-height: 1.6;
++  margin: 8px 0 16px;
++  min-block-size: 3.2em;
++}
++.maydan-button {
++  align-items: center;
++  border: 1px solid var(--maydan-line);
++  cursor: pointer;
++  display: inline-flex;
++  font: inherit;
++  font-size: 1rem;
++  font-weight: 600;
++  justify-content: center;
++  min-block-size: 48px;
++  padding: 8px 20px;
++  text-align: center;
++  text-decoration: none;
++  transition: background-color 110ms ease, color 110ms ease, transform 110ms ease;
++}
++.maydan-button--primary { background: var(--maydan-accent); border-color: var(--maydan-accent); color: var(--maydan-accent-contrast); }
++.maydan-button--primary:hover:not(:disabled) { background: #a5004f; border-color: #a5004f; }
++.maydan-button:active:not(:disabled) { transform: translateY(1px); }
++.maydan-button:disabled { background: #dedede; border-color: #737373; color: #3d3d3d; cursor: not-allowed; }
++.maydan-join-form { margin-block-start: auto; }
++.maydan-join-form .join-form--code {
++  align-items: end;
++  display: grid;
++  gap: 12px;
++  grid-template-columns: minmax(0, 1fr) auto;
++}
++.maydan-join-form .join-form__field {
++  display: grid;
++  font-size: .9rem;
++  font-weight: 600;
++  gap: 6px;
++  min-inline-size: 0;
++}
++.maydan-join-form input {
++  background: var(--maydan-paper);
++  border: 1px solid var(--maydan-line);
++  border-radius: 0;
++  color: var(--maydan-ink);
++  font: inherit;
++  font-size: 1.125rem;
++  min-block-size: 48px;
++  min-inline-size: 0;
++  padding: 8px 12px;
++}
++.maydan-join-form input::placeholder { color: #666; opacity: 1; }
++html[data-theme="dark"] .maydan-join-form input::placeholder { color: #c4c4c4; }
++.maydan-join-form .join-form--code .maydan-button,
++.maydan-join-form .join-form--code button {
++  background: var(--maydan-paper);
++  color: var(--maydan-ink);
++  min-inline-size: 116px;
++}
++.maydan-join-form .form-message { color: var(--maydan-muted); line-height: 1.6; margin: 8px 0 0; }
++.maydan-account-note {
++  align-items: center;
++  color: var(--maydan-muted);
++  display: flex;
++  gap: 8px;
++  padding-block: 8px 28px;
++}
++.maydan-account-note__mark {
++  align-items: center;
++  border: 1px solid var(--maydan-line);
++  border-radius: 50%;
++  color: var(--maydan-ink);
++  display: inline-flex;
++  flex: 0 0 22px;
++  font-size: .75rem;
++  font-weight: 700;
++  inline-size: 22px;
++  justify-content: center;
++  min-block-size: 22px;
++}
++.maydan-account-note p { font-size: .875rem; line-height: 1.6; margin: 0; }
++.maydan-catalogue { border-block-start: 1px solid var(--maydan-line); padding-block: 32px; }
++.maydan-section-heading { margin-block-end: 16px; }
++.maydan-section-heading h2 { font-size: clamp(1.5rem, 3vw, 2rem); }
++.maydan-filter { display: grid; font-weight: 600; gap: 6px; max-inline-size: 28rem; }
++.maydan-filter input {
++  background: var(--maydan-paper);
++  border: 1px solid var(--maydan-line);
++  border-radius: 0;
++  color: var(--maydan-ink);
++  font: inherit;
++  min-block-size: 48px;
++  padding: 8px 12px;
++}
++.maydan-categories { display: grid; gap: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; margin: 16px 0; padding: 0; }
++.maydan-categories a {
++  background: var(--maydan-paper);
++  border: 1px solid var(--maydan-line);
++  color: var(--maydan-ink);
++  display: grid;
++  gap: 4px;
++  min-block-size: 100px;
++  padding: 12px;
++  text-decoration: none;
++}
++.maydan-categories a:hover { border-color: var(--maydan-accent); }
++.maydan-category__index { color: var(--maydan-muted); font-size: .8rem; }
++.maydan-categories strong { font-size: 1rem; }
++.maydan-categories li a > span:last-child { color: var(--maydan-muted); font-size: .875rem; }
++.maydan-status { color: var(--maydan-muted); line-height: 1.7; margin: 12px 0; }
++.maydan-inline-action { background: transparent; border: 0; color: var(--maydan-accent); cursor: pointer; font: inherit; font-weight: 600; min-block-size: 44px; padding: 4px 8px; text-decoration: underline; text-underline-offset: 3px; }
++.maydan-footer {
++  align-items: center;
++  border-block-start: 1px solid var(--maydan-line);
++  display: flex;
++  justify-content: space-between;
++  min-block-size: 76px;
++  padding-block: 12px;
++}
++.maydan-wordmark--footer { color: var(--maydan-ink); font-size: 1rem; }
++.maydan-wordmark--footer .maydan-wordmark__mark { inline-size: 24px; min-block-size: 24px; }
++.maydan-footer nav { display: flex; flex-wrap: wrap; gap: 16px; }
++.maydan-footer nav a { align-items: center; color: var(--maydan-muted); display: inline-flex; min-block-size: 44px; }
++@media (max-width: 680px) {
++  .maydan-header { gap: 8px; min-block-size: 60px; padding-inline: 12px; }
++  .maydan-wordmark { font-size: 1.2rem; }
++  .maydan-header__nav { gap: 0; }
++  .maydan-header__nav > a, .maydan-preview-account { font-size: .85rem; padding-inline: 8px; }
++  .maydan-stage, .maydan-actions, .maydan-account-note, .maydan-catalogue, .maydan-footer { padding-inline: 16px; }
++  .maydan-stage { padding-block: 24px 20px; }
++  .maydan-stage__intro { margin-block-end: 16px; }
++  .maydan-choices, .maydan-actions { grid-template-columns: minmax(0, 1fr); }
++  .maydan-choice { min-block-size: 176px; padding: 16px; }
++  .maydan-choice h2 { margin-inline: -16px; padding-inline: 16px; }
++  .maydan-choice--selected h2 { padding-inline-start: 12px; }
++  .maydan-choice__mark { inline-size: 60px; min-block-size: 60px; }
++  .maydan-actions { gap: 12px; padding-block: 0 12px; }
++  .maydan-action { padding: 16px; }
++  .maydan-action__note { min-block-size: 0; }
++  .maydan-join-form .join-form--code { grid-template-columns: minmax(0, 1fr); }
++  .maydan-join-form .join-form--code button { inline-size: 100%; }
++  .maydan-categories { grid-template-columns: repeat(2, minmax(0, 1fr)); }
++  .maydan-footer { align-items: flex-start; flex-direction: column; gap: 8px; padding-block: 16px; }
++}
++@media (max-width: 360px) {
++  html:has(.maydan-home-page),
++  body:has(.maydan-home-page) { min-width: 0; }
++  .maydan-header { align-items: flex-start; flex-direction: column; padding-block: 10px; }
++  .maydan-header__nav { justify-content: space-between; inline-size: 100%; }
++  .maydan-stage, .maydan-actions, .maydan-account-note, .maydan-catalogue, .maydan-footer { padding-inline: 12px; }
++  .maydan-choice { grid-template-columns: minmax(0, 1fr) 56px; padding: 12px; }
++  .maydan-choice h2 { margin-inline: -12px; padding-inline: 12px; }
++  .maydan-choice--selected h2 { padding-inline-start: 8px; }
++  .maydan-choice__mark { inline-size: 48px; min-block-size: 48px; }
++  .maydan-categories { grid-template-columns: minmax(0, 1fr); }
++}
++@media (prefers-reduced-motion: reduce) {
++  .maydan-home-page *, .maydan-home-page *::before, .maydan-home-page *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
++}
++
+ /* Full-width bars own the viewport gutter. Content surfaces only own their max width;
+    this prevents a capped box from applying the same large-screen gutter again. */
+ .app-page.spatial-shell, .auth-page.spatial-auth, .name-join-page, .admin-page.spatial-admin { background: linear-gradient(160deg, var(--khaliah-ice), #fff 55%, #e7efff); color: var(--khaliah-navy); }
+diff --git a/tests/app/auth-routes.test.tsx b/tests/app/auth-routes.test.tsx
+index 425393db..6229ffb8 100644
+--- a/tests/app/auth-routes.test.tsx
++++ b/tests/app/auth-routes.test.tsx
+@@ -2,6 +2,7 @@ import { act, render, screen } from '@testing-library/react';
+ import { MemoryRouter } from 'react-router-dom';
+ import { afterEach, expect, it, vi } from 'vitest';
+ import { FirebaseAuthProvider, useFirebaseAuth } from '../../src/features/auth/AuthProvider';
++import { ThemeProvider } from '../../src/app/ThemeProvider';
+ import { AccountRoute, LoginRoute } from '../../src/routes/AuthRoutes';
+ 
+ const authMocks = vi.hoisted(() => ({
+@@ -33,23 +34,24 @@ afterEach(() => {
+ });
+ 
+ it('renders unavailable login honestly without Firebase web configuration', () => {
+-  render(<MemoryRouter><FirebaseAuthProvider><LoginRoute /></FirebaseAuthProvider></MemoryRouter>);
++  render(<ThemeProvider><MemoryRouter><FirebaseAuthProvider><LoginRoute /></FirebaseAuthProvider></MemoryRouter></ThemeProvider>);
+   expect(screen.getByText('تسجيل الدخول غير متاح في هذه النسخة حالياً.')).toBeVisible();
+   expect(screen.getByRole('button', { name: 'المتابعة مع Google' })).toBeDisabled();
+ });
+ 
+ it('waits for restoration then renders a signed-out login', async () => {
+   authMocks.auth = signedOutAuth();
+-  render(<MemoryRouter><FirebaseAuthProvider><LoginRoute /></FirebaseAuthProvider></MemoryRouter>);
++  render(<ThemeProvider><MemoryRouter><FirebaseAuthProvider><LoginRoute /></FirebaseAuthProvider></MemoryRouter></ThemeProvider>);
+   expect(screen.getByText('جارٍ استعادة حالة تسجيل الدخول…')).toBeVisible();
+   await screen.findByText(/يمكنك المتابعة كضيف/);
++  expect(screen.getByText('استضافة المباراة تتطلب حساباً موثقاً. ويمكن للضيوف الانضمام إلى الغرف.')).toBeVisible();
+   expect(screen.getByRole('button', { name: 'المتابعة مع Google' })).toBeEnabled();
+ });
+ 
+ it('shows basic Google identity fields and logs out without creating a guest', async () => {
+   const auth = { currentUser: googleUser, authStateReady: async () => undefined };
+   authMocks.auth = auth;
+-  render(<MemoryRouter><FirebaseAuthProvider><AccountRoute /></FirebaseAuthProvider></MemoryRouter>);
++  render(<ThemeProvider><MemoryRouter><FirebaseAuthProvider><AccountRoute /></FirebaseAuthProvider></MemoryRouter></ThemeProvider>);
+   await screen.findByText('ليان');
+   expect(screen.getByText('lian@example.test')).toHaveAttribute('dir', 'ltr');
+   await act(async () => { await screen.getByRole('button', { name: 'تسجيل الخروج' }).click(); });
+@@ -70,7 +72,7 @@ it('leaves the restoring state when Firebase cannot restore the session', async
+     currentUser: null,
+     authStateReady: async () => { throw new Error('restore failed'); },
+   };
+-  render(<MemoryRouter><FirebaseAuthProvider><LoginRoute /><Probe /></FirebaseAuthProvider></MemoryRouter>);
++  render(<ThemeProvider><MemoryRouter><FirebaseAuthProvider><LoginRoute /><Probe /></FirebaseAuthProvider></MemoryRouter></ThemeProvider>);
+   expect(await screen.findByText('error')).toBeVisible();
+   expect(screen.getByText(/تعذر استعادة حالة تسجيل الدخول/)).toBeVisible();
+ });
+diff --git a/tests/app/entry-route.test.tsx b/tests/app/entry-route.test.tsx
+index 45670f14..c738f604 100644
+--- a/tests/app/entry-route.test.tsx
++++ b/tests/app/entry-route.test.tsx
+@@ -1,4 +1,5 @@
+ import { render, screen } from '@testing-library/react';
++import type { ReactNode } from 'react';
+ import userEvent from '@testing-library/user-event';
+ import { afterEach, describe, expect, it, vi } from 'vitest';
+ import { MemoryRouter, Route, Routes } from 'react-router-dom';
+@@ -6,12 +7,18 @@ import { ThemeProvider } from '../../src/app/ThemeProvider';
+ import { EntryRoute, normalizeRoomCode, validateJoinDisplayName } from '../../src/routes/EntryRoute';
+ import { NameJoinRoute } from '../../src/routes/NameJoinRoute';
+ 
+-function renderJoinJourney(initialEntry = '/') {
++vi.mock('../../src/features/auth/auth-context', async (importOriginal) => {
++  const actual = await importOriginal<typeof import('../../src/features/auth/auth-context')>();
++  return { ...actual, DeferredFirebaseAuthProvider: ({ children }: { children: ReactNode }) => children };
++});
++
++function renderJoinJourney(initialEntry = '/', staticPreview = false) {
++  vi.stubEnv('VITE_STATIC_PREVIEW', String(staticPreview));
+   return render(
+     <ThemeProvider>
+       <MemoryRouter initialEntries={[initialEntry]}>
+         <Routes>
+-          <Route path="/" element={<EntryRoute />} />
++          <Route path="/" element={<EntryRoute staticPreview={staticPreview} />} />
+           <Route path="/room/:roomCode/join" element={<NameJoinRoute />} />
+         </Routes>
+       </MemoryRouter>
+@@ -25,9 +32,9 @@ describe('EntryRoute', () => {
+   it('normalizes a room code to uppercase LTR ASCII before continuing to the room name step', async () => {
+     const user = userEvent.setup();
+     renderJoinJourney();
+-    expect(document.title).toBe('الرئيسية | تحدي الخلية');
++    expect(document.title).toBe('ميدان | حروف وإنت صح');
+     const input = screen.getByLabelText('رمز الغرفة');
+-    await user.type(input, 'ab-12 عرب c');
++    await user.type(input, 'ab-12c');
+     expect(input).toHaveValue('AB12C');
+     expect(input).toHaveAttribute('dir', 'ltr');
+     await user.click(screen.getByRole('button', { name: 'انضم إلى غرفة' }));
+@@ -73,20 +80,19 @@ describe('EntryRoute', () => {
+   });
+ 
+   it('keeps the code and direct name-join paths visibly unavailable in an explicit static preview', async () => {
+-    vi.stubEnv('VITE_STATIC_PREVIEW', 'true');
+-    renderJoinJourney('/?room=qr-12');
++    renderJoinJourney('/?room=qr-12', true);
+     expect(screen.getByRole('button', { name: 'انضم إلى غرفة' })).toBeDisabled();
+     expect(screen.getByText('هذه معاينة منشورة للواجهة فقط. إنشاء الغرف والانضمام وإدارة الأسئلة والبيانات غير متاحة هنا.')).toBeInTheDocument();
+     expect(screen.queryByRole('heading', { name: 'ما اسمك؟' })).not.toBeInTheDocument();
+ 
+-    renderJoinJourney('/room/qr-12/join');
++    renderJoinJourney('/room/qr-12/join', true);
+     expect(await screen.findByRole('heading', { name: 'ما اسمك؟' })).toBeInTheDocument();
+     expect(screen.getByLabelText('اسم اللاعب')).toBeDisabled();
+     expect(screen.getByRole('button', { name: 'دخول الغرفة' })).toBeDisabled();
+   });
+ 
+-  it('keeps creation separate from joining and sends board selection to setup', () => {
+-    render(<ThemeProvider><MemoryRouter><EntryRoute /></MemoryRouter></ThemeProvider>);
++  it('presents both games truthfully and keeps guest joining separate from Huroof hosting', () => {
++    render(<ThemeProvider><MemoryRouter><EntryRoute staticPreview={false} /></MemoryRouter></ThemeProvider>);
+     expect(Array.from(document.querySelectorAll('[data-home-region]')).map((node) => node.getAttribute('data-home-region'))).toEqual([
+       'header',
+       'spatial-stage',
+@@ -94,22 +100,23 @@ describe('EntryRoute', () => {
+       'category-chooser',
+       'footer',
+     ]);
+-    expect(screen.getByRole('region', { name: 'أنشئ مباراة جديدة' })).not.toContainElement(screen.getByLabelText('رمز الغرفة'));
+-    expect(screen.getByRole('region', { name: 'انضم إلى غرفة' })).toContainElement(screen.getByLabelText('رمز الغرفة'));
+-    expect(screen.queryByRole('radiogroup', { name: 'اختر نوع اللوح' })).not.toBeInTheDocument();
+-    expect(screen.getByRole('link', { name: 'أنشئ مباراة' })).toHaveAttribute('href', '/host/new');
+-    expect(screen.getByRole('link', { name: 'تسجيل الدخول' })).toHaveAttribute('href', '/login');
++    expect(screen.getByRole('heading', { name: 'حروف' })).toBeInTheDocument();
++    expect(screen.getByRole('heading', { name: 'إنت صح' })).toBeInTheDocument();
++    expect(screen.getByText('غير متاحة بعد')).toBeInTheDocument();
++    expect(screen.getByRole('region', { name: 'أنشئ مباراة حروف' })).not.toContainElement(screen.getByLabelText('رمز الغرفة'));
++    expect(screen.getByRole('region', { name: 'عندك رمز غرفة؟' })).toContainElement(screen.getByLabelText('رمز الغرفة'));
++    expect(screen.queryByRole('link', { name: 'إنشاء مباراة' })).not.toBeInTheDocument();
++    expect(screen.queryByRole('link', { name: /إنت صح/ })).not.toBeInTheDocument();
+     expect(screen.queryByTestId('spatial-board-scene')).not.toBeInTheDocument();
+-    expect(screen.getByRole('heading', { name: 'تحدي الخلية' })).toBeInTheDocument();
++    expect(screen.getByRole('heading', { name: 'اختر لعبتك' })).toBeInTheDocument();
+     expect(screen.getByRole('link', { name: /قواعد اللعب/ })).toHaveAttribute('href', '/how-to-play');
+-    expect(screen.getAllByRole('link', { name: /قيد الإعداد/ })).toHaveLength(8);
+   });
+ 
+-  it('keeps category recovery keyboard-operable for the documented inventory', async () => {
+-    const user = userEvent.setup();
+-    render(<ThemeProvider><MemoryRouter><EntryRoute /></MemoryRouter></ThemeProvider>);
+-    expect(screen.getAllByRole('link', { name: /قيد الإعداد/ })).toHaveLength(8);
+-    await user.type(screen.getByRole('searchbox', { name: 'تصفية الفئات' }), 'لا تطابق');
+-    expect(screen.getByText('لا توجد فئات مطابقة للبحث. امسح البحث لعرض الفئات المتاحة.')).toBeInTheDocument();
++  it('does not invent categories in static preview', () => {
++    vi.stubEnv('VITE_STATIC_PREVIEW', 'true');
++    render(<ThemeProvider><MemoryRouter><EntryRoute staticPreview /></MemoryRouter></ThemeProvider>);
++    expect(screen.getByText('معاينة الواجهة لا تحتوي على فئات لعب منشورة.')).toBeInTheDocument();
++    expect(screen.queryByRole('searchbox', { name: 'تصفية الفئات' })).not.toBeInTheDocument();
++    expect(screen.queryByRole('link', { name: /قيد الإعداد/ })).not.toBeInTheDocument();
+   });
+ });
+diff --git a/tests/app/home-surface-inventory.test.tsx b/tests/app/home-surface-inventory.test.tsx
+index 71059923..832f54f0 100644
+--- a/tests/app/home-surface-inventory.test.tsx
++++ b/tests/app/home-surface-inventory.test.tsx
+@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
+ import { MemoryRouter } from "react-router-dom";
+ import { afterEach, expect, it, vi } from "vitest";
+ import { ThemeProvider } from "../../src/app/ThemeProvider";
++import { FirebaseAuthContext, loadingAuthContext } from "../../src/features/auth/auth-context";
+ import { HomeSurface } from "../../src/routes/HomeSurface";
+ 
+ vi.mock("../../src/features/game/runtime", () => ({
+@@ -60,25 +61,63 @@ it("uses only local categories eligible for the category board", async () => {
+   expect(screen.queryByText("فئة مؤجلة")).not.toBeInTheDocument();
+ });
+ 
+-it("shows the full checked-in metadata inventory in a static preview without requesting the local API", async () => {
++it("shows no invented categories in static preview and disables hosting even for a verified account", async () => {
+   vi.stubEnv("VITE_STATIC_PREVIEW", "true");
+   const fetchMock = vi.spyOn(globalThis, "fetch");
+-  const user = userEvent.setup();
++  const verifiedUser = { isAnonymous: false, emailVerified: true, providerData: [{ providerId: "google.com" }] } as never;
+   render(
+     <ThemeProvider>
+       <MemoryRouter>
+-        <HomeSurface joinForm={<form />} joinMessage={null} staticPreview />
++        <FirebaseAuthContext.Provider value={{ ...loadingAuthContext, status: "google", user: verifiedUser }}>
++          <HomeSurface joinForm={<form />} joinMessage={null} staticPreview />
++        </FirebaseAuthContext.Provider>
+       </MemoryRouter>
+     </ThemeProvider>,
+   );
+ 
+-  expect(screen.getByText(/تعكس حالة الجاهزية السجل المتاح حالياً\. \d+ فئة في الفهرس\./)).toBeVisible();
+-  expect(screen.getAllByText("محتوى محلي مدرج في معاينة الواجهة فقط")).toHaveLength(8);
+-  await user.click(screen.getByRole("button", { name: /عرض كل الفئات/ }));
+-  expect(screen.getByRole("link", { name: /جغرافيا العالم/ })).toHaveAttribute(
+-    "href",
+-    "/host/new?kind=categories&category=huroof-100",
+-  );
+-  expect(screen.queryByRole("link", { name: /دول \/ ولا كلمة/ })).not.toBeInTheDocument();
++  expect(screen.getByText("معاينة الواجهة لا تحتوي على فئات لعب منشورة.")).toBeVisible();
++  expect(screen.queryByRole("searchbox", { name: "تصفية الفئات" })).not.toBeInTheDocument();
++  expect(screen.getByRole("button", { name: "الاستضافة غير متاحة" })).toBeDisabled();
+   expect(fetchMock).not.toHaveBeenCalled();
+ });
++
++it("requires a verified account before showing the Huroof host action", async () => {
++  vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(JSON.stringify({
++    source: "local_sqlite_import",
++    huroofAvailable: false,
++    categories: [],
++  })));
++  const unverifiedGoogleUser = { isAnonymous: false, emailVerified: false, providerData: [{ providerId: "google.com" }] } as never;
++  render(
++    <ThemeProvider>
++      <MemoryRouter>
++        <FirebaseAuthContext.Provider value={{ ...loadingAuthContext, status: "google", user: unverifiedGoogleUser }}>
++          <HomeSurface joinForm={<form />} joinMessage={null} />
++        </FirebaseAuthContext.Provider>
++      </MemoryRouter>
++    </ThemeProvider>,
++  );
++
++  await screen.findByText("لا توجد فئات جاهزة للعرض حالياً.");
++  expect(screen.getByRole("link", { name: "تسجيل الدخول للاستضافة" })).toHaveAttribute("href", "/login");
++  expect(screen.queryByRole("link", { name: "إنشاء مباراة" })).not.toBeInTheDocument();
++});
++
++it("shows search recovery when no eligible category matches the query", async () => {
++  vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(JSON.stringify({
++    source: "local_sqlite_import",
++    huroofAvailable: true,
++    categories: [{
++      id: "tahadani-ready", labelAr: "فئة جاهزة", sourceOnly: true,
++      questionCount: 14, heldQuestionCount: 0, huroofQuestionCount: 14,
++      categoryGameEligible: true, availability: "ready",
++    }],
++  })));
++  const user = userEvent.setup();
++  render(
++    <ThemeProvider><MemoryRouter><HomeSurface joinForm={<form />} joinMessage={null} /></MemoryRouter></ThemeProvider>,
++  );
++  await screen.findByRole("link", { name: /فئة جاهزة/ });
++  await user.type(screen.getByRole("searchbox", { name: "تصفية الفئات" }), "لا تطابق");
++  expect(screen.getByText("لا توجد فئات تطابق البحث.")).toBeVisible();
++});

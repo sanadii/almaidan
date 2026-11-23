@@ -1,0 +1,23 @@
+{
+  "id": "0024",
+  "humanOutcome": "revision requested",
+  "feedback": {
+    "path": "design/evidence/history/0024-maydan-hero-header-feedback.md",
+    "sha256": "77fbcbe019589df9ec8c66a2fe03ff8a73a5560dbc636087fafb928945338e94"
+  },
+  "screenshots": [
+    {
+      "path": "design/evidence/feedback/0024-1.png",
+      "sha256": "7b20cf339a4e0e82ca570224683d3a57a3d8f6d90f1d4a9fb87db09c4fbbcb7d"
+    },
+    {
+      "path": "design/evidence/feedback/0024-2.png",
+      "sha256": "b1c8c39ac657e8902b5566b09ca87d66a774220d974bb463963ce4727a54e48d"
+    }
+  ],
+  "predecessor": {
+    "path": "design/evidence/history/0023-maydan-viewport-family-feedback.md",
+    "sha256": "69fbb27ec5dd64afd489c220ee16ad891ee9ef4e715069874c4c557dae02d9a0"
+  },
+  "previousFreezeSha256": "4f50bbcdf1e434a704883c717b6921379ab16e4da4e7e9c05ea4d673db529ff4"
+}

@@ -1,5 +1,6 @@
-import { availableCategoryCatalog } from "../../data/category-catalog";
-import publicSourceCategoryIds from "../../data/source-category-ids.public.json";
+import { availableCategoryCatalog } from "../../data/category-catalog.js";
+import publicSourceCategoryIds from "../../data/source-category-ids.public.json" with { type: "json" };
+import { CURRENT_CATEGORY_PROJECTION, canonicalizeCategoryIds } from "./runtime/category-projection.js";
 
 export type MatchMode = "classic" | "fast" | "custom";
 export type SetupGameKind = "huroof" | "categories";
@@ -99,8 +100,7 @@ export function parseSetupQuery(search: URLSearchParams): SetupQuerySeed {
   const horizontal = parseTeamName(requestedHorizontal, "الأحمر");
   const vertical = parseTeamName(requestedVertical, "الأخضر");
   const demo = requestedDemo === "0" ? false : true;
-  const categories = requestedCategories
-    .filter((id, index) => categoryIds.has(id) && requestedCategories.indexOf(id) === index)
+  const categories = canonicalizeCategoryIds(requestedCategories.filter((id) => categoryIds.has(id)), CURRENT_CATEGORY_PROJECTION)
     .slice(0, maximumSelectedCategories);
   const hasInvalidMode = requestedMode !== null && !isMatchMode(requestedMode);
   const hasInvalidGameKind = requestedGameKind !== null && !isSetupGameKind(requestedGameKind);

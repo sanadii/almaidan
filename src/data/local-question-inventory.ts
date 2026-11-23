@@ -2,6 +2,9 @@ import { categoryCatalog, type CategoryCover } from "./category-catalog";
 import { normalizeCategoryFilterText } from "./category-filters";
 import publicCategoryInventory from "./category-inventory.public.json";
 import tahadaniImages from "./tahadani-image-catalog.public.json";
+import generatedCategoryCovers from "./generated-category-covers.public.json";
+
+const generatedCoverById = new Map(generatedCategoryCovers.categories.map((cover) => [cover.categoryId, cover.web320]));
 
 const importedCovers = new Map(
   tahadaniImages.covers.map((cover) => [normalizeCategoryFilterText(cover.name), cover]),
@@ -27,7 +30,7 @@ const generatedCovers = new Map([
 ].map(([label, file]) => [normalizeCategoryFilterText(label), file]));
 
 export type LocalQuestionInventory = {
-  source: "local_firestore_import" | "local_sqlite_import";
+  source: "local_firestore_import" | "local_sqlite_import" | "local_saved_release";
   huroofAvailable: boolean;
   recommendedHuroofCategoryIds?: string[];
   categories: Array<{
@@ -35,6 +38,8 @@ export type LocalQuestionInventory = {
     labelAr: string;
     sourceOnly: boolean;
     questionCount: number;
+    sourceQuestionCount?: number;
+    unavailableReason?: string;
     heldQuestionCount: number;
     huroofQuestionCount: number;
     categoryGameEligible: boolean;
@@ -92,6 +97,13 @@ export function catalogCategoryCovers(
   );
   return categories.map((category) => {
     const knownCategory = existing.get(category.id);
+    const generatedPath = generatedCoverById.get(category.id);
+    if (generatedPath) return {
+      id: category.id,
+      displayNameAr: category.labelAr,
+      questionReadiness: knownCategory?.questionReadiness ?? "drafting",
+      cover: { web320: generatedPath, altAr: `غلاف فئة ${category.labelAr}`, publishable: true },
+    };
     if (knownCategory) return knownCategory;
     const name = normalizeCategoryFilterText(category.labelAr);
     const importedCover = importedCovers.get(coverAliases.get(name) ?? name);

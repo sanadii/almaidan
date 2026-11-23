@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "artifactId": "maydan-integration-replacement-concepts-2026-10-02",
+  "recordedAt": "2026-10-02",
+  "status": "presented-for-human-replacement-selection",
+  "purpose": "Exactly three original screenshot-backed homepage directions after the owner rejected the first implemented design. The product name remains ميدان. Generated images are concept evidence, not shippable UI or game/content authority.",
+  "historyPrefix": {
+    "recordId": "design-history-0011",
+    "path": "design/evidence/history/0011-maydan-homepage-rejection.md",
+    "sha256": "5CB986F67449FB6AB84008C86A86FE6F69D08775ECE5411788CC3687C4E9C74A"
+  },
+  "research": "design/evidence/integration-reconcept-research-2026-10-02.md",
+  "concepts": [
+    {
+      "id": "INT-2R-A",
+      "name": "Warm poster play",
+      "direction": "warm-poster-type",
+      "path": "design/mockups/integration-2026-10-02/int-2r-direction-a-warm-poster-play.png",
+      "sha256": "1FA6BB51E67040BF24B0E8D9399D1A6324702CF31F4C6807A9661F6208D58311",
+      "width": 1586,
+      "height": 992,
+      "bytes": 2603787,
+      "leadSource": "https://images.refero.design/styles/fictional-typeface.com/5f5fd099-866e-4681-917b-0254a3883980/preview_0.jpg",
+      "provenance": "Owner-supplied screenshot; visually inspected on 2026-10-02. Original generated Arabic poster preview with large display type, cream field and bright sticker shapes."
+    },
+    {
+      "id": "INT-2R-B",
+      "name": "Electric live play",
+      "direction": "electric-blue-stage",
+      "path": "design/mockups/integration-2026-10-02/int-2r-direction-b-electric-live-play.png",
+      "sha256": "FF88A345DEE2A3145C62EFEBAA73427BDFBED2F515FF5E4834217D9286DF1DE1",
+      "width": 1586,
+      "height": 992,
+      "bytes": 1441008,
+      "leadSource": "https://images.refero.design/styles/honk.me/856297f1-e0ab-4155-a736-0f9edc5ca885/preview_0.jpg",
+      "provenance": "Owner-supplied screenshot; visually inspected on 2026-10-02. Original generated electric blue/green play preview with a different layout from A."
+    },
+    {
+      "id": "INT-2R-C",
+      "name": "Paper-cut game studio",
+      "direction": "pale-paper-cut-rail",
+      "path": "design/mockups/integration-2026-10-02/int-2r-direction-c-paper-cut-studio.png",
+      "sha256": "AC332B9628668BC250D06A4D50CB4ADC0457DD5A452400C77D2CCAE49479EF83",
+      "width": 1586,
+      "height": 992,
+      "bytes": 1232908,
+      "leadSource": "https://images.refero.design/styles/refero.design/image/49ee1679-50df-4241-adc0-719841e2ca9e.jpg",
+      "provenance": "Independently inspected SuperHi screenshot on 2026-10-02; original generated pale paper-cut preview with central motif and side game rail."
+    }
+  ],
+  "generation": {
+    "runner": "D:/projects/agent-profile/scripts/invoke-codex-image.ps1",
+    "model": "gpt-5.6-sol directing built-in image_gen",
+    "result": "Final PNGs passed the wrapper's bitmap decode and minimum-size checks; Root separately verified full Pillow decode, 1586x992 dimensions, byte sizes and SHA-256 hashes. Draft renders were replaced before this exact-three manifest was bound."
+  },
+  "invariants": "All three show Huroof as available and EntaSa7 as coming soon. Preview text and decoration are illustrative. Implement any selected direction in accessible Arabic RTL DOM with real host/join states, truthful availability, unchanged game rules and no copied reference assets. Only the owner's exact selection can authorize the replacement homepage; a separate human live review gates expansion."
+}

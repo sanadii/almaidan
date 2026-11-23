@@ -64,3 +64,12 @@ tmp/
 # Local football source video and extracted goal clips
 /resources/100 Best Goals of 2026 \[So Far\].mp4
 /resources/100-best-goals-2026-clips/
+
+# Preserved pre-migration application and private local settings
+/old_app/
+
+# Large local media (not versioned)
+/data/videos/
+/design/category-covers/
+/data/review-evidence/
+/reports/audit-corrections-2026-09-18/CAPTURE-FRESH.json

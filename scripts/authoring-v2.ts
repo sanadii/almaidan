@@ -32,10 +32,10 @@ const sourceRegistry = {
   ].map(([id, title, url, tier]) => ({ id, title, url, tier, purpose: 'source-class discovery only; not claim-level verification' })),
 };
 
-async function sha256File(path: string) { return contentHash(await readFile(path, 'utf8')); }
+async function sha256File(path: string) { return contentHash((await readFile(path, 'utf8')).replace(/\r\n/g, '\n')); }
 async function writeImmutable(path: string, content: string) {
   const current = await readFile(path, 'utf8').catch(() => null);
-  if (current !== null && current !== content) throw new Error(`Refusing to overwrite versioned artifact: ${path}`);
+  if (current !== null && current.replace(/\r\n/g, '\n') !== content.replace(/\r\n/g, '\n')) throw new Error(`Refusing to overwrite versioned artifact: ${path}`);
   if (current === null) await writeFile(path, content);
 }
 async function categories() { return (JSON.parse(await readFile(join(ROOT, 'content/categories/categories.json'), 'utf8')) as { categories: Array<{ id: string; displayNameAr: string; sourceMode: string; sourcePolicy: string; classicCompatibility: string }> }).categories; }

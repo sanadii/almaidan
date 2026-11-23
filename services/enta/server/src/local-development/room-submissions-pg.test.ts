@@ -1,0 +1,18 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {randomUUID} from 'node:crypto';
+import {LocalRoomStore,createLocalRooms,type RoomAdapter} from './rooms';import {LocalRoundStore} from './round-store';import {createLocalRoundService} from '../rounds/service';import {localCompetitionCatalogue} from './competition-catalogue';import {LOCAL_PROJECT} from './guard';
+const key=()=>randomUUID();
+test('v4 typed list submissions remain private, timed, duplicate-safe and replay after the round changes without scoring',async()=>{
+ const p={projectId:LOCAL_PROJECT,uid:'typed-'+key(),email:'typed@example.test',verifiedAccount:true,anonymous:false},store=new LocalRoomStore(),games=new LocalRoundStore();await store.initialize();await games.initialize();
+ try{const service=createLocalRoundService(games),category=localCompetitionCatalogue().base.categories.find(c=>c.format==='LIST_ITEMS')!;
+ const start=await service.start(p,'STANDALONE_LIST',{requestKey:key(),logicalMatchId:key(),setup:{version:4,categories:[{key:category.key,promptRefs:[]}],teams:[{name:'الأول',players:['نور','سارة']},{name:'الثاني',players:['عمر','علي']}],rules:{turnSeconds:45,overallSeconds:600,questionSeconds:120}}});
+ const adapter:RoomAdapter={get:(p,id)=>service.get(p,id),command:(p,id,c)=>service.command(p,id,c)},rooms=createLocalRooms(store,{classic:adapter,kids:adapter,round:adapter,competitive:adapter});const attached=await rooms.attach(p,{engine:'round',matchId:start.match.id,requestKey:key()}),code=attached.room.code;
+ const a=await rooms.join(code,{name:'نور',requestKey:key()}),b=await rooms.join(code,{name:'عمر',requestKey:key()});let view=b.room!;for(const [i,m]of[a,b].entries())view=(await rooms.hostCommand(p,code,{commandId:key(),expectedVersion:view.version,type:'ASSIGN',memberId:m.memberId,teamIndex:i,playerIndex:0,captain:false})).room;
+ view=(await rooms.hostCommand(p,code,{commandId:key(),expectedVersion:view.version,type:'START'})).room;const opened=await rooms.engineCommand(p,code,{command:{commandId:key(),expectedVersion:start.match.version,type:'NEXT_ROUND'}});let match=opened.match;const roundId=match.currentRound.id,itemId=match.currentRound.items[0].id;
+ const body={commandId:key(),expectedVersion:match.version,type:'SUBMIT_ANSWER',roundId,itemId,submittedText:'تُفاحة'};
+ await assert.rejects(rooms.participantCommand(code,b.token!,body),/ATTEMPT_UNAVAILABLE/);await rooms.participantCommand(code,a.token!,body);assert.equal((await service.get(p,match.id)).version,match.version);assert.equal((await service.get(p,match.id)).teams[0].score,0);
+ assert.equal((await rooms.view(code,b.token!)).room.submissions.length,0);assert.equal((await rooms.view(code,a.token!)).room.submissions[0].text,'تُفاحة');assert.equal((await rooms.hostView(p,code)).room.submissions[0].text,'تُفاحة');
+ await assert.rejects(rooms.participantCommand(code,a.token!,{...body,commandId:key(),submittedText:'تفاحة'}),/DUPLICATE_SUBMITTED_ANSWER/);
+ const late:RoomAdapter={...adapter,get:async(p,id)=>{const game=await service.get(p,id);return {...game,serverNow:game.currentRound!.turnDeadline!+1};}},expired=createLocalRooms(store,{classic:late,kids:late,round:late,competitive:late});await assert.rejects(expired.participantCommand(code,a.token!,{...body,commandId:key(),submittedText:'موز'}),/ROUND_TIME_EXPIRED/);
+ match=(await rooms.engineCommand(p,code,{command:{commandId:key(),expectedVersion:match.version,type:'CLOSE_ROUND',roundId}})).match;assert.equal((await rooms.participantCommand(code,a.token!,body)).idempotent,true);assert.equal((await rooms.hostView(p,code)).room.submissions.length,1);
+ }finally{await store.close();await games.close();}
+});

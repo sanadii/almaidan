@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "visual-name-confirmation-2026-10-01-009",
+  "recordedAt": "2026-10-01",
+  "selectionAuthority": "human-product-owner",
+  "selectedProductNameAr": "ميدان",
+  "selectedConceptId": "INT-CONCEPT-B",
+  "exactHumanAnswer": "Keep ميدان as the name",
+  "previousImmutableRecord": {
+    "recordId": "design-history-0008",
+    "path": "design/evidence/history/0008-maydan-combined-homepage-direction.md",
+    "sha256": "2BF3A1828EFEEFDC51B0DC0419D1E1AB2A2158CA98D9D377A39FC33EBB05A499"
+  },
+  "nameConfirmationRecord": {
+    "recordId": "design-history-0009",
+    "path": "design/evidence/history/0009-maydan-name-confirmation.md",
+    "sha256": "A09A03059101D7DD27BE33613FDF46ADA6CE6BD79EDE00A790D0E5C3EE3B9858"
+  },
+  "scope": "Name confirmation after similar-name search; no live homepage approval, domain purchase, or trademark clearance.",
+  "validationRule": "Bind only the exact immutable 0008 and 0009 record bytes listed here. Later history additions do not invalidate this receipt."
+}

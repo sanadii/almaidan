@@ -1,0 +1,182 @@
+{
+  "task": "PRO-310",
+  "milestone": "ALMAIDAN-ENG03-05",
+  "status": "ACCEPTED_SOURCE_ONLY_WITH_LIMITS",
+  "acceptedAtUtc": "2026-10-27T12:02:38.473028+00:00",
+  "workspace": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof",
+  "scope": "Twelve content/admin families; immutable raw/revision/profile/pointer and isolated material/publisher/registry boundaries; unmounted source composition only",
+  "candidate": [
+    {
+      "path": "services/enta/server/src/content-admin/contracts.ts",
+      "sha256": "c555c25df9af1298941921add91030984e133d34623c3d48a69784bfac4ad5e3",
+      "changed": false
+    },
+    {
+      "path": "services/enta/server/src/content-admin/authorization.ts",
+      "sha256": "904061b212b5d401c46d2515b87c6d24f9032bf8ce46078f7a79c2097d5e7814",
+      "changed": false
+    },
+    {
+      "path": "services/enta/server/src/content-admin/repository.ts",
+      "sha256": "a720560f3b9769290e829788a6ad3622468c1a4e3b710f251f987d1bcbca1831",
+      "changed": false
+    },
+    {
+      "path": "services/enta/server/src/content-admin/postgres.ts",
+      "sha256": "c8b307c2dbef224cf6c770614f775eb4d4380eba795b2aac2637c3ececbd711c",
+      "changed": false
+    },
+    {
+      "path": "services/enta/server/src/content-admin/service.ts",
+      "sha256": "f6b7dc03e2363572b53669d0e4f82125008c9d86165f3143a2f3eb5c595fb9e9",
+      "changed": false
+    },
+    {
+      "path": "services/enta/server/src/content-admin/media.ts",
+      "sha256": "7bb7de28a7a0bed6c4bf8c2b4a307d70d09520dff497b2d99ff1d4f6aaf988a2",
+      "changed": false
+    },
+    {
+      "path": "services/enta/server/src/content-admin/router.ts",
+      "sha256": "70a8d1c12ff5b658b29d6a0a97510fac95b8d968f351ad5d169e1d595bfb7fb6",
+      "changed": true
+    },
+    {
+      "path": "services/enta/server/src/content-admin/composition.ts",
+      "sha256": "83b7e72f2deb834deae4177bd52979bdc61be62701d9a8eafb5730d47895cc34",
+      "changed": false
+    },
+    {
+      "path": "services/enta/server/src/content-admin/claims.ts",
+      "sha256": "d64c7911dfd7a0a0ea185ccb1fd396c8c618f26fa3369c26547b1f73109a8df3",
+      "changed": false
+    },
+    {
+      "path": "services/enta/server/prisma/migrations/20261027210000_eng03_05_content_admin_boundary/migration.sql",
+      "sha256": "ac160e99bd323114c6114004e1d7114088de6570c7b0407ec5a2adb3389d0484",
+      "changed": true
+    },
+    {
+      "path": "services/enta/server/prisma/roles/eng03_05_content_admin_roles.sql",
+      "sha256": "eabc6c6806ecfeca18d6306734d1c77159f3c720d327b80df8b14d09e37adbfc",
+      "changed": true
+    },
+    {
+      "path": "services/enta/server/tests/content-admin.test.ts",
+      "sha256": "e7641a66a29479e41ee0279bdb6dcf7de47939a39e7c61108c93f6dfee0631ac",
+      "changed": true
+    },
+    {
+      "path": "services/enta/server/tests/content-admin-media.test.ts",
+      "sha256": "5a3859ec24ce68e18fce8b9bc7d37bf508e11917c7ba0fd8c350447558b9c625",
+      "changed": false
+    }
+  ],
+  "retainedReferences": [
+    {
+      "path": "functions/src/admin/admin.ts",
+      "sha256": "1d7699d1b2a2ce79d4ca57248aef9fb5249279cdf5c58b568c5c4922c5d7a1de"
+    },
+    {
+      "path": "src/features/admin/admin-service.ts",
+      "sha256": "74efcbc677a4477c0be535586817ccfc004f349f990b425b4fda7547732f5c30"
+    },
+    {
+      "path": "services/enta/server/src/identity.ts",
+      "sha256": "256877b668ccc78ed4a5b6732c27cd5e0d3b70fb59ec04afa5b14e48edb97935"
+    },
+    {
+      "path": "services/enta/server/src/firebase-verifier.ts",
+      "sha256": "5bb0c1840beb7e53e9bb8c17d3913eb5b3a0717948231d86be7728ea2ded6c65"
+    },
+    {
+      "path": "services/enta/server/src/app.ts",
+      "sha256": "48274da089c8d76b07d9b42f9044b780a25d63f21aff894ff902b5edc7d059d3"
+    },
+    {
+      "path": "services/enta/server/src/huroof-pg/content-reader.ts",
+      "sha256": "48b85e799458e7ec0edf08ecc0096e2d2d77991b904d6b06e37bfa90c866bad1"
+    },
+    {
+      "path": "services/enta/server/src/catalog/repository.ts",
+      "sha256": "1cfb24333a06ec30ae09f733e02f61e556205256f57ff0b794a661ba3e30863c"
+    },
+    {
+      "path": "services/enta/server/src/rounds/media.ts",
+      "sha256": "e1865be060af8fc8ddaed08837ad77dcbbaee817e520b506f7c60e17f7ddd47e"
+    },
+    {
+      "path": "services/enta/server/prisma/migrations/20261026100000_eng03_02_huroof_owned_history/migration.sql",
+      "sha256": "a4303a34028fa61fcc7e6b8f49a668a3af3f9f07420f1ae9bbef06e9ac0f1b7c"
+    },
+    {
+      "path": "services/enta/server/prisma/migrations/20261027100000_eng03_03_huroof_service_boundary/migration.sql",
+      "sha256": "d3364f63e92ef6d29597b8fec41374edce599b239730843c26bf038cd798f62d"
+    },
+    {
+      "path": "services/enta/server/prisma/migrations/20261027120000_eng03_04_huroof_realtime/migration.sql",
+      "sha256": "1265309a7787a47daad07370e658258c85eadcf97e7ccf2de78c00a7a50cf0ed"
+    }
+  ],
+  "checks": {
+    "original": "28 content/8 media: retain only unaffected cases under R1 identity/impact join",
+    "affected": "11 HTTP, 1 source inventory, 1 publisher, 1 material; direct noEmit exit0",
+    "root": "Actual selective publisher 1/1 and changed HTTP/router 3/3; candidate/reference hash verification",
+    "reviews": "Database and Security R1 concur with source limits; F1-F3 closed",
+    "sql": "Textual source review/structural checks only; no SQL compiler/parser/execution"
+  },
+  "evidence": [
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-05-20261027\\forge\\final-candidate.json",
+      "sha256": "f75506c71df79b5b3e5cf10c31187c1fc380da12ffa915b9dd2daed172995c6e"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-05-20261027\\forge\\r1-candidate.json",
+      "sha256": "ec1aeae9b026d230b11f3a757b07a45d223a26c5882283277340adbe655694d2"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-05-20261027\\forge\\r1-change.diff",
+      "sha256": "37a679f20312e5d469579a46594098fabe0664f3219b3ae1151692fcc7ff3de9"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-05-20261027\\forge\\FINAL-REVIEW.md",
+      "sha256": "3272dad86d4ce615c9efb97748d98d3af63c2961a15c557740caab6513343056"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-05-20261027\\database\\FINAL-DATABASE-REVIEW.md",
+      "sha256": "b917fcbfea96ca42692f9e0985566ee70821e63e6a728c3d00b5412f582a080d"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-05-20261027\\database\\R1-FINAL-DATABASE-REVIEW.md",
+      "sha256": "e47a60cb462b8ccd31f745d71f9cb033e65dbd53eb9524a43b30eeef3b4a652b"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-05-20261027\\security\\FINAL-SECURITY-REVIEW.md",
+      "sha256": "c0ffb63079ab2eec6f9422349d0f22ce9eb5746d451b63554e9bd66f54f8a1b0"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-05-20261027\\security\\R1-FINAL-SECURITY-REVIEW.md",
+      "sha256": "17b2a516e3dfa629a11f45147a3b06c355fcc077200af61ddc67328c73631122"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-05-20261027\\ROOT-PUBLISHER-REPRODUCTION.log",
+      "sha256": "c14a9f9362b989832d96415daae2549944a6e7eb5ef7e0a8156c9c9e6a209389"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro259-eng03-05-20261027\\ROOT-R1-HTTP-REPRODUCTION.log",
+      "sha256": "488deee3ca830821fe23bfcaceba40881da8b07061b36a97fcdbfe4c9bec9412"
+    }
+  ],
+  "limitations": [
+    "SQL syntax/privilege verification remains NOT_RUN; textual controls are not SQL parse or execution",
+    "real SDK, custody or rights authorities, database, installed ACL/locks/concurrency, runtime and publication remain NOT_RUN",
+    "Synthetic query/SDK/signature fixtures do not establish genuine custody/rights/editorial policies. No installed ACL/locks/concurrency/physical fit or whole app/runtime acceptance.",
+    "Original R0 failures and immutable evidence preserved; source receipt does not close PRO-259 or launch gates."
+  ],
+  "holds": [
+    "R6 STOP",
+    "32 native parity cases NOT_RUN",
+    "No DB apply, credentials, runtime, publication or financial authority"
+  ],
+  "rollback": "Only owned source preimages; future installed revoke/unmount requires dependency review, retain immutable data/audit/pins/ledger."
+}

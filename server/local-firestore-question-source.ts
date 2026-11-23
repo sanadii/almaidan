@@ -17,7 +17,7 @@ export const IMPORT_DATABASE = "(default)";
 export const IMPORT_BUNDLE_SHA256 =
   "7afd1423925b68e11f3f0cab5253879154763994272203b1a4df8007f9cd31ec";
 export const LOCAL_FIRESTORE_NORMALIZER_VERSION =
-  "local-firestore-normalizer-v2";
+  "local-firestore-normalizer-v3";
 const require = createRequire(import.meta.url);
 const QUESTION_COLLECTION = `questionImports/${IMPORT_BUNDLE_SHA256}/questions`;
 const letters = new Set([
@@ -80,11 +80,11 @@ export type ImportedQuestion = RuntimeQuestionV32 & {
   status: "draft_test_import";
   sourceContentHash: string;
   difficulty: string;
-  media?: { mediaId: string; assetSha256: string; altAr: string; type?: "image" | "video"; contentType?: string };
-  answerMedia?: { mediaId: string; assetSha256: string; altAr: string; type?: "image" | "video"; contentType?: string };
+  media?: { mediaId: string; assetSha256: string; altAr: string; type?: "image" | "video"; contentType?: string; youtube?: import('../src/features/game/runtime/youtube-media.js').YouTubeMediaDescriptor };
+  answerMedia?: { mediaId: string; assetSha256: string; altAr: string; type?: "image" | "video"; contentType?: string; youtube?: import('../src/features/game/runtime/youtube-media.js').YouTubeMediaDescriptor };
 };
 export type LocalQuestionInventory = {
-  source: "local_firestore_import" | "local_sqlite_import";
+  source: "local_firestore_import" | "local_sqlite_import" | "local_saved_release";
   snapshotId: string;
   bundleSha256: string;
   boundedReadCount: number;
@@ -99,6 +99,8 @@ export type LocalQuestionInventory = {
     labelAr: string;
     sourceOnly: boolean;
     questionCount: number;
+    sourceQuestionCount?: number;
+    unavailableReason?: string;
     heldQuestionCount: number;
     classicQuestionCount: number;
     huroofQuestionCount: number;
@@ -112,6 +114,7 @@ export type LocalFirestoreQuestionSource = {
   inventory: LocalQuestionInventory;
 };
 export type LocalRuntimeQuestionSource = {
+  challengeDefinitions?: import('../src/features/game/challenges/integration.js').ChallengeDefinitionEnvelope[];
   snapshotId: string;
   questions: ImportedQuestion[];
   inventory: LocalQuestionInventory;
@@ -250,13 +253,12 @@ export function normalizeImportedQuestion(
   const mode = text(raw.mode, raw.modality).toLowerCase();
   if (!question || !answer || !["classic", "trivia"].includes(mode))
     return undefined;
-  const acceptedAnswers = values(raw.accepted_answers).length
-    ? values(raw.accepted_answers)
-    : values(raw.acceptedAnswers).length
-      ? values(raw.acceptedAnswers)
-      : values(raw.accepted).length
-        ? values(raw.accepted)
-        : [answer];
+  const acceptedAnswers = values([
+    answer,
+    ...values(raw.accepted_answers),
+    ...values(raw.acceptedAnswers),
+    ...values(raw.accepted),
+  ]);
   if (
     !acceptedAnswers.length ||
     !acceptedAnswers.every((value) => normalize(value))

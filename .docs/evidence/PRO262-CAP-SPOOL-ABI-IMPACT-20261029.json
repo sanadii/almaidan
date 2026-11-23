@@ -1,0 +1,52 @@
+{
+  "task": "PRO-262",
+  "relatedMilestone": "PRO273-SEL",
+  "status": "LIMITED_SPOOL_JS_CORRESPONDENCE_SOURCE_DELTA_REQUIRES_CORRECTION",
+  "at": "2026-10-28T22:38:54.174241+00:00",
+  "originalSourceAcceptance": "PRO262-CAP-SOURCE-ACCEPTANCE-20261029.json",
+  "originalReceiptPreserved": true,
+  "source": {
+    "path": "services/enta/server/prisma/migrations/20261028140000_pro262_capacity_supplier/migration.sql",
+    "sha256": "4f35801dff9003982663f2bf95114c53ae33a0e4d23d2e0869e45206a5ebc8cd",
+    "function": "pro262_capacity_spool_commit(TEXT,BYTEA)",
+    "range": "1139-1171 as identified by existing planner; exact-decimal JSONB before actual JS validator normalization"
+  },
+  "actualJsOracle": {
+    "status": "ACTUAL_JS_VALIDATOR_ACCEPTS",
+    "bodyDigest": "f5e75a8a8afdb404d604db0ea5199fbb35381cc4db5af97c7af4e20e30cb615b",
+    "result": {
+      "version": 1,
+      "requestKey": "request",
+      "logicalMatchId": "match",
+      "setupKey": "setup",
+      "expectedRevision": 0,
+      "profileScope": "profile"
+    },
+    "boundary": "Pure actual request parser only; no SQL/native/database/app/client initialization",
+    "sqlPredicate": "Not executed. Static Source review identifies exact JSONB numeric validation before JS normalization."
+  },
+  "check": {
+    "exitCode": 0,
+    "harness": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\PRO262-SPOOL-JS-NUMBER-ORACLE-20261029.mts",
+    "sha256": "2f03c7a36c37d2337cebabe59e07ce4701fb61a963158f9ca39a5f4e60879db5",
+    "log": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\PRO262-SPOOL-JS-NUMBER-ORACLE-20261029.log",
+    "logSha256": "1974799afd9e0429bc4bd1cbcdcd633f90b0db5a8d6569b15d288948bb9dc1db"
+  },
+  "affected": [
+    "Raw spool parse/request correspondence",
+    "Dependent semantic request digest/replay/dispatch compatibility for the affected input representations"
+  ],
+  "retained": [
+    "Actual original87 Source case results at their exact inputs",
+    "Physical prelaunch and global accounting",
+    "Independent installed/cleanup observation",
+    "Input baseline claims and whole-delivery fence",
+    "Closed-scope/all-incarnation release",
+    "Both guards and accepted native bridge bytes"
+  ],
+  "correction": "Additive PRO273 migration with full JS token/binary64/request-validator semantics and immutable new-spool parse sidecar; preserve original body/bodyDigest/spool IDs/committed receipts/hash domains and legacy unresolved holds. No canonical numeric wire restriction invented.",
+  "noNativeFailureClaim": true,
+  "nativeSqlDifferential": "NOT_RUN",
+  "fullTaskDone": false,
+  "completionCredit": 0
+}

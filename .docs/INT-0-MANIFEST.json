@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "maydan-int0-baseline-v1",
+  "assembledAt": "2026-10-02T15:58:00Z",
+  "status": "partial-read-only",
+  "source": {
+    "huroof": {
+      "integrationWorktree": "C:/Users/User/.codex/worktrees/huroof-enta-integration/huroof_wa_oloof",
+      "baseCommit": "c48594bfeb1a93f6db88eadddc1021944dcb0dec",
+      "primaryMixedCheckout": "D:/projects/huroof_wa_oloof",
+      "primaryBaseCommit": "d6a53c78ae5c7b2108ff54de2bce70c1a172464d",
+      "primaryUncommittedWorkPreserved": true,
+      "primaryStatusObservation": {
+        "observedAt": "2026-10-02T16:16:30Z",
+        "command": "git status --porcelain=v1 -uall",
+        "trackedChangedPaths": 49,
+        "untrackedFilePaths": 7806,
+        "totalStatusPaths": 7855,
+        "interpretation": "Dated mixed-tree file-path count only; does not authorize staging, reset, deletion, or importing all paths into integration."
+      }
+    },
+    "enta": {
+      "gitCheckout": "D:/projects/EntaSa7-git",
+      "commit": "a009328442c7469937b073b6a8fe3ce4ce115160",
+      "prismaSchemaSha256": "701171085310A37222962F413E3D2FCFBB4660C980ADA395543495D607869D88",
+      "rootLockfileSha256": "15E5F1CECAEBD75A4BE295E069844948F6D8F15247342728DAF90A9E16A44F4E"
+    }
+  },
+  "huroofProduction": {
+    "vercel": {
+      "observedAt": "2026-10-01",
+      "team": "sanad-general",
+      "projectId": "prj_LlhlcNrvjFJnmPkIFPzc2mkzu6Ni",
+      "productionDeploymentId": "dpl_2L35DD52xyK5BSgN5dR2hyf32CUT",
+      "gitCommit": "c48594bfeb1a93f6db88eadddc1021944dcb0dec"
+    },
+    "firebase": {
+      "projectId": "huroof-a3ee7",
+      "databaseId": "(default)",
+      "contentCaptureAt": "2026-10-01T20:47:33.853Z",
+      "contentCaptureSha256": "be8ea7a411f3b0034320fcd943c663355042f2ef3933951cda5ae17bac35a404",
+      "activeReleaseId": "t37m-media-cc919463d962a644fefb20b5d05ed8f8",
+      "activeReleaseRootSha256": "7ef9b9fe0aad1b6945bd3d2b476da3f831626085174990643fa6240db68b771c",
+      "directDescendants": 121574,
+      "catalogCategories": 530,
+      "savedQuestions": 115636,
+      "reviewedPlayableCountProven": false,
+      "roomReadAt": "2026-10-02T15:29:39.215Z",
+      "roomCount": 42,
+      "roomsWithoutClosedAt": 41,
+      "roomsWithoutClosedAtUpdatedWithin24Hours": 0,
+      "rootCollectionCount": 69,
+      "rootCollectionFinancialNameMatches": 0,
+      "deployedFunctionSourceFinancialStringMatches": 0,
+      "functionRegion": "me-central1",
+      "activeFunctionCount": 61,
+      "gameFunctionBuildId": "07917e7d-fb3c-40e2-82c2-00e2e9f953e4",
+      "gameFunctionSourceMd5Base64": "7ewsg60T6JLfkorLNrVQZQ==",
+      "gameFunctionSourceCrc32cBase64": "8xSC2w==",
+      "gameFunctionSourceSha256": "08d1305a34b145e5a90ab5f3ef89fe20ada326388683aa5ed72dee122004f45e",
+      "gameFunctionSourceEntryCount": 41,
+      "deployedSourceSelectorModuleSha256": "8a9b46757ba82f770fd875d4dae2e16f4611cf08cbdaad4923d49332475aab63",
+      "gameFunctions": {
+        "createRoom": { "revision": "createroom-00009-xir", "sourceGeneration": "1790198958177477" },
+        "submitGameIntent": { "revision": "submitgameintent-00010-qur", "sourceGeneration": "1790198990236820" },
+        "getApprovedReleaseCatalog": { "revision": "getapprovedreleasecatalog-00007-din", "sourceGeneration": "1790198990409057" }
+      },
+      "rules": {
+        "firestore": {
+          "rulesetId": "97690625-9057-4742-8c9b-3fef0f76b903",
+          "sourceSha256Lf": "a151e6c9a9a0c9eb51ace8a4d08d7f69902feaecc897e59e62db5c0831edb096",
+          "matchesIsolatedCheckoutAfterCrLfNormalization": true
+        },
+        "storage": {
+          "rulesetId": "123fd4ab-21aa-471c-8dab-3e1d40720f6c",
+          "sourceSha256Lf": "c7945b30ffec81f9b5be9cea162c4cb891e7417797004f211b564fadd2a61ca5",
+          "matchesIsolatedCheckoutAfterCrLfNormalization": true
+        }
+      }
+    }
+  },
+  "entaProduction": {
+    "publicClientUrl": "https://tahdani-client.vercel.app/",
+    "publicApiHealthUrl": "https://tahdani-server.vercel.app/api/health",
+    "ownerSaysLiveWithNoKnownRealUsers": true,
+    "oldDatabaseMigrationPlanned": false,
+    "vercelProjectAccess": "unavailable-from-current-team",
+    "productionDatabaseAndMerchantInventory": "unknown"
+  },
+  "openGates": [
+    "fresh-content-pointer-and-root-before-release",
+    "old-room-drain-or-route-retention",
+    "old-financial-obligation-and-callback-inventory",
+    "deployed-selector-behavior-and-capability-attestation",
+    "new-firebase-postgresql-domain-and-merchant-provisioning",
+    "rights-cleared-reviewed-playable-content",
+    "new-project-rules-app-check-and-device-acceptance"
+  ],
+  "evidence": [
+    "INT-0-BASELINE.md",
+    "../output/t44-current-question-compare-20261001/live-20261001-after-login/analysis/LIVE-RESULT.md",
+    "../output/int0-function-source-20261002/SOURCE-READBACK.json"
+  ]
+}

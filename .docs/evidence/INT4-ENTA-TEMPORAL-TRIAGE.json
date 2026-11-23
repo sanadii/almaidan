@@ -1,0 +1,490 @@
+{
+  "kind": "INT-4 private temporal-review leads (metadata only)",
+  "sourceCommit": "a009328442c7469937b073b6a8fe3ce4ce115160",
+  "sourcePath": "server/prisma/data/extraQuestions.json",
+  "sourceSha256": "32a1bd7788d4f7d919af0e676c84b11d8a76e7f63d7752af535a5e1982ff1604",
+  "method": "Match prompt text only with listed regex flags; hash each parsed row using UTF-8 JSON.stringify; zero-based category array index. A flag is a review lead, never a finding of inaccuracy or approval.",
+  "patterns": {
+    "yearMention": "\\b20(?:2[0-9]|3[0-9])\\b",
+    "relativeTime": "أحدث|حالي(?:اً|ا|ة|ين)?|الآن|اليوم|في الوقت الحالي",
+    "mostMoons": "أكبر عدد من الأقمار|أكثر عدد من الأقمار"
+  },
+  "uniqueRows": 52,
+  "flagCounts": {
+    "yearMention": 39,
+    "relativeTime": 14,
+    "mostMoons": 1
+  },
+  "rows": [
+    {
+      "category": "علوم",
+      "index": 47,
+      "points": 600,
+      "rowSha256": "12dc8d603f8563539aeb5ec9a14f080652f6d66e60c099c3b494a399862bb768",
+      "flags": [
+        "relativeTime",
+        "mostMoons"
+      ]
+    },
+    {
+      "category": "تكنولوجيا",
+      "index": 29,
+      "points": 400,
+      "rowSha256": "2ad381c87993445e0ec9f61f9d61269e25768d91bb0d0ff3806888e5f144d8fe",
+      "flags": [
+        "yearMention",
+        "relativeTime"
+      ]
+    },
+    {
+      "category": "رياضة",
+      "index": 27,
+      "points": 400,
+      "rowSha256": "2c5fb6fe2d581e569816b73601c962e8429b6e2337263c1c79abe343d234debc",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "رياضة",
+      "index": 37,
+      "points": 600,
+      "rowSha256": "7d9ca554ed65106b9703850f9681851a724f8290bfbfba852cb04603059b7033",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "رياضة",
+      "index": 38,
+      "points": 600,
+      "rowSha256": "a1802e03d160845d07c5715e18494dfe2614bea44697919cf31562fbd2465886",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "رياضة",
+      "index": 43,
+      "points": 600,
+      "rowSha256": "04dc67ecfd4df4b3be64a793e9a9c7b070a46b2206205433deb488f4ed9e7dd7",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "رياضة",
+      "index": 45,
+      "points": 600,
+      "rowSha256": "67232c02259bd1fc4230fa1c5bc39a92e8f64988d4213ad46d60e3fa09cbd2e0",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "رياضة",
+      "index": 46,
+      "points": 600,
+      "rowSha256": "81804a4d0415f8dcd4d8f0987f07076ad3997118e3ffb4f3636b6b6823c40657",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "رياضة",
+      "index": 47,
+      "points": 600,
+      "rowSha256": "3403e28ea6e80df7acc82fa1d290e481c80ceb66a4cc965d86091d57b6053342",
+      "flags": [
+        "relativeTime"
+      ]
+    },
+    {
+      "category": "رياضة",
+      "index": 61,
+      "points": 400,
+      "rowSha256": "14677576cf0bff2e378fcfc0c6b26288e57a421e02ce5e3f4c732d6d90de13c7",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "سينما وأفلام",
+      "index": 19,
+      "points": 400,
+      "rowSha256": "428cfe1d879c5085b36895f9884dde61335d1d5212b4fa993bc5cf39472113fc",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "تاريخ",
+      "index": 62,
+      "points": 400,
+      "rowSha256": "6c760da5178992848f63873b681e2fcc3ecd7a0cebe0cdebb3eb379f6c2627a6",
+      "flags": [
+        "relativeTime"
+      ]
+    },
+    {
+      "category": "جغرافيا",
+      "index": 46,
+      "points": 600,
+      "rowSha256": "1574e262539f6639cb2cb4df88558cf735a7b7e1a47b0ab025976499a716897f",
+      "flags": [
+        "relativeTime"
+      ]
+    },
+    {
+      "category": "رمضانيات",
+      "index": 1,
+      "points": 200,
+      "rowSha256": "ed38fc75478a77cc31da5d7b87a58905816429e900ed45521a77e3939e129246",
+      "flags": [
+        "relativeTime"
+      ]
+    },
+    {
+      "category": "رمضانيات",
+      "index": 31,
+      "points": 400,
+      "rowSha256": "cbfcfb6e176dca83cc3e927b597fcc56287386748e5a5ff0e3aca56bf6453e39",
+      "flags": [
+        "relativeTime"
+      ]
+    },
+    {
+      "category": "عالم الأطفال",
+      "index": 47,
+      "points": 600,
+      "rowSha256": "4b17c2ce886a1ef739336705a8c96e0c9b52140b528aca546b683abb564802d6",
+      "flags": [
+        "relativeTime"
+      ]
+    },
+    {
+      "category": "أبطال خارقين",
+      "index": 8,
+      "points": 400,
+      "rowSha256": "99488bece378356af020fff59bbeb652f3dda862b1788a0a484c8922700fe7db",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كرة قدم عامة",
+      "index": 17,
+      "points": 600,
+      "rowSha256": "ae413f8f7dec0a26b8b56465917ccb0a79c825a35946fe238d53879f23d6dfba",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كرة قدم عامة",
+      "index": 21,
+      "points": 600,
+      "rowSha256": "736b596700787c54affca328b6817bff728eba436f5ae18d7bd5bf58ce317996",
+      "flags": [
+        "relativeTime"
+      ]
+    },
+    {
+      "category": "كرة قدم عامة",
+      "index": 22,
+      "points": 600,
+      "rowSha256": "42693c17358cb56d6d3beceb17a537644ab66991cf603f39404e3aebc0890e8e",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "الدوري الإيطالي",
+      "index": 23,
+      "points": 600,
+      "rowSha256": "e4327f00065b322e5e16c0a9ad728ad926ced37668942894526d2ea8bd2d4976",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كورة عالمية",
+      "index": 11,
+      "points": 400,
+      "rowSha256": "1c3c332ef8c015690b9acd03516841bdb8ff81844cfd89c1d4b73c592010ba78",
+      "flags": [
+        "relativeTime"
+      ]
+    },
+    {
+      "category": "كورة عالمية",
+      "index": 15,
+      "points": 400,
+      "rowSha256": "14128bb6ee1bd074757b227aef5b40263dc9db5d02e99b23f71c62beb0e38409",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كورة عالمية",
+      "index": 21,
+      "points": 600,
+      "rowSha256": "65fbdf192bbf82cecd0dea325efc5081cc57713918e12c1785a91400ee7dd614",
+      "flags": [
+        "relativeTime"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 0,
+      "points": 200,
+      "rowSha256": "a26299759558e318f3d6962389e25d03a395b53f0c4dc25003fd3a521ed5d883",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 1,
+      "points": 200,
+      "rowSha256": "44d012d9500a48e34b22f32705a12690c6ff51e908532767f613b048b185a47a",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 2,
+      "points": 200,
+      "rowSha256": "7c848fac212fb3b36b553eff212ab0a9e9811817ba6c8812b7d0499a123dfaab",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 3,
+      "points": 200,
+      "rowSha256": "1141b563fcc971f50aed3088622854bca60ac9a6bd6d6a959e36eadd09ebe49d",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 4,
+      "points": 200,
+      "rowSha256": "278e6de097a122e5c3b56ad3797b47982384be271395151cf8672710bf2b3aa3",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 5,
+      "points": 200,
+      "rowSha256": "2c9fad98d253df90c351eb03611cef23075fccbf6540ab2f04af2658dc8fb345",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 6,
+      "points": 200,
+      "rowSha256": "40530d648d94a478a0f82de55185c3683d7c9dbfb03e4b5f6003a67602b86539",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 7,
+      "points": 200,
+      "rowSha256": "df85ced6eec939ce8744dfd6b8fe7ea5f318b549a8b3bf59d0edeccb30286e28",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 8,
+      "points": 400,
+      "rowSha256": "7636bd7407052e908a986ffa70787d4ff7fc398077a9e5a10041eac4d153d890",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 9,
+      "points": 400,
+      "rowSha256": "54e3d566f6502d6b24b69116dca55a1f57c635e97aa36cb9afa4881ac2c4d2cd",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 10,
+      "points": 400,
+      "rowSha256": "69801cc25480134cef776349f992a239594da0576fe2a345f8c39483fe7b1ab0",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 11,
+      "points": 400,
+      "rowSha256": "bd83bc309be38b93f8fb2368d8acb014be8ef3d5f65232088a5e84e65f0e3e51",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 12,
+      "points": 400,
+      "rowSha256": "c8c91e223bef4f48d7742c1f79610b42c09f07eaa9493d5c2c964282f0ed5c88",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 13,
+      "points": 400,
+      "rowSha256": "a848e5f7092a16a98ef9e77f953227c10c945dac8a6544209e0c1281c97f2262",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 14,
+      "points": 400,
+      "rowSha256": "38cf9c861bfef4c7843da1698a3af6e809efb791ca6743c08c09de8fe72185d4",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 15,
+      "points": 400,
+      "rowSha256": "9d7ca4720127cd29f454b481ae0ca8c7388caedb7c552725df134e4e70a1d8a9",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 16,
+      "points": 600,
+      "rowSha256": "c384a612a41175de165f4e54dbd4d1c14551ddb10dd417a9c1863f9417684558",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 17,
+      "points": 600,
+      "rowSha256": "4907a71289f949010205af68a35bab77b3fd70ecded22db692d6d729d9a16be3",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 18,
+      "points": 600,
+      "rowSha256": "da9a629b6c00582b5a307389f566323f4aa0c74ff0b2a8b642932372d866731b",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 19,
+      "points": 600,
+      "rowSha256": "1ba4fb1e1f5d9bd065c2a1dd0a0b490563d8c025dfc11361aaf7f9c4b9f19de2",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 20,
+      "points": 600,
+      "rowSha256": "990f15153d48f4aec18287b71380b462c7beb3348da9cd4b12521bf97700d8bd",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 21,
+      "points": 600,
+      "rowSha256": "3dade5db7f32a47291f3a68031c9b4b9e5b50fa2f5cea9b5caf400bdc9bfc37f",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 22,
+      "points": 600,
+      "rowSha256": "f0e28d304a43693810a8b401a13247b0cb9bedd6abc8fdf82b24672b1d286206",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم 2026",
+      "index": 23,
+      "points": 600,
+      "rowSha256": "11c919f4e43c3287cdb712c135e46278f29151cd044bac1923ab085a646cbfdc",
+      "flags": [
+        "yearMention"
+      ]
+    },
+    {
+      "category": "كأس العالم عبر السنين",
+      "index": 19,
+      "points": 600,
+      "rowSha256": "2d363d23b31bb5d0561525f379e8d768ad7c50005bf553e02bf76e293c0b8ae6",
+      "flags": [
+        "relativeTime"
+      ]
+    },
+    {
+      "category": "كأس العالم عبر السنين",
+      "index": 20,
+      "points": 600,
+      "rowSha256": "f055826d1853f1d19c911c1772240302d4d3c612734865e00ee790ff546def54",
+      "flags": [
+        "relativeTime"
+      ]
+    },
+    {
+      "category": "كأس العالم عبر السنين",
+      "index": 21,
+      "points": 600,
+      "rowSha256": "7eb90ef2d0877a089fb8def25a517864373df343064b632625cd74b9cad02226",
+      "flags": [
+        "relativeTime"
+      ]
+    },
+    {
+      "category": "أرقام وإحصائيات كروية",
+      "index": 15,
+      "points": 400,
+      "rowSha256": "43661a31f8468b902200789840e9d4fbc24dd63b2472db2d6b271febe55ef10e",
+      "flags": [
+        "yearMention"
+      ]
+    }
+  ]
+}

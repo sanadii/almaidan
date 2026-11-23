@@ -1,0 +1,17 @@
+{
+  "assignmentId": "PRO311-HISTORY-FORGE",
+  "taskId": "PRO273-SEL",
+  "disposition": "BOUNDED SOURCE AUDIT DATA ONLY",
+  "matrix": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\database\\PRO311-IMMUTABLE-WRITER-MATRIX-20261101.md",
+  "sha256": "40e2b63b7e6e8f1ea6728be78d5c51288d8430c496b0feb596722565a2a96c2d",
+  "review": "Database proposal and Security conditional concurrence",
+  "conditions": [
+    "Encode four exact signature/grantee edges as conditional audit data, requiring final replacement definition, owner, exact return type, search path and immutable source identity, not signature alone.",
+    "Require intended direct grant and reject PUBLIC, grant option, unexpected overloads and effective inherited execution; preserve actual SESSION_USER authentication and distinct caller capabilities.",
+    "Pin private transitive callees/effect sets including baseline spent update; inspect triggers/rules/extensions/other-owner effects. No literal dynamic EXECUTE alone is not proof of closure.",
+    "Preserve atomic reservation/binding and exact charge/claim idempotency; missing bootstrap trust/baseline, installer expectation/session/attempt provisioning remains denied; no generic DML or owner membership.",
+    "This is partial inventory, not complete privilege closure; unknown schema ownership, creator history, replication controls and installed facts remain denial; keep both aborts and immutable locks.",
+    "Affected tests only in existing authorized test path; independent changed-byte Security/Database review and Root acceptance still required."
+  ],
+  "holds": "R6 STOP, both public reader guards, all accepted evidence, spent and UNKNOWN records unchanged; no SQL/native/DB/OS/service/network/install/deploy authorization."
+}

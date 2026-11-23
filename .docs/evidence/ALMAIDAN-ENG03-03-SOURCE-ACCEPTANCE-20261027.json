@@ -1,0 +1,84 @@
+{
+  "stage": "ALMAIDAN-ENG03-03",
+  "issue": "PRO-308",
+  "status": "SOURCE_ACCEPTED",
+  "acceptedUtc": "2026-10-27T08:40:14.3006380Z",
+  "workspace": "C:/Users/User/.codex/worktrees/huroof-enta-integration/huroof_wa_oloof",
+  "appliedCount": 19,
+  "scopeCount": 22,
+  "rootFinalIdentityMismatches": [],
+  "evidence": [
+    {
+      "path": "D:/projects/huroof_wa_oloof/output/pro259-eng03-03-20261027/forge/REVIEW-CANDIDATE-R3.json",
+      "sha256": "51cfd620b579e9cbde61141ba5624cb103eda8ed6d79f91734c59de195db1a27"
+    },
+    {
+      "path": "D:/projects/huroof_wa_oloof/output/pro259-eng03-03-20261027/ROOT-SOURCE-RELEASE-R3.json",
+      "sha256": "a89ede5cf49658900318e3002595e7f6762950a23ade6e045147d0a231c551b6"
+    },
+    {
+      "path": "D:/projects/huroof_wa_oloof/output/pro259-eng03-03-20261027/forge/APPLIED-R3.json",
+      "sha256": "fc63e2fb22b8bb476654d4a626208bd0c8c508205594ed151abe0442d827d2d6"
+    },
+    {
+      "path": "D:/projects/huroof_wa_oloof/output/pro259-eng03-03-20261027/forge/POST-APPLY-PRESERVATION-R3.json",
+      "sha256": "8ec8718b0debcaa58bd33b3c4a87419fd01805c95845b127615477778697a91f"
+    },
+    {
+      "path": "D:/projects/huroof_wa_oloof/output/pro259-eng03-03-20261027/forge/APPLIED-CHECK-JOIN-R3.json",
+      "sha256": "b402038487ed798b966d5deca626eaf73a851fdce11ddceaac9d496fde2d3c23"
+    },
+    {
+      "path": "D:/projects/huroof_wa_oloof/output/pro259-eng03-03-20261027/forge/IMPLEMENTATION-CHECKLIST-R3.md",
+      "sha256": "5b088cd1c81ef0c3226afab9d2afc73c13fb177eafaae2978beeb0fcc7d95943"
+    },
+    {
+      "path": "D:/projects/huroof_wa_oloof/output/pro259-eng03-03-20261027/forge/C01-C08-RECONCILIATION-R2.md",
+      "sha256": "1b9b59890d58f00f5c4b2431bcfb2b056a7814f409318a355c0deb9e72c50d79"
+    },
+    {
+      "path": "D:/projects/huroof_wa_oloof/output/pro259-eng03-03-20261027/forge/R3-TEST-IDENTITIES.json",
+      "sha256": "2599d4eba64d90c200ce324a5f5207e48bbcd65feefee510684aad4c22e32e97"
+    },
+    {
+      "path": "D:/projects/huroof_wa_oloof/output/pro259-eng03-03-20261027/ROOT-C05-R1.json",
+      "sha256": "ea3c895b8d84de3ec840955a7de2ebcfa46c116e5c5e1db6e1b61c1befcc8beb"
+    },
+    {
+      "path": "D:/projects/huroof_wa_oloof/output/pro259-eng03-03-20261027/database/PREEDIT-REVIEW-R3.md",
+      "sha256": "0660eb46925f097824cc5b2f569ac7cdbd10c9efbaa8fc20f8698696c5101103"
+    },
+    {
+      "path": "D:/projects/huroof_wa_oloof/output/pro259-eng03-03-20261027/security/PREEDIT-REVIEW-R3.md",
+      "sha256": "cf3244c4532f3643665e0133ce6f99c6a40fd250aa13a9dbebed57421a235359"
+    },
+    {
+      "path": "D:/projects/huroof_wa_oloof/output/pro259-eng03-03-20261027/database/FINAL-REVIEW-R3.json",
+      "sha256": "caa54e7d7f98beeb275c9e2263f0ce6e235a3201550fc4c09d58c806ed5fe480"
+    },
+    {
+      "path": "D:/projects/huroof_wa_oloof/output/pro259-eng03-03-20261027/security/FINAL-APPLIED-RECEIPT-R3.json",
+      "sha256": "a74aebbeee1585c2a8f5192728ef888cc15ad880878b6c0816073e12303da909"
+    }
+  ],
+  "criteria": {
+    "C01": "Exact applied scope, preimages, containment and accepted02 preservation verified",
+    "C02": "116-source server and20-source builder compiler closures passed and joined to applied bytes",
+    "C03": "Actual verifier/current user/UID/project/policy and host eligibility negative cases passed with inert SDK",
+    "C04": "Strict locator and composed missing/unavailable/ambiguous no-fallback cases passed",
+    "C05": "Actual service/adapter lobby-to-start, precharge denial, replay/retry cases; Root reproduction passed; SQL financial invariants source-reviewed",
+    "C06": "Actual reducer/preparation lifecycle, correction/recompletion, privacy, expiry and exhaustion cases passed within supported classic profile",
+    "C07": "Audited imports/inert handlers/denial hooks/no-store and no default activation verified; not OS-level or runtime qualification",
+    "C08": "Shared hash equivalence/extraction and unchanged outside-index hunks reviewed; accepted02 exact hashes retained; no invented external legacy historical equality",
+    "C09": "Independent Database and Security exact pre-edit and final applied-source concurrence; Root integrated review, critical reproduction and final identity checks complete"
+  },
+  "limitations": [
+    "R6 STOP; all32 installed/native parity cases NOT_RUN",
+    "No SQL parser/execution, DB/Prisma/package build/server/runtime/network/config/key/install/real finance/deploy/delete performed",
+    "Genuine identity policy and custody supplier/publication remain held dependencies; default fresh eligibility denies without authority",
+    "Same-room successor/rematch and unsupported profiles unavailable before charge",
+    "Synthetic SQL/custody tests prove source composition, not installed atomicity, ACL, locking, payment or production behavior",
+    "Historical external legacy source hashes absent; preservation claims limited to inspected scope",
+    "Parent PRO-259 and complete app integration remain unfinished"
+  ]
+}

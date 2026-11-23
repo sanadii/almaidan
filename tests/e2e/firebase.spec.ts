@@ -671,7 +671,7 @@ test("Firebase player tabs share one renewing presence lease", async ({ browser,
     const firstTab = await player.newPage();
     await firstTab.goto(`${baseURL}/`);
     await firstTab.getByLabel("رمز الغرفة").fill(code);
-    await firstTab.getByRole("button", { name: "انضم إلى غرفة" }).click();
+    await firstTab.getByRole("button", { name: "الدخول" }).click();
     await firstTab.getByLabel("اسم اللاعب").fill("نفس اللاعب");
     await firstTab.getByRole("button", { name: "دخول الغرفة" }).click();
     await expect(firstTab.getByRole("heading", { name: "ردهة المباراة" })).toBeVisible();
@@ -766,7 +766,7 @@ for (const gameKind of ["huroof", "categories"] as const) {
         const page = await context.newPage();
         await page.goto(`${baseURL}/`);
         await page.getByLabel("رمز الغرفة").fill(code);
-        await page.getByRole("button", { name: "انضم إلى غرفة" }).click();
+        await page.getByRole("button", { name: "الدخول" }).click();
         await page.getByLabel("اسم اللاعب").fill(name);
         await page.getByRole("button", { name: "دخول الغرفة" }).click();
         await expect(

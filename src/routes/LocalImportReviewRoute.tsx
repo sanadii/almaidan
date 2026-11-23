@@ -1,12 +1,13 @@
 import { type ReactNode, useEffect, useState } from 'react';
 import { InternalHeader } from '../design-system/InternalHeader';
+import '../styles/local-import-review.css';
 
 type Item = { incomingId: string; categoryId: string; outcome: string; reason: string; storageState: string };
 type Page = { runKind: string; after: Record<string, number>; outcomes: Record<string, number>; total: number; offset: number; limit: number; categories: string[]; items: Item[] };
 type Detail = { incomingId: string; mode: string; question: string | null; instruction: string | null; answer: string; acceptedAnswers: string[]; letterModeEligible: boolean | null; stagingState?: string; storageState: string; currentStored?: { id: string; prompt?: string; answer?: string }; media?: { assetSha256: string; altAr: string } };
 
 function LocalReviewFrame({ children }: { children: ReactNode }) {
-  return <main className="local-import-review" dir="rtl" id="main-content">
+  return <main data-page-layout="wide" className="local-import-review" dir="rtl" id="main-content">
     <InternalHeader />
     {children}
   </main>;

@@ -4,13 +4,26 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { deriveMatch, initialGameState } from '../../src/features/game/domain/lifecycle.js';
 import { generateBoard, generateCategoryBoard, revealSurprise } from '../../src/features/game/domain/board.js';
-import { approvedReleaseCatalogProjection, canonicalQuestionQuery, expectedReleaseMatches, MAX_ROOM_SCOPE_CATEGORIES, MAX_SCOPED_RELEASE_QUESTIONS, prepareLetterReveal, questionRows, RELEASE_READER_OPTIONS, RUNTIME_QUESTION_FIELDS, scopedCanonicalQuestionQuery, scopedCategories, scopedInventoryCount, selectQuestionForActiveCell, validateQuestionScope } from './index.js';
+import { approvedReleaseCatalogProjection, challengeQuestionsForRoom, normalizeT36CreateOptions, validateQaClosureRequest, canonicalQuestionQuery, expectedReleaseMatches, MAX_ROOM_SCOPE_CATEGORIES, MAX_SCOPED_RELEASE_QUESTIONS, prepareLetterReveal, questionRows, RELEASE_READER_OPTIONS, RUNTIME_QUESTION_FIELDS, scopedCanonicalQuestionQuery, scopedCategories, scopedInventoryCount, selectQuestionForActiveCell, validateQuestionScope } from './index.js';
 import { createCategoryQuestionSelection, createMatchQuestionSelection, promoteReservedQuestion, reserveQuestionForCell, selectCategoryQuestion, selectCharadesQuestion, selectMatchQuestion, type RuntimeQuestionV32 } from '../../src/features/game/runtime/question-selector.js';
 import { intentHash, intentReceiptId, isRoomClosed, preflightContentPreparation, projectRoom, reduceIntent, roomGameKind, validIntent, type CanonicalMember, type CanonicalQuestion, type CanonicalRoom } from './game.js';
 
 const room = (): CanonicalRoom => ({ schemaVersion: 2, roomCode: 'A1B2C3D4', revision: 2, game: { ...initialGameState(), lifecycle: 'QUESTION_READING' }, config: { demo: true, questionSeconds: 20, opponentSeconds: 10, teams: { horizontal: 'أفقي', vertical: 'عمودي' }, releaseId: 'demo-drafts', releaseRootSha256: 'hash', releaseDemoFixture: true }, timer: { deadlineMs: 2_000, buzzOpen: true }, questionCursor: 0 });
 const player: CanonicalMember = { uid: 'p1', role: 'player', displayName: 'P', ready: false, active: true, team: 'horizontal' };
 const readyReleaseQuestions: CanonicalQuestion[] = Array.from({ length: 25 }, (_, letter) => Array.from({ length: 3 }, (_, copy) => ({ id: `ready-${letter}-${copy}`, categoryId: 'category-a', modality: 'classic' as const, targetLetter: `ح${letter}`, answerConceptId: `concept-${letter}-${copy}`, headerAr: 'عنوان', promptAr: 'سؤال', canonicalAnswer: 'جواب', acceptedAnswers: ['جواب'] }))).flat();
+
+test('Firebase room scopes exclude mixed-category challenges without a negotiated contract', () => {
+  const ordinary = readyReleaseQuestions[0]!;
+  const challenge = {
+    ...readyReleaseQuestions[1]!, id: 'mixed-challenge', answerConceptId: 'challenge:word-search',
+    challenge: { kind: 'word_search', factFamilies: ['word-search:mixed'], definition: { manifestSha256: 'a'.repeat(64), id: 'word-search-definition', schemaVersion: 't37-topup-word-search-definition-v1', definitionSha256: 'b'.repeat(64) } },
+  } as CanonicalQuestion;
+  assert.deepEqual(challengeQuestionsForRoom([ordinary, challenge], undefined).map((question) => question.id), [ordinary.id]);
+  assert.deepEqual(
+    challengeQuestionsForRoom([ordinary, challenge], { protocolVersion: 't36-challenge-runtime-v1', mechanics: ['word_search'], definitionSchemas: ['t37-topup-word-search-definition-v1'] } as CanonicalRoom['config']['challenge']).map((question) => question.id),
+    [ordinary.id, challenge.id],
+  );
+});
 
 const m05PlanPath = 'D:/projects/huroof_wa_oloof/output/media-live-20260911/owner-category-supplement-plan.json';
 const privateM05Fixture = process.env.RUN_PRIVATE_OWNER_CATEGORY_SUPPLEMENT_TESTS === '1' && existsSync(m05PlanPath);
@@ -186,6 +199,24 @@ test('policy version defaults only legacy Huroof rooms and malformed envelopes f
   assert.equal(validIntent({ ...valid, expectedRevision: Number.MAX_SAFE_INTEGER + 1 }), false);
   assert.equal(validIntent({ ...valid, extra: true }), false);
 });
+
+test('word-search submissions accept only bounded endpoints, never a client path', () => {
+  const intent = {
+    type: 'CHALLENGE_SUBMIT' as const,
+    intentId: 'word-search-endpoints',
+    expectedRevision: 3,
+    payload: {
+      occurrence: '1:cell-word-search',
+      challengeRevision: 1,
+      stage: 'answer',
+      start: { row: 0, column: 2 },
+      end: { row: 0, column: 6 },
+    },
+  };
+  assert.equal(validIntent(intent), true);
+  assert.equal(validIntent({ ...intent, payload: { ...intent.payload, path: [[0, 2], [0, 3]] } }), false);
+  assert.equal(validIntent({ ...intent, payload: { ...intent.payload, start: { row: 9, column: 2 } } }), false);
+});
 test('shared reveal requires the active occurrence and freezes a video question without scoring', () => {
   const host: CanonicalMember = { ...player, uid: 'host', role: 'host', team: undefined };
   const videoRoom = { ...room(), activeQuestionOccurrence: '2:cell-0-0:video-q', activeQuestion: { id: 'video-q', modality: 'video' as const, headerAr: 'عنوان', promptAr: 'سؤال', canonicalAnswer: 'جواب', acceptedAnswers: ['جواب'], media: { mediaId: 'goal-quiz-2026:001:blur', assetSha256: 'a'.repeat(64), altAr: 'مقطع', type: 'video' as const }, answerMedia: { mediaId: 'goal-quiz-2026:001:clean', assetSha256: 'b'.repeat(64), altAr: 'الإجابة', type: 'video' as const } } };
@@ -292,9 +323,9 @@ test('safe live team moves preserve game state and readiness, while answer and s
   }
 });
 test('Firebase projections preserve match settings for a same-settings rematch', () => {
-  const canonical = { ...room(), config: { ...room().config, categories: ['tahadani-006', 'tahadani-007'], modality: 'image' as const, difficulty: 'hard', mode: 'custom' as const } };
+  const canonical = { ...room(), config: { ...room().config, categories: ['tahadani-006', 'tahadani-007'], modality: 'image' as const, difficulty: 'hard', mode: 'custom' as const, labelledColours: true } };
   const value = projectRoom('r1', canonical, [{ ...player, role: 'host' }], 'host', 'p1', 1_000).projection as { room: { matchSettings: unknown } };
-  assert.deepEqual(value.room.matchSettings, { demo: true, gameKind: 'huroof', questionSeconds: 20, opponentSeconds: 10, teams: { horizontal: 'أفقي', vertical: 'عمودي' }, categories: ['tahadani-006', 'tahadani-007'], modality: 'image', difficulty: 'hard', mode: 'custom', showQuestionOnAudience: true, expectedRelease: { releaseId: 'demo-drafts', releaseRootSha256: 'hash' } });
+  assert.deepEqual(value.room.matchSettings, { demo: true, gameKind: 'huroof', questionSeconds: 20, opponentSeconds: 10, teams: { horizontal: 'أفقي', vertical: 'عمودي' }, categories: ['tahadani-006', 'tahadani-007'], modality: 'image', difficulty: 'hard', mode: 'custom', showQuestionOnAudience: true, labelledColours: true, expectedRelease: { releaseId: 'demo-drafts', releaseRootSha256: 'hash' } });
 });
 test('only first eligible player buzz wins and player sees self winner only', () => {
   const first = reduceIntent(room(), player, { type: 'BUZZ', intentId: 'a', expectedRevision: 2, payload: {} }, 1_000); assert.equal(first.room.game.lifecycle, 'FIRST_ANSWER'); assert.equal(first.room.buzzWinner?.uid, 'p1'); assert.equal(first.room.buzzWinner?.method, 'player'); assert.throws(() => reduceIntent(first.room, { ...player, uid: 'p2', team: 'vertical' }, { type: 'BUZZ', intentId: 'b', expectedRevision: 3, payload: {} }, 1_000)); const winner = projectRoom('r', first.room, [player], 'player', 'p1', 1_000); const host = projectRoom('r', first.room, [player], 'host', 'p1', 1_000); assert.match(JSON.stringify(winner), /isBuzzWinner/); assert.match(JSON.stringify(host), /displayName/);
@@ -313,6 +344,12 @@ test('late, audience, and wrong-team buzzes are rejected', () => {
   assert.throws(() => reduceIntent(room(), { ...player, role: 'audience' }, { type: 'BUZZ', intentId: 'a', expectedRevision: 2, payload: {} }, 1_000)); assert.throws(() => reduceIntent(room(), player, { type: 'BUZZ', intentId: 'a', expectedRevision: 2, payload: {} }, 2_001)); const opponent = { ...room(), game: { ...room().game, lifecycle: 'OPPONENT_CHANCE' as const, entitledTeam: 'vertical' as const } }; assert.throws(() => reduceIntent(opponent, player, { type: 'BUZZ', intentId: 'a', expectedRevision: 2, payload: {} }, 1_000));
 });
 test('receipt ids are collision-resistant and request hash detects semantic reuse', () => { const prefix = 'a'.repeat(119); assert.notEqual(intentReceiptId('p', `${prefix}a`), intentReceiptId('p', `${prefix}b`)); assert.notEqual(intentHash({ type: 'BUZZ', intentId: 'same', expectedRevision: 1, payload: {} }), intentHash({ type: 'BUZZ', intentId: 'same', expectedRevision: 2, payload: {} })); });
+test('challenge receipt hashes replay reordered readiness objects while retaining array order', () => {
+  const base = { type: 'CHALLENGE_READY' as const, intentId: 'ready', expectedRevision: 8, payload: { occurrence: '8:cell:def', challengeRevision: 3, stage: 'setup', participantId: 'member:player', readiness: { protocolHash: 'p', assignmentHash: 'a', stimulusHash: 's' } } };
+  const reordered = { ...base, payload: { ...base.payload, readiness: { stimulusHash: 's', protocolHash: 'p', assignmentHash: 'a' } } };
+  assert.equal(intentHash(base), intentHash(reordered));
+  assert.notEqual(intentHash({ ...base, type: 'CHALLENGE_SUBMIT', payload: { occurrence: '8:cell:def', challengeRevision: 3, stage: 'answer', answers: ['a', 'b'] } }), intentHash({ ...base, type: 'CHALLENGE_SUBMIT', payload: { occurrence: '8:cell:def', challengeRevision: 3, stage: 'answer', answers: ['b', 'a'] } }));
+});
 test('OPEN_QUESTION remains compatible without resetting an already-open buzzer', () => { const host: CanonicalMember = { ...player, uid: 'h', role: 'host', team: undefined }; const result = reduceIntent(room(), host, { type: 'OPEN_QUESTION', intentId: 'open', expectedRevision: 2, payload: {} }, 1_000); assert.equal(result.room.game.lifecycle, 'QUESTION_READING'); assert.deepEqual(result.room.timer, { deadlineMs: 2_000, buzzOpen: true }); });
 test('non-charades retry reopens the same cell with a fresh question while return clears disclosed state for the board', () => {
   const host: CanonicalMember = { ...player, uid: 'h', role: 'host', team: undefined };
@@ -450,4 +487,40 @@ test('manual lobby participants are host-managed, count toward readiness, and ne
   assert.equal(JSON.stringify(playerProjection).includes('manual-one'), false);
   const moved = reduceIntent(second.room, host, { type: 'LOBBY_ASSIGN_TEAM', intentId: 'manual-move', expectedRevision: second.room.revision, payload: { manualParticipantId: 'manual-one', team: 'vertical' } }, 1_000, undefined, [host]);
   assert.equal(moved.room.manualParticipants?.find((participant) => participant.id === 'manual-one')?.team, 'vertical');
+});
+
+test('closed challenge projections suppress the canonical question, timer, and answer for every role', () => {
+  const host: CanonicalMember = { uid: 'host', role: 'host', displayName: 'مضيف', ready: true, active: true };
+  const canonical = { ...room(), closedAt: '2026-09-23T00:00:00.000Z', activeQuestionOccurrence: '7:cell-0-0:private', activeQuestion: { id: 'private', modality: 'classic' as const, headerAr: 'سري', promptAr: 'سؤال سري', canonicalAnswer: 'إجابة سرية', acceptedAnswers: ['إجابة سرية'], sources: [{ title: 'مصدر سري' }] }, challenge: { continued: false } } as unknown as CanonicalRoom;
+  for (const role of ['host', 'player', 'audience'] as const) {
+    const projection = projectRoom('closed', canonical, [host], role, role === 'host' ? host.uid : undefined, 1_000).projection;
+    assert.equal(JSON.stringify(projection).includes('إجابة سرية'), false);
+    assert.equal(JSON.stringify(projection).includes('سؤال سري'), false);
+    assert.equal(JSON.stringify(projection).includes('deadlineAt'), false);
+    assert.equal(JSON.stringify(projection).includes('challenge'), false);
+  }
+});
+
+
+test('createRoom rejects malformed T36 permit and map presentation inputs before admission', () => {
+  assert.deepEqual(normalizeT36CreateOptions({}), { mapPresentation: 'ordinary', qaPermitId: undefined });
+  assert.deepEqual(normalizeT36CreateOptions({ mapPresentation: 'interactive', qaChallengePermitId: 'permit_123456' }), { mapPresentation: 'interactive', qaPermitId: 'permit_123456' });
+  assert.throws(() => normalizeT36CreateOptions({ mapPresentation: 'preview' }), /MAP_PRESENTATION_INVALID/);
+  assert.throws(() => normalizeT36CreateOptions({ qaChallengePermitId: 'short' }), /QA_PERMIT_REFERENCE_INVALID/);
+  assert.throws(() => normalizeT36CreateOptions({ qaChallengePermitId: 12 }), /QA_PERMIT_REFERENCE_INVALID/);
+});
+
+
+test('a closed QA room projection retains scores while suppressing timers and questions', () => {
+  const closed = { ...room(), closedAt: '2026-09-23T12:00:00.000Z', timer: { deadlineMs: 9_999, buzzOpen: true }, buzzWinner: { uid: 'p1', displayName: 'P', team: 'horizontal' as const, method: 'player' as const }, activeQuestion: { id: 'private', headerAr: 'سري', promptAr: 'خاص', canonicalAnswer: 'جواب', acceptedAnswers: ['جواب'] }, game: { ...room().game, questionScores: { horizontal: 2, vertical: 1 } } } as CanonicalRoom;
+  const projection = projectRoom('room', closed, [player], 'host', 'p1', 1_000).projection as Record<string, unknown>;
+  assert.deepEqual(projection.questionScores, { horizontal: 2, vertical: 1 });
+  assert.equal(projection.question, undefined); assert.equal(projection.deadlineAt, undefined); assert.equal(projection.buzzWinner, undefined); assert.equal(projection.challenge, undefined);
+});
+
+
+test('QA closure callable input is bounded before it can reach a transaction', () => {
+  assert.deepEqual(validateQaClosureRequest({ roomId: 'room-123', intentId: 'close-1', expectedRevision: 4, reason: 'انتهى الاختبار' }), { id: 'room-123', intentId: 'close-1', expectedRevision: 4, reason: 'انتهى الاختبار' });
+  assert.throws(() => validateQaClosureRequest({ roomId: 'room-123', intentId: 'close-1', expectedRevision: 4, reason: '' }), /QA_CLOSURE_REQUEST_INVALID/);
+  assert.throws(() => validateQaClosureRequest({ roomId: 'room-123', intentId: '!', expectedRevision: 4, reason: 'سبب' }), /QA_CLOSURE_REQUEST_INVALID/);
 });

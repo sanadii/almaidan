@@ -1,0 +1,526 @@
+## codex/app-update-2026-09-07...origin/codex/app-update-2026-09-07 [ahead 3, behind 26]
+ M .docs/DEPLOYMENT.md
+ M .docs/DESIGN-PLAN.md
+ M .docs/HANDOVER.md
+ M .docs/IMPLEMENTATION-PLAN.md
+ M .docs/MILESTONES.md
+ M .docs/PROJECT-BRIEF.md
+ M .docs/README.md
+ M .docs/RELEASE-2026-09-18.md
+ M .docs/SETUP-AND-RUN.md
+ M DESIGN-DNA.md
+ M design/HOME-SURFACE-SPEC.md
+ M docs/PROJECT-PLAN.md
+ M docs/QUESTION_BANK_300_EXECUTION.md
+ M firestore.indexes.json
+ M firestore.rules
+ M functions/src/admin/admin.ts
+ M functions/src/game.test.ts
+ M functions/src/game.ts
+ M functions/src/index.ts
+ M functions/src/question-media.test.ts
+ M functions/src/question-media.ts
+ M scripts/q4800-owner-approved-release.ts
+ M scripts/test-firebase-e2e.ts
+ M server/index.ts
+ M server/service.ts
+ M src/app/App.tsx
+ M src/data/category-filters.ts
+ M src/data/category-playability.ts
+ M src/data/local-question-inventory.ts
+ M src/features/board/game-board.tsx
+ M src/features/game/runtime/contracts.ts
+ M src/features/game/runtime/deferred-firebase-adapter.ts
+ M src/features/game/runtime/firebase-game-adapter.ts
+ M src/features/game/runtime/local-realtime-game-adapter.ts
+ M src/features/game/runtime/question-selector.ts
+ M src/routes/GameRoutes.tsx
+ M src/routes/HomeSurface.tsx
+ M src/styles/global.css
+ M src/styles/khaliah.css
+ M tests/app/category-filters.test.tsx
+ M tests/app/game-board.test.tsx
+ M tests/app/gameplay-state-surfaces.test.tsx
+ M tests/app/question-media.test.tsx
+ M tests/app/setup-route.test.tsx
+ M tests/e2e/firebase.spec.ts
+ M tests/firestore-rules.test.ts
+ M tests/game/deferred-firebase-adapter.test.ts
+ M tests/game/service.test.ts
+ M tests/game/websocket.integration.test.ts
+ M tests/runtime-selector.test.ts
+?? .docs/AUTH-RR01-READONLY-PRODUCTION-PROBE.md
+?? .docs/AUTH-RULES-RO01-READONLY-RULES-CAPTURE.md
+?? .docs/DAILY-PARTS.md
+?? .docs/DAILY-WORK-PLAN.md
+?? .docs/FIREBASE-CONTENT-SYNC.md
+?? .docs/GOOGLE-DRIVE-HANDOFF-PLAN.md
+?? .docs/INT-0-BASELINE.md
+?? .docs/INT-0-MANIFEST.json
+?? .docs/INT-062-CAPACITY-CONTRACT.md
+?? .docs/INT-1-CONTRACTS.md
+?? .docs/INT-4-CATEGORY-CROSSWALK.md
+?? .docs/INT-4-CONTENT-CONTRACT.md
+?? .docs/INT-4-E-R4-PACKAGE-REPAIR.md
+?? .docs/INT-4-ENTASA7-EDITORIAL-PILOT.md
+?? .docs/INT-5-FINANCIAL-CONTRACT.md
+?? .docs/INT-6-TOURNAMENT-RESULT-CONTRACT.md
+?? .docs/INT-EXECUTION-STATUS.md
+?? .docs/INT-FEATURE-MATRIX.md
+?? .docs/PART1-AUTH-CAPTURE-REPAIR.md
+?? .docs/PART1-AUTH-OPERATIONS.md
+?? .docs/PART1-COMPACT-REVIEW-CONTRACT.md
+?? .docs/PART1-COMPLETION.md
+?? .docs/PART1-MEASURED-PILOT.md
+?? .docs/PART2-PERSISTENCE-PLAN.md
+?? .docs/REVIEW-SPEED-PLAN.md
+?? .docs/RR-ST50-PRIVATE-PUBLICATION-PLAN.md
+?? .docs/RR-ST50-PUB02-CONCRETE-PROTOCOL.md
+?? .docs/T17-QUESTION-MEDIA.md
+?? .docs/T18-REFERENCE-REDESIGN.md
+?? .docs/T19-PREMIUM-BOARD.md
+?? .docs/T27-ADMIN-DASHBOARD.md
+?? .docs/T36-PLAYTEST.md
+?? .docs/T36-PREMIUM-MECHANICS.md
+?? .docs/T37-MEDIA-ACQUISITION-PLAN.md
+?? .docs/evidence/
+?? content/reviewed/
+?? content/source-catalog/tahadani-games-catalog.v1.json
+?? data/
+?? design/category-covers/
+?? design/cell-challenge-background.md
+?? design/evidence/electric-blue-live-feedback-receipt-0017.json
+?? design/evidence/electric-blue-selection-receipt-0016.json
+?? design/evidence/feedback/
+?? design/evidence/hero-header-feedback-receipt-0024.json
+?? design/evidence/history/0008-maydan-combined-homepage-direction.md
+?? design/evidence/history/0009-maydan-name-confirmation.md
+?? design/evidence/history/0010-maydan-playful-homepage-refinement.md
+?? design/evidence/history/0011-maydan-homepage-rejection.md
+?? design/evidence/history/0012-maydan-warm-poster-replacement-selection.md
+?? design/evidence/history/0013-maydan-warm-poster-color-feedback.md
+?? design/evidence/history/0014-maydan-fictional-reference-correction.md
+?? design/evidence/history/0015-maydan-premium-structure-rejection.md
+?? design/evidence/history/0016-maydan-electric-blue-selection.md
+?? design/evidence/history/0017-maydan-electric-blue-live-feedback.md
+?? design/evidence/history/0018-maydan-playful-direct-implementation.md
+?? design/evidence/history/0019-maydan-playful-fidelity-rejection.md
+?? design/evidence/history/0020-maydan-separate-cards-rejection.md
+?? design/evidence/history/0021-maydan-live-playful-selection.md
+?? design/evidence/history/0022-maydan-playful-fidelity-rejection.md
+?? design/evidence/history/0023-maydan-viewport-family-feedback.md
+?? design/evidence/history/0024-maydan-hero-header-feedback.md
+?? design/evidence/history/0025-product-game-names.md
+?? design/evidence/history/0026-homepage-approved.md
+?? design/evidence/homepage-approval-receipt-0026.json
+?? design/evidence/integration-concept-research-2026-10-01.md
+?? design/evidence/integration-concept-set-2026-10-01.json
+?? design/evidence/integration-fictional-style-readback-2026-10-02.md
+?? design/evidence/integration-playful-reference-review-2026-10-03.md
+?? design/evidence/integration-reconcept-research-2026-10-02.md
+?? design/evidence/integration-reconcept-set-2026-10-02.json
+?? design/evidence/lalezar-font-source-2026-10-02.md
+?? design/evidence/live-playful-selection-receipt-0021.json
+?? design/evidence/name-confirmation-receipt-0009.json
+?? design/evidence/playful-fidelity-audit-2026-10-03.md
+?? design/evidence/playful-fidelity-receipt-0019.json
+?? design/evidence/playful-fidelity-reference-manifest-0022.json
+?? design/evidence/playful-fidelity-rejection-receipt-0022.json
+?? design/evidence/playful-implementation-receipt-0018.json
+?? design/evidence/playful-live-audit-2026-10-03.md
+?? design/evidence/playful-live-reference-dimensions-0021.json
+?? design/evidence/playful-live-reference-manifest-0021.json
+?? design/evidence/reference-correction-receipt-0014.json
+?? design/evidence/references/
+?? design/evidence/refinement-receipt-0010.json
+?? design/evidence/rejected-homepage-2026-10-02.md
+?? design/evidence/rejected-homepage-2026-10-02.patch
+?? design/evidence/rejection-receipt-0011.json
+?? design/evidence/review/
+?? design/evidence/selection-receipt-0008.json
+?? design/evidence/selection-receipt-0012.json
+?? design/evidence/separate-cards-receipt-0020.json
+?? design/evidence/viewport-family-feedback-receipt-0023.json
+?? design/mockups/flat-broadcast/
+?? design/mockups/immersive-2026-09-05/
+?? design/mockups/integration-2026-10-01/
+?? design/mockups/integration-2026-10-02/
+?? docs/CATEGORY-COVER-BACKFILL-2026-09-22.md
+?? docs/CATEGORY-PLAYABILITY-2026-09-12.md
+?? docs/CATEGORY-QUESTION-COUNTS.md
+?? docs/CATEGORY-QUESTION-INVENTORY-2026-09-17.md
+?? docs/EMPTY-CATEGORY-PRIORITIES-2026-09-17.md
+?? docs/MISSING-MEDIA-001-2026-09-17.md
+?? docs/MISSING-MEDIA-002-2026-09-17.md
+?? docs/MISSING-MEDIA-003-2026-09-17.md
+?? docs/MISSING-MEDIA-2026-09-17.md
+?? docs/MISSING-MEDIA-ACQUISITION-2026-09-22.csv
+?? docs/MISSING-MEDIA-ACQUISITION-2026-09-22.json
+?? docs/MISSING-MEDIA-ACQUISITION-2026-09-22.md
+?? docs/MISSING-MEDIA-CURRENT-2026-09-24.md
+?? docs/MISSING-MEDIA-PATCH-1-2026-09-17.md
+?? docs/MISSING-MEDIA-PATCH-2-2026-09-17.md
+?? docs/MISSING-MEDIA-PATCH-2026-09-17.md
+?? docs/MISSING-MEDIA-REMAINING-2026-09-23.md
+?? docs/MISSING-MEDIA-T35G-8100-2026-09-22.md
+?? docs/MISSING-MEDIA-T35I-CARDS-2026-09-22.md
+?? docs/MISSING-MEDIA-T37M-2026-09-24.md
+?? docs/MISSING-MEDIA-T39-2026-09-25.md
+?? docs/MISSING-MEDIA-TAHADANI-40x300-2026-09-17.json
+?? docs/MISSING-MEDIA-TAHADANI-40x300-2026-09-17.md
+?? docs/MISSING-MEDIA-TAHADANI-5600-2026-09-17.json
+?? docs/MISSING-MEDIA-TAHADANI-5600-2026-09-17.md
+?? docs/MISSING-MEDIA-TAHADANI-6900-2026-09-17.json
+?? docs/MISSING-MEDIA-TAHADANI-6900-2026-09-17.md
+?? docs/MISSING-MEDIA-TAHADANI-GAMES-CARTOONS-7200-2026-09-17.json
+?? docs/MISSING-MEDIA-TAHADANI-GAMES-CARTOONS-7200-2026-09-17.md
+?? docs/MISSING-UNBOUND-MEDIA-TAHADANI-ENTERTAINMENT-15000-2026-09-17.json
+?? docs/MISSING-UNBOUND-MEDIA-TAHADANI-ENTERTAINMENT-15000-2026-09-17.md
+?? docs/T35J-CATEGORY-TRACKER-2026-09-23.md
+?? docs/T35J-HELD-CARDS-2026-09-23.md
+?? docs/T38-CATEGORY-INVENTORY-2026-09-24.md
+?? docs/TAHADANI-EXTENDED-CATEGORY-CATALOG.md
+?? docs/TAHADANI-ZERO-ENTRY-CATEGORY-PRIORITIES.md
+?? docs/UNVERIFIED-QUESTION-REVIEW-QUEUE-2026-09-17.md
+?? docs/ZERO-CATEGORY-SOURCE-RECONCILIATION-2026-09-23.md
+?? functions/src/category-challenge-selection.test.ts
+?? functions/src/map-variant-commitment.test.ts
+?? functions/src/map-variant-commitment.ts
+?? functions/src/qa-challenge-permit.test.ts
+?? functions/src/qa-challenge-permit.ts
+?? outputs/
+?? playwright.m4.config.ts
+?? public/assets/categories/generated/goals-2026.webp
+?? public/assets/categories/generated/huroof-063.webp
+?? public/assets/categories/generated/huroof-064.webp
+?? public/assets/categories/generated/huroof-065.webp
+?? public/assets/categories/generated/huroof-066.webp
+?? public/assets/categories/generated/huroof-067.webp
+?? public/assets/categories/generated/huroof-070.webp
+?? public/assets/categories/generated/huroof-071.webp
+?? public/assets/categories/generated/huroof-072.webp
+?? public/assets/categories/generated/huroof-073.webp
+?? public/assets/categories/generated/huroof-098.webp
+?? public/assets/categories/generated/legacy/
+?? public/assets/categories/generated/tahadani-games/
+?? reports/
+?? scripts/audit-candidate-category-covers.ts
+?? scripts/audit-verified-release.ts
+?? scripts/build-legacy-category-covers.ts
+?? scripts/build-review-master-sheet.mjs
+?? scripts/build-tahadani-games-category-covers.ts
+?? scripts/compact-question-review.ts
+?? scripts/countries-600-replacement-release.ts
+?? scripts/drive-review-connected-runner.mjs
+?? scripts/drive-review-upload.mjs
+?? scripts/export-review-drive-handoff.mjs
+?? scripts/firebase-content-sync-production.ts
+?? scripts/firebase-content-sync.ts
+?? scripts/flag-image-media-release.ts
+?? scripts/owner-001-json-import.ts
+?? scripts/owner-002-json-import.ts
+?? scripts/owner-003-json-import.ts
+?? scripts/owner-audit-corrections-release.ts
+?? scripts/owner-category-reconciliation.ts
+?? scripts/owner-category-supplement.ts
+?? scripts/owner-imports-public-release.ts
+?? scripts/owner-media-registry-url-patch-import.ts
+?? scripts/owner-media-release.ts
+?? scripts/owner-question-json-import.ts
+?? scripts/owner-questions-space1-import.ts
+?? scripts/owner-questions1-json-import.ts
+?? scripts/owner-questions2-json-import.ts
+?? scripts/owner-questions3-import.ts
+?? scripts/owner-questions4-import.ts
+?? scripts/owner-remove-all-country-code-trivia-release.ts
+?? scripts/owner-remove-letter-suffix-release.ts
+?? scripts/owner-remove-prompt-metadata-release.ts
+?? scripts/owner-remove-text-flag-questions-release.ts
+?? scripts/owner-tahadani-40x300-import.ts
+?? scripts/owner-tahadani-5600-import.ts
+?? scripts/owner-tahadani-6900-import.ts
+?? scripts/owner-tahadani-entertainment-15000-import.ts
+?? scripts/owner-tahadani-games-cartoons-7200-import.ts
+?? scripts/package-review-chatgpt.mjs
+?? scripts/public-100-goal-successor.ts
+?? scripts/q6000-owner-approved-release.ts
+?? scripts/refresh-current-question-inventory.mjs
+?? scripts/run-candidate-category-cover-backfill.ps1
+?? scripts/t17-goal-media.py
+?? scripts/t32-media-patch3-private-intake.ts
+?? scripts/t34-t12k-source-intake.ts
+?? scripts/t35-complete-import-release.ts
+?? scripts/t35-image-links-remediation.ts
+?? scripts/t35-media-handoff-import.ts
+?? scripts/t35-media-handoff-rebase.ts
+?? scripts/t35-playable-completion-release.ts
+?? scripts/t35-playable-completion.ts
+?? scripts/t35-question-expansion-release.ts
+?? scripts/t35g-8100-release.ts
+?? scripts/t35g-8100.ts
+?? scripts/t35i-cards-release.ts
+?? scripts/t35i-cards.ts
+?? scripts/t35j-topup-release.ts
+?? scripts/t35j-topup.ts
+?? scripts/t36-challenge-content.ts
+?? scripts/t36-premium-release-transport.ts
+?? scripts/t36-premium-release.ts
+?? scripts/t36-qa-permit.test.ts
+?? scripts/t36-qa-permit.ts
+?? scripts/t37-clean70-challenge-normalizer.ts
+?? scripts/t37-four-archives-release.ts
+?? scripts/t37-four-archives.ts
+?? scripts/t37-media-acquisition.ts
+?? scripts/t37-release-assembly.ts
+?? scripts/t37-release-operator.ts
+?? scripts/t37-topup-word-search-normalizer.ts
+?? scripts/t37m-crop-prep.ts
+?? scripts/t37m-direct-flag-retry.ts
+?? scripts/t37m-flag-original-acquisition.ts
+?? scripts/t37m-whole-object-operator.ts
+?? scripts/t37m-whole-object-phone-preview.ts
+?? scripts/t37m-whole-object-review.ts
+?? scripts/t37m-whole-object-successor.ts
+?? scripts/t38-archive-intake.ts
+?? scripts/t38-archive-release.ts
+?? scripts/t38b2-calculation-candidate.ts
+?? scripts/t38b3-release-assembly.ts
+?? scripts/t38b3-release-operator.ts
+?? scripts/t39-private-intake.ts
+?? scripts/t41-private-intake.ts
+?? scripts/t42-private-intake.ts
+?? scripts/t42-public-candidate.ts
+?? scripts/t42-review-intake.ts
+?? scripts/t43-difficulty-inventory.ts
+?? scripts/t44-011-live-answer-families.mjs
+?? scripts/t44-011-semantic-pairs.mjs
+?? scripts/t44-012-live-answer-families.mjs
+?? scripts/t44-answer-correction-candidates.mjs
+?? scripts/t44-answer-family-leads.mjs
+?? scripts/t44-archive-media-reuse.py
+?? scripts/t44-category178-fifa-fact-check.mjs
+?? scripts/t44-category178-live-lineage.ts
+?? scripts/t44-category178-review-queue.mjs
+?? scripts/t44-category178-source-reconcile.ts
+?? scripts/t44-category203-candidate-coverage.py
+?? scripts/t44-category203-jorginho-alt.py
+?? scripts/t44-category203-page-only-acquire.py
+?? scripts/t44-category203-physical-coverage.py
+?? scripts/t44-category203-zinchenko-alt.py
+?? scripts/t44-category209-direct-leads.py
+?? scripts/t44-category209-local-metadata.py
+?? scripts/t44-category209-pd-page-audit.py
+?? scripts/t44-category209-pd-private-pilot.py
+?? scripts/t44-category209-review-status.py
+?? scripts/t44-cloud-media-byte-readback.mjs
+?? scripts/t44-cloud-media-decode-audit.mjs
+?? scripts/t44-cloud-media-metadata-audit.mjs
+?? scripts/t44-commons-pair-queue.ts
+?? scripts/t44-current-question-compare.mjs
+?? scripts/t44-inventory.ts
+?? scripts/t44-latent-source-urls.py
+?? scripts/t44-live-cover-delivery-audit.py
+?? scripts/t44-live-exact-question-repeats.mjs
+?? scripts/t44-live-media-binding-audit.ts
+?? scripts/t44-live-question-integrity-audit.mjs
+?? scripts/t44-malformed-live-duplicate-sweep.mjs
+?? scripts/t44-media-acquire-pilot.ts
+?? scripts/t44-media-acquire-v10.ts
+?? scripts/t44-media-acquire-v11.ts
+?? scripts/t44-media-acquire-v12.ts
+?? scripts/t44-media-acquire-v13.ts
+?? scripts/t44-media-acquire-v14.ts
+?? scripts/t44-media-acquire-v15.ts
+?? scripts/t44-media-acquire-v16.ts
+?? scripts/t44-media-acquire-v17.ts
+?? scripts/t44-media-acquire-v18.ts
+?? scripts/t44-media-acquire-v19.ts
+?? scripts/t44-media-acquire-v20.ts
+?? scripts/t44-media-acquire-v21.ts
+?? scripts/t44-media-acquire-v22.ts
+?? scripts/t44-media-acquire-v23.ts
+?? scripts/t44-media-acquire-v24.ts
+?? scripts/t44-media-acquire-v25.ts
+?? scripts/t44-media-acquire-v26.ts
+?? scripts/t44-media-acquire-v27.ts
+?? scripts/t44-media-acquire-v28.ts
+?? scripts/t44-media-acquire-v29.ts
+?? scripts/t44-media-acquire-v3.ts
+?? scripts/t44-media-acquire-v30.ts
+?? scripts/t44-media-acquire-v31.ts
+?? scripts/t44-media-acquire-v32.ts
+?? scripts/t44-media-acquire-v33.ts
+?? scripts/t44-media-acquire-v34.ts
+?? scripts/t44-media-acquire-v35.ts
+?? scripts/t44-media-acquire-v36.ts
+?? scripts/t44-media-acquire-v37.ts
+?? scripts/t44-media-acquire-v38.ts
+?? scripts/t44-media-acquire-v39.ts
+?? scripts/t44-media-acquire-v4.ts
+?? scripts/t44-media-acquire-v40.ts
+?? scripts/t44-media-acquire-v41.ts
+?? scripts/t44-media-acquire-v42.ts
+?? scripts/t44-media-acquire-v43.ts
+?? scripts/t44-media-acquire-v44.ts
+?? scripts/t44-media-acquire-v45.ts
+?? scripts/t44-media-acquire-v46.ts
+?? scripts/t44-media-acquire-v47.ts
+?? scripts/t44-media-acquire-v48.ts
+?? scripts/t44-media-acquire-v49.ts
+?? scripts/t44-media-acquire-v5.ts
+?? scripts/t44-media-acquire-v50.ts
+?? scripts/t44-media-acquire-v51.ts
+?? scripts/t44-media-acquire-v52.ts
+?? scripts/t44-media-acquire-v53.ts
+?? scripts/t44-media-acquire-v54.ts
+?? scripts/t44-media-acquire-v55.ts
+?? scripts/t44-media-acquire-v56.ts
+?? scripts/t44-media-acquire-v57.ts
+?? scripts/t44-media-acquire-v58.ts
+?? scripts/t44-media-acquire-v59.ts
+?? scripts/t44-media-acquire-v6.ts
+?? scripts/t44-media-acquire-v60.ts
+?? scripts/t44-media-acquire-v61.ts
+?? scripts/t44-media-acquire-v62.ts
+?? scripts/t44-media-acquire-v63.ts
+?? scripts/t44-media-acquire-v64.ts
+?? scripts/t44-media-acquire-v65.ts
+?? scripts/t44-media-acquire-v66.ts
+?? scripts/t44-media-acquire-v67.ts
+?? scripts/t44-media-acquire-v68.ts
+?? scripts/t44-media-acquire-v69.ts
+?? scripts/t44-media-acquire-v7.ts
+?? scripts/t44-media-acquire-v70.ts
+?? scripts/t44-media-acquire-v71.ts
+?? scripts/t44-media-acquire-v72.ts
+?? scripts/t44-media-acquire-v8.ts
+?? scripts/t44-media-acquire-v9.ts
+?? scripts/t44-media-link-register.ts
+?? scripts/t44-media-private-byte-verify.mjs
+?? scripts/t44-raster-private-coverage.mjs
+?? scripts/t44-raster-replacement-portraits.py
+?? scripts/t44-review-exact-sweep.ts
+?? scripts/t44-review-pilot.ts
+?? scripts/t44-single-answer-correction-release.ts
+?? scripts/t44-single-answer-correction-transport.ts
+?? scripts/t44-source-hint-live-duplicates.mjs
+?? scripts/t44-t35i-live-status.mjs
+?? scripts/t44-t37m-011-overlap.mjs
+?? scripts/t44-t37m-011-pair-first-pass.mjs
+?? scripts/t44-t37m-011-unicode-screen.py
+?? scripts/t44-t37m-012-overlap.mjs
+?? scripts/t44-t41-commons-metadata-snapshot.py
+?? scripts/t44-t41-commons-row-queue.ts
+?? scripts/t44-t41-sporting-alt-lead.py
+?? scripts/t44-t41-svg-commons-metadata.py
+?? scripts/t44-t41-svg-private-acquire.py
+?? scripts/t44-t41-unique-raster-urls.py
+?? scripts/t44-t41-unique-svg-urls.py
+?? scripts/verify-drive-download.mjs
+?? scripts/verify-drive-upload-inputs.mjs
+?? scripts/verify-tahadani-games-category-covers.ts
+?? server/challenge-definition-repository.ts
+?? src/data/category-topic-taxonomy.ts
+?? src/data/tahadani-games-category-covers.public.json
+?? src/features/game/challenges/
+?? src/features/game/runtime/challenge-question-selector.ts
+?? src/features/game/runtime/map-variant-resolver.ts
+?? src/features/game/runtime/question-projection.ts
+?? src/routes/MediaCredits.tsx
+?? tahdani.sa.json
+?? tahdani.sa.md
+?? tests/app/category-cover-resolution.test.tsx
+?? tests/app/challenge-stage.test.tsx
+?? tests/app/media-credits.test.tsx
+?? tests/audit-verified-release.test.ts
+?? tests/compact-question-review.test.ts
+?? tests/drive-review-handoff.test.mjs
+?? tests/e2e/m4-challenge-visual.spec.ts
+?? tests/e2e/m4-real-local.spec.ts
+?? tests/e2e/m5-real-local.spec.ts
+?? tests/firebase-content-sync-production.test.ts
+?? tests/firebase-content-sync.test.ts
+?? tests/fixtures/m4-source-tile-arabic.json
+?? tests/fixtures/m5-source-memory-arabic.json
+?? tests/flag-image-media-release.test.ts
+?? tests/game/category-allocation.test.ts
+?? tests/game/challenge-engine.test.ts
+?? tests/game/challenge-integration.test.ts
+?? tests/game/challenge-question-selector.test.ts
+?? tests/game/family-allocation.test.ts
+?? tests/game/firebase-game-adapter.test.ts
+?? tests/game/map-variant-resolver.test.ts
+?? tests/game/t36-challenge-content.test.ts
+?? tests/owner-001-json-import.test.ts
+?? tests/owner-002-json-import.test.ts
+?? tests/owner-003-json-import.test.ts
+?? tests/owner-audit-corrections-release.test.ts
+?? tests/owner-category-reconciliation.test.ts
+?? tests/owner-category-supplement.test.ts
+?? tests/owner-imports-public-release.test.ts
+?? tests/owner-media-registry-url-patch-import.test.ts
+?? tests/owner-media-release-plan.test.ts
+?? tests/owner-media-release.test.ts
+?? tests/owner-question-json-import.test.ts
+?? tests/owner-questions-space1-import.test.ts
+?? tests/owner-questions1-json-import.test.ts
+?? tests/owner-questions2-json-import.test.ts
+?? tests/owner-questions3-import.test.ts
+?? tests/owner-remove-all-country-code-trivia-release.test.ts
+?? tests/owner-remove-letter-suffix-release.test.ts
+?? tests/owner-remove-prompt-metadata-release.test.ts
+?? tests/owner-remove-text-flag-questions-release.test.ts
+?? tests/owner-tahadani-40x300-import.test.ts
+?? tests/owner-tahadani-5600-import.test.ts
+?? tests/owner-tahadani-6900-import.test.ts
+?? tests/owner-tahadani-entertainment-15000-import.test.ts
+?? tests/owner-tahadani-games-cartoons-7200-import.test.ts
+?? tests/public-100-goal-successor.test.ts
+?? tests/q6000-owner-approved-release.test.ts
+?? tests/t17_goal_media_test.py
+?? tests/t32-media-patch3-private-intake.test.ts
+?? tests/t34-t12k-source-intake.test.ts
+?? tests/t35-complete-import-release.test.ts
+?? tests/t35-image-links-remediation.test.ts
+?? tests/t35-media-handoff-import.test.ts
+?? tests/t35-media-handoff-rebase.test.ts
+?? tests/t35-playable-completion.test.ts
+?? tests/t35-question-expansion-release.test.ts
+?? tests/t35g-8100.test.ts
+?? tests/t35i-cards.test.ts
+?? tests/t35j-topup.test.ts
+?? tests/t36-premium-release.test.ts
+?? tests/t37-clean70-challenge-normalizer.test.ts
+?? tests/t37-four-archives.test.ts
+?? tests/t37-media-acquisition.test.ts
+?? tests/t37-release-assembly.test.ts
+?? tests/t37-release-operator.test.ts
+?? tests/t37-word-search.test.ts
+?? tests/t37m-crop-prep.test.ts
+?? tests/t37m-direct-flag-retry.test.ts
+?? tests/t37m-flag-original-acquisition.test.ts
+?? tests/t37m-whole-object-review.test.ts
+?? tests/t37m-whole-object-successor.test.ts
+?? tests/t38-archive-intake.test.ts
+?? tests/t38b2-calculation-candidate.test.ts
+?? tests/t38b3-release.test.ts
+?? tests/t39-private-intake.test.ts
+?? tests/t41-private-intake.test.ts
+?? tests/t42-private-intake.test.ts
+?? tests/t42-public-candidate.test.ts
+?? tests/t42-review-intake.test.ts
+?? tests/t43-difficulty-inventory.test.ts
+?? tests/t44-answer-correction-candidates.test.mjs
+?? tests/t44-cloud-media-metadata-audit.test.mjs
+?? tests/t44-commons-pair-queue.test.ts
+?? tests/t44-current-question-compare.test.mjs
+?? tests/t44-inventory.test.ts
+?? tests/t44-live-media-binding-audit.test.ts
+?? tests/t44-live-question-integrity-audit.test.mjs
+?? tests/t44-media-acquire-pilot.test.ts
+?? tests/t44-media-link-register.test.ts
+?? tests/t44-review-exact-sweep.test.ts
+?? tests/t44-review-pilot.test.ts
+?? tests/t44-single-answer-correction-release.test.ts
+?? tests/t44-single-answer-correction-transport.test.ts
+?? tests/t44-t41-commons-row-queue.test.ts

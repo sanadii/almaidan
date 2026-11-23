@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "visual-refinement-2026-10-02-010",
+  "recordedAt": "2026-10-02",
+  "authority": "human-product-owner",
+  "exactInitialFeedback": "these 2 are good",
+  "exactChoice": "Refine selected direction with playful type and shapes (Recommended)",
+  "selectedDirection": "INT-CONCEPT-B",
+  "historyPrefix": {
+    "recordId": "design-history-0009",
+    "path": "design/evidence/history/0009-maydan-name-confirmation.md",
+    "sha256": "A09A03059101D7DD27BE33613FDF46ADA6CE6BD79EDE00A790D0E5C3EE3B9858"
+  },
+  "refinementRecord": {
+    "recordId": "design-history-0010",
+    "path": "design/evidence/history/0010-maydan-playful-homepage-refinement.md",
+    "sha256": "A477B870B44DE50CC61BCC8F6347ED36557B73E31138EB1662319D6A326D9C77"
+  },
+  "referenceUrls": [
+    "https://images.refero.design/styles/fictional-typeface.com/5f5fd099-866e-4681-917b-0254a3883980/preview_0.jpg",
+    "https://images.refero.design/styles/honk.me/856297f1-e0ab-4155-a736-0f9edc5ca885/preview_0.jpg"
+  ],
+  "scope": "Refine the existing combined homepage and entry shell for human live review; retain concept B palette and product name. Other routes remain gated.",
+  "validationRule": "Validate the exact numbered record and exact history-prefix SHA listed here; later appended records cannot invalidate this receipt. No aesthetic quality claim."
+}

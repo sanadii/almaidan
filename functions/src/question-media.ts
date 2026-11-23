@@ -2,9 +2,25 @@ import { createHash } from 'node:crypto';
 import { access, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { hasRevealedOccurrence, type CanonicalMember, type CanonicalRoom } from './game.js';
+import { isYouTubeMediaDescriptor, youtubeDescriptorBytes, YOUTUBE_MEDIA_CONTENT_TYPE } from '../../src/features/game/runtime/youtube-media.js';
 
 export type CurrentQuestionMediaRequest = { roomId: string; mediaId: string; assetSha256: string };
+type MediaBinding = Pick<CurrentQuestionMediaRequest, 'mediaId' | 'assetSha256'> & {
+  occurrence?: string;
+  disclosureOccurrence?: string;
+};
 export const activeImageStates = new Set(['QUESTION_READING', 'FIRST_ANSWER', 'OPPONENT_CHANCE', 'QUESTION_FAILED', 'PAUSED']);
+
+export function immutableReleaseYouTubeMedia(binding: MediaBinding & { type?: string; contentType?: string }, item: Record<string, unknown> | undefined) {
+  if (binding.type !== 'video' || binding.contentType !== YOUTUBE_MEDIA_CONTENT_TYPE || !item ||
+      Object.keys(item).sort().join(',') !== 'assetSha256,contentType,immutable,mediaId,youtube' ||
+      item.immutable !== true || item.mediaId !== binding.mediaId || item.assetSha256 !== binding.assetSha256 ||
+      item.contentType !== YOUTUBE_MEDIA_CONTENT_TYPE || !isYouTubeMediaDescriptor(item.youtube) ||
+      createHash('sha256').update(youtubeDescriptorBytes(item.youtube)).digest('hex') !== binding.assetSha256) {
+    throw new Error('invalid-immutable-youtube-binding');
+  }
+  return item.youtube;
+}
 
 /** Release-owned object routing; only enumerated public-goal grammars opt in. */
 export function expectedReleaseMediaObjectName(mediaId: string, assetSha256: string, video: boolean, rebuiltJpeg: boolean) {
@@ -61,6 +77,7 @@ export async function emulatorCurrentQuestionMediaUrl(media: { mediaId: string; 
 
 /** Pure callable authorization boundary; the caller supplies identity from Auth. */
 export function authorizeCurrentQuestionMedia(roomId: string, room: CanonicalRoom, members: CanonicalMember[], uid: string, request: unknown) {
+  if (room.challenge && !room.challenge.solutionRevealed) throw new Error('challenge-media-denied');
   if (!request || typeof request !== 'object' || Array.isArray(request)) throw new Error('invalid-media-request');
   const value = request as Partial<CurrentQuestionMediaRequest>;
   if (Object.keys(value).length !== 3 || value.roomId !== roomId || typeof value.mediaId !== 'string' || !/^[A-Za-z0-9:_-]{1,128}$/.test(value.mediaId) || typeof value.assetSha256 !== 'string' || !/^[a-f0-9]{64}$/.test(value.assetSha256)) throw new Error('invalid-media-request');
@@ -72,4 +89,22 @@ export function authorizeCurrentQuestionMedia(roomId: string, room: CanonicalRoo
   const media = member.role === 'host' && revealed ? room.activeQuestion?.answerMedia ?? room.activeQuestion?.media : room.activeQuestion?.media;
   if (!['image', 'video'].includes(room.activeQuestion?.modality ?? '') || !media || media.mediaId !== value.mediaId || media.assetSha256 !== value.assetSha256) throw new Error('media-binding-mismatch');
   return media;
+}
+
+/**
+ * A media read may take long enough for the room to advance or access to be
+ * revoked.  Recheck after the read, immediately before returning bytes/URLs.
+ * The callable supplies the authoritative recheck; this helper keeps that
+ * ordering testable without exposing a storage path to callers.
+ */
+export async function readWithFinalMediaAuthorization<T>(
+  binding: MediaBinding,
+  read: () => Promise<T>,
+  reauthorize: () => Promise<MediaBinding>,
+): Promise<T> {
+  const value = await read();
+  const current = await reauthorize();
+  if (current.mediaId !== binding.mediaId || current.assetSha256 !== binding.assetSha256 || current.occurrence !== binding.occurrence || current.disclosureOccurrence !== binding.disclosureOccurrence)
+    throw new Error('media-authorization-stale');
+  return value;
 }

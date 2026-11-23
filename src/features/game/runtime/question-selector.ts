@@ -1,3 +1,5 @@
+import { canonicalCategoryId, canonicalizeCategoryIds, categoryMatches, type CategoryProjectionVersion } from "./category-projection.js";
+
 export type RuntimeQuestionV32 = {
   id: string;
   categoryId: string;
@@ -14,6 +16,7 @@ export type RuntimeSelectionOptions = {
   modality: RuntimeQuestionV32["modality"];
   seed: number;
   reservePerLetter?: number;
+  categoryProjectionVersion?: CategoryProjectionVersion;
 };
 export type MatchQuestionSelection = {
   queues: Record<string, string[]>;
@@ -21,6 +24,7 @@ export type MatchQuestionSelection = {
   consumedAnswerConceptIds: string[];
   seed: number;
   categories: string[];
+  categoryProjectionVersion?: CategoryProjectionVersion;
   modality: RuntimeQuestionV32["modality"];
   /** Category queues use the same monotonic consumed histories as letter queues. */
   gameKind?: "huroof" | "categories";
@@ -50,10 +54,10 @@ const shuffled = <T>(values: T[], seed: number) => {
 };
 /** Finds a distinct global concept assignment for every category allocation slot. */
 function planCategoryAllocation(
-  questions: RuntimeQuestionV32[], categories: string[], slotsPerCategory: number,
+  questions: RuntimeQuestionV32[], categories: string[], slotsPerCategory: number, version?: CategoryProjectionVersion,
 ): Map<string, Set<string>> | undefined {
   const slots = categories.flatMap((category) => Array.from({ length: slotsPerCategory }, () => category));
-  const conceptsFor = new Map(categories.map((category) => [category, [...new Set(questions.filter((question) => question.categoryId === category && question.modality !== "charades").map((question) => question.answerConceptId))].sort()]));
+  const conceptsFor = new Map(categories.map((category) => [category, [...new Set(questions.filter((question) => categoryMatches(category, question.categoryId, version) && question.modality !== "charades").map((question) => question.answerConceptId))].sort()]));
   const owner = new Map<string, number>();
   const visit = (slot: number, seen: Set<string>): boolean => {
     for (const concept of conceptsFor.get(slots[slot]) ?? []) {
@@ -73,13 +77,13 @@ export function createMatchQuestionSelection(
   questions: RuntimeQuestionV32[],
   options: RuntimeSelectionOptions,
 ): MatchQuestionSelection {
-  const categorySet = new Set(options.categories);
+  const categorySet = new Set(canonicalizeCategoryIds(options.categories, options.categoryProjectionVersion));
   if (!categorySet.size)
     throw new Error("Question selection requires an explicit category scope.");
   const eligible = questions.filter(
     (question) =>
       question.modality === options.modality &&
-      categorySet.has(question.categoryId) &&
+      categorySet.has(canonicalCategoryId(question.categoryId, options.categoryProjectionVersion)) &&
       typeof question.targetLetter === "string" &&
       question.targetLetter.trim(),
   );
@@ -115,6 +119,7 @@ export function createMatchQuestionSelection(
     consumedAnswerConceptIds: [],
     seed: options.seed,
     categories: [...categorySet].sort(),
+    ...(options.categoryProjectionVersion ? { categoryProjectionVersion: options.categoryProjectionVersion } : {}),
     modality: options.modality,
   };
 }
@@ -123,14 +128,14 @@ export function createCategoryQuestionSelection(
   questions: RuntimeQuestionV32[],
   options: Omit<RuntimeSelectionOptions, "reservePerLetter">,
 ): MatchQuestionSelection {
-  const categories = [...new Set(options.categories)].sort();
+  const categories = canonicalizeCategoryIds(options.categories, options.categoryProjectionVersion).sort();
   if (categories.length < 2 || categories.length > 10)
     throw new Error("Category selection requires two to ten categories.");
   const queues: Record<string, string[]> = {};
   const slotsPerCategory = Math.ceil(25 / categories.length) + 1;
   for (const category of categories) {
     const eligible = questions
-      .filter((question) => question.modality !== "charades" && question.categoryId === category)
+      .filter((question) => question.modality !== "charades" && categoryMatches(category, question.categoryId, options.categoryProjectionVersion))
       .sort((left, right) => left.id.localeCompare(right.id));
     const uniqueConcepts = new Set(eligible.map((question) => question.answerConceptId)).size;
     // The balanced 25-cell board assigns at most ceil(25/categoryCount) cells
@@ -139,18 +144,18 @@ export function createCategoryQuestionSelection(
       throw new Error(`Category ${category} has insufficient unique concepts for its board allocation and replacement reserve.`);
     queues[category] = eligible.map((question) => question.id);
   }
-  const allocation = planCategoryAllocation(questions, categories, slotsPerCategory);
+  const allocation = planCategoryAllocation(questions, categories, slotsPerCategory, options.categoryProjectionVersion);
   if (!allocation)
     throw new Error("Category scope has overlapping concepts that cannot cover its board allocation and replacement reserve.");
   for (const category of categories) {
-    const categoryQuestions = questions.filter((question) => question.categoryId === category && question.modality !== "charades").sort((left, right) => left.id.localeCompare(right.id));
+    const categoryQuestions = questions.filter((question) => categoryMatches(category, question.categoryId, options.categoryProjectionVersion) && question.modality !== "charades").sort((left, right) => left.id.localeCompare(right.id));
     const reservedConcepts = allocation.get(category)!;
     const preferred = categoryQuestions.filter((question) => reservedConcepts.has(question.answerConceptId));
     const remaining = categoryQuestions.filter((question) => !reservedConcepts.has(question.answerConceptId));
     const seed = options.seed ^ [...category].reduce((sum, value) => sum + value.charCodeAt(0), 0);
     queues[category] = [...shuffled(preferred.map((question) => question.id), seed), ...shuffled(remaining.map((question) => question.id), seed ^ 0x9e3779b1)];
   }
-  return { queues, consumedQuestionIds: [], consumedAnswerConceptIds: [], reservedQuestionIds: [], reservedAnswerConceptIds: [], reservedForCell: {}, seed: options.seed, categories, modality: "classic", gameKind: "categories" };
+  return { queues, consumedQuestionIds: [], consumedAnswerConceptIds: [], reservedQuestionIds: [], reservedAnswerConceptIds: [], reservedForCell: {}, seed: options.seed, categories, ...(options.categoryProjectionVersion ? { categoryProjectionVersion: options.categoryProjectionVersion } : {}), modality: "classic", gameKind: "categories" };
 }
 
 function availableQuestion(questions: RuntimeQuestionV32[], selection: MatchQuestionSelection, queueKey: string): RuntimeQuestionV32 {
@@ -167,7 +172,7 @@ export function reserveQuestionForCell(
   questions: RuntimeQuestionV32[], selection: MatchQuestionSelection, queueKey: string, cellId: string,
 ): { question: RuntimeQuestionV32; selection: MatchQuestionSelection } {
   if ((selection.reservedForCell ?? {})[cellId]) throw new Error(`Cell ${cellId} already has a reserved question.`);
-  const question = availableQuestion(questions, selection, queueKey);
+  const question = availableQuestion(questions, selection, selection.gameKind === "categories" ? canonicalCategoryId(queueKey, selection.categoryProjectionVersion) : queueKey);
   return { question, selection: {
     ...selection,
     reservedQuestionIds: [...(selection.reservedQuestionIds ?? []), question.id],
@@ -202,7 +207,7 @@ export function selectCategoryQuestion(
   questions: RuntimeQuestionV32[], selection: MatchQuestionSelection, categoryId: string,
 ): { question: RuntimeQuestionV32; selection: MatchQuestionSelection } {
   if (selection.gameKind !== "categories") throw new Error("Category selection policy is required.");
-  const question = availableQuestion(questions, selection, categoryId);
+  const question = availableQuestion(questions, selection, canonicalCategoryId(categoryId, selection.categoryProjectionVersion));
   return { question, selection: { ...selection, consumedQuestionIds: [...selection.consumedQuestionIds, question.id], consumedAnswerConceptIds: [...selection.consumedAnswerConceptIds, question.answerConceptId] } };
 }
 export function selectMatchQuestion(
@@ -245,11 +250,12 @@ export function selectCharadesQuestion(
   options: {
     categories: string[];
     cursor: number;
+    categoryProjectionVersion?: CategoryProjectionVersion;
     consumedQuestionIds?: string[];
     consumedAnswerConceptIds?: string[];
   },
 ): RuntimeQuestionV32 {
-  const categories = new Set(options.categories);
+  const categories = new Set(canonicalizeCategoryIds(options.categories, options.categoryProjectionVersion));
   if (!categories.size)
     throw new Error("Charades selection requires an explicit category scope.");
   const usedIds = new Set(options.consumedQuestionIds ?? []);
@@ -258,7 +264,7 @@ export function selectCharadesQuestion(
     .filter(
       (question) =>
         question.modality === "charades" &&
-        categories.has(question.categoryId) &&
+        categories.has(canonicalCategoryId(question.categoryId, options.categoryProjectionVersion)) &&
         !question.targetLetter &&
         !usedIds.has(question.id) &&
         !usedConcepts.has(question.answerConceptId),

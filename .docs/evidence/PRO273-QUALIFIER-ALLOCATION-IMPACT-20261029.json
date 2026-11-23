@@ -1,0 +1,34 @@
+{
+  "milestone": "PRO273-SEL",
+  "status": "CORRECTIVE_SOURCE_CONTRACT_RELEASED_IMPLEMENTATION_NOT_ACCEPTED",
+  "contractResolution": "PRO273-CP-ARENA-SOURCE-AMENDMENT-RELEASE-20261029.json",
+  "originalAuthoringRelease": "PRO273-SEL-SOURCE-AUTHORING-RELEASE-20261029.json",
+  "originalReceiptPreserved": true,
+  "finding": "Qualifier descriptor names baseline partition and physical proof but does not bind a typed complete qualifier-process/launch vector to a protected qualified partition and shared global accounting. Aggregate baseline totals, durable control charge and observer input claims do not themselves prove this distinct holder.",
+  "affected": [
+    "Qualifier reservation physical allocation authority",
+    "Qualifier/control contribution to every shared physical admission gate",
+    "Allocation claim, unknown occupancy and release correspondence",
+    "INITIAL and revoker process/preinput holder and captured delivery contract",
+    "Bootstrap semantic-core/provenance hash dependency direction",
+    "One-use arena invocation/body catalog budget across failed transactions",
+    "Qualified arena body/depth/token cardinality and actual current-context join"
+  ],
+  "retained": [
+    "Existing CAP acceptance and limited spool-impact receipt",
+    "Both public reader guards and accepted native-bridge bytes",
+    "Compatible primitive, arena, profile, raw-token and direct-entry contract dispositions",
+    "Existing focused parser checks at their exact source identities"
+  ],
+  "nextOwners": [
+    "PRO311-HISTORY-DATABASE: exact existing allocation records, accounting joins and minimal corrective contract",
+    "ALMAIDAN-TEN-TASK-PLAN: smallest complete allocation amendment reconciled with Database",
+    "Root: adopt and persist exact correction and obtain required domain delta before affected authoring",
+    "PRO311-HISTORY-FORGE: continue independent authorized Source work"
+  ],
+  "genuineQuantitiesProvided": false,
+  "nativeSqlBuild": "NOT_RUN",
+  "runtimeAuthorityGranted": false,
+  "fullTaskDone": false,
+  "credit": 0
+}

@@ -30,7 +30,7 @@ beforeEach(() => {
 it('keeps Firebase room creation disabled when approved release discovery is unavailable', async () => {
   runtime.getApprovedReleaseCatalog.mockRejectedValue(new Error('No active immutable release.'));
   render(<ThemeProvider><MemoryRouter><HostNewRoute /></MemoryRouter></ThemeProvider>);
-  await waitFor(() => expect(screen.getByTestId('create-room')).toBeDisabled());
+  await waitFor(() => expect(screen.getAllByText('لا توجد حزمة أسئلة معتمدة ونشطة لإنشاء غرفة مباشرة. راجع النشر أو جرّب لاحقاً.').length).toBeGreaterThan(0));
   expect(screen.getByTestId('create-room')).toBeDisabled();
   expect(runtime.createRoom).not.toHaveBeenCalled();
 });
@@ -41,10 +41,8 @@ it('submits demo false only after the approved Firebase catalog is ready', async
   render(<ThemeProvider><MemoryRouter><HostNewRoute /></MemoryRouter></ThemeProvider>);
   await waitFor(() => expect(screen.getByTestId('create-room')).toBeEnabled());
   expect(screen.getByRole('button', { name: 'أنشئ الغرفة المباشرة' })).toBeEnabled();
-  await user.click(screen.getByRole('button', { name: 'فئة أ — أضف إلى الاختيار' }));
-  await user.click(screen.getByRole('button', { name: 'فئة ب — أضف إلى الاختيار' }));
   await user.click(screen.getByTestId('create-room'));
-  await waitFor(() => expect(runtime.createRoom).toHaveBeenCalledWith(expect.objectContaining({ demo: false, categories: ['category-a', 'category-b'], expectedRelease: { releaseId: 'release-approved', releaseRootSha256: 'a'.repeat(64) } })));
+  await waitFor(() => expect(runtime.createRoom).toHaveBeenCalledWith(expect.objectContaining({ demo: false, categories: ['category-a', 'category-b'], expectedRelease: { releaseId: 'release-approved', releaseRootSha256: 'a'.repeat(64) } }), undefined));
 });
 
 it('keeps a board mode disabled when the approved catalog says its exact selector cannot fill it', async () => {
@@ -66,8 +64,6 @@ it('refreshes the Firebase catalog when room creation detects a stale release id
   const user = userEvent.setup();
   render(<ThemeProvider><MemoryRouter><HostNewRoute /></MemoryRouter></ThemeProvider>);
   await waitFor(() => expect(screen.getByTestId('create-room')).toBeEnabled());
-  await user.click(screen.getByRole('button', { name: 'فئة أ — أضف إلى الاختيار' }));
-  await user.click(screen.getByRole('button', { name: 'فئة ب — أضف إلى الاختيار' }));
   await user.click(screen.getByTestId('create-room'));
   await waitFor(() => expect(runtime.getApprovedReleaseCatalog).toHaveBeenCalledTimes(2));
   expect(await screen.findByText('تغيّرت الحزمة المعتمدة. حدّث الإعدادات للتحقق من الفهرس الجديد.')).toBeVisible();

@@ -1,0 +1,210 @@
+{
+  "milestone": "PRO273-SEL",
+  "assignment": "PRO311-HISTORY-FORGE",
+  "status": "GUARDED_SOURCE_AUTHORING_RELEASED_NOT_IMPLEMENTATION_ACCEPTANCE",
+  "releasedUtc": "2026-10-28T23:05:51.0153258Z",
+  "sourceRoot": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof",
+  "manifest": "output/pro311-history-20261027/forge/PRO273-SEL-PREEDIT-MANIFEST-591cd769e77c990b.json",
+  "manifestSha256": "591cd769e77c990b07b536698b8b6e37b4427556fcc7245dac6737a679fbf97d",
+  "companionSha256": "d9214a5b6942f49cc27f1362c332e4f51a24a6b664101361ce833ad80a447090",
+  "reviews": [
+    {
+      "sha256": "e102ff0a6d454a80128c9a04dab3828f78f1880fc5cafd009e6f4781eded3fee",
+      "disposition": "Conditional guarded Source authoring concurrence",
+      "path": "output/pro311-history-20261027/database/PRO273-SEL-31PATH-PREEDIT-REVIEW-20261029.md"
+    },
+    {
+      "sha256": "9cfda205ff3f359b14964577889ebabd99f9990c46c9dc03597556f1bc6a5a8d",
+      "disposition": "Concur exact Source authoring contract",
+      "path": "output/pro311-history-20261027/security/PRO273-SEL-31PATH-PREEDIT-REVIEW-20261029.md"
+    }
+  ],
+  "ownedNew": [
+    {
+      "path": "services/enta/server/prisma/migrations/20261028160000_pro273_selection_completion/migration.sql",
+      "present": false
+    },
+    {
+      "path": "services/enta/server/prisma/roles/pro273_selection_completion_roles.sql",
+      "present": false
+    },
+    {
+      "path": "services/enta/server/src/huroof-pg/selection-contract.ts",
+      "present": false
+    },
+    {
+      "path": "services/enta/server/tests/pro273-selection-completion.test.ts",
+      "present": false
+    },
+    {
+      "path": "services/enta/server/tests/pro273-selection-contract.test.ts",
+      "present": false
+    },
+    {
+      "path": "services/enta/server/tests/pro273-ordinary-capacity.test.ts",
+      "present": false
+    },
+    {
+      "path": "services/enta/server/native/pro273-primitives/CMakeLists.txt",
+      "present": false
+    },
+    {
+      "path": "services/enta/server/native/pro273-primitives/pro273_primitives.cpp",
+      "present": false
+    },
+    {
+      "path": "services/enta/server/native/pro273-primitives/pro273_primitives.control",
+      "present": false
+    },
+    {
+      "path": "services/enta/server/native/pro273-primitives/pro273_primitives--1.0.sql",
+      "present": false
+    },
+    {
+      "path": "services/enta/server/native/pro273-primitives/dependencies.json",
+      "present": false
+    },
+    {
+      "path": "services/enta/server/native/pro273-primitives/ABI.md",
+      "present": false
+    },
+    {
+      "path": "services/enta/server/native/pro273-primitives/tests/primitive_vectors.cpp",
+      "present": false
+    }
+  ],
+  "ownedChange": [
+    {
+      "path": "services/enta/server/src/huroof-pg/service.ts",
+      "sha256": "08534bc04a8c2ac9e92e03bd5b9c23dce84f1d7416b17a3c5121738275d4ae5d",
+      "bytes": 26014,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\01-service.ts"
+    },
+    {
+      "path": "services/enta/server/src/huroof-pg/challenge.ts",
+      "sha256": "495dd64693ee3516690676ff12e7974708b45bd79c43f1fafdbbc95257a820a6",
+      "bytes": 12533,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\02-challenge.ts"
+    },
+    {
+      "path": "services/enta/server/src/huroof-pg/postgres.ts",
+      "sha256": "4b365054de35de5ecf87ca00f366f3e6113e8e08fcb42ab667aa64ad08720280",
+      "bytes": 17618,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\03-postgres.ts"
+    },
+    {
+      "path": "services/enta/server/src/huroof-pg/composition.ts",
+      "sha256": "3f4ade4014b77003f372c428029bf7d59f2a7fbf1eab191885dae861b8063241",
+      "bytes": 2886,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\04-composition.ts"
+    },
+    {
+      "path": "services/enta/server/src/huroof-pg/router.ts",
+      "sha256": "5edb4450301375689484df7bdf3934b57e6164d57dde6f7341974dd10470c2da",
+      "bytes": 3507,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\05-router.ts"
+    },
+    {
+      "path": "services/enta/server/src/huroof-pg/repository.ts",
+      "sha256": "62aae4c66c14014527d61e69813cdb3ed16e9c550ea68d27a40ddfb55664efc9",
+      "bytes": 5782,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\06-repository.ts"
+    },
+    {
+      "path": "services/enta/server/src/history-rematch/capacity-contract.ts",
+      "sha256": "f7519853e408f9d8dd242b6d2e62485c3e68745b788491e43c59db9ff2bbd831",
+      "bytes": 16516,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\07-capacity-contract.ts"
+    },
+    {
+      "path": "services/enta/server/src/history-rematch/capacity-supplier.ts",
+      "sha256": "321dd3d03cdc5507d6cd125dd895b0eed40e7b9415d8d7d7e4ea5339b813fcbb",
+      "bytes": 1785,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\08-capacity-supplier.ts"
+    },
+    {
+      "path": "services/enta/server/src/history-rematch/capacity-supervisor.ts",
+      "sha256": "8bf8b52e0c6d1367b6dbef2013f7779897b8a3cdc2ff015da4c8471281d34c2d",
+      "bytes": 26128,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\09-capacity-supervisor.ts"
+    },
+    {
+      "path": "services/enta/server/src/history-rematch/capacity-producer.ts",
+      "sha256": "384e5c0412bf2b0104fb59dfec6f456fc1e8968e87cc0f4e8d6d67b81bdbbe3b",
+      "bytes": 25141,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\10-capacity-producer.ts"
+    },
+    {
+      "path": "services/enta/server/src/history-rematch/capacity-ingress.ts",
+      "sha256": "e2e4c10ee9ecb2404e6a406ce4cc755b90bb88efcf654cf0392362a3e406d2e8",
+      "bytes": 20156,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\11-capacity-ingress.ts"
+    },
+    {
+      "path": "services/enta/server/src/realtime/service.ts",
+      "sha256": "49deff660d8d696cbd89aa6052fad2b4a9370f57b738f6d1ddec562676ec66c9",
+      "bytes": 8752,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\12-service.ts"
+    },
+    {
+      "path": "services/enta/server/src/realtime/router.ts",
+      "sha256": "7e313a99a22fd95483f0a8de5a338f8a5886cbf36debc7e462844dd6d042004a",
+      "bytes": 3045,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\13-router.ts"
+    },
+    {
+      "path": "services/enta/server/tests/pro273-huroof-modes.test.ts",
+      "sha256": "4e7738fcb66e7bbbb0f68932c089d776362d6b663893630b7830734e96030efb",
+      "bytes": 129695,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\14-pro273-huroof-modes.test.ts"
+    },
+    {
+      "path": "services/enta/server/tests/pro262-capacity-supplier.test.ts",
+      "sha256": "0dfe3ec47a38e74fdc1da88d2913f7e8b771f1e26021b1dfc5082d31db88524a",
+      "bytes": 4516,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\15-pro262-capacity-supplier.test.ts"
+    },
+    {
+      "path": "services/enta/server/tests/pro262-capacity-lifecycle.test.ts",
+      "sha256": "f45503b0b7ae33abbdbba9925b1916c3435a885412c340b5479a01627b1daf63",
+      "bytes": 47508,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\16-pro262-capacity-lifecycle.test.ts"
+    },
+    {
+      "path": "services/enta/server/src/app.ts",
+      "sha256": "f2dc37c7870f45f382a8cfa28d03d3daaffd4233330797cbcc2107b61173ff89",
+      "bytes": 11537,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\17-app-proposed.ts",
+      "authority": "Root adopted app pre-parser scope amendment; no Source authoring release"
+    },
+    {
+      "path": "services/enta/server/src/realtime/postgres.ts",
+      "sha256": "10158f4931abcc847521ad81b1100b5d3fa1096be101cc49ef8ce8fcc246d13b",
+      "bytes": 16304,
+      "preimage": "D:\\projects\\huroof_wa_oloof\\output\\pro311-history-20261027\\forge\\PRO273-SEL-PREEDIT-PREIMAGES\\18-realtime-postgres.ts",
+      "authority": "Root adopted 31st path after direct exported factory inert-query counterexample"
+    }
+  ],
+  "sourceAuthoringReleased": true,
+  "runtimeAuthorityGranted": false,
+  "firstPointerRequirement": "Lane initialization creates one guarded empty current-pointer row with activationOrdinal0 and null profile/generation/hash. First NONE CAS locks this row; never rely on absent-row FOR UPDATE.",
+  "impact": "Only31 owned paths plus their affected graph. Retain unaffected accepted CAP/native-bridge/DNA evidence; separately track spool semantic/request/replay impact.",
+  "rollback": "Deny fresh selection admissions; preserve valid committed replay/continuation, immutable receipts/results/history and occupied unresolved resources. No reset/refund/deletion or old migration/guard rewrite.",
+  "requiredFinal": [
+    "Forge full assigned implementation and affected pure/inert actual adapter/oracle tests plus appropriate direct noEmit",
+    "Exact current changed-byte Database and Security reviews with compatible evidence joins",
+    "Root integrated review and reproduction of a material load-bearing affected check",
+    "Native build/load/SQL/ACL/locks/ICU/resource/process/genuine qualification remains NOT_RUN pending exact separate authority"
+  ],
+  "holds": [
+    "R6 STOP",
+    "both reader guards byte-identical",
+    "installation aborts preserved",
+    "readiness attempt spent",
+    "download proposal ungranted",
+    "no app/DB/SDK initialization or network/process/credential/native/SQL execution"
+  ],
+  "implementationAccepted": false,
+  "fullTaskDone": false,
+  "credit": 0
+}

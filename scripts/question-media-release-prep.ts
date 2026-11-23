@@ -47,17 +47,6 @@ export type PrivateMediaPackageSpec = {
   expected: { contentType: PrivateMediaUpload["contentType"]; mediaId: RegExp; objectName: (hash: string) => string };
 };
 
-const GOAL_MEDIA_ID = /^goal-quiz-2026:\d{3}:(?:blur|clean)$/u;
-const goalPackageSpec = (manifest: string): PrivateMediaPackageSpec => ({
-  manifest, expectedCount: 198, expected: {
-    contentType: "video/mp4",
-    mediaId: GOAL_MEDIA_ID,
-    // Existing Functions derive this exact opaque object path from the media
-    // binding.  M-MEDIA-08 changes bytes only, never the media-ID/path family.
-    objectName: (assetSha256) => `question-media/goal-quiz-2026/assets/${assetSha256}.mp4`,
-  },
-});
-
 type RawAsset = Record<string, unknown>;
 const validHash = (value: unknown): value is string => typeof value === "string" && /^[a-f0-9]{64}$/u.test(value);
 const signatureFor = (type: PrivateMediaUpload["contentType"], bytes: Uint8Array) =>
@@ -115,32 +104,7 @@ export async function buildPrivateMediaUploadPlan(root: string, packages: Privat
   const uploads = groups.flat().sort((left, right) => left.mediaId.localeCompare(right.mediaId));
   if (new Set(uploads.map((upload) => upload.mediaId)).size !== uploads.length || new Set(uploads.map((upload) => upload.assetSha256)).size !== uploads.length)
     throw new Error("Private media IDs and hashes must be one-to-one.");
-  return {
-    dryRun: true as const,
-    assetCount: uploads.length,
-    manifestSha256: hash(uploads.map((upload) => Object.fromEntries(
-      Object.entries(upload).filter(([key]) => key !== "localFile"),
-    ))),
-    uploads,
-  };
-}
-
-function assertGoalPairs(uploads: PrivateMediaUpload[]) {
-  const goalPairs = new Map<string, Set<string>>();
-  for (const upload of uploads) {
-    const match = /^goal-quiz-2026:(\d{3}):(blur|clean)$/u.exec(upload.mediaId);
-    if (!match) throw new Error("Goal media has an invalid stable media ID.");
-    goalPairs.set(match[1]!, new Set([...(goalPairs.get(match[1]!) ?? []), match[2]! ]));
-  }
-  if (goalPairs.size !== 99 || [...goalPairs.values()].some((pair) => pair.size !== 2))
-    throw new Error("Goal media must contain exactly 99 blur/clean pairs.");
-}
-
-/** Validates the M-MEDIA-08 successor in isolation; it remains an offline dry run. */
-export async function buildGoalMediaSuccessorUploadPlan(root = ROOT): Promise<PrivateMediaUploadPlan> {
-  const plan = await buildPrivateMediaUploadPlan(root, [goalPackageSpec("content/question-media/goal-quiz-2026-edge-successor/media-registry.json")]);
-  assertGoalPairs(plan.uploads);
-  return { ...plan, packageCounts: { v18: 0, rebuild: 0, goals: plan.assetCount } };
+  return { dryRun: true as const, assetCount: uploads.length, manifestSha256: hash(uploads.map(({ localFile, ...upload }) => upload)), uploads };
 }
 
 /** Validates every locally available V18 PNG, rebuilt JPEG, and T17 MP4 before any cloud action. */
@@ -154,12 +118,21 @@ export async function buildQuestionMediaUploadPlan(root = ROOT): Promise<Private
       contentType: "image/jpeg", mediaId: /^rebuild-v2-photo-011-\d{3}$/u,
       objectName: (assetSha256) => `question-media/guess-picture-rebuild-v2/assets/${assetSha256}.jpg`,
     } },
-    goalPackageSpec("content/question-media/goal-quiz-2026/media-registry.json"),
+    { manifest: "content/question-media/goal-quiz-2026/media-registry.json", expectedCount: 198, expected: {
+      contentType: "video/mp4", mediaId: /^goal-quiz-2026:\d{3}:(?:blur|clean)$/u,
+      objectName: (assetSha256) => `question-media/goal-quiz-2026/assets/${assetSha256}.mp4`,
+    } },
   ];
   const plan = await buildPrivateMediaUploadPlan(root, specs);
   const uploads = plan.uploads;
   const [v18, rebuild, goals] = [uploads.filter((upload) => upload.contentType === "image/png"), uploads.filter((upload) => upload.contentType === "image/jpeg"), uploads.filter((upload) => upload.contentType === "video/mp4")];
-  assertGoalPairs(goals);
+  const goalPairs = new Map<string, Set<string>>();
+  for (const upload of goals) {
+    const match = /^goal-quiz-2026:(\d{3}):(blur|clean)$/u.exec(upload.mediaId)!;
+    goalPairs.set(match[1]!, new Set([...(goalPairs.get(match[1]!) ?? []), match[2]! ]));
+  }
+  if (goalPairs.size !== 99 || [...goalPairs.values()].some((pair) => pair.size !== 2))
+    throw new Error("Goal media must contain exactly 99 blur/clean pairs.");
   return { ...plan, packageCounts: { v18: v18.length, rebuild: rebuild.length, goals: goals.length } };
 }
 

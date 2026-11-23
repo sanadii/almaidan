@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "maydan-electric-blue-selection-2026-10-02-016",
+  "recordedAt": "2026-10-02",
+  "selectionAuthority": "human-product-owner",
+  "exactHumanAnswer": "change it to Option B - electric blue approach",
+  "selectedProductNameAr": "ميدان",
+  "selectedConceptId": "INT-2R-B",
+  "previousImmutableRecord": {
+    "recordId": "design-history-0015",
+    "path": "design/evidence/history/0015-maydan-premium-structure-rejection.md",
+    "sha256": "49173726C187116E5E0FD53EB5FEB131A6A364B589D4433149107B1FB671D8F0"
+  },
+  "conceptSet": {
+    "path": "design/evidence/integration-reconcept-set-2026-10-02.json",
+    "sha256": "0A77A11CFB085BF956E41D5A4B6A6BEBC4F0582F553488920067E1184A4E427F"
+  },
+  "selectedImage": {
+    "path": "design/mockups/integration-2026-10-02/int-2r-direction-b-electric-live-play.png",
+    "sha256": "FF88A345DEE2A3145C62EFEBAA73427BDFBED2F515FF5E4834217D9286DF1DE1"
+  },
+  "directionRecord": {
+    "recordId": "design-history-0016",
+    "path": "design/evidence/history/0016-maydan-electric-blue-selection.md",
+    "sha256": "65E0B1782388506473A6A15E53B461541AF093A01F5DBA4DFD7B3E4793850C31"
+  },
+  "scope": "Replacement combined homepage and entry shell only. A later explicit human live review of the implemented page gates visual expansion.",
+  "validationRule": "Validate exact numbered 0015/0016 records, exact prior concept-set bytes and selected B preview bytes. Do not revalidate old receipts against mutable whole-file history. Deterministic checks do not certify aesthetics."
+}

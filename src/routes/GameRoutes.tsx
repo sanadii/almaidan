@@ -1,9 +1,12 @@
+import '../styles/game-guide.css';
 import {
   type FormEvent,
   type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
   useCallback,
+  useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -16,7 +19,10 @@ import {
   useParams,
 } from "react-router-dom";
 import { InternalHeader as AppHeader } from "../design-system/InternalHeader";
+import { ThemeToggle } from '../design-system/ThemeToggle';
 import { QuestionReveal } from "../features/ui/QuestionReveal";
+import {isYouTubeMediaDescriptor,youtubeEmbedUrl,type YouTubeMediaDescriptor} from '../features/game/runtime/youtube-media';
+import { ChallengeStage } from "../features/game/challenges/ChallengeStage";
 import {
   availableCategoryCatalog as legacyAvailableCategoryCatalog,
   categoryCatalog,
@@ -36,6 +42,7 @@ import {
 } from "../data/category-filters";
 import {
   approvedCategoryPlayable,
+  categoryChallengeKinds,
   localCategoryPlayable,
 } from "../data/category-playability";
 import { GameBoard, type BoardCell, type BoardPresentationContext } from "../features/board/game-board";
@@ -50,12 +57,22 @@ import { connectionLabel, stateLabel } from "../features/ui/game-state";
 import type {
   HostPresenceSnapshot,
   ApprovedReleaseCatalog,
+  ChallengeMechanic,
   IntentType,
   PlayerPresenceState,
   ProjectionEnvelope,
   SafeProjection,
 } from "../features/game/runtime/contracts";
+import { CLIENT_CHALLENGE_CAPABILITY } from "../features/game/runtime/contracts";
+import { useFirebaseAuth } from '../features/auth/auth-context';
+import { isAlmaidanLocalDevelopment } from '../lib/local-development';
+import type { CreateRoomRequest } from '../features/game/runtime/contracts';
+import {parseLocalCreationPending,localCreationKey} from '../features/game/runtime/local-creation-pending';
+import {ownerEpoch,assertOwnerEpoch,isOwnerEpoch,type OwnerEpoch} from '../features/enta/auth-epoch';
+import {LocalRoomCreationFailure} from '../features/game/runtime/local-realtime-game-adapter';
 import { gameRuntime } from "../features/game/runtime";
+import { PgRuntimeContext } from "../features/game/runtime/room-context";
+import { parseRoomLocator } from "../features/game/runtime/room-locator";
 import {
   isStaticPreviewBuild,
   staticPreviewNotice,
@@ -71,7 +88,7 @@ type ViewProjection = SafeProjection & {
     revealedAnswer?: string;
     occurrence?: string;
     sources?: Array<{ title?: string; url?: string }>;
-    media?: { mediaId: string; assetSha256: string; altAr: string; type?: "image" | "video"; contentType?: string };
+    media?: { mediaId: string; assetSha256: string; altAr: string; type?: "image" | "video"; contentType?: string; audiencePresentation?: "clear" | "concealed" };
   };
   audit?: Array<{ revision: number; type: string; payload?: unknown }>;
 };
@@ -80,6 +97,7 @@ type CurrentQuestionMediaGrant = {
   assetSha256: string;
   url: string;
   expiresAt: string;
+  youtube?: YouTubeMediaDescriptor;
 };
 type CurrentQuestionMediaRequest = {
   roomId: string;
@@ -92,6 +110,8 @@ type QuestionMediaBinding = {
   altAr: string;
   type?: "image" | "video";
   contentType?: string;
+  /** New reviewed prompt stimuli may be readable on the audience display. Legacy media stays concealed. */
+  audiencePresentation?: "clear" | "concealed";
 };
 
 /**
@@ -102,18 +122,23 @@ type QuestionMediaBinding = {
 export const isQuestionMediaVideo = (media: Pick<QuestionMediaBinding, "type" | "contentType">) =>
   media.type === "video" || media.contentType?.toLowerCase().startsWith("video/") === true;
 
-/** The encoded prompt video is already filtered; image prompts retain their legacy concealment. */
-export const shouldConcealAudienceQuestionMedia = (media: Pick<QuestionMediaBinding, "type" | "contentType">) =>
-  !isQuestionMediaVideo(media);
+/**
+ * Legacy image prompts remain concealed. A release can opt in only a reviewed,
+ * answer-safe prompt binding with the explicit immutable `clear` value.
+ */
+export const shouldConcealAudienceQuestionMedia = (media: Pick<QuestionMediaBinding, "type" | "contentType" | "audiencePresentation">) =>
+  !isQuestionMediaVideo(media) && media.audiencePresentation !== "clear";
 
 /** Answers belong to the host, never to the audience display. */
 export const shouldShowSharedRevealedAnswer = () =>
-  false;
+  true;
 
 const revokeObjectUrl = (url: string) => {
   if (url.startsWith("blob:") && typeof URL.revokeObjectURL === "function")
     URL.revokeObjectURL(url);
 };
+
+const pgMediaUnavailable = async (): Promise<CurrentQuestionMediaGrant> => { throw new Error("MEDIA_UNAVAILABLE"); };
 
 /** Loads only a current server-authorized grant and clears it before its bearer expiry. */
 export function CurrentQuestionMedia({
@@ -130,10 +155,12 @@ export function CurrentQuestionMedia({
   concealed?: boolean;
 }) {
   const [url, setUrl] = useState("");
+  const [youtube, setYoutube] = useState(false);
   const [failed, setFailed] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const activeUrl = useRef("");
   const activeBinding = useRef("");
+  const youtubeExpiryTimer = useRef<number | undefined>(undefined);
   const binding = `${roomId}\u0000${media.mediaId}\u0000${media.assetSha256}`;
   const request = useCallback(() => {
     const value = {
@@ -155,6 +182,8 @@ export function CurrentQuestionMedia({
       revokeObjectUrl(activeUrl.current);
       activeUrl.current = "";
       activeBinding.current = "";
+      if (youtubeExpiryTimer.current !== undefined) window.clearTimeout(youtubeExpiryTimer.current);
+      youtubeExpiryTimer.current = undefined;
     },
     [binding],
   );
@@ -162,12 +191,21 @@ export function CurrentQuestionMedia({
     let alive = true;
     let receivedUrl = "";
     let refreshTimer: number | undefined;
+    const failAndClear = () => {
+      revokeObjectUrl(activeUrl.current);
+      activeUrl.current = '';
+      activeBinding.current = '';
+      if (youtubeExpiryTimer.current !== undefined) window.clearTimeout(youtubeExpiryTimer.current);
+      youtubeExpiryTimer.current = undefined;
+      setUrl(''); setYoutube(false); setFailed(true);
+    };
     const preserveVideo =
       isQuestionMediaVideo(media) &&
       activeBinding.current === binding &&
       Boolean(activeUrl.current);
     if (!preserveVideo) {
       setUrl("");
+      setYoutube(false);
       setFailed(false);
     }
     void request()
@@ -181,18 +219,26 @@ export function CurrentQuestionMedia({
           typeof value.url !== "string" ||
           value.mediaId !== media.mediaId ||
           value.assetSha256 !== media.assetSha256 ||
+          (value.youtube !== undefined && (!isQuestionMediaVideo(media) || !isYouTubeMediaDescriptor(value.youtube) || value.url !== youtubeEmbedUrl(value.youtube))) ||
+          (value.youtube === undefined && !value.url.startsWith('blob:')) ||
+          (preserveVideo && youtube && (value.youtube === undefined || value.url !== activeUrl.current)) ||
           !Number.isFinite(expiresAtMs) ||
           expiresAtMs <= Date.now()
         ) {
-          setFailed(true);
+          failAndClear();
           return;
         }
         receivedUrl = value.url;
+        if (value.youtube !== undefined) {
+          if (youtubeExpiryTimer.current !== undefined) window.clearTimeout(youtubeExpiryTimer.current);
+          youtubeExpiryTimer.current = window.setTimeout(failAndClear, expiresAtMs - Date.now());
+        }
         if (preserveVideo) revokeObjectUrl(value.url);
         else {
           revokeObjectUrl(activeUrl.current);
           activeBinding.current = binding;
           activeUrl.current = value.url;
+          setYoutube(value.youtube !== undefined);
           setUrl(value.url);
         }
         refreshTimer = window.setTimeout(
@@ -201,7 +247,7 @@ export function CurrentQuestionMedia({
         );
       })
       .catch(() => {
-        if (alive && !preserveVideo) setFailed(true);
+        if (alive && !preserveVideo) failAndClear();
       });
     return () => {
       alive = false;
@@ -233,7 +279,9 @@ export function CurrentQuestionMedia({
       aria-busy={!url}
       data-testid="question-media"
     >
-      {url && isQuestionMediaVideo(media) ? (
+      {url && youtube ? (
+        <iframe src={url} title={media.altAr} allow="encrypted-media; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
+      ) : url && isQuestionMediaVideo(media) ? (
         <video autoPlay controls muted onError={() => setFailed(true)} playsInline src={url} />
       ) : url ? (
         <img alt={media.altAr} onError={() => setFailed(true)} src={url} />
@@ -266,8 +314,12 @@ const saveCapability = (id: string, value: StoredCapability) =>
 const saveAudienceCapability = (id: string, value: StoredCapability) =>
   sessionStorage.setItem(audienceCapabilityKey(id), JSON.stringify(value));
 export const readableError = (error: unknown) => {
-  const message =
+  let message =
     error instanceof Error ? error.message.replace(/^Error:\s*/, "") : "";
+  try{const parsed=JSON.parse(message);if(typeof parsed.error==='string')message=parsed.error;}catch{}
+  if(/AUTHENTICATION|ID_TOKEN|VERIFIED_ACCOUNT/.test(message))return 'سجّل الدخول بحساب المضيف المحلي ثم أعد المحاولة.';
+  if(/IDEMPOTENCY|REQUEST_KEY/.test(message))return 'طلب إنشاء الغرفة محفوظ بإعدادات مختلفة. استعد الطلب الأصلي قبل إنشاء مباراة أخرى.';
+  if(/ORIGIN|LOCAL_ONLY/.test(message))return 'افتح التطبيق من عنوانه المحلي على هذا الكمبيوتر.';
   if (message === "STALE_REVISION")
     return "تغيّرت الغرفة للتو. راجع الحالة الحالية ثم حاول مرة أخرى.";
   if (
@@ -284,9 +336,11 @@ export const readableError = (error: unknown) => {
     return "لا تكفي الأسئلة في الفئات المختارة لتجهيز لوحة المباراة. اختر «استخدام كل الفئات» أو أضف «معلومات عامة».";
   if (message === "SELECTED_SCOPE_NOT_PLAYABLE")
     return "الفئات المختارة لا تكفي للوحة المطلوبة في الحزمة المعتمدة. غيّر الاختيار ثم حاول مرة أخرى.";
+  if (message === "NAVIGATION_PRIVATE_GUIDE_REQUIRED")
+    return "يحتاج «وجّه صاحبك» إلى لاعب موثّق في فريق الفرصة يحمل هاتف الدليل. انقل الهاتف إلى هذا الفريق قبل اختيار الخانة.";
   if (message === "ACTIVE_RELEASE_CHANGED")
     return "تغيّرت الحزمة المعتمدة. حدّث الإعدادات للتحقق من الفهرس الجديد.";
-  return message || "تعذر إتمام العملية.";
+  return /[\u0600-\u06ff]/.test(message) ? message : 'تعذر إتمام العملية. حدّث حالة الغرفة وتأكد من تشغيل الخدمات المحلية ثم أعد المحاولة.';
 };
 type LocalIntentResponse = {
   projection?: ProjectionEnvelope<ViewProjection>;
@@ -326,12 +380,12 @@ export const previewBoardCells: BoardCell[] = generateBoard(
   previewLetters,
 ).cells;
 export const isReadOnlyFixtureRoom = (
-  runtimeKind: "fixture" | "firebase" | "local",
+  runtimeKind: "fixture" | "firebase" | "local" | "pg",
   roomId?: string,
 ) => runtimeKind === "fixture" && roomId === "fixture-room";
 function useDocumentTitle(title: string) {
   useEffect(() => {
-    document.title = `${title} | الخلية`;
+    document.title = `${title} | الميدان`;
   }, [title]);
 }
 const teamName = (name?: string) =>
@@ -497,6 +551,14 @@ export function HostNewRoute() {
   const navigate = useNavigate();
   const staticPreview = isStaticPreviewBuild();
   const location = useLocation();
+  const {user} = useFirebaseAuth();
+  const currentOwner = useRef(user?.uid);currentOwner.current=user?.uid;
+  const creationLifecycle=useRef(new AbortController());
+  useEffect(()=>{const controller=new AbortController();creationLifecycle.current=controller;return()=>controller.abort();},[]);
+  const localPending = useRef<{uid:string;request:CreateRoomRequest}|null>(null);
+  const [recoveringCreation,setRecoveringCreation] = useState(false);
+  const [creationBlocked,setCreationBlocked]=useState(false);
+  useEffect(()=>{localPending.current=null;setRecoveringCreation(false);setCreationBlocked(false);if(!isAlmaidanLocalDevelopment||!user)return;try{const raw=sessionStorage.getItem(localCreationKey(user.uid));if(raw){localPending.current=parseLocalCreationPending(raw,user.uid);setRecoveringCreation(true);}}catch{setCreationBlocked(true);setError('تعذر قراءة طلب إنشاء الغرفة المحفوظ. لا تنشئ طلباً جديداً قبل استعادة الطلب الأصلي.');}},[user?.uid]);
   const querySeed = useRef(
     parseSetupQuery(new URLSearchParams(location.search)),
   );
@@ -509,6 +571,9 @@ export function HostNewRoute() {
     questionSeconds: querySeed.current.questionSeconds,
     opponentSeconds: querySeed.current.opponentSeconds,
     categories: querySeed.current.categories,
+    challengeEnabled: false,
+    labelledColours: false,
+    mapPresentation: "ordinary" as "ordinary" | "interactive",
   });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -516,7 +581,6 @@ export function HostNewRoute() {
   const [categoryTopic, setCategoryTopic] = useState<CategoryTopicId | "all">(
     "all",
   );
-  const [selectedOnly, setSelectedOnly] = useState(false);
   const [unavailableCovers, setUnavailableCovers] = useState<Set<string>>(
     () => new Set(),
   );
@@ -529,6 +593,7 @@ export function HostNewRoute() {
   const [approvedReleaseCatalog, setApprovedReleaseCatalog] = useState<ApprovedReleaseCatalog>();
   const [approvedReleaseCatalogError, setApprovedReleaseCatalogError] = useState("");
   const [approvedReleaseCatalogAttempt, setApprovedReleaseCatalogAttempt] = useState(0);
+  const [localChallengeAvailability, setLocalChallengeAvailability] = useState<ChallengeMechanic[]>();
   const firebaseRuntime = gameRuntime.kind === "firebase";
   const modeControls = useRef<Array<HTMLButtonElement | null>>([]);
   const kindControls = useRef<Array<HTMLButtonElement | null>>([]);
@@ -569,10 +634,18 @@ export function HostNewRoute() {
       .catch(() => {
         if (!active) return;
         setApprovedReleaseCatalog(undefined);
-        setApprovedReleaseCatalogError("تعذر الاتصال بخدمة اللعبة أو التحقق من إعدادات الاتصال. أعد المحاولة لاحقاً.");
+        setApprovedReleaseCatalogError("لا توجد حزمة أسئلة معتمدة ونشطة لإنشاء غرفة مباشرة. راجع النشر أو جرّب لاحقاً.");
       });
     return () => { active = false; };
   }, [approvedReleaseCatalogAttempt, firebaseRuntime, staticPreview]);
+  useEffect(() => {
+    if (staticPreview || gameRuntime.kind !== "local") return;
+    let active = true;
+    void (gameRuntime.getChallengeAvailability?.() ?? Promise.reject(new Error("CHALLENGE_AVAILABILITY_UNAVAILABLE")))
+      .then((availability) => { if (active) setLocalChallengeAvailability(availability.enabledMechanics); })
+      .catch(() => { if (active) setLocalChallengeAvailability([]); });
+    return () => { active = false; };
+  }, [staticPreview]);
   const activeQuestionInventory = localQuestionInventory ?? (staticPreview ? staticPreviewQuestionInventory : undefined);
   const localCategoryById = useMemo(
     () =>
@@ -584,11 +657,15 @@ export function HostNewRoute() {
       ),
     [activeQuestionInventory],
   );
+  const enabledChallengeKinds = firebaseRuntime
+    ? approvedReleaseCatalog?.challengeAvailability?.enabledMechanics ?? []
+    : localChallengeAvailability ?? [];
   const categorySelectionAllowed = useCallback((id: string) => {
     if (firebaseRuntime)
       return approvedCategoryPlayable(
         approvedReleaseCatalog?.categories.find((category) => category.id === id),
         form.gameKind,
+        enabledChallengeKinds,
       );
     if (!activeQuestionInventory) return true;
     return localCategoryPlayable(
@@ -596,7 +673,7 @@ export function HostNewRoute() {
       form.gameKind,
       activeQuestionInventory.huroofAvailable,
     );
-  }, [activeQuestionInventory, approvedReleaseCatalog, firebaseRuntime, form.gameKind, localCategoryById]);
+  }, [activeQuestionInventory, approvedReleaseCatalog, enabledChallengeKinds, firebaseRuntime, form.gameKind, localCategoryById]);
   const categoryCatalogue = useMemo(() => {
     if (localQuestionInventoryError) return [];
     if (firebaseRuntime)
@@ -605,8 +682,8 @@ export function HostNewRoute() {
     return inventory ? inventoryCategoryCovers(inventory) : legacyAvailableCategoryCatalog;
   }, [approvedReleaseCatalog, firebaseRuntime, localQuestionInventory, localQuestionInventoryError, staticPreview]);
   const availableCategoryCatalog = useMemo(
-    () => categoryCatalogue.filter((category) => categorySelectionAllowed(category.id)),
-    [categoryCatalogue, categorySelectionAllowed],
+    () => activeQuestionInventory?.source === 'local_saved_release' ? categoryCatalogue : categoryCatalogue.filter((category) => categorySelectionAllowed(category.id)),
+    [categoryCatalogue, categorySelectionAllowed, activeQuestionInventory],
   );
   const firebaseSelectedModeUnavailable = Boolean(
     firebaseRuntime && approvedReleaseCatalog && !approvedReleaseCatalog.boardCapabilities[form.gameKind],
@@ -634,16 +711,14 @@ export function HostNewRoute() {
   const visibleCategories = useMemo(() => {
     return filterCategories(availableCategoryCatalog, {
       query: categoryQuery,
-      selectedIds: form.categories,
-      selectedOnly,
+      selectedIds: [],
+      selectedOnly: false,
       topicId: categoryTopic,
     });
   }, [
     availableCategoryCatalog,
     categoryQuery,
     categoryTopic,
-    form.categories,
-    selectedOnly,
   ]);
   const selectedCategories = useMemo(
     () =>
@@ -655,6 +730,13 @@ export function HostNewRoute() {
       }),
     [availableCategoryCatalog, form.categories],
   );
+  const selectedChallengeKinds = useMemo(() => [...new Set(selectedCategories.flatMap((selected) => {
+    const category = firebaseRuntime
+      ? approvedReleaseCatalog?.categories.find((item) => item.id === selected.id)
+      : { id: selected.id };
+    return categoryChallengeKinds(category);
+  }))], [approvedReleaseCatalog, firebaseRuntime, selectedCategories]);
+  const availableSelectedChallengeKinds = selectedChallengeKinds.filter((kind) => enabledChallengeKinds.includes(kind));
   const update = <K extends keyof typeof form>(
     key: K,
     value: (typeof form)[K],
@@ -765,13 +847,14 @@ export function HostNewRoute() {
   const resetCategoryFilters = () => {
     setCategoryQuery("");
     setCategoryTopic("all");
-    setSelectedOnly(false);
   };
   const categoryFiltersActive =
-    categoryQuery.trim().length > 0 || categoryTopic !== "all" || selectedOnly;
+    categoryQuery.trim().length > 0 || categoryTopic !== "all";
   async function create(event: FormEvent) {
     event.preventDefault();
+    if(busy||creationBlocked)return;
     setError("");
+    if(isAlmaidanLocalDevelopment&&(!user||user.isAnonymous)){navigate(`/login?returnTo=${encodeURIComponent(location.pathname+location.search)}`);return;}
     if (staticPreview) {
       setError(staticPreviewNotice);
       return;
@@ -808,12 +891,22 @@ export function HostNewRoute() {
       categoryFilterControl.current?.focus();
       return;
     }
-    if (selectedCategories.length === 0) {
+    if (!firebaseRuntime && selectedCategories.length === 0) {
       setError("اختر فئة واحدة على الأقل من الفئات المختارة قبل إنشاء المباراة.");
       categoryFilterControl.current?.focus();
       return;
     }
+    if (form.challengeEnabled && !availableSelectedChallengeKinds.length) {
+      setError("لا توجد آلية تحدٍّ مفعّلة على الخادم للفئات المختارة حالياً.");
+      return;
+    }
+    if (form.mapPresentation === "interactive" && (!form.challengeEnabled || !availableSelectedChallengeKinds.includes("qatar_map"))) {
+      setError("يتطلب نمط خريطة قطر التفاعلي آلية «لوكيشن قطر» المفعّلة للفئات المختارة.");
+      return;
+    }
     setBusy(true);
+    let attemptedEpoch:OwnerEpoch|null=null;
+    let attemptedRaw:string|null=null;
     try {
       const request = {
         displayName: "المضيف",
@@ -825,8 +918,33 @@ export function HostNewRoute() {
         questionSeconds: form.questionSeconds,
         opponentSeconds: form.opponentSeconds,
         teams: { horizontal: form.horizontal, vertical: form.vertical },
-        categories: selectedCategories.map((category) => category.id),
+        categories: selectedCategories.length
+          ? selectedCategories.map((category) => category.id)
+          : firebaseRuntime && releaseCatalog
+            ? releaseCatalog.categories.map((category) => category.id)
+            : form.gameKind === "huroof" && localQuestionInventory?.recommendedHuroofCategoryIds?.length
+              ? localQuestionInventory.recommendedHuroofCategoryIds
+              : form.categories,
+        labelledColours: form.labelledColours,
+        mapPresentation: form.mapPresentation,
+        ...(form.challengeEnabled ? { challenge: CLIENT_CHALLENGE_CAPABILITY } : {}),
       };
+      const ownerUid=user?.uid;
+      const epoch=isAlmaidanLocalDevelopment&&user?ownerEpoch(user.uid):null;
+      attemptedEpoch=epoch;
+      const signal=creationLifecycle.current.signal;
+      let dispatched:CreateRoomRequest=request;
+      let authority:{idToken:string;assertCurrent?:()=>void}|undefined;
+      if(isAlmaidanLocalDevelopment&&user){
+        const stored=sessionStorage.getItem(localCreationKey(user.uid));
+        if(stored)localPending.current=parseLocalCreationPending(stored,user.uid);
+        else if(localPending.current)throw new Error('LOCAL_PENDING_UNREADABLE');
+        if(!localPending.current){const pending={uid:user.uid,request:{...request,requestKey:crypto.randomUUID()}};sessionStorage.setItem(localCreationKey(user.uid),JSON.stringify(pending));localPending.current=pending;}
+        if(localPending.current.uid!==user.uid)throw new Error('AUTHENTICATION_REQUIRED');
+        dispatched=localPending.current.request;attemptedRaw=sessionStorage.getItem(localCreationKey(user.uid));if(!attemptedRaw)throw new Error('LOCAL_PENDING_UNREADABLE');setRecoveringCreation(true);authority={idToken:await user.getIdToken(),assertCurrent:()=>assertOwnerEpoch(epoch!,signal)};
+        if(currentOwner.current!==ownerUid)throw new Error('AUTHENTICATION_REQUIRED');
+        assertOwnerEpoch(epoch!,signal);
+      }
       const body =
         gameRuntime.kind === "fixture"
           ? await fetch("/api/rooms", {
@@ -845,12 +963,18 @@ export function HostNewRoute() {
                 token: string;
               }>;
             })
-          : await gameRuntime.createRoom(request);
+          : await gameRuntime.createRoom(dispatched,authority);
       if (!body.roomId || !body.roomCode) throw new Error("تعذر إنشاء الغرفة.");
+      if(isAlmaidanLocalDevelopment&&currentOwner.current!==ownerUid)throw new Error('AUTHENTICATION_REQUIRED');
+      if(epoch)assertOwnerEpoch(epoch,signal);
+      if(isAlmaidanLocalDevelopment&&ownerUid){const stored=sessionStorage.getItem(localCreationKey(ownerUid));if(!stored||JSON.stringify(parseLocalCreationPending(stored,ownerUid).request)!==JSON.stringify(dispatched))throw new Error('LOCAL_PENDING_UNREADABLE');}
       saveCapability(body.roomId, { token: body.token ?? "", role: "host" });
       sessionStorage.setItem(`huroof:code:${body.roomCode}`, body.roomId);
+      if(isAlmaidanLocalDevelopment&&ownerUid){sessionStorage.removeItem(localCreationKey(ownerUid));localPending.current=null;setRecoveringCreation(false);}
       navigate(`/room/${body.roomCode}/lobby`);
     } catch (reason) {
+      if(reason instanceof Error&&reason.message==='LOCAL_PENDING_UNREADABLE')setCreationBlocked(true);
+      if(reason instanceof LocalRoomCreationFailure&&reason.definitive&&attemptedEpoch&&isOwnerEpoch(attemptedEpoch)&&!creationLifecycle.current.signal.aborted){try{if(!attemptedRaw||sessionStorage.getItem(localCreationKey(attemptedEpoch.uid))!==attemptedRaw)throw Error('LOCAL_PENDING_UNREADABLE');sessionStorage.removeItem(localCreationKey(attemptedEpoch.uid));localPending.current=null;setRecoveringCreation(false);}catch{setCreationBlocked(true);}}
       setError(readableError(reason));
       if (
         firebaseRuntime &&
@@ -863,21 +987,26 @@ export function HostNewRoute() {
     }
   }
   return (
-    <main
-      className="app-page spatial-shell spatial-shell--setup"
+    <main data-page-layout="wide"
+      className="maydan-app maydan-public-page maydan-host-page" data-page-kind="setup"
       id="main-content"
+      tabIndex={-1}
     >
       <AppHeader />
       <section
-        className="setup-page spatial-setup"
+        className="maydan-host-setup"
         aria-labelledby="setup-title"
+        data-runtime={gameRuntime.kind}
+        data-catalogue-source={activeQuestionInventory?.source ?? 'unavailable'}
       >
         <div>
-          <p className="eyebrow">إعداد المباراة</p>
-          <h1 id="setup-title">أنشئ مباراة</h1>
+          <p className="eyebrow">إعداد مباراة الخلية</p>
+          <h1 id="setup-title">جهّزوا اللوح. وابدأوا التحدّي.</h1>
           {staticPreview ? <p className="form-message" role="status">{staticPreviewNotice}</p> : null}
+          {recoveringCreation?<p className="form-message" role="status">يوجد طلب إنشاء محفوظ. زر الإنشاء يستعيد الغرفة نفسها بإعداداتها الأصلية؛ لن ينشئ غرفة ثانية.</p>:null}
         </div>
         <form className="setup-form" id="match-setup-form" onSubmit={create}>
+          <div className="setup-fields">
           <section className="game-kind-fields">
             <h2>نوع اللوح</h2>
             <div
@@ -972,8 +1101,32 @@ export function HostNewRoute() {
               />
             </label>
           </section>
+          <section className="challenge-capability-fields" aria-labelledby="challenge-capability-title">
+            <h2 id="challenge-capability-title">تحدّيات تفاعلية</h2>
+            <label>
+              <input checked={form.challengeEnabled} disabled={form.gameKind !== "categories" || availableSelectedChallengeKinds.length === 0} onChange={(event) => update("challengeEnabled", event.target.checked)} type="checkbox" />
+              فعّل التحدّيات التفاعلية التي يدعمها الخادم للفئات المختارة
+            </label>
+            <label>
+              <input checked={form.labelledColours} onChange={(event) => update("labelledColours", event.target.checked)} type="checkbox" />
+              أظهر أسماء الألوان بجانب الألوان في تحدّي «لون الصورة»
+            </label>
+            {availableSelectedChallengeKinds.includes("qatar_map") ? <fieldset disabled={!form.challengeEnabled}>
+              <legend>عرض «لوكيشن قطر»</legend>
+              <label>
+                <input checked={form.mapPresentation === "ordinary"} name="map-presentation" onChange={() => update("mapPresentation", "ordinary")} type="radio" />
+                الأسئلة الأصلية المعتادة
+              </label>
+              <label>
+                <input checked={form.mapPresentation === "interactive"} name="map-presentation" onChange={() => update("mapPresentation", "interactive")} type="radio" />
+                التحدّي التفاعلي المراجع
+              </label>
+            </fieldset> : null}
+            <p className="field-note">تظل التحدّيات متوقفة افتراضياً. {availableSelectedChallengeKinds.length ? `المتاح للفئات المختارة الآن: ${availableSelectedChallengeKinds.map((kind) => ({ missing_tile: "الجزء المفقود", qatar_map: "لوكيشن قطر", navigation: "وجّه صاحبك", memory: "لون الصورة", word_search: "صيد المختفي" })[kind]).join("، ")}.` : "لا توجد آلية مفعّلة على الخادم للفئات المختارة."} يحتاج «وجّه صاحبك» إلى هاتف خاص للدليل، ويمكن للمضيف إدخال حركة اللاعب عند التحكم اليدوي. تثبت تسمية ألوان محتوى الذاكرة عند بدء المباراة.</p>
+          </section>
           <section>
             <h2>الفئات</h2>
+            {activeQuestionInventory?.source === 'local_saved_release' ? <p className="field-note">كل الفئات الأصلية ظاهرة. الفئات غير المناسبة لهذا اللوح موضّحة ولا يمكن اختيارها. المتاح: {categoryCatalogue.filter(c => categorySelectionAllowed(c.id)).length} من {categoryCatalogue.length}.</p> : null}
             {staticPreview ? (
               <p className="field-note" role="status">
                 يعرض هذا الفهرس محتوى معاينة الواجهة فقط، ولا يثبت توفره للعب المنشور.
@@ -1035,14 +1188,6 @@ export function HostNewRoute() {
                     ))}
                   </div>
                 </div>
-                <label className="category-filter__selected-only">
-                  <input
-                    checked={selectedOnly}
-                    onChange={(event) => setSelectedOnly(event.target.checked)}
-                    type="checkbox"
-                  />
-                  <span>الفئات المختارة فقط</span>
-                </label>
               </div>
               <div className="category-filter__meta">
                 <small aria-live="polite">
@@ -1075,9 +1220,13 @@ export function HostNewRoute() {
               {visibleCategories.map((category) =>
                 (() => {
                   const isFallbackCover = unavailableCovers.has(category.id);
+                  const playable = categorySelectionAllowed(category.id);
+                  const inventoryCategory = localCategoryById.get(category.id);
+                  const unavailableReason = !playable ? form.gameKind === 'huroof' && !inventoryCategory?.huroofQuestionCount ? 'لا تحتوي على أسئلة بإجابات تبدأ بحروف اللوح؛ جرّب نمط المجموعات.' : inventoryCategory?.unavailableReason ?? 'لا تكفي الأسئلة المناسبة لهذا النمط.' : '';
                   return (
                     <button
-                      aria-label={`${category.displayNameAr}${form.categories.includes(category.id) ? " — محددة" : " — أضف إلى الاختيار"}`}
+                      aria-label={`${category.displayNameAr}${!playable ? ' — غير متاحة: '+unavailableReason : form.categories.includes(category.id) ? " — محددة" : " — أضف إلى الاختيار"}`}
+                      aria-disabled={!playable}
                       aria-pressed={form.categories.includes(category.id)}
                       className={`category-choice ${form.categories.includes(category.id) ? "is-selected" : ""}`}
                       key={category.id}
@@ -1105,15 +1254,14 @@ export function HostNewRoute() {
                       <span className="category-choice__title">
                         {category.displayNameAr}
                       </span>
+                      {!playable ? <span className="category-choice__reason">{unavailableReason}</span> : null}
                     </button>
                   );
                 })(),
               )}
               {visibleCategories.length === 0 ? (
                 <p className="category-filter__empty" role="status">
-                  {selectedOnly && form.categories.length === 0
-                    ? "لا توجد فئات مختارة بعد. اختر فئة ثم فعّل هذا الخيار."
-                    : "لا توجد فئات مطابقة. أعد ضبط التصفية لعرض كل الفئات."}
+                  لا توجد فئات مطابقة. أعد ضبط التصفية لعرض كل الفئات.
                 </p>
               ) : null}
             </div>
@@ -1177,7 +1325,7 @@ export function HostNewRoute() {
                 <button className="button button--quiet" onClick={() => setApprovedReleaseCatalogAttempt((attempt) => attempt + 1)} type="button">أعد المحاولة</button>
               ) : null}
             </p>
-          ) : <label className="demo-control">
+          ) : activeQuestionInventory?.source === 'local_saved_release' ? <p className="field-note">تُستخدم الأسئلة الأصلية المحفوظة على هذا الكمبيوتر. يمكن للمضيف التحكم بالفريقين أو دعوة اللاعبين برمز الغرفة.</p> : <label className="demo-control">
             <input
               checked={form.demo}
               onChange={(event) => update("demo", event.target.checked)}
@@ -1185,6 +1333,7 @@ export function HostNewRoute() {
             />{" "}
             استخدم مسودات تجريبية صريحة؛ يمكن للمضيف تشغيل الفريقين دون لاعبين.
           </label>}
+          </div>
         <aside className="setup-summary">
           <p className="eyebrow">ملخص مباشر</p>
           <dl>
@@ -1228,12 +1377,12 @@ export function HostNewRoute() {
             className="button button--primary"
             data-testid="create-room"
             disabled={
-              busy || Boolean(localQuestionInventoryError) || staticPreview || (firebaseRuntime ? !approvedReleaseCatalog || !approvedReleaseCatalog.boardCapabilities[form.gameKind] : !form.demo)
+              busy || creationBlocked || Boolean(localQuestionInventoryError) || staticPreview || (firebaseRuntime ? !approvedReleaseCatalog || !approvedReleaseCatalog.boardCapabilities[form.gameKind] : !form.demo)
             }
             title={staticPreview ? staticPreviewNotice : firebaseRuntime && !approvedReleaseCatalog ? approvedReleaseCatalogError || "جارٍ التحقق من الحزمة المعتمدة" : !form.demo ? "لا يوجد مخزون معتمد كافٍ" : undefined}
             type="submit"
           >
-            {staticPreview ? "إنشاء الغرفة غير متاح في المعاينة" : busy ? "جارٍ الإنشاء…" : firebaseRuntime ? "أنشئ الغرفة المباشرة" : "أنشئ الغرفة التجريبية"}
+            {staticPreview ? "إنشاء الغرفة غير متاح في المعاينة" : busy ? "جارٍ الإنشاء…" : activeQuestionInventory?.source === 'local_saved_release' ? 'إنشاء الغرفة' : firebaseRuntime ? "أنشئ الغرفة المباشرة" : "أنشئ الغرفة التجريبية"}
           </button>
           <p aria-live="polite" className="form-message">
             {error ||
@@ -1257,6 +1406,7 @@ function useRoom(
   autoAudience = false,
   projectionRole?: "host" | "player" | "audience",
 ) {
+  const pg = useContext(PgRuntimeContext);
   const [envelope, setEnvelope] =
     useState<ProjectionEnvelope<ViewProjection> | null>(null);
   // Intents must bind the most recently delivered authoritative revision, not a
@@ -1274,7 +1424,35 @@ function useRoom(
   const expectedPresenceRefresh = useRef<string | undefined>(undefined);
   const socketRef = useRef<WebSocket | undefined>(undefined);
   const connecting = useRef(false);
-  useEffect(() => {
+  useLayoutEffect(() => {
+    let locatorBackend: 'pg' | 'legacy' | 'enta';
+    try { locatorBackend = parseRoomLocator(code).backend; } catch { setConnection('offline'); setError('INVALID_LOCATOR'); return; }
+    if (locatorBackend === 'enta') { setConnection('offline'); setError('INVALID_LOCATOR'); return; }
+    if (locatorBackend === 'pg') {
+      if (!pg || !code) { setConnection('offline'); setError('PG_UNAVAILABLE'); return; }
+      const view=autoAudience || projectionRole==='audience' ? 'audience' : 'member';
+      envelopeRef.current=null; setEnvelope(null);
+      let unbind=pg.bindRoute(code,view); let active=true; let unsubscribe:(()=>void)|undefined; let timer:ReturnType<typeof setTimeout>|undefined; let retryDelay=1000;
+      const schedule=(rebind:boolean) => {
+        if(!active || timer) return;
+        timer=setTimeout(() => { timer=undefined; if(!active) return; if(rebind) { unsubscribe?.(); unsubscribe=undefined; unbind(); unbind=pg.bindRoute(code,view); } launch(); }, retryDelay);
+        retryDelay=Math.min(15000,retryDelay*2);
+      };
+      const launch=() => {
+        void pg.resumeRoom(code).then(() => {
+          if(!active) return; const role=pg.currentRole(); if(!role || (projectionRole && role!==projectionRole)) throw new Error('ROLE_UNAVAILABLE');
+          retryDelay=1000;
+          unsubscribe=pg.subscribeProjection(code,role,'',(next) => {
+            if(!active) return; envelopeRef.current=next as ProjectionEnvelope<ViewProjection>; setEnvelope(next as ProjectionEnvelope<ViewProjection>); setConnection('connected'); setError('');
+          }, (reason) => {
+            if(!active) return; envelopeRef.current=null; setEnvelope(null); setConnection('offline'); setError(readableError(reason));
+            if(reason.message==='AUTH_CHANGED') schedule(true);
+          });
+        }).catch((reason) => { if(!active) return; envelopeRef.current=null; setEnvelope(null); setConnection('offline'); setError(readableError(reason)); schedule(false); });
+      };
+      launch();
+      return () => { active=false; if(timer) clearTimeout(timer); unsubscribe?.(); unbind(); envelopeRef.current=null; };
+    }
     let alive = true;
     const online = () => navigator.onLine !== false;
     const clearRetry = () => {
@@ -1352,13 +1530,15 @@ function useRoom(
             : capabilityFor(roomId)
           : undefined;
         if (autoAudience && (!cap || cap.role !== "audience")) {
-          if (gameRuntime.kind === "firebase" && gameRuntime.joinAudience) {
+          if (gameRuntime.joinAudience) {
             const audience = await gameRuntime.joinAudience(code);
             roomId = audience.roomId;
-            saveAudienceCapability(roomId, { token: "", role: "audience" });
+            saveAudienceCapability(roomId, { token: audience.token ?? "", role: "audience" });
           } else {
             const claim = await fetch(`/api/rooms/${code}/audience`, {
               method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({ challenge: CLIENT_CHALLENGE_CAPABILITY }),
             });
             if (!claim.ok) throw new Error("تعذر فتح شاشة الجمهور.");
             const audience = (await claim.json()) as {
@@ -1381,6 +1561,8 @@ function useRoom(
         // capabilities, so this singleton never reuses a previous room role.
         if (gameRuntime.kind === "local")
           gameRuntime.setCapabilityToken?.(cap.token);
+        if (gameRuntime.kind === "local" && gameRuntime.resumeRoom)
+          await gameRuntime.resumeRoom(roomId, CLIENT_CHALLENGE_CAPABILITY);
         if (gameRuntime.kind === "firebase") {
           const unsubscribe = gameRuntime.subscribeProjection(
             roomId,
@@ -1421,7 +1603,8 @@ function useRoom(
           connecting.current = false;
           return;
         }
-        const response = await fetch(`/api/rooms/${roomId}`, {
+        const challengeQuery = encodeURIComponent(JSON.stringify(CLIENT_CHALLENGE_CAPABILITY));
+        const response = await fetch(`/api/rooms/${roomId}?challenge=${challengeQuery}`, {
           headers: { authorization: `Bearer ${cap.token}` },
         });
         if (!response.ok) throw new Error("تعذر الاتصال بالغرفة.");
@@ -1434,7 +1617,7 @@ function useRoom(
         setError("");
         const protocol = location.protocol === "https:" ? "wss:" : "ws:";
         const socket = new WebSocket(
-          `${protocol}//${location.host}/ws?roomId=${encodeURIComponent(roomId)}&token=${encodeURIComponent(cap.token)}`,
+          `${protocol}//${location.host}/ws?roomId=${encodeURIComponent(roomId)}&token=${encodeURIComponent(cap.token)}&challenge=${challengeQuery}`,
         );
         socketRef.current = socket;
         socket.onopen = () => {
@@ -1455,6 +1638,11 @@ function useRoom(
             setError(envelopeValue.error);
             return;
           }
+          // HTTP intent acknowledgements can arrive before an older queued
+          // WebSocket snapshot. Never let that older snapshot resurrect a
+          // retained terminal challenge after CONTINUE.
+          if ((envelopeRef.current?.revision ?? -1) > envelopeValue.revision)
+            return;
           envelopeRef.current = envelopeValue;
           setEnvelope(envelopeValue);
           setConnection("connected");
@@ -1519,14 +1707,19 @@ function useRoom(
       clearRetry();
       closeSocket();
     };
-  }, [autoAudience, code, projectionRole]);
+  }, [autoAudience, code, projectionRole, pg]);
   const send = async (
     type: IntentType,
     payload: Record<string, unknown> = {},
-  ) => {
+  ):Promise<void> => {
     if (connection !== "connected") throw new Error("CONNECTION_UNAVAILABLE");
     const currentEnvelope = envelopeRef.current ?? envelope;
     if (!currentEnvelope) throw new Error("PROJECTION_UNAVAILABLE");
+    if (code && parseRoomLocator(code).backend === "pg") {
+      if (!pg) throw new Error("PG_UNAVAILABLE");
+      await pg.submitGameIntent(currentEnvelope.roomId, { type, payload, expectedRevision: currentEnvelope.revision, intentId: createGameIntentId() });
+      return;
+    }
     if (gameRuntime.kind === "firebase") {
       await gameRuntime.submitGameIntent(currentEnvelope.roomId, {
         type,
@@ -1538,6 +1731,12 @@ function useRoom(
     }
     const cap = capabilityFor(currentEnvelope.roomId);
     if (!cap) throw new Error("CAPABILITY_UNAVAILABLE");
+    // The engine permits early finish only from a paused game. Use the
+    // acknowledged pause revision, so the confirmation never sends a stale end.
+    if(type==='END_WITHOUT_WINNER'&&currentEnvelope.projection.room.state!=='PAUSED'){
+      await send('PAUSE');
+      return send(type,payload);
+    }
     const response = await fetch(
       `/api/rooms/${currentEnvelope.roomId}/intents`,
       {
@@ -1764,12 +1963,52 @@ function HostPlayerCapsule({
   );
 }
 
+function RoundMarkers({
+  axis,
+  currentRound,
+  roundResults,
+}: {
+  axis: TeamAxis;
+  currentRound?: number;
+  roundResults?: NonNullable<SafeProjection["roundResults"]>;
+}) {
+  return (
+    <ol aria-label="جولات المباراة" className="round-markers">
+      {[1, 2, 3, 4, 5].map((round) => {
+        const result = roundResults?.find((item) => item.round === round);
+        const status =
+          result?.winner === axis
+            ? "won"
+            : result?.winner
+              ? "lost"
+              : currentRound === round
+                ? "current"
+                : "pending";
+        return (
+          <li
+            aria-label={`الجولة ${round}: ${status === "won" ? "فوز" : status === "lost" ? "خسارة" : status === "current" ? "الحالية" : "بانتظار"}`}
+            className={`round-markers__marker round-markers__marker--${status}`}
+            data-round={round}
+            key={round}
+          >
+            <svg aria-hidden="true" viewBox="0 0 12 12">
+              <circle cx="6" cy="6" r="5" />
+            </svg>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 export function TeamScoreCard({
   axis,
   assignment,
   players,
   presence,
+  currentRound,
   points,
+  roundResults,
   rounds,
   testId,
   teamName: customName,
@@ -1806,8 +2045,18 @@ export function TeamScoreCard({
           );
       }}
     >
+      {variant === "stage" ? (
+        <span aria-hidden="true" className="stage-score__medallion">
+          <svg viewBox="0 0 24 24">
+            <path d="M8 3h8l-1 6h-6L8 3Z" />
+            <path d="M9 5 5 7l4 5M15 5l4 2-4 5" />
+            <path d="M8 10h8v3a4 4 0 0 1-8 0v-3Z" />
+            <path d="M12 17v3M9 21h6" />
+          </svg>
+        </span>
+      ) : null}
       <span className={`team-score-card__team ${variant}-score__team`}>
-        {customName ? teamName(customName) : `فريق ${label}`}
+        {variant === "host" ? (customName ? teamName(customName) : `فريق ${label}`) : label}
       </span>
       <div className="team-score__rounds">
         <strong
@@ -1818,6 +2067,13 @@ export function TeamScoreCard({
           {rounds}
         </strong>
         <small>الجولات</small>
+        {variant === "host" && (
+          <RoundMarkers
+            axis={axis}
+            currentRound={currentRound}
+            roundResults={roundResults}
+          />
+        )}
       </div>
       <div className={`team-score__points ${variant}-score__points`}>
         <span aria-hidden="true" className="team-score__points-label">
@@ -1852,7 +2108,7 @@ export function TeamScoreCard({
   );
 }
 
-export function BoardStatusStrip({ projection, serverTime, presentationContext, onDeadline }: { projection: SafeProjection; serverTime: string; presentationContext?: BoardPresentationContext; onDeadline?: () => void; notification?: string }) {
+export function BoardStatusStrip({ projection, serverTime, presentationContext, onDeadline }: { projection: SafeProjection; serverTime: string; presentationContext?: BoardPresentationContext; onDeadline?: () => void }) {
   const state = projection.room.state;
   const answering = (state === "FIRST_ANSWER" || state === "OPPONENT_CHANCE")
     ? projection.answeringTeam ?? projection.entitledTeam : undefined;
@@ -2034,15 +2290,17 @@ export function HostActions({
       </section>
     );
   }
-  if (contentHold && state !== "PAUSED") {
+    if (contentHold) {
     return (
       <>
         <div className="control-grid control-grid--content-hold" role="status">
           <p>
             توقف اختيار المحتوى: لا يتوفر بديل صالح لهذه الخطوة. لا تُحتسب أي نقطة
-            ولا تتغير ملكية الخلية. أوقف المباراة مؤقتًا ثم اختر إنهاء المباراة بلا فائز.
+            ولا تتغير ملكية الخلية.
           </p>
+          {endButton}
         </div>
+        {endConfirmation}
       </>
     );
   }
@@ -2082,18 +2340,16 @@ export function HostActions({
       {state === "QUESTION_FAILED" && (
         <>
           <p className="host-failure-summary" role="status">
-            لم تُمنح الخلية لأي فريق. اختر سؤالاً جديدًا في {selectionLabel} نفسها،
-            أو غيّر {selectionLabel} ثم عد إلى اللوحة؛ لن يعود السؤال المكشوف.
+            لم تُمنح الخلية لأي فريق. استبدلها ثم اختر {selectionLabel} آخر من
+            اللوحة؛ لن يعود السؤال المكشوف.
           </p>
           <button
             className="button button--primary"
             onClick={() => action("RETRY_CELL")}
           >
-            {`سؤال جديد في ${selectionLabel} نفسها`}
+            {`استبدل الخلية واختر ${selectionLabel} آخر`}
           </button>
-          <button className="button" onClick={() => action("RETURN_CELL")}>
-            {`غيّر ${selectionLabel} والعودة إلى اللوحة`}
-          </button>
+          {endButton}
         </>
       )}
       {state === "PAUSED" && (
@@ -2146,7 +2402,7 @@ export function HostPauseAction({
   action: (type: IntentType, payload?: Record<string, unknown>) => void;
   contentHold?: boolean;
 }) {
-  if (state === "CORRECTION" || state === "MATCH_COMPLETE" || (contentHold && state === "PAUSED"))
+  if (state === "CORRECTION" || state === "MATCH_COMPLETE" || contentHold)
     return null;
   return (
     <button
@@ -2174,30 +2430,7 @@ export function HostVisibilityControls({
   onHostAnswerChange: (visible: boolean) => void;
   showHostAnswer: boolean;
 }) {
-  const [open, setOpen] = useState(false);
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const closeOptions = () => {
-    setOpen(false);
-    triggerRef.current?.focus();
-  };
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    if (open && !dialog.open) {
-      if (typeof dialog.showModal === "function") dialog.showModal();
-      else dialog.setAttribute("open", "");
-    } else if (!open && dialog.open) {
-      if (typeof dialog.close === "function") dialog.close();
-      else dialog.removeAttribute("open");
-    }
-  }, [open]);
   return (
-    <>
-    <button className="button" type="button" ref={triggerRef} aria-haspopup="dialog" onClick={() => setOpen(true)}>خيارات</button>
-    <dialog className="correction-dialog" aria-label="خيارات العرض" ref={dialogRef} onCancel={(event) => { event.preventDefault(); closeOptions(); }} onClose={closeOptions}>
-    <div className="correction-dialog__surface">
-    <header className="correction-dialog__header"><h2>خيارات العرض</h2></header>
     <section className="host-visibility-controls">
       <label className="host-visibility-control">
         <span>إظهار الإجابة للمضيف</span>
@@ -2224,10 +2457,6 @@ export function HostVisibilityControls({
         </p>
       ) : null}
     </section>
-    <button className="button" type="button" onClick={closeOptions}>إغلاق</button>
-    </div>
-    </dialog>
-    </>
   );
 }
 
@@ -2251,12 +2480,14 @@ const activeImageStatesForView = new Set([
   "QUESTION_FAILED",
 ]);
 export const canRenderCurrentQuestionMedia = ({
+  audienceQuestionVisible,
   authoritative,
   connection,
   role,
   state,
   surface,
 }: {
+  audienceQuestionVisible?: boolean;
   authoritative?: boolean;
   connection: string;
   role: "host" | "player" | "audience";
@@ -2264,6 +2495,7 @@ export const canRenderCurrentQuestionMedia = ({
   surface: "lobby" | "host" | "play" | "display" | "results";
 }) => {
   if (connection !== "connected" || authoritative === false) return false;
+  if (role === "audience" && audienceQuestionVisible === false) return false;
   if (role === "host") return surface === "host";
   return (
     role === "audience" &&
@@ -2597,7 +2829,7 @@ type HostJoinLink = {
 function useHostJoinLink(roomCode: string): HostJoinLink {
   const [origin, setOrigin] = useState(
     () =>
-      import.meta.env.VITE_PUBLIC_JOIN_ORIGIN ||
+      import.meta.env?.VITE_PUBLIC_JOIN_ORIGIN ||
       (typeof window === "undefined" ? "" : window.location.origin),
   );
   const [qr, setQr] = useState<{ joinUrl: string; value: string }>();
@@ -2606,9 +2838,9 @@ function useHostJoinLink(roomCode: string): HostJoinLink {
     message: string;
   }>();
   const [copyStatus, setCopyStatus] = useState("");
-  const joinUrl = playerJoinUrl(origin, roomCode);
+  const joinUrl = isAlmaidanLocalDevelopment ? `${window.location.origin}/room/${encodeURIComponent(roomCode)}/join` : playerJoinUrl(origin, roomCode);
   const originIsInvalid =
-    Boolean(origin.trim()) && !normalizedJoinOrigin(origin);
+    !isAlmaidanLocalDevelopment && Boolean(origin.trim()) && !normalizedJoinOrigin(origin);
   const qrDataUrl = qr && qr.joinUrl === joinUrl ? qr.value : "";
   const qrError =
     qrFailure && qrFailure.joinUrl === joinUrl ? qrFailure.message : "";
@@ -2670,6 +2902,7 @@ export function HostJoinInlineQr({
   join: HostJoinLink;
   onOpen: () => void;
 }) {
+  if(isAlmaidanLocalDevelopment)return <aside className="lobby-join-qr"><p>شارك الرمز أو الرابط في جلسة متصفح مستقلة على هذا الكمبيوتر.</p><button className="button" type="button" onClick={()=>void join.copyLink()}>نسخ رابط الدعوة</button><p role="status">{join.copyStatus}</p></aside>;
   const status = join.joinUrl
     ? join.qrError || "امسح الرمز للانضمام إلى هذه المباراة."
     : join.originIsInvalid
@@ -2917,6 +3150,8 @@ function RoomRouteInstance({
             : "ردهة المباراة",
   );
   const { roomCode } = useParams();
+  let roomBackend: "pg" | "legacy" | "enta" | undefined;
+  try { roomBackend = parseRoomLocator(roomCode).backend; } catch { roomBackend = undefined; }
   const { envelope, connection, error, presence, send, reportError } = useRoom(
     roomCode,
     surface === "display",
@@ -2935,7 +3170,7 @@ function RoomRouteInstance({
   const [showHostAnswer, setShowHostAnswer] = useState(true);
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
   const hostJoin = useHostJoinLink(
-    envelope?.role === "host" ? projection?.room.roomCode ?? "" : "",
+    envelope?.role === "host" ? (roomCode?.startsWith("M2-") ? roomCode : projection?.room.roomCode ?? "") : "",
   );
   const [draggedTeamTarget, setDraggedTeamTarget] =
     useState<AssignmentTarget>();
@@ -3046,6 +3281,7 @@ function RoomRouteInstance({
     const transitionKey = type ? `${envelope?.revision}:${type}` : undefined;
     if (
       !type ||
+      Boolean(projection?.challenge) ||
       surface !== "host" ||
       envelope?.role !== "host" ||
       connection !== "connected" ||
@@ -3134,18 +3370,24 @@ function RoomRouteInstance({
           },
         }
       : undefined;
-  const reconcileDeadline = () => {
-    if (gameRuntime.kind === "firebase" && envelope)
-      void gameRuntime
-        .syncDeadline?.(envelope.roomId)
-        .catch((reason) => reportError(readableError(reason)));
+  const reconcileDeadline = async () => {
+    if (roomBackend !== "legacy") return false;
+    if (gameRuntime.kind !== "firebase" || !envelope) return true;
+    try {
+      return (await gameRuntime.syncDeadline?.(envelope.roomId))?.expired === true;
+    } catch (reason) {
+      reportError(readableError(reason));
+      return false;
+    }
   };
   const rematch = async () => {
+    if(isAlmaidanLocalDevelopment&&envelope){navigate(`/huroof/rematch/${envelope.roomId}`);return;}
     const settings = projection?.room.matchSettings;
     if (!settings || rematchBusy) return;
     setRematchBusy(true);
     reportError("");
     try {
+      if (roomCode?.startsWith("M2-")) throw new Error("REMATCH_UNAVAILABLE");
       const body = await gameRuntime.createRoom({
         displayName: "المضيف",
         ...settings,
@@ -3166,7 +3408,7 @@ function RoomRouteInstance({
     try {
       if (!navigator.clipboard?.writeText)
         throw new Error("النسخ غير مدعوم في هذا المتصفح.");
-      await navigator.clipboard.writeText(projection.room.roomCode);
+      await navigator.clipboard.writeText(roomCode?.startsWith("M2-") ? roomCode : projection.room.roomCode);
       setCopyStatus("تم نسخ رمز الغرفة.");
     } catch (reason) {
       setCopyStatus(readableError(reason));
@@ -3174,7 +3416,7 @@ function RoomRouteInstance({
   };
   if (!projection || !envelope)
     return (
-      <main
+      <main data-page-layout="wide"
         className="app-page spatial-shell spatial-shell--status"
         id="main-content"
       >
@@ -3237,17 +3479,10 @@ function RoomRouteInstance({
   const correctionPending = state === "CORRECTION";
   const correctionDialogVisible = correctionDialogOpen || correctionPending;
   const resultState = resultRouteState(roomCode, role, state);
-  const newMatchHref = sameSettingsNewMatchHref(projection.room.matchSettings);
+  const newMatchHref = isAlmaidanLocalDevelopment ? `/huroof/rematch/${envelope.roomId}` : sameSettingsNewMatchHref(projection.room.matchSettings);
   const canStartMatch = canDispatchLobbyStart(state, projection.room.canStart);
   const team = projection.self?.team;
   const cells = projection.board ?? previewBoardCells;
-  const activeCell = cells.find((cell) => cell.id === projection.activeCellId);
-  const activeCellCaption =
-    activeCell?.kind === "category" && activeCell.categoryLabelAr
-      ? `الفئة الحالية: ${activeCell.categoryLabelAr} · الترتيب ${activeCell.categoryOccurrence ?? "—"}`
-      : activeCell?.kind === "surprise" && activeCell.revealedLetter
-        ? `المفاجأة ${activeCell.visibleValue}: الحرف الحالي ${activeCell.revealedLetter}`
-        : undefined;
   const incompleteEnd = Boolean(projection.endedWithoutWinner);
   const boardMotionEnabled =
     connection === "connected" && envelope.authoritative !== false;
@@ -3326,9 +3561,27 @@ function RoomRouteInstance({
         reportError(readableError(reason));
       });
   };
+  if (projection.challenge && surface !== "lobby")
+    return (
+      <ChallengeStage
+        authoritative={envelope.authoritative}
+        challenge={projection.challenge}
+        connection={connection}
+        error={error}
+        labelledColours={projection.room.matchSettings?.labelledColours === true}
+        members={projection.room.members}
+        onIntent={action}
+        onDeadline={roomBackend === "legacy" && gameRuntime.kind === "firebase" ? reconcileDeadline : undefined}
+        onTerminalCorrection={() => setCorrectionDialogOpen(true)}
+        role={role}
+        serverTime={envelope.serverTime}
+        scores={projection.questionScores}
+        teams={projection.room.teams}
+      />
+    );
   if (surface === "lobby")
     return (
-      <main
+      <main data-page-layout="wide"
         className="app-page spatial-shell spatial-shell--lobby"
         id="main-content"
       >
@@ -3345,7 +3598,7 @@ function RoomRouteInstance({
             <div className="lobby-title__code">
               <p className="lobby-room-code">
                 <span>رمز الغرفة</span>
-                <bdi dir="ltr">{projection.room.roomCode}</bdi>
+                <bdi dir="ltr">{roomCode?.startsWith("M2-") ? roomCode : projection.room.roomCode}</bdi>
               </p>
               <div className="lobby-title__share-actions">
                 <button
@@ -3456,7 +3709,7 @@ function RoomRouteInstance({
     );
   if (surface === "play")
     return (
-      <main
+      <main data-page-layout="wide"
         className={`player-page spatial-player player-page--${playerTeam}`}
         data-buzzer-state={buzzerState}
         data-team={playerTeam}
@@ -3476,6 +3729,13 @@ function RoomRouteInstance({
           className="player-buzzer-zone"
           aria-describedby="player-buzzer-status"
         >
+          {connection === "connected" && envelope.authoritative !== false &&
+            (state === "FIRST_ANSWER" || state === "OPPONENT_CHANCE") &&
+            projection.deadlineAt ? (
+              <div className="player-page__countdown" role="timer" aria-label="الوقت المتبقي" dir="ltr">
+                <Countdown deadlineAt={projection.deadlineAt} serverTime={envelope.serverTime} />
+              </div>
+            ) : null}
           <h1 className="sr-only">
             {connection !== "connected"
               ? buzzText
@@ -3565,7 +3825,7 @@ function RoomRouteInstance({
     );
   if (surface === "display")
     return (
-      <main
+      <main data-page-layout="wide"
         className="stage spatial-stage game-arena"
         data-state={state}
         id="main-content"
@@ -3584,7 +3844,7 @@ function RoomRouteInstance({
             <span>الخلية</span>
             <small>شاشة الجمهور</small>
           </p>
-          <BoardStatusStrip projection={projection} serverTime={envelope.serverTime} presentationContext={boardPresentationContext} onDeadline={reconcileDeadline} notification={activeCellCaption || undefined} />
+          <BoardStatusStrip projection={projection} serverTime={envelope.serverTime} presentationContext={boardPresentationContext} onDeadline={roomBackend === "legacy" ? reconcileDeadline : undefined} />
           <p className="game-arena__badge">
             <svg aria-hidden="true" viewBox="0 0 24 24">
               <path d="M8 3h8l-1 6h-6L8 3Z" />
@@ -3605,13 +3865,12 @@ function RoomRouteInstance({
             teamName={projection.room.teams?.vertical}
             variant="stage"
           />
-          <div
-            className={`stage-board-column ${activeCellCaption ? "stage-board-column--active-caption" : ""}`}
-          >
+          <div className="stage-board-column">
             <GameBoard
               activeCellId={projection.activeCellId}
               cells={cells}
               className="stage-board"
+              fillContainer
               presentation="tactile"
               winningPath={projection.winningPath}
               motionBaselineKey={boardMotionBaselineKey}
@@ -3630,7 +3889,7 @@ function RoomRouteInstance({
           />
         </section>
         <section
-          className={`question-band${questionMediaVisible ? " question-band--with-media" : ""}${questionMediaVisible && !audienceQuestionTextVisible ? " question-band--media-only" : ""}`}
+          className={`question-band${questionMediaVisible ? " question-band--with-media" : ""}${questionMediaVisible && !audienceQuestionTextVisible ? " question-band--media-only" : ""}${!audienceQuestionTextVisible && !questionMediaVisible ? " question-band--concealed" : ""}`}
           aria-live="polite"
           style={{
             visibility: (audienceQuestionTextVisible || questionMediaVisible)
@@ -3689,6 +3948,7 @@ function RoomRouteInstance({
                   key={`${envelope.roomId}:${projection.activeCellId ?? ""}:${projection.question.media.mediaId}:${projection.question.media.assetSha256}`}
                   roomId={envelope.roomId}
                   media={projection.question.media}
+                  load={roomBackend === "pg" ? pgMediaUnavailable : undefined}
                   concealed={shouldConcealAudienceQuestionMedia(projection.question.media)}
                 />
               ) : null}
@@ -3704,7 +3964,7 @@ function RoomRouteInstance({
     );
   if (surface === "results")
     return (
-      <main
+      <main data-page-layout="wide"
         className="app-page spatial-shell spatial-shell--results"
         id="main-content"
       >
@@ -3734,7 +3994,7 @@ function RoomRouteInstance({
             )}
             {incompleteEnd && (
               <p>
-                نفد المحتوى المتاح قبل اكتمال مسار. احتُفظ بالنقاط وسجل الجولات
+                انتهت المباراة قبل اكتمالها. احتُفظ بالنقاط وسجل الجولات
                 دون إعلان فائز.
               </p>
             )}
@@ -3779,9 +4039,11 @@ function RoomRouteInstance({
                   <li>إجابة صحيحة وتثبيت ملكيتها (+1 نقطة)</li>
                   <li>اكتمال المسار (+1 جولة)</li>
                 </ol>
-                <Link className="button button--primary" to={host ? newMatchHref : "/host/new"}>
+                {host ? <Link className="button button--primary" to={newMatchHref}>
                   مباراة جديدة
-                </Link>
+                </Link> : <p>اطلب من المضيف بدء مباراة جديدة ومشاركة رمزها.</p>}
+                {host ? <Link className="button" to="/history">مبارياتي</Link> : null}
+                <Link className="button" to="/">العودة للرئيسية</Link>
               </>
             ) : (
               <Link
@@ -3813,7 +4075,7 @@ function RoomRouteInstance({
       </main>
     );
   return (
-    <main
+    <main data-page-layout="wide"
       className="app-page host-page spatial-shell spatial-shell--host game-arena game-arena--host"
       data-state={state}
       id="main-content"
@@ -3844,11 +4106,6 @@ function RoomRouteInstance({
               motionEnabled={boardMotionEnabled}
               presentationContext={boardPresentationContext}
             />}
-            {!questionMediaVisible && activeCellCaption ? (
-              <p className="active-cell-caption" role="status">
-                {activeCellCaption}
-              </p>
-            ) : null}
             {!questionMediaVisible && projection.room.matchSettings?.gameKind === "categories" ? (
               <button
                 aria-expanded={expandedBoardOpen}
@@ -3889,6 +4146,7 @@ function RoomRouteInstance({
                       key={`${envelope.roomId}:${projection.activeCellId ?? ""}:${projection.question.media.mediaId}:${projection.question.media.assetSha256}`}
                       roomId={envelope.roomId}
                       media={projection.question.media}
+                      load={roomBackend === "pg" ? pgMediaUnavailable : undefined}
                     />
                   ) : null}
                   {projection.question?.revealedAnswer ? (
@@ -3963,7 +4221,7 @@ function RoomRouteInstance({
                 ) : projection.deadlineAt ? (
                   <Countdown
                     deadlineAt={projection.deadlineAt}
-                    onDeadline={reconcileDeadline}
+                    onDeadline={roomBackend === "legacy" ? reconcileDeadline : undefined}
                     serverTime={envelope.serverTime}
                   />
                 ) : null}
@@ -3971,7 +4229,7 @@ function RoomRouteInstance({
                   <div hidden>
                     <Countdown
                       deadlineAt={projection.deadlineAt}
-                      onDeadline={reconcileDeadline}
+                      onDeadline={roomBackend === "legacy" ? reconcileDeadline : undefined}
                       serverTime={envelope.serverTime}
                     />
                   </div>
@@ -4063,9 +4321,10 @@ function RoomRouteInstance({
             </>
           )}
           {host && <div className="host-controls__bottom-actions">
+            <div className="room-game-navigation"><Link className="button" to="/">الميدان · الرئيسية</Link>{isAlmaidanLocalDevelopment?<Link className="button" to="/history">مبارياتي</Link>:null}<ThemeToggle compact/></div>
             <div className="host-controls__action-row host-controls__action-row--two">
-              <Link className="button" aria-label="فتح شاشة العرض في تبويب جديد" data-testid="host-display-link" rel="noopener noreferrer" target="_blank" to={`/room/${projection.room.roomCode}/display`}>شاشة العرض</Link>
-              <button className="button" type="button" onClick={() => setJoinDialogOpen(true)}>رمز QR</button>
+              <Link className="button" aria-label="فتح شاشة العرض في تبويب جديد" data-testid="host-display-link" rel="noopener noreferrer" target="_blank" to={`/room/${roomCode?.startsWith("M2-") ? roomCode : projection.room.roomCode}/display`}>شاشة العرض</Link>
+              <button className="button" type="button" onClick={() => isAlmaidanLocalDevelopment ? void hostJoin.copyLink() : setJoinDialogOpen(true)}>{isAlmaidanLocalDevelopment ? "نسخ رابط الدعوة" : "رمز QR"}</button>
             </div>
             {state !== "LOBBY" && <div className="host-controls__action-row host-controls__action-row--three">
               <button className="button" data-testid="correction-trigger" ref={correctionTriggerRef} type="button" onClick={() => setCorrectionDialogOpen(true)}>تصحيح</button>
@@ -4430,45 +4689,84 @@ function CorrectionReview({
 
 export function HowToPlayRoute() {
   useDocumentTitle("كيف تلعب");
+  const staticPreview = isStaticPreviewBuild();
   return (
-    <main
-      className="app-page spatial-shell spatial-shell--rules"
-      id="main-content"
-    >
+    <main data-page-layout="wide" className="maydan-app maydan-public-page maydan-rules-page" data-page-kind="reading" id="main-content" tabIndex={-1}>
       <AppHeader />
-      <section className="rules-page spatial-rules">
-        <div>
-          <p className="eyebrow">قواعد مختصرة</p>
+      <div className="page-rail game-guide">
+        <header className="game-guide__intro">
+          <p className="eyebrow">دليل اللعب</p>
           <h1>كيف تلعب؟</h1>
-          <ol>
-            <li>
-              <b>اختر</b> خلية من اللوح.
-            </li>
-            <li>يظهر السؤال ويُفتح البازر تلقائيًا.</li>
-            <li>
-              <b>التقط</b> الخلية بإجابة صحيحة.
-            </li>
-            <li>
-              <b>صِل</b> بين طرفي محرك.
-            </li>
+          <p>ابدأوا معاً، ثم اختاروا اللعبة وتعرّفوا على قواعدها.</p>
+          <nav className="game-guide__nav" aria-label="انتقل إلى قواعد اللعبة">
+            <a href="#rules-general">البداية</a>
+            <a href="#rules-khaliah">الخلية</a>
+            <a href="#rules-enta-sah">إنت صح</a>
+            <a href="#rules-imposter">الدخيل</a>
+          </nav>
+        </header>
+
+        <section className="game-guide__section" id="rules-general" aria-labelledby="rules-general-title">
+          <div className="game-guide__section-heading"><p className="eyebrow">قبل اللعب</p><h2 id="rules-general-title">ابدأوا من هنا</h2><p>أربع خطوات تجمعكم في غرفة واحدة.</p></div>
+          <ol className="game-guide__start-steps">
+            <li><strong>اختاروا اللعبة</strong><span>تعرّفوا على الألعاب واختاروا ما يناسب جمعتكم.</span></li>
+            <li><strong>جهّزوا الغرفة</strong><span>يسجّل المضيف الدخول بحساب موثّق ويختار إعدادات المباراة.</span></li>
+            <li><strong>شاركوا الرمز</strong><span>ينضم الأصحاب بالرمز والاسم.</span></li>
+            <li><strong>ابدأوا الجولة</strong><span>رتّبوا اللاعبين واتبعوا تعليمات اللعبة حتى النتيجة.</span></li>
           </ol>
-        </div>
-        <div>
-          <GameBoard
-            activeCellId="cell-2-2"
-            cells={previewBoardCells.map((cell) =>
-              cell.id === "cell-2-2"
-                ? { ...cell, owner: "horizontal" as const }
-                : cell,
-            )}
-            presentation="tactile"
-          />
-          <p>
-            <AxisMark axis="horizontal" /> يصل اليسار باليمين ·{" "}
-            <AxisMark axis="vertical" /> يصل الأعلى بالأسفل
-          </p>
-        </div>
-      </section>
+          {isAlmaidanLocalDevelopment ? <p className="game-guide__note">في الوضع المحلي، استخدموا جلسات متصفح منفصلة للضيوف على هذا الكمبيوتر.</p> : null}
+        </section>
+
+        <section className="game-guide__section" id="rules-khaliah" aria-labelledby="rules-title">
+          <div className="game-guide__section-heading"><p className="eyebrow">لعبة الحروف</p><h2 id="rules-title">كيف تلعب الخلية؟</h2><p>التقطوا الحروف ووصلوا بين طرفَي فريقكم.</p></div>
+          <div className="game-guide__board-layout">
+            <div>
+              <ol className="game-guide__steps">
+                <li><strong>اختاروا خلية</strong><span>يختار المضيف خلية من اللوح.</span></li>
+                <li><strong>استعدوا للإجابة</strong><span>يظهر السؤال ويُفتح البازر تلقائيًا.</span></li>
+                <li><strong>التقطوا الخلية</strong><span>الإجابة الصحيحة تمنح الخلية للفريق.</span></li>
+                <li><strong>صِلوا الطرفين</strong><span>صِل بين طرفَي اللوح للفوز.</span></li>
+              </ol>
+              <div className="game-guide__actions"><Link className="button button--primary" to="/host/new">إعداد الخلية</Link></div>
+            </div>
+            <figure className="game-guide__board">
+              <div inert><GameBoard activeCellId="cell-2-2" cells={previewBoardCells.map((cell) => cell.id === "cell-2-2" ? { ...cell, owner: "horizontal" as const } : cell)} presentation="tactile" /></div>
+              <figcaption><AxisMark axis="horizontal" /> يصل اليسار باليمين · <AxisMark axis="vertical" /> يصل الأعلى بالأسفل</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section className="game-guide__section" id="rules-enta-sah" aria-labelledby="enta-rules-title">
+          <div className="game-guide__section-heading"><p className="eyebrow">الأسئلة والجولات</p><h2 id="enta-rules-title">كيف تلعب إنت صح؟</h2><p>اختاروا النمط المناسب واتبعوا تعليمات كل جولة.</p></div>
+          <ol className="game-guide__steps game-guide__steps--grid">
+            <li><strong>جهّزوا المباراة</strong><span>اختاروا النمط والفئات المتوافقة، وأدخلوا أسماء الفرق واللاعبين.</span></li>
+            <li><strong>ادخلوا الغرفة</strong><span>شاركوا الرمز. يدخل الضيف باسمه، ثم يوزّعه المضيف على الفريق ومقعد اللاعب.</span></li>
+            <li><strong>افتحوا لوحة المضيف</strong><span>شاشة العرض واللاعبون يتابعون السؤال والنقاط دون صلاحيات التحكّم.</span></li>
+            <li><strong>العبوا الجولات</strong><span>اتبعوا تعليمات النمط، وأرسلوا الإجابات في الوقت المحدد عندما تتطلب الجولة ذلك.</span></li>
+            <li><strong>اعرضوا النتيجة</strong><span>اجمعوا النقاط عبر الجولات؛ يفوز الفريق الأعلى مجموعاً، ويُعرض التعادل عند تساوي أعلى مجموع. اعرضوا النتيجة المحفوظة بعد الجولات. الإنهاء المبكر يحتاج تأكيداً ويُظهر الجولات المتبقية.</span></li>
+          </ol>
+          <div className="game-guide__details">
+            <details><summary>الأسئلة والأطفال</summary><p>يختار الفريق السؤال. يكشف المضيف الإجابة ويحتسب النقاط؛ لا تظهر الإجابة قبل الكشف.</p></details>
+            <details><summary>القوائم والتمثيل والرسم</summary><p>يرسل اللاعب إجابته أو تخمينه من صفحة الغرفة قبل انتهاء الوقت. تظهر للمضيف ولصاحبها فقط، ويُرفض تكرار الإجابة نفسها من اللاعب في الجولة. يراجع المضيف ويحكم العناصر الصحيحة؛ الإرسال لا يمنح نقاطاً تلقائياً. في الرسم يعيّن المضيف الرسام ويرسل له المهمة الخاصة من صفحة الغرفة.</p></details>
+            <details><summary>التحدّي</summary><p>تسجّل المحاولات والمساعدات وفق الدور. اللاعب الذي شاهد المهمة الخاصة لا يجيب عن هدفه.</p></details>
+          </div>          <p className="game-guide__note">الأطفال: محتوى مراجع لأعمار ٧–١٠. الفئات غير المتوافقة لا يمكن اختيارها.</p>
+          {isAlmaidanLocalDevelopment ? <p className="game-guide__note">يعمل الوضع المحلي على هذا الكمبيوتر؛ استخدموا جلسات متصفح منفصلة للضيوف.</p> : null}
+          <div className="game-guide__actions">{isAlmaidanLocalDevelopment ? <Link className="button button--primary" to="/enta/new">اختيار لعبة إنت صح</Link> : <p role="status">إنت صح — قريباً</p>}</div>
+        </section>
+
+        <section className="game-guide__section" id="rules-imposter" aria-labelledby="imposter-rules-title">
+          <div className="game-guide__section-heading"><p className="eyebrow">تلميح وخداع</p><h2 id="imposter-rules-title">كيف تلعب الدخيل؟</h2><p>الكل يعرف الكلمة… إلا واحد!</p></div>
+          <ol className="game-guide__steps game-guide__steps--grid">
+            <li><strong>شاهدوا السر</strong><span>يلعب من ٣ إلى ٨ أشخاص، والمضيف لاعب معهم، وكل لاعب بجهازه. يكشف كل لاعب سرّه لنفسه بالضغط المطوّل. يعرف الجميع الكلمة والفئة، أما الدخيل فيعرف الفئة فقط.</span></li>
+            <li><strong>لمّحوا وناقشوا</strong><span>يقدّم كل لاعب تلميحاً من كلمة واحدة في دوره، على جولتين، ثم تناقشون.</span></li>
+            <li><strong>صوّتوا بسرية</strong><span>صوّتوا لكشف الدخيل. إذا انكشف، يحصل على تخمين أخير للكلمة؛ يفوز إن أصاب، ويفوز أهل الكلمة إن أخطأ أو انتهى الوقت.</span></li>
+          </ol>
+          <div className="game-guide__actions">
+            {isAlmaidanLocalDevelopment && !staticPreview ? <Link className="button button--primary" to="/host/new?kind=imposter">ابدأ الدخيل</Link> : <p role="status">الدخيل — اللعب المستضاف غير مفعّل</p>}
+            <Link className="button button--secondary" to="/how-to-play/imposter">اقرأ قواعد الدخيل كاملة</Link>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }
@@ -4552,7 +4850,7 @@ export function QuestionsRoute() {
     ],
   );
   return (
-    <main className="app-page" id="main-content">
+    <main data-page-layout="wide" className="app-page" id="main-content">
       <AppHeader />
       <section className="admin-page">
         <header className="admin-page__header">
@@ -4894,19 +5192,24 @@ function QuestionEditor({ id }: { id: string }) {
 export function NotFoundRoute() {
   useDocumentTitle("الصفحة غير موجودة");
   return (
-    <main
-      className="app-page spatial-shell spatial-shell--status"
+    <main data-page-layout="wide"
+      className="maydan-app maydan-public-page"
       id="main-content"
+      tabIndex={-1}
     >
       <AppHeader />
-      <section className="status-panel spatial-status-panel">
+      <section className="maydan-status-panel" aria-labelledby="not-found-title">
         <p className="eyebrow">404</p>
-        <h1>الصفحة غير موجودة</h1>
+        <h1 id="not-found-title">الصفحة غير موجودة</h1>
         <p>ربما تغيّر الرابط أو انتهت الجلسة.</p>
         <Link className="button button--primary" to="/">
-          العودة إلى الدخول
+          العودة للرئيسية
         </Link>
       </section>
     </main>
   );
 }
+
+
+
+

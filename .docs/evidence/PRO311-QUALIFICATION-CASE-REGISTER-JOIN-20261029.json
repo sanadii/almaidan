@@ -1,0 +1,20 @@
+{
+  "status": "ORIGINAL_CASE_REGISTER_EXACT_MATCH_AFTER_P25_ENCODING_REPAIR",
+  "originalSourcePath": "output/pro259-eng02-20261026/ENG02-OBLIGATIONS-R0.json",
+  "originalSourceSha256": "f33f0f5a3a8776ad0e5f4f3209bacddc813825d1bd272ce0138a1b50b08aa86b",
+  "originalSourceHashVerifiedEarlierThisTurn": true,
+  "requestSha256": "49edbf5c81f4916fabfc0f952c823ae6db115cb7d02194ba61ffde8e66848c34",
+  "originalCount": 32,
+  "requestCount": 32,
+  "mismatches": [],
+  "repair": {
+    "predecessorSha256": "45c64ef6bc465a9166a729948d9370dc6030123f00264b27633b48918d9cce44",
+    "affectedId": "P25",
+    "predecessorPath": "output/pro311-history-20261027/BOUNDED-QUALIFICATION-REQUEST-P25-PREDECESSOR-45c64ef6bc465a91.json",
+    "reason": "Request definition had an encoding mismatch; restored directly from immutable original register"
+  },
+  "runtimeAuthorityGranted": false,
+  "readinessStatus": "COMPLETED_SINGLE_ATTEMPT_SPENT",
+  "newExecutedCases": 0,
+  "meaning": "Source identity repair only; original definitions/status/authority and all spent admissions preserved"
+}

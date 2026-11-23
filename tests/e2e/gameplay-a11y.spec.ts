@@ -22,7 +22,7 @@ for (const gameKind of ['huroof', 'categories'] as const) test(`${gameKind} host
       const page = await context.newPage();
       await page.goto(`${baseURL}/`);
       await page.getByLabel('رمز الغرفة').fill(code!);
-      await page.getByRole('button', { name: 'انضم إلى غرفة' }).click();
+      await page.getByRole('button', { name: 'الدخول' }).click();
       await page.getByLabel('اسم اللاعب').fill(name);
       await page.getByRole('button', { name: 'دخول الغرفة' }).click();
       await page.getByTestId('ready').click();

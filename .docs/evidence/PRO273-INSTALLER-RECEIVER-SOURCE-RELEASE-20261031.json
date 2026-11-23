@@ -1,0 +1,98 @@
+{
+  "status": "CONDITIONAL_BOUNDED_SOURCE_TRANSPORT_AUTHORING_RELEASED_IMPLEMENTATION_NOT_ACCEPTED",
+  "taskId": "PRO273-SEL",
+  "assignmentId": "PRO311-HISTORY-FORGE",
+  "scope": "same31path591cd769; existing owned capacity modules, new additive migration/roles and focused tests; no package/lockfile/newSourcepath or ordinaryCAP replacement",
+  "proposal": {
+    "path": "output/pro311-history-20261027/planner/PRO273-INSTALLER-RECEIVER-TRANSPORT-20261031.md",
+    "sha256": "0ee2572bbd767e2827f80e9fbf60ce94f1d7daa1f2e163a04088784d73ad58b7"
+  },
+  "reviews": {
+    "database": {
+      "path": "output/pro311-history-20261027/database/PRO273-INSTALLER-RECEIVER-TRANSPORT-DISPOSITION-20261031.md",
+      "sha256": "b230f2ed51e0a697788bcd466014dc21e25a85d8a0265808d0ad38fb58251719"
+    },
+    "security": {
+      "path": "output/pro311-history-20261027/security/PRO273-INSTALLER-RECEIVER-TRANSPORT-DISPOSITION-20261031.md",
+      "sha256": "cd51c1c672bf7f5d00657d91c29204ef86787f6cf49d490afea0384cf19b39a3"
+    }
+  },
+  "rootReconciliation": {
+    "transport": "one persistent actual supervised noninteractive psql child, internal concrete private transport; never supplied database/query/inspector callback as authority",
+    "installedAnchor": {
+      "serviceName": "HuroofWaOloofInstallerRoot-PRO311-LOCAL-20261028",
+      "registry64": "HKLM/SYSTEM/CurrentControlSet/Services/HuroofWaOloofInstallerRoot-PRO311-LOCAL-20261028/Parameters",
+      "store": "C:/ProgramData/HuroofWaOloof/InstallerRoot/PRO311-LOCAL-20261028",
+      "meaning": "source-fixed expected object names only, not evidence of existing/authentic installation",
+      "required": "real SCM configuration/status/security, protected HKLM values+effective security, actual service/receiver token SID/groups/privileges/start/parent/job and host/boot, protected handle/file/ancestor identity/reparse/owner/DACL and immutable source/loader/dependency closure; independent administrator/SYSTEM root, runtime/app cannot modify",
+      "inspection": "private concrete fixed bounded Windows inspection implementation in ownedmodules; literal protected helper/script with real Win32 APIs, no caller script/path/callback. Independent startup closure must fund inspector/framework/compiler-if-any/native loads/outputs as actually used before target launch."
+    },
+    "signature": {
+      "algorithm": "Node builtin Ed25519 only",
+      "key": "exact raw32-byte publickey from OS-authenticated anchor; fixed DER SPKI prefix302a300506032b6570032100; verify key fingerprint/current authority epoch against installed anchor",
+      "signature": "exact raw64 bytes, no trailing/alternateencoding/keyfallback",
+      "wire": "signature covers exact persisted bytes; fixed signed prefix pro273.installer.launch-permit.v1 followed by LF and UTF8 closed JSON; verify before decoding; schemaVersion pro273-installer-launch-permit-v1",
+      "permitFields": [
+        "schemaVersion",
+        "permitId",
+        "authorityEpoch",
+        "hostIdentity",
+        "bootIdentity",
+        "serviceIdentity",
+        "credentialEpoch",
+        "launchEpoch",
+        "validFrom",
+        "validUntil",
+        "sourceClosureHash",
+        "installationClosureHash",
+        "physicalIdentity",
+        "physicalProofIdentity",
+        "startupFunding",
+        "workerFunding",
+        "claimantFunding",
+        "expectationId",
+        "dispatchAttemptId",
+        "constructorKind",
+        "targetId",
+        "expectedCoreHash",
+        "expectedEvidenceHash",
+        "receiverClosureHash",
+        "psqlManifestHash",
+        "endpointId",
+        "credentialConfigId",
+        "inputId",
+        "inputLength",
+        "inputHash",
+        "prelaunchAttemptReceipt",
+        "resourceScheduleRef"
+      ],
+      "keyGeneration": "authorityEpoch must equal current permitted installed key/authority generation and pass protected revocation floor; actual signature uses that exact installed rawkey. Key identity/fingerprint never selected by permit.",
+      "decoder": "closed raw data only, never executable authorization; nested funding/service/attempt/schedule variants exact protected records, no generic budgets/boolean approval"
+    },
+    "startupAndFences": "independently funded admitted installed service/inspection/key/permit/metadata envelope before reads; separately protected committed finite attempt before spawn; create-only durable OS launch/dispatch fences mirror exact SQLattempts, finite paid events, no secondpool/delete/reset/refund. Missing native fence durability qualification denies admission; fsync/rename/exit alone not proof.",
+    "channel": "shellfalse windowsHidetrue verifiedabsolutepsql and qualifiedDLLclosure, protectedcwd explicitenv/singletypedendpoint+verifyfullserverauth+protectedcredentialfile/authprofile. Fixed -X -w -q -A -t, ON_ERROR_STOP1, ON_ERROR_ROLLBACKoff, ECHOnone, no callerflags/env/URI/multihost/options/service/config/GSS-SSPIfallback. No generic query, reconnect, backslash-input, psqlvars, retry/savepoint or cross-stage single-transaction. Lowercasevalidatedhex body and every textualID in fixed SQL; fixed JSONreply nonce/phase/schema and boundeddrained sanitizeddiagnostics.",
+    "commits": "same actual child/session, sourcefixed correlation then independent committed actual observer/session/slot/bootstrap/trust/charge joins; prep commit then separate postCOMMIT receiptSELECT+actualsession/creationTx check before capture; durable dispatch-before-first-write; constructor transactioncommit then separate exactimmutable receiptSELECT. Precommit row/commandtag/exit0 not commitproof. Partialwrite/ACKloss/overflow/disconnect/crash =>spentUNKNOWN/no redispatch; separate fundedread-onlylookup only.",
+    "resources": "full startup/service/inspection/Node/psql/libpq/TLS/native/parent/raw/hex/SQL/pipe/backend/output/credential/canonical/parser/WAL/index/fence/receipt/rollback/drain maximumoverlap within existing typed permanent partitions and independently qualified Startup/Worker/Claimant/Observer scopes; nothing supplied by Source or target borrowing",
+    "sql": "actual SessionUser/OID/PID/start/epochs/source/install/observation/currenttrust/coverage, exact restrictiveFks/NOWAIT/postwaitcurrenttime, narrow preparation/constructor/receipt capabilities, no owner/directDML/SETROLE/public/appgrant. Atomic pair and committedconstruction exclusion unchanged.",
+    "lifetime": "retain all permanent/spent/unknown holders until independently authorized actual credential seal/allOID absence/protocol/processTree/parent/IPC drain/rollback proof; no timer/promise/EOF/exit refund"
+  },
+  "genuinePrerequisites": {
+    "administrativeProvisioner": null,
+    "serviceSIDAndLauncher": null,
+    "protectedSCMRegistryStoreACLs": null,
+    "signerKeyCustodianAndActualKeyEpoch": null,
+    "credentialCustodianAndEndpointTLS": null,
+    "startupWorkerClaimantObserverQuantities": null,
+    "actualNodeInspectorPsqlLibpqDllSourceHashes": null,
+    "nativeOSLoaderFenceCrashNoRetryCleanupProof": null
+  },
+  "authorityBoundary": "Source authoring and inert Source verification only. No provisioning/service/account/key/credential/registry/ACL/native/DB access granted. User target-selection delegation is not freshR6 authority. Download permission would not approve these externalfacts.",
+  "acceptance": "implementation pending; actualSource tests externalIOonly, both final changedbyte domainreviews and Rootloadbearing reproduction/requiredGate stillmandatory; nativefacts NOT_RUN",
+  "runtimeAuthorityGranted": false,
+  "R6": "STOP",
+  "readerGuards": "PRESERVED",
+  "installationAborts": "PRESERVED",
+  "spentAdmissions": "PRESERVED",
+  "fullTaskDone": false,
+  "credit": 0
+}

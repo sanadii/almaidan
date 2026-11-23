@@ -1,0 +1,16 @@
+{
+  "status": "RECEIVER_AUTHORITY_DEPENDENCIES_RECORDED_NO_RUNTIME_GRANT",
+  "predecessorPath": "output/pro311-history-20261027/BOUNDED-QUALIFICATION-REQUEST-PRE-RECEIVER-778792721f9dbc9b.json",
+  "predecessorSha256": "778792721f9dbc9bc635010519ef6369d8a29661adc8932ec76bb93b55e90f93",
+  "requestSha256": "976655065e8c60be381f891cb97674069d6fec2b664cf9177385ada7317148cf",
+  "changedScope": "selectionPrimitiveQualificationDependency only",
+  "original32CaseRegisterUnchanged": true,
+  "allReadinessTargetDownloadGrantAndBudgetSectionsUnchanged": true,
+  "executionFreezeStatus": "NOT_FROZEN_PRO273_SOURCE_IMPLEMENTATION_IN_PROGRESS",
+  "newExecutedCases": 0,
+  "authorityGranted": false,
+  "R6": "STOP",
+  "readinessAttempt": "SPENT_NO_RETRY",
+  "fullTaskDone": false,
+  "credit": 0
+}

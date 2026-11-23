@@ -7,7 +7,9 @@ import {
   canonicalApprovedJsonl,
   canonicalJson,
   SAFE_DOCUMENT_ID,
+  hash, byPath, documentsHash, assertFirestoreDocumentPath,
 } from "./firestore-release-canonical.js";
+export { assertFirestoreDocumentPath } from "./firestore-release-canonical.js";
 import {
   DEFAULT_VALIDATION_AS_OF,
   isStrictIsoDate,
@@ -106,34 +108,9 @@ export function buildV18ReleaseMediaDocuments(releaseId: string, uploaded: Array
   return documents;
 }
 
-const hash = (value: string): string =>
-  createHash("sha256").update(value, "utf8").digest("hex");
-const byPath = (left: ReleaseDocument, right: ReleaseDocument) =>
-  left.path < right.path ? -1 : left.path > right.path ? 1 : 0;
-const documentsHash = (documents: ReleaseDocument[]): string =>
-  hash(
-    canonicalJson(
-      documents
-        .slice()
-        .sort(byPath)
-        .map(({ path, data }) => ({ path, data })),
-    ),
-  );
-
 /** Only the emulator demo plan carries an active pointer; production preparation never does. */
 export function releaseDocumentWriteMode(path: string): ReleaseWriteMode {
   return path === "runtime/activeRelease" ? "set" : "create";
-}
-
-/** Firestore document paths have an even number of non-empty, safe segments. */
-export function assertFirestoreDocumentPath(path: string): void {
-  const segments = path.split("/");
-  if (
-    segments.length === 0 ||
-    segments.length % 2 !== 0 ||
-    segments.some((segment) => !SAFE_DOCUMENT_ID.test(segment))
-  )
-    throw new Error(`Invalid Firestore document path: ${path}`);
 }
 
 export function assertUniqueReleaseDocuments(

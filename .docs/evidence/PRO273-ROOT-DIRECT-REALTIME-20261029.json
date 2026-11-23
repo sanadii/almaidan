@@ -1,0 +1,18 @@
+{
+  "milestone": "PRO273-SEL",
+  "status": "ROOT_SOURCE_COUNTEREXAMPLE_DIRECT_ENTRY_REACHES_QUERY_IO",
+  "sourcePath": "C:/Users/User/.codex/worktrees/huroof-enta-integration/huroof_wa_oloof/services/enta/server/src/realtime/postgres.ts",
+  "sourceSha256": "10158f4931abcc847521ad81b1100b5d3fa1096be101cc49ef8ce8fcc246d13b",
+  "sourceRange": "15-19",
+  "harness": "output/pro311-history-20261027/PRO273-ROOT-DIRECT-REALTIME-20261029.mts",
+  "harnessSha256": "87e4c9f6d8787826ad1ed85d47bb3cfaa26199f9055fb5b252595153aaff8eeb",
+  "log": "output/pro311-history-20261027/PRO273-ROOT-DIRECT-REALTIME-20261029.log",
+  "logSha256": "9b80e86c5bf50faaa2290ad94d03eb87eaefdfb09b0052d74a5cedabe53054e5",
+  "exitCode": 0,
+  "queryIoCalls": 1,
+  "actualBoundary": "Actual exported postgresRealtimeRepository; only query IO substituted with inert rows. No genuine database/native/SQL/app/network execution.",
+  "proposedCorrection": "Add realtime/postgres.ts as exact owned path if required by both domain reviews; deny unadmitted direct entry before query/material IO and preserve every second-read/reconciliation lifetime.",
+  "sourceAuthoringReleased": false,
+  "fullTaskDone": false,
+  "credit": 0
+}

@@ -1,0 +1,142 @@
+{
+  "task": "PRO-311 / ALMAIDAN-ENG03-06",
+  "status": "BOUNDED_V3_SOURCE_REPAIR_ACCEPTED_FULL_TASK_HELD",
+  "acceptedUtc": "2026-10-27T19:33:33.1182318Z",
+  "workspace": "C:/Users/User/.codex/worktrees/huroof-enta-integration/huroof_wa_oloof",
+  "fullTaskDone": false,
+  "completionCredit": 0,
+  "originalRequiredSetComplete": false,
+  "scope": "17-file bounded history/original-result Source candidate with repaired strict DTOs, owned routing/cursors and guarded PG result access; no full feature or runtime acceptance",
+  "identities": [
+    {
+      "path": "services/enta/server/prisma/migrations/20261028000000_pro311_history/migration.sql",
+      "expected": "e6d8f158af261951a7e4fa7cc75a140cdaf67b8fecc0e7e61b64d7e1b62ee15f",
+      "observed": "e6d8f158af261951a7e4fa7cc75a140cdaf67b8fecc0e7e61b64d7e1b62ee15f"
+    },
+    {
+      "path": "services/enta/server/prisma/roles/pro311_history_roles.sql",
+      "expected": "b95a98f3ed036f05642914933a7cd09f75b3f09bf77fea980c9dd171c120eaf9",
+      "observed": "b95a98f3ed036f05642914933a7cd09f75b3f09bf77fea980c9dd171c120eaf9"
+    },
+    {
+      "path": "services/enta/server/src/history-rematch/service.ts",
+      "expected": "f0e70b19f2c129d8778a8c0465ca208edb5a44caedbf01486619826ae6bde9e3",
+      "observed": "f0e70b19f2c129d8778a8c0465ca208edb5a44caedbf01486619826ae6bde9e3"
+    },
+    {
+      "path": "services/enta/server/src/history-rematch/history-router.ts",
+      "expected": "3c6bcc8a9e1facc5af7e53e55229bf43d893031e0759fac2c4d269086e69afc2",
+      "observed": "3c6bcc8a9e1facc5af7e53e55229bf43d893031e0759fac2c4d269086e69afc2"
+    },
+    {
+      "path": "services/enta/server/src/history-rematch/history-composition.ts",
+      "expected": "2d55d785670b2950c48c2f1239cde5d6ff47b0190e87807ed1642c21c746cf06",
+      "observed": "2d55d785670b2950c48c2f1239cde5d6ff47b0190e87807ed1642c21c746cf06"
+    },
+    {
+      "path": "services/enta/server/src/history-rematch/postgres.ts",
+      "expected": "c1e03a69d5fd1e606388668c16ea5d8317622a8ebbaf26cbcb5e92f089927005",
+      "observed": "c1e03a69d5fd1e606388668c16ea5d8317622a8ebbaf26cbcb5e92f089927005"
+    },
+    {
+      "path": "services/enta/server/src/history-rematch/result.ts",
+      "expected": "0d62e31add1be62d01e7cbd0649f6ad8b3d79e57b7e5c629a890e6c486a03d27",
+      "observed": "0d62e31add1be62d01e7cbd0649f6ad8b3d79e57b7e5c629a890e6c486a03d27"
+    },
+    {
+      "path": "services/enta/server/src/huroof-pg/history.ts",
+      "expected": "4e331c28fb2ae2a121ead3926e5d2a59bc68502d889c88a74a8773c59134ec23",
+      "observed": "4e331c28fb2ae2a121ead3926e5d2a59bc68502d889c88a74a8773c59134ec23"
+    },
+    {
+      "path": "services/enta/server/src/app.ts",
+      "expected": "e8b9fbafff90e3490b5dc62ac053e07baf9f3c00848c95876c5ba6117190cff9",
+      "observed": "e8b9fbafff90e3490b5dc62ac053e07baf9f3c00848c95876c5ba6117190cff9"
+    },
+    {
+      "path": "src/features/enta/client.ts",
+      "expected": "0ec7e31883f0f640ff89478d8c162f572f89d6830af1003a190dade8b1558900",
+      "observed": "0ec7e31883f0f640ff89478d8c162f572f89d6830af1003a190dade8b1558900"
+    },
+    {
+      "path": "src/features/enta/history.ts",
+      "expected": "c05b4bf07ae4e32874fbc419f90ce98a98b788d3eec4db67ee11cb644592687b",
+      "observed": "c05b4bf07ae4e32874fbc419f90ce98a98b788d3eec4db67ee11cb644592687b"
+    },
+    {
+      "path": "src/features/enta/HistoryRoutes.tsx",
+      "expected": "3dd84d4ef1cd72d5848621a30d84822ae67ec78de5dcf701a89f10dab152407e",
+      "observed": "3dd84d4ef1cd72d5848621a30d84822ae67ec78de5dcf701a89f10dab152407e"
+    },
+    {
+      "path": "src/features/enta/original-result.ts",
+      "expected": "4c0878cf072fd701cd7447a69153d01a94b07a604f5985ac2647d2808e1d4a23",
+      "observed": "4c0878cf072fd701cd7447a69153d01a94b07a604f5985ac2647d2808e1d4a23"
+    },
+    {
+      "path": "src/features/enta/OriginalResultRoute.tsx",
+      "expected": "b69b21f1ea88e802e45adbe96fb810ad846720dc0199a928c22db30e737abb87",
+      "observed": "b69b21f1ea88e802e45adbe96fb810ad846720dc0199a928c22db30e737abb87"
+    },
+    {
+      "path": "src/app/App.tsx",
+      "expected": "6ca4e323d4554081c620528a7f0ae9a6c3846253b188c694180e9db08ed2a5d0",
+      "observed": "6ca4e323d4554081c620528a7f0ae9a6c3846253b188c694180e9db08ed2a5d0"
+    },
+    {
+      "path": "services/enta/server/tests/pro311-history.test.ts",
+      "expected": "87ae28288bd44c2dca98523fc93e2a1bb3f32c34ec657855f789abd2963e2684",
+      "observed": "87ae28288bd44c2dca98523fc93e2a1bb3f32c34ec657855f789abd2963e2684"
+    },
+    {
+      "path": "tests/app/enta-history.test.tsx",
+      "expected": "b0f8fec64c79a3226566374e08ca262256501c3fa41286d9ad1295dcacb10822",
+      "observed": "b0f8fec64c79a3226566374e08ca262256501c3fa41286d9ad1295dcacb10822"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "output/pro311-history-20261027/forge/V3-REPAIR-FREEZE.json",
+      "sha256": "4bb3ce1a5fd1d58e341100099c60e9ecb6967577a1f62615f5351e04f4b86ee4"
+    },
+    {
+      "path": "output/pro311-history-20261027/forge/V3-REPAIR-IMPACT.json",
+      "sha256": "13902da2e7d1aa58d7736f92c25ebf45315fe67d17106df119801276b5b1766a"
+    },
+    {
+      "path": "output/pro311-history-20261027/database/V3-REPAIR-FINAL-REVIEW.md",
+      "sha256": "8225f2d7b662afc7e197dfc220cd3ef4fa388f35a9c9fcd392765d1a99126a2e"
+    },
+    {
+      "path": "output/pro311-history-20261027/security/V3-REPAIR-FINAL-REVIEW.md",
+      "sha256": "ee3d63bc6f009af47ae7e24fd939e17170de90a39e999ae25465614047710996"
+    },
+    {
+      "path": "output/pro311-history-20261027/ROOT-BOUNDED-REPRODUCTION.json",
+      "sha256": "1d49f320b6f7bfddc900ce2d25d621c2ecd7a0183ffdc3ede1610d9c32251e57"
+    },
+    {
+      "path": "output/pro311-history-20261027/ROOT-V3-REPAIR-REPRODUCTION.json",
+      "sha256": "b1347e279a92f1ac5de59aa2ce910eb195f1b2e82a3d9d07391629c6c1592ddb"
+    },
+    {
+      "path": "output/pro311-history-20261027/PG-RESULT-RESOURCE-DISPOSITION.md",
+      "sha256": "a19521cd9172cfa3532dc72ad7d095d1e35cb759cf8bf05e5ec5c698e9dd4906"
+    }
+  ],
+  "checks": [
+    "Forge15 server and4client plus app/server noEmit, retained PG noEmit by unchanged module identity",
+    "Database independent104 parser cases;Security affected parser checks; both final reviews concur for scoped repair",
+    "Root actual composed history and PG no-I/O denial2/2 at prior compatible freeze; parser repair1/1, post-run17identities match. Initial wrapper schema error preserved; no pre-run identity proof claimed for latter.",
+    "SQL anchors/round shape/resource deny inspected as Source only; reference examples not executed SQL"
+  ],
+  "holds": [
+    "R6 STOP; no SQL parser/execution, DB, SDK initialization, network/service/financial/install/deploy",
+    "PG original-result full-artifact resource policy and readable larger-history treatment unresolved",
+    "Historical UTC provenance and fresh direct/recursive20 capacity unresolved",
+    "SQL/native snapshot, effective ACL/transaction behavior and physical capacity unproved; native32 NOT_RUN",
+    "Full-shell SSR unproved; controlled view DOM/SSR narrower",
+    "Full PRO-311 remains unmet, PRO-312 prerequisite not satisfied"
+  ],
+  "next": "Resolve original resource/content/runtime prerequisites without replacing them with this bounded acceptance"
+}

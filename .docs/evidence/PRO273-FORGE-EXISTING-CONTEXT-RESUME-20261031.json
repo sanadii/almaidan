@@ -1,0 +1,24 @@
+{
+  "assignmentId": "PRO311-HISTORY-FORGE",
+  "taskId": "PRO273-SEL",
+  "reason": "original existing context ended latest continuation with no Source edits, same actual-inspector/receiver gap; resume the other existing Terra context with newly reviewed concrete c627 route, no new agent",
+  "previousExecutionTarget": "/root/pro311_history_forge_transfer",
+  "previousStatus": "COMPLETED",
+  "soleSourceExecutionTarget": "/root/pro311_history_forge_execution_refresh",
+  "sourceIdentities": {
+    "services/enta/server/prisma/migrations/20261028160000_pro273_selection_completion/migration.sql": "b4ecdc401a43961553c37c43578ce7dfa543b3d63d84be50bdeca7266a853d1b",
+    "services/enta/server/prisma/roles/pro273_selection_completion_roles.sql": "5a0a4b5e6ca62c303ce34e02a867decc931a686cb71389604540e4b591a74d66",
+    "services/enta/server/src/history-rematch/capacity-contract.ts": "d0a899dbb4040bf5da4d3015582cc737ea5a7d79a4f887d3664d1783a5acf3c8",
+    "services/enta/server/tests/pro273-ordinary-capacity.test.ts": "4f8618124c445ef96143c32da094c2092524cf35d380967e4281c2932a47b2e9"
+  },
+  "sourceRoot": "C:\\Users\\User\\.codex\\worktrees\\huroof-enta-integration\\huroof_wa_oloof",
+  "scope": "same31path591cd769; original assignment and accepted evidence retained",
+  "newContractDelta": "PRO273-INSTALLER-RECEIVER-SOURCE-RELEASE-20261031.json c62740e9a630be1ae484e23ba58406f2cda52f16164f3d3cc06c9c77e45c154b",
+  "acceptedNewEvidence": "pure signature/framing fixture tests4/4 and noEmit, 41affected tests at own prior inputs; not installed authority; transitive identity join incomplete",
+  "dispatch": "supported same-assignment prepare/preflight/followup only; binding record alone not dispatch proof",
+  "ledgerReset": false,
+  "R6": "STOP",
+  "guardsAbortsSpentAdmissions": "PRESERVED",
+  "fullTaskDone": false,
+  "credit": 0
+}

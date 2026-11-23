@@ -1,0 +1,13 @@
+.enta-page .enta-aid-options { display: grid; gap: 8px; min-inline-size: 0; padding: 16px; border: 1px solid var(--app-border); border-radius: 12px; }
+.enta-page .enta-aid-options label { display: flex; align-items: center; gap: 8px; min-block-size: 44px; }
+.enta-page .enta-team-color { display: block; inline-size: 48px; block-size: 8px; border-radius: 4px; }
+.enta-page .enta-team-marker { display: block; flex: 0 0 12px; inline-size: 12px; block-size: 32px; border-radius: 4px; }
+.enta-page :is(.enta-aids,.enta-ruling,.enta-review) { display: grid; gap: 16px; min-inline-size: 0; inline-size: 100%; }
+.enta-page .enta-review { padding: 24px; border: 1px solid var(--app-border); border-radius: 16px; background: var(--app-surface); }
+.enta-page :is(.enta-review,.enta-ruling,.enta-aids) fieldset { display: grid; gap: 8px; min-inline-size: 0; border: 1px solid var(--app-border); border-radius: 12px; padding: 16px; }
+.enta-page :is(.enta-review,.enta-ruling) fieldset label { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; min-block-size: 44px; }
+.enta-page .enta-attempt-form { display: flex; flex-wrap: wrap; align-items: end; gap: 16px; min-inline-size: 0; border: 1px solid var(--app-border); padding: 16px; border-radius: 12px; }
+.enta-page .enta-attempt-form label { flex: 1; min-inline-size: min(100%,180px); }
+.enta-page .enta-attempt-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.enta-page .enta-review ul { overflow-wrap: anywhere; }
+@media (max-width:600px) { .enta-page .enta-review { padding: 16px; } .enta-page .enta-attempt-form { display: grid; } }

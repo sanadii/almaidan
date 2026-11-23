@@ -1,0 +1,16 @@
+{
+  "assignmentId": "PRO311-HISTORY-FORGE",
+  "taskId": "PRO273-SEL",
+  "decision": "bounded Source continuation; not full acceptance",
+  "basis": [
+    "Database PRO311-PAIR-FUNDING-REVIEW",
+    "Security PRO311-PAIR-AUTHORITY-REVIEW",
+    "PRO273-CONSTRUCTOR-BOOTSTRAP-SOURCE-RELEASE-20261029.json"
+  ],
+  "scope": "Implement selected qualifier-allocation claimant and distinct CONTROL worker funding branch, only where full protected provenance and currentness can be checked. Deny other variants until their exact scalar mapping and full incarnation are established; preserve all four ResourceSchedule shape variants.",
+  "claimant": "Derive claimantPrincipalName from protected authenticated allocation and descriptor; require name and protected OID agreement against pg_roles with login eligibility and non-superuser, matching protected credential/launch epochs. Independently authenticate actual claimant at invocation, not from installer or definer identity.",
+  "worker": "Resolve exact separately funded protected CONTROL identity and full provenance; reject same underlying reservation and any unavailable equality/currentness proof. Do not require premature future worker execution; enforce actual session ownership at invocation.",
+  "transaction": "Validate exact source/install/physical/trust/expiry and full vectors; insert complete schedule, BodySpecs, debit grant and receipt atomically; preserve deferred FKs, later-transaction-only use, revalidation and private owner/installer ACL.",
+  "limitations": "CAP scalar mappings remain unadopted and denied; no new wire field, hash domain, global pool or refund. R6 STOP, public reader guards, install aborts, accepted evidence and spent admissions remain. No SQL execution or native authority granted.",
+  "review": "Both domain reviewers concur on protected identity requirements; changed bytes still require independent Database and Security review and Root acceptance."
+}

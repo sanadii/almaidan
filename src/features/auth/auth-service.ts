@@ -35,6 +35,8 @@ export function authErrorMessage(error: unknown): AuthActionError {
     'auth/link-changed-user': 'تعذر ربط Google مع الحفاظ على جلسة الضيف. لم تُستبدل جلسة الضيف.',
     'auth/invalid-email': 'عنوان البريد الإلكتروني غير صالح.',
     'auth/invalid-credential': 'البريد الإلكتروني أو كلمة المرور غير صحيحة.',
+    'auth/user-not-found': 'البريد الإلكتروني أو كلمة المرور غير صحيحة.',
+    'auth/wrong-password': 'البريد الإلكتروني أو كلمة المرور غير صحيحة.',
     'auth/email-already-in-use': 'هذا البريد مسجل بالفعل. استخدم تسجيل الدخول بدلاً من إنشاء حساب.',
     'auth/weak-password': 'اختر كلمة مرور أقوى، من ستة أحرف على الأقل.',
     'auth/too-many-requests': 'تم إيقاف المحاولات مؤقتاً. انتظر قليلاً ثم حاول مجدداً.',
@@ -61,23 +63,11 @@ export async function signInOrLinkGoogle(auth: Auth): Promise<User> {
   if (!currentUser.isAnonymous) return currentUser;
 
   const uid = currentUser.uid;
-  try {
-    const result = await linkWithPopup(currentUser, googleProvider);
-    if (result.user.uid !== uid) {
-      throw { code: 'auth/link-changed-user' };
-    }
-    return result.user;
-  } catch (error) {
-    const code = error && typeof error === 'object' && 'code' in error ? String(error.code) : '';
-    if (code !== 'auth/credential-already-in-use' && code !== 'auth/account-exists-with-different-credential') {
-      throw error;
-    }
-
-    // The selected Google account already owns a Firebase user. A guest cannot
-    // be linked to it, so switch intentionally to that existing account.
-    await signOut(auth);
-    return (await signInWithPopup(auth, googleProvider)).user;
+  const result = await linkWithPopup(currentUser, googleProvider);
+  if (result.user.uid !== uid) {
+    throw { code: 'auth/link-changed-user' };
   }
+  return result.user;
 }
 
 export async function signOutFirebaseUser(auth: Auth) {

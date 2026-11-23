@@ -1,0 +1,76 @@
+.enta-page .enta-rail { margin-block: 40px; display: grid; gap: 32px; }
+.enta-page .enta-heading, .enta-page .enta-setup { display: grid; gap: 24px; }
+.enta-page .enta-heading { gap: 8px; }
+.enta-page .enta-lead { max-inline-size: 65ch; }
+.enta-page .enta-fields { display: grid; justify-items: start; gap: 24px; border: 1px solid var(--app-border); border-radius: 16px; padding: 24px; margin: 0; min-inline-size: 0; background: var(--app-surface); }
+.enta-page legend { font-size: 20px; font-weight: 700; padding-inline: 8px; color: var(--app-ink); }
+.enta-page .enta-team-fields { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,280px),1fr)); gap: 24px; inline-size: 100%; }
+.enta-page .enta-team-field { display: grid; align-content: start; gap: 16px; min-inline-size: 0; }
+.enta-page label { display: grid; gap: 8px; font-weight: 600; color: var(--app-ink); min-inline-size: 0; }
+.enta-page :is(input:not([type="checkbox"]):not([type="radio"]),textarea) { box-sizing: border-box; inline-size: 100%; min-inline-size: 0; min-block-size: 48px; padding: 8px 16px; border: 1px solid var(--app-border); border-radius: 8px; background: var(--app-canvas); color: var(--app-ink); font: inherit; box-shadow: none; }
+.enta-page :is(input,textarea):disabled { opacity: 1; color: var(--app-muted); background: var(--app-subtle); }
+.enta-page :is(button,.button) { min-inline-size: 44px; min-block-size: 44px; white-space: normal; }
+.enta-page .button { display: inline-flex; align-items: center; justify-content: center; }
+.enta-page button:disabled { opacity: 1; color: var(--app-muted); background: var(--app-subtle); border-color: var(--app-border); cursor: not-allowed; }
+.enta-page .enta-categories { display: grid; gap: 24px; }
+.enta-page .enta-section-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.enta-page .enta-category-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,180px),1fr)); gap: 16px; }
+.enta-page .enta-category { text-align: start; padding: 16px; background: var(--app-surface); }
+.enta-page .enta-category[aria-pressed="true"] { border: 2px solid var(--app-accent); color: var(--app-accent); background: var(--app-surface); }
+.enta-page :is(.enta-setup-summary,.enta-state,.enta-question,.enta-result,.enta-finish) { display: grid; gap: 24px; justify-items: start; padding: 24px; border: 1px solid var(--app-border); border-radius: 16px; background: var(--app-surface); min-inline-size: 0; }
+.enta-page .enta-setup-summary { border-inline-start: 4px solid var(--app-accent); }
+.enta-page [role="alert"] { color: var(--app-error); }
+.enta-page .enta-play { display: grid; gap: 32px; }
+.enta-page .enta-scores { list-style: none; display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,180px),1fr)); gap: 16px; padding: 0; margin: 0; inline-size: 100%; }
+.enta-page .enta-scores > li { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 24px; border: 1px solid var(--app-border); border-radius: 12px; background: var(--app-surface); min-inline-size: 0; }
+.enta-page .enta-scores > li[data-turn="true"] { border-inline-start: 4px solid var(--app-accent); }
+.enta-page .enta-scores strong { font-size: 28px; color: var(--app-accent); }
+.enta-page .enta-board { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 16px; }
+.enta-page .enta-board-column { display: grid; align-content: start; grid-template-rows: minmax(88px,auto) auto; gap: 16px; min-inline-size: 0; }
+.enta-page .enta-board-column h2 { font-size: 18px; padding: 16px; border-block-end: 1px solid var(--app-border); }
+.enta-page .enta-board-column > div { display: grid; gap: 16px; }
+.enta-page .enta-tile { display: grid; align-content: center; justify-items: center; gap: 8px; min-block-size: 72px; color: var(--app-accent); background: var(--app-surface); }
+.enta-page .enta-tile > span { font-size: 24px; font-weight: 700; }
+.enta-page .enta-tile small { font-size: 12px; font-weight: 400; }
+.enta-page .enta-question .enta-section-heading { inline-size: 100%; }
+.enta-page .enta-question h2 { font-size: clamp(24px,3vw,36px); max-inline-size: 65ch; line-height: 1.6; }
+.enta-page .enta-question fieldset { border: 0; padding: 0; margin: 0; min-inline-size: 0; }
+.enta-page .enta-answer { display: grid; gap: 8px; border-inline-start: 4px solid var(--app-accent); padding: 16px; background: var(--app-subtle); inline-size: 100%; }
+.enta-page .enta-timer { font-variant-numeric: tabular-nums; color: var(--app-accent); font-weight: 700; }
+.enta-page .enta-award-teams, .enta-page .enta-actions { display: flex; flex-wrap: wrap; gap: 16px; }
+.enta-page :is(.enta-award-teams,.enta-finish) label { display: flex; align-items: center; min-block-size: 44px; gap: 8px; }
+.enta-page :is(input[type="checkbox"],input[type="radio"]) { inline-size: 24px; block-size: 24px; accent-color: var(--app-action); flex: none; }
+.enta-page :is(h1,h2,h3,p,label,li,button,a) { overflow-wrap: anywhere; min-inline-size: 0; }
+.enta-page .enta-result h2 { font-size: 32px; color: var(--app-accent); }
+.enta-page .enta-board.enta-board--kids { grid-template-columns: minmax(0,1fr); max-inline-size: 560px; }
+.enta-page .enta-board--kids .enta-board-column > div { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.enta-page .enta-history, .enta-page .enta-history-list { display: grid; gap: 24px; padding: 0; margin: 0; list-style: none; }
+.enta-page .enta-history-list { grid-template-columns: repeat(auto-fit,minmax(min(100%,360px),1fr)); }
+.enta-page .enta-history-list article { display: grid; gap: 16px; align-content: start; padding: 24px; border: 1px solid var(--app-border); border-radius: 16px; background: var(--app-surface); }
+.enta-page .enta-history-list ul { padding-inline-start: 24px; }
+.enta-page .enta-history-filters { display: flex; flex-wrap: wrap; gap: 24px; }
+.enta-page .enta-history-filters select { min-inline-size: 180px; min-block-size: 48px; color: var(--app-ink); background: var(--app-surface); border: 1px solid var(--app-border); border-radius: 8px; padding: 8px 16px; font: inherit; }
+@media(max-width:68rem) { .enta-page .enta-board { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+@media(max-width:48rem) { .enta-page .enta-rail { margin-block: 32px; gap: 24px; } .enta-page .enta-play { gap: 24px; } .enta-page .enta-board { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; } .enta-page .enta-scores strong { font-size: 24px; } .enta-page .enta-scores > li { padding: 16px; } }
+@media(max-width:360px) { .enta-page :is(.enta-fields,.enta-setup-summary,.enta-state,.enta-question,.enta-result,.enta-finish) { padding: 16px; } .enta-page .enta-board-column h2 { padding: 8px; font-size: 16px; } .enta-page .enta-tile { padding-inline: 8px; } }
+@media(prefers-reduced-motion:reduce) { .enta-page :is(button,input,a) { transition: none; animation: none; } }
+
+.enta-page .enta-category-source { display: block; margin-block-start: 8px; font-size: 14px; color: var(--app-muted); overflow-wrap: anywhere; }
+
+.enta-page .enta-mode-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 180px)); gap: 12px; }
+.enta-page a.enta-mode-card:not(.button) { display: grid; grid-template-rows: auto 1fr; overflow: hidden; min-inline-size: 0; border: 1px solid var(--app-border); border-radius: 12px; background: var(--app-surface); color: var(--app-ink); text-decoration: none; font-weight: 700; transition: border-color 200ms, transform 200ms; }
+.enta-page .enta-mode-card img { display: block; inline-size: 100%; block-size: 112px; object-fit: cover; }
+.enta-page .enta-mode-card > span { display: flex; align-items: center; padding: 12px; min-block-size: 56px; }
+.enta-page a.enta-mode-card--primary:not(.button) { border-color: var(--app-action); background: var(--app-action); color: var(--app-action-ink, #fff); }
+.enta-page .enta-mode-card:hover { border-color: var(--app-accent); transform: translateY(-2px); }
+.enta-page .enta-mode-card:focus-visible { outline: 3px solid var(--app-accent); outline-offset: 3px; }
+@media (max-width: 48rem) { .enta-page .enta-mode-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { .enta-page .enta-mode-card { transition: none; } .enta-page .enta-mode-card:hover { transform: none; } }
+
+/* Keep game content and recovery controls readable at each board size. */
+.enta-page :is(.enta-state, .enta-question, .enta-result, .enta-finish) { box-sizing: border-box; inline-size: 100%; }
+.enta-page :is(.enta-actions, .enta-award-teams) { inline-size: 100%; align-items: center; }
+.enta-page .enta-board-column h2 { overflow-wrap: anywhere; }
+.enta-page .enta-tile:focus-visible { outline: 3px solid var(--app-accent); outline-offset: 3px; }
+@media (max-width: 767px) { .enta-page :is(.enta-state, .enta-question, .enta-result, .enta-finish) { padding: 20px; } }
+.enta-page .button--primary { min-block-size: 48px; }

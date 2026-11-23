@@ -2,8 +2,8 @@ import { act, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, expect, it, vi } from 'vitest';
 import { FirebaseAuthProvider, useFirebaseAuth } from '../../src/features/auth/AuthProvider';
-import { AccountRoute, LoginRoute } from '../../src/routes/AuthRoutes';
 import { ThemeProvider } from '../../src/app/ThemeProvider';
+import { AccountRoute, LoginRoute } from '../../src/routes/AuthRoutes';
 
 const authMocks = vi.hoisted(() => ({
   auth: null as { currentUser: unknown; authStateReady: () => Promise<void> } | null,
@@ -44,6 +44,7 @@ it('waits for restoration then renders a signed-out login', async () => {
   render(<ThemeProvider><MemoryRouter><FirebaseAuthProvider><LoginRoute /></FirebaseAuthProvider></MemoryRouter></ThemeProvider>);
   expect(screen.getByText('جارٍ استعادة حالة تسجيل الدخول…')).toBeVisible();
   await screen.findByText(/يمكنك المتابعة كضيف/);
+  expect(screen.getByText('استضافة المباراة تتطلب حساباً موثقاً. ويمكن للضيوف الانضمام إلى الغرف.')).toBeVisible();
   expect(screen.getByRole('button', { name: 'المتابعة مع Google' })).toBeEnabled();
 });
 
@@ -51,7 +52,7 @@ it('shows basic Google identity fields and logs out without creating a guest', a
   const auth = { currentUser: googleUser, authStateReady: async () => undefined };
   authMocks.auth = auth;
   render(<ThemeProvider><MemoryRouter><FirebaseAuthProvider><AccountRoute /></FirebaseAuthProvider></MemoryRouter></ThemeProvider>);
-  await screen.findByRole('heading', { name: 'ليان' });
+  await screen.findByText('ليان');
   expect(screen.getByText('lian@example.test')).toHaveAttribute('dir', 'ltr');
   await act(async () => { await screen.getByRole('button', { name: 'تسجيل الخروج' }).click(); });
   expect(authMocks.signOut).toHaveBeenCalledWith(auth);

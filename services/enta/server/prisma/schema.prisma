@@ -1,0 +1,2477 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Provisioned out of band after target-database audit. Runtime only reads this
+// singleton and fails closed when it is missing or does not match configuration.
+model DeploymentNamespace {
+  id                String @id @default("singleton")
+  namespaceId       String @unique
+  firebaseProjectId String
+  huroofPolicyRevisions HuroofIdentityPolicyRevision[]
+}
+
+// ---------- Users & Auth ----------
+
+model User {
+  id             String   @id @default(cuid())
+  name           String   @unique
+  role           String   @default("USER") // USER | ADMIN
+  remainingGames Int      @default(1) // free first game
+  // Never spends a credit and never runs out — for whoever runs the app.
+  unlimitedGames Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  purchases          Purchase[]
+  giftsSent          GiftCode[]         @relation("GiftSender")
+  giftsRedeemed      GiftCode[]         @relation("GiftRedeemer")
+  games              Game[]
+  tournaments        Tournament[]
+  favorites          FavoriteCategory[]
+  firebaseIdentities FirebaseIdentity[]
+}
+
+// New-project Firebase identities are independent from historical shared-code
+// accounts. The composite key is the external identity authority; userId is an
+// optional private link added only by a later reviewed account-linking flow.
+model FirebaseIdentity {
+  id                String   @id @default(cuid())
+  firebaseProjectId String
+  firebaseUid       String
+  userId            String?  @unique
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user   User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  scopes FirebaseAdminScope[]
+  wallet Wallet?
+  admissions Admission[]
+  games Game[]
+  entaModeEvidenceReviews EntaModeReleaseEvidence[]
+  walletEntries WalletEntry[] @relation("WalletEntryActor")
+  huroofRooms HuroofRoom[]
+  huroofMembers HuroofMember[]
+  huroofCommands HuroofCommandReceipt[]
+  huroofContentRevisions HuroofContentRevision[]
+  huroofContentAudits HuroofContentAudit[]
+  huroofResults HuroofMatchResult[]
+  huroofHistoryHeads HuroofOwnerHistoryHead[]
+
+  @@unique([firebaseProjectId, firebaseUid])
+  @@index([firebaseUid])
+}
+
+// Admin authority is reread from PostgreSQL on each request. Firebase name,
+// email, and client-supplied roles never grant access.
+model FirebaseAdminScope {
+  id                String @id @default(cuid())
+  firebaseProjectId String
+  firebaseUid       String
+  scope             String
+
+  identity FirebaseIdentity @relation(fields: [firebaseProjectId, firebaseUid], references: [firebaseProjectId, firebaseUid], onDelete: Cascade)
+
+  @@unique([firebaseProjectId, firebaseUid, scope])
+  @@index([firebaseProjectId, firebaseUid])
+}
+
+// One person's starred categories — a shortcut through six hundred of them.
+model FavoriteCategory {
+  id         String   @id @default(cuid())
+  userId     String
+  categoryId String
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, categoryId])
+  @@index([userId])
+}
+
+// Singleton row (id is always "singleton") holding the one shared access
+// code everyone logs in with — editable from the admin panel instead of
+// requiring a redeploy to change.
+model AppSetting {
+  id         String @id @default("singleton")
+  accessCode String
+}
+
+// ---------- Commerce ----------
+
+model Package {
+  id         String     @id @default(cuid())
+  name       String
+  gamesCount Int
+  price      Float
+  currency   String     @default("BHD")
+  active     Boolean    @default(true)
+  sortOrder  Int        @default(0)
+  purchases  Purchase[]
+  giftCodes  GiftCode[]
+}
+
+model DiscountCode {
+  id         String     @id @default(cuid())
+  code       String     @unique
+  percentOff Int // 0-100
+  maxUses    Int        @default(1)
+  usedCount  Int        @default(0)
+  active     Boolean    @default(true)
+  expiresAt  DateTime?
+  createdAt  DateTime   @default(now())
+  purchases  Purchase[]
+}
+
+model Purchase {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id])
+  packageId      String
+  package        Package       @relation(fields: [packageId], references: [id])
+  discountCodeId String?
+  discountCode   DiscountCode? @relation(fields: [discountCodeId], references: [id])
+  amount         Float
+  status         String        @default("PENDING") // PENDING | PAID | FAILED
+  purpose        String        @default("SELF") // SELF | GIFT
+  giftToPhone    String? // set when purpose = GIFT
+  provider       String? // tap | myfatoorah | mock
+  providerRef    String? // gateway charge/invoice id, used to verify status
+  redirectUrl    String? // hosted checkout URL returned by the gateway
+  createdAt      DateTime      @default(now())
+  paidAt         DateTime?
+}
+
+model GiftCode {
+  id               String    @id @default(cuid())
+  code             String    @unique
+  purchaseId       String?   @unique
+  packageId        String
+  package          Package   @relation(fields: [packageId], references: [id])
+  fromUserId       String
+  fromUser         User      @relation("GiftSender", fields: [fromUserId], references: [id])
+  toPhone          String?
+  redeemedByUserId String?
+  redeemedByUser   User?     @relation("GiftRedeemer", fields: [redeemedByUserId], references: [id])
+  status           String    @default("SENT") // SENT | REDEEMED
+  createdAt        DateTime  @default(now())
+  redeemedAt       DateTime?
+}
+
+// ---------- Firebase-owned wallet and paid admission (INT-5A draft) ----------
+
+model Wallet {
+  id                String   @id @default(cuid())
+  firebaseIdentityId String  @unique
+  available         BigInt   @default(0)
+  held              BigInt   @default(0)
+  debt              BigInt   @default(0)
+  version           BigInt   @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  firebaseIdentity FirebaseIdentity @relation(fields: [firebaseIdentityId], references: [id], onDelete: Restrict)
+  entries          WalletEntry[]
+  admissions       Admission[]
+
+  @@unique([id, firebaseIdentityId])
+}
+
+model WalletEntry {
+  id                    String   @id @default(cuid())
+  walletId              String
+  sequence              BigInt
+  originType            String
+  originId              String
+  effect                String
+  reservationId         String?
+  deltaAvailable        BigInt
+  deltaHeld             BigInt
+  deltaDebt             BigInt
+  resultingAvailable    BigInt
+  resultingHeld         BigInt
+  resultingDebt         BigInt
+  actorFirebaseIdentityId String?
+  evidenceHash          String?
+  createdAt             DateTime @default(now())
+
+  wallet       Wallet       @relation(fields: [walletId], references: [id], onDelete: Restrict)
+  reservation  Reservation? @relation(fields: [reservationId], references: [id], onDelete: Restrict)
+  actor         FirebaseIdentity? @relation("WalletEntryActor", fields: [actorFirebaseIdentityId], references: [id], onDelete: Restrict)
+
+  @@unique([walletId, sequence])
+  @@unique([walletId, originType, originId, effect])
+  @@unique([reservationId, effect])
+  @@index([walletId, createdAt])
+  // Migration-only partial unique index also limits FREE_FIRST_GRANT by actor Firebase identity.
+}
+
+model Admission {
+  id                   String   @id @default(cuid())
+  firebaseIdentityId   String
+  walletId             String
+  engine               String
+  operation            String
+  mode                 String   @default("CLASSIC")
+  logicalMatchId       String
+  requestKey           String
+  requestHash          String
+  intentHash           String
+  requestVersion       Int
+  catalogReleaseId     String?
+  releaseRootHash      String?
+  validationReceiptId  String?
+  selectorVersion      String
+  state                String   @default("HELD") // HELD | COMMITTED | RELEASED
+  storageAuthority     String   @default("LEGACY_PROTOCOL_V1")
+  version              Int      @default(0)
+  roomProjectId        String?
+  roomId               String?
+  huroofBinding        Json?
+  huroofConfig         Json?
+  huroofCatalogReleaseId String?
+  huroofCatalogRootHash String?
+  huroofValidationReceiptId String?
+  predecessorAdmissionId String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  firebaseIdentity FirebaseIdentity       @relation(fields: [firebaseIdentityId], references: [id], onDelete: Restrict)
+  wallet           Wallet                 @relation(fields: [walletId, firebaseIdentityId], references: [id, firebaseIdentityId], onDelete: Restrict)
+  catalogRelease   CatalogRelease?         @relation(fields: [catalogReleaseId, releaseRootHash], references: [id, releaseRootHash], onDelete: Restrict)
+  validationReceipt CatalogValidationReceipt? @relation(fields: [validationReceiptId, catalogReleaseId, releaseRootHash], references: [id, catalogReleaseId, releaseRootHash], onDelete: Restrict)
+  predecessor      Admission? @relation("HuroofPredecessor", fields: [predecessorAdmissionId], references: [id], onDelete: Restrict)
+  successors       Admission[] @relation("HuroofPredecessor")
+  huroofProof      HuroofAdmissionProof?
+  huroofCatalogRelease CatalogRelease? @relation("HuroofAdmissionCatalog", fields: [huroofCatalogReleaseId, huroofCatalogRootHash], references: [id, releaseRootHash], onDelete: Restrict)
+  huroofValidationReceipt CatalogValidationReceipt? @relation("HuroofAdmissionReceipt", fields: [huroofValidationReceiptId, huroofCatalogReleaseId, huroofCatalogRootHash], references: [id, catalogReleaseId, releaseRootHash], onDelete: Restrict)
+  reservation      Reservation?
+  events            AdmissionEvent[]
+  outbox            AdmissionOutbox[]
+  game              Game?
+  huroofMatch HuroofMatch?
+  huroofResults HuroofMatchResult[]
+
+  @@unique([id, firebaseIdentityId])
+  @@unique([firebaseIdentityId, engine, logicalMatchId])
+  @@unique([firebaseIdentityId, requestKey])
+  @@unique([roomProjectId, roomId])
+  @@index([walletId, state])
+  // INT-062 additive restrictive relation source; old fields/guards unchanged.
+}
+
+model HuroofAdmissionProof {
+  id            String @id
+  admissionId   String @unique
+  proofVersion  Int
+  terminalState String
+  proof         Json
+  createdAt     DateTime @default(now())
+  admission     Admission @relation(fields: [admissionId], references: [id], onDelete: Restrict)
+}
+
+model Reservation {
+  id          String    @id @default(cuid())
+  admissionId String    @unique
+  quantity    Int       @default(1)
+  state       String    @default("HELD") // HELD | COMMITTED | RELEASED
+  heldAt      DateTime  @default(now())
+  expiresAt   DateTime?
+  committedAt DateTime?
+  releasedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  admission Admission    @relation(fields: [admissionId], references: [id], onDelete: Restrict)
+  entries   WalletEntry[]
+}
+
+model AdmissionEvent {
+  id          String   @id @default(cuid())
+  admissionId String
+  sequence    BigInt
+  eventType   String
+  evidenceHash String?
+  detailCode  String?
+  createdAt   DateTime @default(now())
+
+  admission Admission @relation(fields: [admissionId], references: [id], onDelete: Restrict)
+
+  @@unique([admissionId, sequence])
+  @@index([admissionId, createdAt])
+}
+
+model AdmissionOutbox {
+  id                 String   @id @default(cuid())
+  admissionId        String
+  jobKind            String
+  transitionVersion  Int
+  state              String   @default("PENDING") // PENDING | LEASED | DONE | FAILED
+  availableAt        DateTime @default(now())
+  leaseOwner         String?
+  leaseExpiresAt     DateTime?
+  leaseVersion       Int      @default(0)
+  attemptCount       Int      @default(0)
+  lastErrorCode      String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  admission Admission @relation(fields: [admissionId], references: [id], onDelete: Restrict)
+
+  @@unique([admissionId, jobKind, transitionVersion])
+  @@index([state, availableAt])
+}
+
+// ---------- Content: categories & questions ----------
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  icon      String   @default("🎯")
+  color     String   @default("#6C4CE0")
+  imageUrl  String? // cover photo shown on the category card
+  type      String   @default("PERMANENT") // PERMANENT | SEASONAL | KIDS | DRAWING | STUDENT | LIST
+  seasonTag String? // e.g. RAMADAN_2026
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  questions      Question[]
+  gameCategories GameCategory[]
+  favorites      FavoriteCategory[]
+}
+
+model Question {
+  id         String   @id @default(cuid())
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+  text       String
+  answer     String
+  hint       String?
+  hint2      String?
+  hint3      String?
+  hint4      String?
+  imageUrl   String? // shown instead of/alongside text, e.g. a flag to identify
+  videoUrl   String? // a clip to play instead of/alongside an image, e.g. a goal
+  grayscale  Boolean  @default(false) // strip the colors so team kits give nothing away
+  points     Int      @default(200) // 100/200/300 tiers
+  isDrawing  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  gameQuestions GameQuestion[]
+  varReports    VarReport[]
+  answers       QuestionAnswer[]
+}
+
+// One of several hidden answers to a single question, each carrying its own
+// score. Used by the list round ("السهل الممتنع"), where a team names as many
+// as it can before the clock runs out and the obvious ones are worth least.
+model QuestionAnswer {
+  id         String   @id @default(cuid())
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id])
+  text       String
+  points     Int      @default(100)
+  // A trap is not one of the hidden slots: it looks like a right answer but
+  // sits outside the top ten, and saying it deducts `points` instead.
+  isTrap     Boolean  @default(false)
+  // Picture of this item, for acting rounds where a photo beats a word.
+  imageUrl   String?
+  sortOrder  Int      @default(0)
+}
+
+model VarReport {
+  id         String   @id @default(cuid())
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id])
+  gameId     String?
+  note       String
+  status     String   @default("OPEN") // OPEN | RESOLVED
+  createdAt  DateTime @default(now())
+}
+
+// ---------- Core game session ----------
+
+model Game {
+  id               String          @id @default(cuid())
+  userId           String?
+  user             User?            @relation(fields: [userId], references: [id], onDelete: Restrict)
+  gameFormat       String          @default("LEGACY") // LEGACY | FIREBASE_PINNED
+  executionFormat  String          @default("TIER_BOARD") // immutable v4 discriminator
+  firebaseIdentityId String?
+  admissionId      String?
+  // Historical rows remain null only when their IDs were captured by the migration.
+  catalogReleaseId String?
+  catalogReleaseRootHash String?
+  validationReceiptId String?
+  catalogRelease   CatalogRelease? @relation(fields: [catalogReleaseId], references: [id], onDelete: Restrict)
+  validationReceipt CatalogValidationReceipt? @relation("GameValidationReceipt", fields: [validationReceiptId, catalogReleaseId, catalogReleaseRootHash], references: [id, catalogReleaseId, releaseRootHash], onDelete: Restrict)
+  firebaseIdentity FirebaseIdentity? @relation(fields: [firebaseIdentityId], references: [id], onDelete: Restrict)
+  admission        Admission?       @relation(fields: [admissionId, firebaseIdentityId], references: [id, firebaseIdentityId], onDelete: Restrict)
+  legacyUnpinnedEligibility LegacyUnpinnedGame?
+  mode             String          @default("CLASSIC") // CLASSIC | KIDS | STUDENT | LIST
+  status           String          @default("ACTIVE") // ACTIVE | FINISHED
+  winnerTeamId     String?
+  winnerTeam       Team? @relation("GameWinner", fields: [id, winnerTeamId], references: [gameId, id], onDelete: Restrict, onUpdate: NoAction, map: "Game_winner_same_game")
+  isTie            Boolean         @default(false)
+  createdAt        DateTime        @default(now()) @db.Timestamp(3)
+  finishedAt       DateTime?       @db.Timestamp(3)
+
+  teams                  Team[]
+  gameCategories         GameCategory[]
+  categoryPins           GameCategoryPin[]
+  gameQuestions          GameQuestion[]
+  runtime                GameRuntime?
+  runtimeEvents          GameEvent[]
+  rematchLink            EntaRematchLink? @relation("EntaRematchChild")
+  paidRematches          EntaRematchLink[] @relation("EntaRematchPredecessor")
+  executionPin           EntaExecutionPin?
+  formatRounds           GameRound[]
+  authorityEvents        RoundAuthorityEvent[]
+
+  @@unique([id, catalogReleaseId])
+  @@unique([admissionId, firebaseIdentityId])
+  @@unique([id, firebaseIdentityId])
+  @@unique([id, admissionId, firebaseIdentityId])
+  @@index([firebaseIdentityId, createdAt, id], map: "Game_enta_owner_history_idx")
+  // INT-062 additive restrictive relation source; old fields/guards unchanged.
+  CompetitiveAuditReport_owner_children CompetitiveAuditReport[] @relation("CompetitiveAuditReport_owner")
+  EngineTournamentBindingSnapshot_owner_children EngineTournamentBindingSnapshot[] @relation("EngineTournamentBindingSnapshot_owner")
+  EngineMatchResult_owner_children EngineMatchResult[] @relation("EngineMatchResult_owner")
+  GameCompetitivePin_admissionSource_children GameCompetitivePin[] @relation("GameCompetitivePin_admissionSource")
+  competitiveCapacityClaims CompetitiveCapacityClaim[]
+  competitiveCapacityCharges CompetitiveCapacityCharge[]
+  competitiveCapacityHeads CompetitiveCapacityHead[]
+}
+
+model Team {
+  id        String         @id @default(cuid())
+  gameId    String
+  game      Game           @relation(fields: [gameId], references: [id])
+  name      String
+  color     String         @default("#6C4CE0")
+  score     Int            @default(0)
+  players   Player[]
+  lifelines TeamLifeline[]
+
+  answeredQuestions GameQuestion[]
+  activeRuntimes GameRuntime[]
+  runtimeEvents GameEvent[]
+  wonGames Game[] @relation("GameWinner")
+  scorePostings RoundScorePosting[]
+  actorAssignments RoundActorAssignment[]
+
+  @@unique([gameId, id])
+  // INT-062 additive restrictive relation source; old fields/guards unchanged.
+  CompetitiveRosterPlayer_team_children CompetitiveRosterPlayer[] @relation("CompetitiveRosterPlayer_team")
+  CompetitiveAllowance_team_children CompetitiveAllowance[] @relation("CompetitiveAllowance_team")
+  CompetitiveScorePosting_team_children CompetitiveScorePosting[] @relation("CompetitiveScorePosting_team")
+  CompetitiveScoreRead_team_children CompetitiveScoreRead[] @relation("CompetitiveScoreRead_team")
+  CompetitiveItemConsumption_team_children CompetitiveItemConsumption[] @relation("CompetitiveItemConsumption_team")
+  EngineTournamentBindingParticipant_participant_children EngineTournamentBindingParticipant[] @relation("EngineTournamentBindingParticipant_participant")
+}
+
+model Player {
+  id     String @id @default(cuid())
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id])
+  name   String
+  // INT-062 additive restrictive relation source; old fields/guards unchanged.
+  @@unique([id, teamId])
+  CompetitiveRosterPlayer_player_children CompetitiveRosterPlayer[] @relation("CompetitiveRosterPlayer_player")
+}
+
+model TeamLifeline {
+  id     String  @id @default(cuid())
+  teamId String
+  team   Team    @relation(fields: [teamId], references: [id])
+  type   String // PHONE_A_FRIEND | DOUBLE_ANSWER | MORE_HINT | TRAP | PICK_ANSWERER | STEAL_POINTS | DOUBLE_POINTS
+  used   Boolean @default(false)
+}
+
+model GameCategory {
+  id         String   @id @default(cuid())
+  gameId     String
+  game       Game     @relation(fields: [gameId], references: [id])
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+}
+
+model GameCategoryPin {
+  id                  String @id @default(cuid())
+  gameId              String
+  catalogReleaseId    String
+  categoryKey         String
+  categoryRevisionId  String
+  ordinal             Int
+
+  game Game @relation(fields: [gameId, catalogReleaseId], references: [id, catalogReleaseId], onDelete: Restrict)
+  releaseCategory CatalogReleaseCategory @relation(fields: [catalogReleaseId, categoryKey, categoryRevisionId], references: [catalogReleaseId, categoryKey, categoryRevisionId], onDelete: Restrict)
+
+  formatRounds GameRound[]
+  @@unique([gameId, ordinal])
+  @@unique([gameId, categoryKey])
+}
+
+model GameQuestion {
+  id                 String                  @id @default(cuid())
+  gameId             String
+  catalogReleaseId   String?
+  game               Game?                   @relation(fields: [gameId, catalogReleaseId], references: [id, catalogReleaseId], onDelete: Restrict)
+  questionId         String?
+  question           Question?               @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  // Null on historical rows; pinned rows must belong to this same catalog release.
+  questionRevisionId String?
+  catalogMembership  CatalogReleaseQuestion? @relation(fields: [catalogReleaseId, questionRevisionId], references: [catalogReleaseId, questionRevisionId], onDelete: Restrict)
+  answeredByTeamId   String?
+  answeredByTeam     Team?                   @relation(fields: [gameId, answeredByTeamId], references: [gameId, id], onDelete: Restrict, onUpdate: NoAction, map: "GameQuestion_answer_same_game")
+  isCorrect          Boolean?
+  // With more than two teams the host can rule the answer correct for several
+  // of them at once; these are the extra teams that also scored, kept here so
+  // undo can take the points back off every one of them.
+  alsoCorrectTeamIds String[]                @default([])
+  isOpened           Boolean                 @default(false)
+  usedVar            Boolean                 @default(false)
+  activeRuntimes      GameRuntime[]
+  runtimeEvents      GameEvent[]
+  formatRound        GameRound?
+
+  @@unique([gameId, questionRevisionId])
+  @@unique([gameId, id])
+}
+
+// INT-060.E1 additive SOURCE draft. No datasource/schema application implied.
+model GameRuntime {
+  gameId           String @id
+  version          Int @default(1)
+  state            String @default("BOARD")
+  setup            Json
+  setupHash        String
+  teamOrder        String[]
+  turnIndex        Int @default(0)
+  activeQuestionId String?
+  activeTeamId     String?
+  activeRoundId    String?
+  deadlineAt       DateTime? @db.Timestamptz(3)
+  resultReason     String?
+  unplayedCount    Int @default(0)
+  createdAt        DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime @updatedAt @db.Timestamptz(3)
+
+  game Game @relation(fields: [gameId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  activeQuestion GameQuestion? @relation(fields: [gameId, activeQuestionId], references: [gameId, id], onDelete: Restrict, onUpdate: NoAction)
+  activeTeam Team? @relation(fields: [gameId, activeTeamId], references: [gameId, id], onDelete: Restrict, onUpdate: NoAction)
+  activeRound GameRound? @relation("ActiveFormatRound", fields: [gameId, activeRoundId], references: [gameId, id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+model GameEvent {
+  gameId                  String
+  commandId               String
+  sequence                Int
+  actorFirebaseIdentityId String
+  type                    String
+  intentHash              String
+  questionId              String?
+  teamId                  String?
+  ruling                  String?
+  resultReason            String?
+  unplayedCount           Int?
+  createdAt               DateTime @default(now()) @db.Timestamptz(3)
+
+  game Game @relation(fields: [gameId, actorFirebaseIdentityId], references: [id, firebaseIdentityId], onDelete: Restrict, onUpdate: NoAction)
+  question GameQuestion? @relation(fields: [gameId, questionId], references: [gameId, id], onDelete: Restrict, onUpdate: NoAction)
+  team Team? @relation(fields: [gameId, teamId], references: [gameId, id], onDelete: Restrict, onUpdate: NoAction)
+  rematchLinks EntaRematchLink[]
+
+  @@id([gameId, commandId])
+  @@unique([gameId, sequence])
+  // INT-062 additive restrictive relation source; old fields/guards unchanged.
+  EngineMatchResult_terminal_children EngineMatchResult[] @relation("EngineMatchResult_terminal")
+}
+
+// INT-060.E2 source only. Links reference immutable FINISH event versions.
+model EntaRematchLink {
+  childGameId String @id
+  firebaseIdentityId String
+  predecessorGameId String
+  predecessorRuntimeVersion Int
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  child Game @relation("EntaRematchChild", fields: [childGameId, firebaseIdentityId], references: [id, firebaseIdentityId], onDelete: Restrict, onUpdate: NoAction)
+  predecessor Game @relation("EntaRematchPredecessor", fields: [predecessorGameId, firebaseIdentityId], references: [id, firebaseIdentityId], onDelete: Restrict, onUpdate: NoAction)
+  finishEvent GameEvent @relation(fields: [predecessorGameId, predecessorRuntimeVersion], references: [gameId, sequence], onDelete: Restrict, onUpdate: NoAction)
+  @@unique([childGameId, firebaseIdentityId])
+}
+
+// Future reviewed issuer must bind these immutable mode facts. No authoring
+// route/grant/seed or permissive activation is added by the E2 source tranche.
+model EntaModeReleaseEvidence {
+  receiptId String
+  mode String
+  catalogReleaseId String
+  releaseRootHash String
+  policyVersion String
+  targetCohort String?
+  reviewerIdentityId String
+  evidenceHash String
+  kidsSources Json
+  kidsProofs Json
+  suitabilityManifestHash String?
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  receipt CatalogValidationReceipt @relation(fields: [receiptId, catalogReleaseId, releaseRootHash], references: [id, catalogReleaseId, releaseRootHash], onDelete: Restrict, onUpdate: NoAction)
+  reviewer FirebaseIdentity @relation(fields: [reviewerIdentityId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  @@id([receiptId, mode])
+}
+
+// ---------- Immutable reviewed catalog (INT-4; no rows are seeded) ----------
+
+model SourceCategoryCrosswalkRevision {
+  id                   String   @id @default(cuid())
+  sourceNamespace      String
+  sourceCategoryId     String
+  revision             Int
+  canonicalCategoryKey String
+  mappingHash          String
+  createdAt            DateTime @default(now())
+
+  questionRevisions QuestionRevision[]
+
+  @@unique([sourceNamespace, sourceCategoryId, revision], map: "SourceCrosswalk_source_revision_key")
+  @@unique([sourceNamespace, sourceCategoryId, mappingHash], map: "SourceCrosswalk_source_hash_key")
+  @@unique([id, sourceNamespace, sourceCategoryId, revision, canonicalCategoryKey])
+  @@unique([id, mappingHash])
+}
+
+model CanonicalCategoryRevision {
+  id                   String   @id @default(cuid())
+  sourceNamespace      String   @default("canonical.category")
+  categoryKey          String
+  revision             Int
+  labelAr              String
+  description          String?
+  coverMediaRevisionId String?
+  contentHash          String
+  editorialReceiptId   String
+  editorialDecision    String   @default("APPROVED")
+  createdAt            DateTime @default(now())
+
+  coverMedia        MediaRevision?           @relation("CanonicalCover", fields: [coverMediaRevisionId], references: [id], onDelete: Restrict)
+  editorialReceipt  EditorialReviewReceipt   @relation("CategoryEditorialReceipt", fields: [editorialReceiptId, sourceNamespace, categoryKey, revision, contentHash, editorialDecision], references: [id, sourceNamespace, sourceKey, sourceRevision, subjectHash, decision], onDelete: Restrict)
+  releaseCategories CatalogReleaseCategory[]
+
+  @@unique([categoryKey, revision])
+  @@unique([categoryKey, contentHash])
+  @@unique([id, categoryKey, contentHash])
+  @@unique([id, categoryKey, contentHash, editorialReceiptId])
+}
+
+model EditorialReviewReceipt {
+  id              String   @id @default(cuid())
+  sourceNamespace String
+  sourceKey       String
+  sourceRevision  Int
+  subjectHash     String
+  decision        String
+  reviewerRef     String
+  evidenceHash    String
+  createdAt       DateTime @default(now())
+
+  questionRevisions QuestionRevision[]
+  categoryRevisions CanonicalCategoryRevision[] @relation("CategoryEditorialReceipt")
+
+  @@unique([id, sourceNamespace, sourceKey, sourceRevision, subjectHash, decision])
+  @@index([sourceNamespace, sourceKey, sourceRevision])
+}
+
+model ContentRightsReceipt {
+  id              String   @id @default(cuid())
+  sourceNamespace String
+  subjectType     String
+  sourceKey       String
+  subjectHash     String
+  decision        String
+  rightsHolderRef String
+  licenseRef      String
+  evidenceHash    String
+  createdAt       DateTime @default(now())
+
+  questionRevisions QuestionRevision[]
+  mediaRevisions    MediaRevision[]
+
+  @@unique([id, sourceNamespace, subjectType, sourceKey, subjectHash, decision])
+  @@index([sourceNamespace, subjectType, sourceKey])
+}
+
+model QuestionRevision {
+  id                   String   @id @default(cuid())
+  sourceNamespace      String
+  sourceQuestionId     String
+  revision             Int
+  sourceContentHash    String
+  contentHash          String
+  sourceCategoryId     String
+  crosswalkRevisionId  String
+  crosswalkRevision    Int
+  canonicalCategoryKey String
+  prompt               String
+  points               Int
+  hints                String[] @default([])
+  modality             String
+  engine               String
+  mode                 String
+  tier                 String
+  editorialReceiptId   String
+  editorialDecision    String   @default("APPROVED")
+  rightsReceiptId      String
+  rightsSubjectType    String   @default("QUESTION")
+  rightsDecision       String   @default("CLEARED")
+  sealedAt             DateTime?
+  createdAt            DateTime @default(now())
+
+  crosswalk          SourceCategoryCrosswalkRevision @relation(fields: [crosswalkRevisionId, sourceNamespace, sourceCategoryId, crosswalkRevision, canonicalCategoryKey], references: [id, sourceNamespace, sourceCategoryId, revision, canonicalCategoryKey], onDelete: Restrict)
+  editorialReceipt   EditorialReviewReceipt          @relation(fields: [editorialReceiptId, sourceNamespace, sourceQuestionId, revision, contentHash, editorialDecision], references: [id, sourceNamespace, sourceKey, sourceRevision, subjectHash, decision], onDelete: Restrict)
+  rightsReceipt      ContentRightsReceipt            @relation(fields: [rightsReceiptId, sourceNamespace, rightsSubjectType, sourceQuestionId, contentHash, rightsDecision], references: [id, sourceNamespace, subjectType, sourceKey, subjectHash, decision], onDelete: Restrict)
+  answers            QuestionAnswerRevision[]
+  media              QuestionRevisionMedia[]
+  releaseMemberships CatalogReleaseQuestion[]
+  seal               QuestionRevisionSeal?
+  formatRevisions    EntaFormatRevision[]
+
+  @@unique([sourceNamespace, sourceQuestionId, revision], map: "QuestionRevision_source_revision_key")
+  @@unique([sourceNamespace, sourceQuestionId, contentHash], map: "QuestionRevision_source_hash_key")
+  @@unique([id, contentHash])
+  @@unique([id, canonicalCategoryKey, contentHash])
+  @@unique([id, sourceNamespace, canonicalCategoryKey, contentHash])
+  @@unique([id, sourceNamespace, sourceQuestionId, canonicalCategoryKey, contentHash], map: "Question_format_source_identity_key")
+}
+
+model QuestionRevisionSeal {
+  id                        String   @id @default(cuid())
+  questionRevisionId        String   @unique
+  contentHash               String
+  answerManifestHash        String
+  mediaManifestHash         String
+  canonicalizationVersion   Int
+  sealedAt                  DateTime @default(now())
+
+  questionRevision QuestionRevision @relation(fields: [questionRevisionId, contentHash], references: [id, contentHash], onDelete: Restrict)
+  memberships     CatalogReleaseQuestion[]
+
+  @@unique([questionRevisionId, contentHash])
+}
+
+model QuestionAnswerRevision {
+  id                  String   @id @default(cuid())
+  questionRevisionId  String
+  questionContentHash String
+  sortOrder           Int
+  text                String
+  points              Int
+  isCorrect           Boolean  @default(false)
+  isTrap              Boolean  @default(false)
+  contentHash         String
+  createdAt           DateTime @default(now())
+
+  question QuestionRevision @relation(fields: [questionRevisionId, questionContentHash], references: [id, contentHash], onDelete: Restrict)
+  formatItems EntaFormatItem[]
+
+  @@unique([questionRevisionId, sortOrder])
+  @@unique([id, contentHash])
+  @@unique([id, questionRevisionId, questionContentHash, contentHash], map: "Answer_format_same_question_key")
+  // INT-062 additive restrictive relation source; old fields/guards unchanged.
+  EntaCompetitiveGrapheme_answer_children EntaCompetitiveGrapheme[] @relation("EntaCompetitiveGrapheme_answer")
+}
+
+model MediaRevision {
+  id                String   @id @default(cuid())
+  sourceNamespace   String
+  sourceMediaId     String
+  revision          Int
+  mediaSha256       String
+  objectKey         String
+  mimeType          String
+  byteLength        BigInt
+  rightsReceiptId   String
+  rightsSubjectType String   @default("MEDIA")
+  rightsDecision    String   @default("CLEARED")
+  createdAt         DateTime @default(now())
+
+  rightsReceipt    ContentRightsReceipt        @relation(fields: [rightsReceiptId, sourceNamespace, rightsSubjectType, sourceMediaId, mediaSha256, rightsDecision], references: [id, sourceNamespace, subjectType, sourceKey, subjectHash, decision], onDelete: Restrict)
+  canonicalCovers  CanonicalCategoryRevision[] @relation("CanonicalCover")
+  questionBindings QuestionRevisionMedia[]
+  objectProofs MediaObjectProof[]
+
+  @@unique([sourceNamespace, sourceMediaId, revision], map: "MediaRevision_source_revision_key")
+  @@unique([sourceNamespace, sourceMediaId, mediaSha256], map: "MediaRevision_source_hash_key")
+  @@unique([id, mediaSha256])
+  @@unique([objectKey, mediaSha256])
+}
+
+model QuestionRevisionMedia {
+  id                  String   @id @default(cuid())
+  questionRevisionId  String
+  questionContentHash String
+  mediaRevisionId     String
+  mediaSha256         String
+  role                String
+  sortOrder           Int      @default(0)
+  createdAt           DateTime @default(now())
+
+  question QuestionRevision @relation(fields: [questionRevisionId, questionContentHash], references: [id, contentHash], onDelete: Restrict)
+  media    MediaRevision    @relation(fields: [mediaRevisionId, mediaSha256], references: [id, mediaSha256], onDelete: Restrict)
+
+  @@unique([questionRevisionId, role, sortOrder])
+}
+
+model CatalogRelease {
+  huroofAdmissions Admission[] @relation("HuroofAdmissionCatalog")
+  id              String   @id @default(cuid())
+  releaseRootHash String   @unique
+  manifestVersion Int
+  sealedAt        DateTime?
+  createdAt       DateTime @default(now())
+
+  sourceSnapshots     CatalogReleaseSourceSnapshot[]
+  categories          CatalogReleaseCategory[]
+  questionMemberships CatalogReleaseQuestion[]
+  availability        CatalogReleaseAvailability[]
+  activePointers      ActiveCatalogPointer[]
+  games               Game[]
+  admissions          Admission[]
+  seal                CatalogReleaseSeal?
+  formatReleases      EntaFormatRelease[]
+
+  @@unique([id, releaseRootHash])
+}
+
+model CatalogReleaseSourceSnapshot {
+  id               String   @id @default(cuid())
+  catalogReleaseId String
+  sourceNamespace  String
+  sourceReleaseId  String
+  sourceRootSha256 String
+  snapshotHash     String
+  createdAt        DateTime @default(now())
+
+  catalogRelease          CatalogRelease           @relation(fields: [catalogReleaseId], references: [id], onDelete: Restrict)
+  entaQuestionMemberships CatalogReleaseQuestion[]
+
+  @@unique([catalogReleaseId, sourceNamespace], map: "CatalogReleaseSourceSnapshot_release_namespace_key")
+  @@unique([catalogReleaseId, sourceNamespace, snapshotHash], map: "CatalogReleaseSourceSnapshot_release_namespace_hash_key")
+  @@unique([id, snapshotHash])
+}
+
+model CatalogReleaseCategory {
+  id                  String   @id @default(cuid())
+  catalogReleaseId    String
+  categoryKey         String
+  categoryRevisionId  String
+  categoryContentHash String
+  createdAt           DateTime @default(now())
+
+  catalogRelease      CatalogRelease               @relation(fields: [catalogReleaseId], references: [id], onDelete: Restrict)
+  categoryRevision    CanonicalCategoryRevision    @relation(fields: [categoryRevisionId, categoryKey, categoryContentHash], references: [id, categoryKey, contentHash], onDelete: Restrict)
+  availability        CatalogReleaseAvailability[]
+  questionMemberships CatalogReleaseQuestion[]
+  gameCategoryPins    GameCategoryPin[]
+
+  @@unique([catalogReleaseId, categoryKey])
+  @@unique([catalogReleaseId, categoryKey, categoryRevisionId])
+  @@unique([id, catalogReleaseId, categoryKey])
+}
+
+model CatalogReleaseQuestion {
+  id                  String   @id @default(cuid())
+  catalogReleaseId    String
+  sourceNamespace     String
+  sourceSnapshotHash  String
+  questionRevisionId  String
+  questionContentHash String
+  categoryKey         String
+  createdAt           DateTime @default(now())
+
+  catalogRelease   CatalogRelease               @relation(fields: [catalogReleaseId], references: [id], onDelete: Restrict)
+  sourceSnapshot   CatalogReleaseSourceSnapshot @relation(fields: [catalogReleaseId, sourceNamespace, sourceSnapshotHash], references: [catalogReleaseId, sourceNamespace, snapshotHash], onDelete: Restrict)
+  questionRevision QuestionRevision             @relation(fields: [questionRevisionId, sourceNamespace, categoryKey, questionContentHash], references: [id, sourceNamespace, canonicalCategoryKey, contentHash], onDelete: Restrict)
+  releaseCategory  CatalogReleaseCategory       @relation(fields: [catalogReleaseId, categoryKey], references: [catalogReleaseId, categoryKey], onDelete: Restrict)
+  questionSeal     QuestionRevisionSeal          @relation(fields: [questionRevisionId, questionContentHash], references: [questionRevisionId, contentHash], onDelete: Restrict)
+  games            GameQuestion[]
+
+  @@unique([catalogReleaseId, questionRevisionId])
+  @@unique([catalogReleaseId, questionRevisionId, categoryKey])
+  @@index([catalogReleaseId, categoryKey])
+}
+
+model CatalogReleaseAvailability {
+  id                    String   @id @default(cuid())
+  catalogReleaseId      String
+  categoryKey           String
+  engine                String
+  mode                  String
+  tier                  String
+  modality              String
+  selectorVersion       String
+  selectionManifestHash String
+  freshSelectionHash    String
+  repeatSelectionHash   String
+  freshSelectionIds     String[] @default([])
+  repeatSelectionIds    String[] @default([])
+  freshSelectionSeed    Int
+  repeatSelectionSeed   Int
+  validatedAt           DateTime
+  createdAt             DateTime @default(now())
+
+  catalogRelease CatalogRelease         @relation(fields: [catalogReleaseId], references: [id], onDelete: Restrict)
+  category       CatalogReleaseCategory @relation(fields: [catalogReleaseId, categoryKey], references: [catalogReleaseId, categoryKey], onDelete: Restrict)
+
+  @@unique([catalogReleaseId, categoryKey, engine, mode, tier, modality])
+  @@index([catalogReleaseId, categoryKey])
+}
+
+model ActiveCatalogPointer {
+  id               String   @id @default("singleton")
+  catalogReleaseId String
+  releaseRootHash  String
+  validationReceiptId String
+  updatedAt        DateTime @updatedAt
+
+  catalogRelease CatalogRelease @relation(fields: [catalogReleaseId, releaseRootHash], references: [id, releaseRootHash], onDelete: Restrict)
+  validationReceipt CatalogValidationReceipt @relation(fields: [validationReceiptId, catalogReleaseId, releaseRootHash], references: [id, catalogReleaseId, releaseRootHash], onDelete: Restrict)
+}
+
+model CatalogReleaseSeal {
+  id               String   @id @default(cuid())
+  catalogReleaseId String   @unique
+  releaseRootHash  String
+  sealHash         String
+  canonicalizationVersion Int
+  sealedAt         DateTime @default(now())
+
+  catalogRelease CatalogRelease @relation(fields: [catalogReleaseId, releaseRootHash], references: [id, releaseRootHash], onDelete: Restrict, onUpdate: NoAction)
+  validationReceipts CatalogValidationReceipt[]
+  validationProofs CatalogValidationProof[]
+
+  @@unique([catalogReleaseId, releaseRootHash, sealHash])
+  @@unique([catalogReleaseId, releaseRootHash])
+}
+
+model CatalogValidationReceipt {
+  huroofAdmissions Admission[] @relation("HuroofAdmissionReceipt")
+  id                         String   @id @default(cuid())
+  catalogReleaseId           String
+  releaseRootHash            String
+  sealHash                   String
+    proofId                    String?
+  validatorRef               String
+  policyVersion              String
+  sourceEvidenceManifestHash String
+  selectorVersion            String
+  huroofProjectId            String?
+  huroofReleaseId            String?
+  huroofRootSha256            String?
+  huroofCapabilityStateHash  String?
+  huroofSelectorAttestation  String?
+  issuedAt                   DateTime @default(now())
+
+  releaseSeal CatalogReleaseSeal @relation(fields: [catalogReleaseId, releaseRootHash, sealHash], references: [catalogReleaseId, releaseRootHash, sealHash], onDelete: Restrict)
+    proof CatalogValidationProof? @relation(fields: [proofId, catalogReleaseId, releaseRootHash, sealHash, policyVersion], references: [id, catalogReleaseId, releaseRootHash, sealHash, policyVersion], onDelete: Restrict)
+  activePointers ActiveCatalogPointer[]
+  activationEvents CatalogActivationEvent[]
+  admissions Admission[]
+  games Game[] @relation("GameValidationReceipt")
+  entaModeEvidence EntaModeReleaseEvidence[]
+  formatReleases EntaFormatRelease[]
+
+  @@unique([id, catalogReleaseId])
+  @@unique([id, catalogReleaseId, releaseRootHash])
+  huroofPins HuroofMatchPin[]
+  huroofProfileRevisions HuroofContentRevision[] @relation("HuroofProfileReceipt")
+  @@unique([proofId], map: "CatalogValidationReceipt_proof_unique")
+    @@unique([proofId, catalogReleaseId, releaseRootHash, sealHash, policyVersion], map: "CatalogValidationReceipt_proof_relation_key")
+  // Successor-policy identity is enforced by a predicate unique index in the
+  // R3-E migration; Prisma cannot represent this partial uniqueness safely.
+}
+
+model CatalogValidationProof {
+  id                            String   @id
+  catalogReleaseId              String
+  releaseRootHash                String
+  sealHash                       String
+  policyVersion                  String
+  canonicalReportBytes           Bytes
+  reportSha256                   String
+  sourceArtifactSha256           String
+  sourceSnapshotHash             String
+  sourceEvidenceManifestSha256   String
+  sourceEvidenceGenerationSha256 String
+  sourceSummarySha256            String
+  issuerTrustManifestSha256      String
+  selectorVersion                String
+  selectorBuildId                String
+  executableBuildSha256           String
+  databaseHelpersSha256           String
+  issuerTrustGenerationSha256     String
+  validatedAt                     DateTime @db.Timestamptz(3)
+  expiresAt                       DateTime @db.Timestamptz(3)
+  createdAt                      DateTime @default(now())
+
+  releaseSeal CatalogReleaseSeal @relation(fields: [catalogReleaseId, releaseRootHash, sealHash], references: [catalogReleaseId, releaseRootHash, sealHash], onDelete: Restrict)
+  receipt CatalogValidationReceipt?
+
+  @@unique([catalogReleaseId, releaseRootHash, sealHash, policyVersion], map: "CatalogValidationProof_release_policy_key")
+  @@unique([id, catalogReleaseId, releaseRootHash, sealHash, policyVersion], map: "CatalogValidationProof_identity_fkey_key")
+  @@unique([reportSha256, id])
+}
+
+model CatalogActivationEvent {
+  id                    String   @id @default(cuid())
+  expectedPreviousReceiptId String?
+  validationReceiptId   String
+  catalogReleaseId      String
+  releaseRootHash       String
+  eventHash             String
+  activatedBy           String
+  activatedAt           DateTime @default(now())
+
+  validationReceipt CatalogValidationReceipt @relation(fields: [validationReceiptId, catalogReleaseId, releaseRootHash], references: [id, catalogReleaseId, releaseRootHash], onDelete: Restrict)
+
+  @@unique([validationReceiptId, eventHash])
+}
+
+model LegacyUnpinnedGame {
+  gameId      String   @id
+  snapshottedAt DateTime @default(now())
+
+  game Game @relation(fields: [gameId], references: [id], onDelete: Restrict)
+}
+
+// ---------- Tournaments ----------
+
+model Tournament {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  name         String
+  format       String   @default("KNOCKOUT") // KNOCKOUT | ROUND_ROBIN
+  status       String   @default("SETUP") // SETUP | IN_PROGRESS | FINISHED
+  championTeam String?
+  createdAt    DateTime @default(now())
+
+  teams   TournamentTeam[]
+  matches TournamentMatch[]
+}
+
+model TournamentTeam {
+  id           String     @id @default(cuid())
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id])
+  name         String
+}
+
+model TournamentMatch {
+  id           String     @id @default(cuid())
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id])
+  round        Int
+  orderInRound Int        @default(0)
+  teamAName    String?
+  teamBName    String?
+  teamAScore   Int        @default(0)
+  teamBScore   Int        @default(0)
+  winnerName   String?
+  status       String     @default("PENDING") // PENDING | DONE | BYE
+}
+
+// ---------- Student / study mode ----------
+
+model StudentSubject {
+  id       String  @id @default(cuid())
+  name     String
+  grade    String // e.g. "الصف السادس"
+  semester String // "الفصل الأول" | "الفصل الثاني"
+  active   Boolean @default(true)
+
+  questions StudentQuestion[]
+}
+
+model StudentQuestion {
+  id           String         @id @default(cuid())
+  subjectId    String
+  subject      StudentSubject @relation(fields: [subjectId], references: [id])
+  text         String
+  choices      String // JSON-encoded string[]
+  correctIndex Int
+}
+
+// ---------- TV show ----------
+
+model Episode {
+  id          String    @id @default(cuid())
+  title       String
+  number      Int
+  airDate     DateTime?
+  description String?
+  videoUrl    String?
+  createdAt   DateTime  @default(now())
+}
+
+model TvApplication {
+  id            String   @id @default(cuid())
+  teamName      String
+  phone         String
+  membersCount  Int
+  gender        String // MALE | FEMALE
+  agreedToTerms Boolean  @default(false)
+  status        String   @default("PENDING") // PENDING | REVIEWED
+  createdAt     DateTime @default(now())
+}
+
+// An image the admin uploaded from their own device. Stored here rather than
+// on a file host so the app needs no extra service; the client shrinks each
+// picture to a cover-sized JPEG first, which keeps these rows small.
+model UploadedImage {
+  id        String   @id @default(cuid())
+  mimeType  String
+  data      Bytes
+  createdAt DateTime @default(now())
+}
+
+// INT-061.E1 additive source. Independently sealed format/media evidence does
+// not extend the coverage of an existing QuestionRevisionSeal.
+model EntaFormatRelease {
+  id String @id
+  baseReleaseId String
+  baseRoot String
+  receiptId String @unique
+  formatRoot String @unique
+  mediaRoot String
+  policyVersion String
+  issuerEvidenceHash String
+  sealedAt DateTime? @db.Timestamptz(3)
+  base CatalogRelease @relation(fields: [baseReleaseId, baseRoot], references: [id, releaseRootHash], onDelete: Restrict, onUpdate: Restrict)
+  receipt CatalogValidationReceipt @relation(fields: [receiptId, baseReleaseId, baseRoot], references: [id, catalogReleaseId, releaseRootHash], onDelete: Restrict, onUpdate: Restrict)
+  formats EntaFormatRevision[]
+  covers EntaFormatCover[]
+  executions EntaExecutionPin[]
+  @@unique([id, formatRoot, mediaRoot])
+  // INT-062 additive restrictive relation source; old fields/guards unchanged.
+  EntaCompetitiveRelease_format_children EntaCompetitiveRelease[] @relation("EntaCompetitiveRelease_format")
+}
+model EntaFormatRevision {
+  id String @id
+  releaseId String
+  questionRevisionId String
+  questionHash String
+  sourceNamespace String
+  sourceId String
+  categoryKey String
+  opaqueRef String
+  format String
+  contentHash String
+  rules Json
+  release EntaFormatRelease @relation(fields: [releaseId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  question QuestionRevision @relation(fields: [questionRevisionId, sourceNamespace, sourceId, categoryKey, questionHash], references: [id, sourceNamespace, sourceQuestionId, canonicalCategoryKey, contentHash], onDelete: Restrict, onUpdate: Restrict)
+  items EntaFormatItem[]
+  media EntaFormatMedia[]
+  rounds GameRound[]
+  @@unique([releaseId, opaqueRef])
+  @@unique([releaseId, categoryKey, sourceNamespace, sourceId])
+  @@unique([id, questionRevisionId, questionHash, contentHash])
+  @@unique([id, questionRevisionId, sourceNamespace, sourceId, categoryKey, questionHash, contentHash])
+  @@unique([id, questionRevisionId, questionHash])
+  // INT-062 additive restrictive relation source; old fields/guards unchanged.
+  EntaCompetitivePrompt_format_children EntaCompetitivePrompt[] @relation("EntaCompetitivePrompt_format")
+}
+model EntaFormatItem {
+  formatId String
+  id String
+  questionRevisionId String
+  questionHash String
+  answerRevisionId String
+  answerHash String
+  ordinal Int
+  value Int
+  trap Boolean
+  format EntaFormatRevision @relation(fields: [formatId, questionRevisionId, questionHash], references: [id, questionRevisionId, questionHash], onDelete: Restrict, onUpdate: Restrict)
+  answer QuestionAnswerRevision @relation(fields: [answerRevisionId, questionRevisionId, questionHash, answerHash], references: [id, questionRevisionId, questionContentHash, contentHash], onDelete: Restrict, onUpdate: Restrict)
+  media EntaFormatMedia[]
+  pins RoundItemPin[]
+  @@id([formatId, id])
+  @@unique([formatId, ordinal])
+  @@unique([formatId, id, answerRevisionId, answerHash])
+}
+model MediaObjectProof {
+  id String @id
+  mediaRevisionId String
+  mediaHash String
+  objectVersion String
+  byteLength Int
+  width Int
+  height Int
+  durationMs Int?
+  codec String?
+  manifestHash String
+  issuerEvidenceHash String
+  sealedAt DateTime? @db.Timestamptz(3)
+  media MediaRevision @relation(fields: [mediaRevisionId, mediaHash], references: [id, mediaSha256], onDelete: Restrict, onUpdate: Restrict)
+  chunks MediaChunkProof[]
+  formatBindings EntaFormatMedia[]
+  covers EntaFormatCover[]
+  @@unique([id, mediaHash, manifestHash])
+}
+model MediaChunkProof {
+  proofId String
+  ordinal Int
+  byteLength Int
+  sha256 String
+  proof MediaObjectProof @relation(fields: [proofId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  @@id([proofId, ordinal])
+}
+model EntaFormatMedia {
+  id String @id
+  formatId String
+  questionRevisionId String
+  questionHash String
+  itemId String?
+  proofId String
+  role String
+  ordinal Int
+  format EntaFormatRevision @relation(fields: [formatId, questionRevisionId, questionHash], references: [id, questionRevisionId, questionHash], onDelete: Restrict, onUpdate: Restrict)
+  item EntaFormatItem? @relation(fields: [formatId, itemId], references: [formatId, id], onDelete: Restrict, onUpdate: Restrict)
+  proof MediaObjectProof @relation(fields: [proofId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([formatId, role, ordinal])
+}
+model EntaFormatCover {
+  releaseId String
+  categoryKey String
+  proofId String
+  release EntaFormatRelease @relation(fields: [releaseId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  proof MediaObjectProof @relation(fields: [proofId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  @@id([releaseId, categoryKey])
+}
+model EntaExecutionPin {
+  gameId String @id
+  firebaseIdentityId String
+  executionFormat String
+  formatReleaseId String
+  formatRoot String
+  mediaRoot String
+  clientBinding Json
+  clientHash String
+  fullIntent Json
+  intentHash String
+  state Json
+  game Game @relation(fields: [gameId, firebaseIdentityId], references: [id, firebaseIdentityId], onDelete: Restrict, onUpdate: Restrict)
+  formatRelease EntaFormatRelease @relation(fields: [formatReleaseId, formatRoot, mediaRoot], references: [id, formatRoot, mediaRoot], onDelete: Restrict, onUpdate: Restrict)
+  exposure EntaSourceExposure[]
+  @@unique([gameId, firebaseIdentityId, executionFormat])
+  @@unique([gameId, firebaseIdentityId])
+  // INT-062 additive restrictive relation source; old fields/guards unchanged.
+  GameCompetitivePin_execution_children GameCompetitivePin[] @relation("GameCompetitivePin_execution")
+}
+model EntaSourceExposure {
+  gameId String
+  ordinal Int
+  firebaseIdentityId String
+  executionFormat String
+  categoryKey String
+  sourceNamespace String
+  sourceId String
+  cycle Int
+  revisionId String
+  execution EntaExecutionPin @relation(fields: [gameId, firebaseIdentityId, executionFormat], references: [gameId, firebaseIdentityId, executionFormat], onDelete: Restrict, onUpdate: Restrict)
+  round GameRound @relation(fields: [gameId, ordinal, revisionId, sourceNamespace, sourceId, categoryKey], references: [gameId, ordinal, questionRevisionId, sourceNamespace, sourceId, categoryKey], onDelete: Restrict, onUpdate: Restrict)
+  @@id([gameId, ordinal])
+  @@unique([firebaseIdentityId, executionFormat, categoryKey, sourceNamespace, sourceId, cycle])
+}
+model GameRound {
+  id String @id
+  gameId String
+  gameQuestionId String @unique
+  formatId String
+  questionRevisionId String
+  questionHash String
+  categoryKey String
+  sourceNamespace String
+  sourceId String
+  formatHash String
+  ordinal Int
+  pin Json
+  state Json
+  category GameCategoryPin @relation(fields: [gameId, categoryKey], references: [gameId, categoryKey], onDelete: Restrict, onUpdate: Restrict)
+  game Game @relation(fields: [gameId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  question GameQuestion @relation(fields: [gameId, gameQuestionId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  format EntaFormatRevision @relation(fields: [formatId, questionRevisionId, sourceNamespace, sourceId, categoryKey, questionHash, formatHash], references: [id, questionRevisionId, sourceNamespace, sourceId, categoryKey, questionHash, contentHash], onDelete: Restrict, onUpdate: Restrict)
+  exposure EntaSourceExposure[]
+  items RoundItemPin[]
+  events RoundAuthorityEvent[]
+  scopes RoundGrantScope[]
+  assignments RoundActorAssignment[]
+  canvas DrawingCanvasState?
+  activeRuntimes GameRuntime[] @relation("ActiveFormatRound")
+  @@unique([gameId, id])
+  @@unique([gameId, ordinal])
+  @@unique([gameId, ordinal, questionRevisionId, sourceNamespace, sourceId, categoryKey])
+  @@unique([id, formatId])
+  @@unique([gameId, gameQuestionId])
+  // INT-062 additive restrictive relation source; old fields/guards unchanged.
+  CompetitiveRoundPin_round_children CompetitiveRoundPin[] @relation("CompetitiveRoundPin_round")
+  CompetitiveAllowance_round_children CompetitiveAllowance[] @relation("CompetitiveAllowance_round")
+  CompetitiveEffect_round_children CompetitiveEffect[] @relation("CompetitiveEffect_round")
+  CompetitiveAttempt_round_children CompetitiveAttempt[] @relation("CompetitiveAttempt_round")
+  CompetitiveRulingHead_round_children CompetitiveRulingHead[] @relation("CompetitiveRulingHead_round")
+  CompetitiveAuditReport_round_children CompetitiveAuditReport[] @relation("CompetitiveAuditReport_round")
+  CompetitiveConsumption_round_children CompetitiveConsumption[] @relation("CompetitiveConsumption_round")
+  CompetitiveItemConsumption_round_children CompetitiveItemConsumption[] @relation("CompetitiveItemConsumption_round")
+  CompetitiveRuntimeHead_boardReview_children CompetitiveRuntimeHead[] @relation("CompetitiveRuntimeHead_boardReview")
+  competitiveCapacityClaims CompetitiveCapacityClaim[]
+  competitiveCapacityCharges CompetitiveCapacityCharge[]
+  competitiveCapacityHead CompetitiveCapacityHead?
+}
+model RoundItemPin {
+  roundId String
+  formatId String
+  itemId String
+  answerRevisionId String
+  answerHash String
+  ordinal Int
+  round GameRound @relation(fields: [roundId, formatId], references: [id, formatId], onDelete: Restrict, onUpdate: Restrict)
+  item EntaFormatItem @relation(fields: [formatId, itemId, answerRevisionId, answerHash], references: [formatId, id, answerRevisionId, answerHash], onDelete: Restrict, onUpdate: Restrict)
+  postings RoundScorePosting[]
+  assignments RoundActorAssignment[]
+  @@id([roundId, itemId])
+  @@unique([roundId, ordinal])
+  // INT-062 additive restrictive relation source; old fields/guards unchanged.
+  CompetitiveAttempt_item_children CompetitiveAttempt[] @relation("CompetitiveAttempt_item")
+  CompetitiveRulingHead_item_children CompetitiveRulingHead[] @relation("CompetitiveRulingHead_item")
+  CompetitiveItemConsumption_item_children CompetitiveItemConsumption[] @relation("CompetitiveItemConsumption_item")
+  capacityClaims CompetitiveCapacityClaim[] @relation("CapacityItem")
+}
+model RoundAuthorityEvent {
+  id String @id
+  gameId String
+  ownerIdentityId String
+  roundId String?
+  commandId String
+  sequence Int
+  type String
+  intentHash String
+  authorityKind String
+  authorityGrantId String?
+  authorityGeneration Int?
+  assignmentId String?
+  systemOperation String?
+  pauseReason String?
+  at DateTime @db.Timestamptz(3)
+  game Game @relation(fields: [gameId, ownerIdentityId], references: [id, firebaseIdentityId], onDelete: Restrict, onUpdate: Restrict)
+  round GameRound? @relation(fields: [gameId, roundId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  grant RoundGrant? @relation(fields: [authorityGrantId, gameId, roundId, authorityGeneration, assignmentId], references: [id, gameId, roundId, generation, assignmentId], onDelete: Restrict, onUpdate: Restrict)
+  postings RoundScorePosting[]
+  @@unique([gameId, commandId])
+  @@unique([gameId, sequence])
+  @@unique([gameId, id])
+  @@unique([id, gameId, roundId])
+  // INT-062 additive restrictive relation source; old fields/guards unchanged.
+  CompetitiveEffect_event_children CompetitiveEffect[] @relation("CompetitiveEffect_event")
+  CompetitiveConsumption_event_children CompetitiveConsumption[] @relation("CompetitiveConsumption_event")
+  CompetitiveAttempt_event_children CompetitiveAttempt[] @relation("CompetitiveAttempt_event")
+  CompetitiveAttempt_pickedEventId_children CompetitiveAttempt[] @relation("CompetitiveAttempt_pickedEventId")
+  CompetitiveAttempt_bonusEventId_children CompetitiveAttempt[] @relation("CompetitiveAttempt_bonusEventId")
+  CompetitiveClassification_event_children CompetitiveClassification[] @relation("CompetitiveClassification_event")
+  CompetitiveEffectAttempt_bonus_children CompetitiveEffectAttempt[] @relation("CompetitiveEffectAttempt_bonus")
+  CompetitiveItemReview_event_children CompetitiveItemReview[] @relation("CompetitiveItemReview_event")
+  CompetitiveItemResolution_event_children CompetitiveItemResolution[] @relation("CompetitiveItemResolution_event")
+  EngineMatchResult_terminalAuthority_children EngineMatchResult[] @relation("EngineMatchResult_terminalAuthority")
+  EngineMatchResult_authority_children EngineMatchResult[] @relation("EngineMatchResult_authority")
+  capacityPauseClaims CompetitiveCapacityClaim[] @relation("CapacityPause")
+  capacityDispositions CompetitiveCapacityDisposition[]
+  capacityCharge CompetitiveCapacityCharge?
+  capacityResourceHeads CompetitiveCapacityHead[] @relation("CapacityResource")
+}
+model RoundScorePosting {
+  id String @id
+  gameId String
+  roundId String
+  itemId String?
+  eventId String
+  teamId String
+  delta Int
+  before Int
+  after Int
+  rulesVersion String
+  event RoundAuthorityEvent @relation(fields: [eventId, gameId, roundId], references: [id, gameId, roundId], onDelete: Restrict, onUpdate: Restrict)
+  item RoundItemPin? @relation(fields: [roundId, itemId], references: [roundId, itemId], onDelete: Restrict, onUpdate: Restrict)
+  team Team @relation(fields: [gameId, teamId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([roundId, itemId])
+}
+model RoundGrantScope {
+  id String @id
+  gameId String
+  roundId String
+  role String
+  assignmentId String?
+  generation Int
+  activeGrantId String? @unique
+  round GameRound @relation(fields: [gameId, roundId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  assignment RoundActorAssignment? @relation(fields: [assignmentId, gameId, roundId], references: [id, gameId, roundId], onDelete: Restrict, onUpdate: Restrict)
+  grants RoundGrant[] @relation("ScopeGrants")
+  activeGrant RoundGrant? @relation("ScopeActiveGrant", fields: [id, activeGrantId], references: [scopeId, id], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([gameId, roundId, role, assignmentId])
+  @@unique([id, activeGrantId])
+  @@unique([id, gameId, roundId])
+  // SQL-only partial unique RoundGrantScope_null_assignment_scope closes NULL
+  // judge-slot duplication. Source verification protects it from schema drift.
+}
+model RoundGrant {
+  id String @id
+  gameId String
+  scopeId String
+  roundId String
+  role String
+  assignmentId String?
+  generation Int
+  tokenHash String @unique
+  expiresAt DateTime @db.Timestamptz(3)
+  revoked Boolean @default(false)
+  scope RoundGrantScope @relation("ScopeGrants", fields: [scopeId, gameId, roundId], references: [id, gameId, roundId], onDelete: Restrict, onUpdate: Restrict)
+  activeScope RoundGrantScope? @relation("ScopeActiveGrant")
+  events RoundAuthorityEvent[]
+  @@unique([gameId, id])
+  @@unique([scopeId, id])
+  @@unique([scopeId, generation])
+  @@unique([id, gameId, roundId, generation, assignmentId])
+  // INT-062 additive restrictive relation source; old fields/guards unchanged.
+  CompetitiveTargetDisclosure_grant_children CompetitiveTargetDisclosure[] @relation("CompetitiveTargetDisclosure_grant")
+  capacityClaims CompetitiveCapacityClaim[] @relation("CapacityGrant")
+}
+model DrawingCanvasState {
+  roundId String @id
+  revision Int
+  state Json
+  round GameRound @relation(fields: [roundId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+}
+
+model RoundActorAssignment {
+  id String @id
+  gameId String
+  roundId String
+  teamId String
+  playerIndex Int
+  itemId String?
+  generation Int
+  round GameRound @relation(fields: [gameId, roundId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  team Team @relation(fields: [gameId, teamId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  scopes RoundGrantScope[]
+  item RoundItemPin? @relation(fields: [roundId, itemId], references: [roundId, itemId], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([id, gameId, roundId])
+  @@unique([roundId, generation])
+  // INT-062 additive restrictive relation source; old fields/guards unchanged.
+  CompetitiveAssignmentPlayer_assignment_children CompetitiveAssignmentPlayer[] @relation("CompetitiveAssignmentPlayer_assignment")
+}
+
+// INT-062.E1 request5 source only. SQL adds strict types/bounds, immutable seals,
+// partial NULL-safe attempt identity, deferred same-parent/head/score/consumption
+// closure and fixed role policies. Preserve those SQL-only guarantees on diff.
+model EntaCompetitiveRelease {
+  id String @id
+  formatReleaseId String
+  formatRoot String
+  mediaRoot String
+  proofRoot String
+  paletteRoot String
+  rulesVersion String
+  issuerEvidenceHash String
+  sealedAt DateTime? @db.Timestamptz(3)
+  format EntaFormatRelease @relation("EntaCompetitiveRelease_format", fields: [formatReleaseId, formatRoot, mediaRoot], references: [id, formatRoot, mediaRoot], onDelete: Restrict, onUpdate: Restrict)
+  EntaCompetitivePrompt_release_children EntaCompetitivePrompt[] @relation("EntaCompetitivePrompt_release")
+  GameCompetitivePin_release_children GameCompetitivePin[] @relation("GameCompetitivePin_release")
+  @@unique([id, proofRoot, paletteRoot])
+}
+model EntaCompetitivePrompt {
+  id String @id
+  releaseId String
+  formatId String
+  questionRevisionId String
+  questionHash String
+  proofHash String
+  hintRoot String
+  effectValue Int
+  effectValueSource String
+  release EntaCompetitiveRelease @relation("EntaCompetitivePrompt_release", fields: [releaseId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  format EntaFormatRevision @relation("EntaCompetitivePrompt_format", fields: [formatId, questionRevisionId, questionHash], references: [id, questionRevisionId, questionHash], onDelete: Restrict, onUpdate: Restrict)
+  EntaCompetitiveHint_prompt_children EntaCompetitiveHint[] @relation("EntaCompetitiveHint_prompt")
+  EntaCompetitiveGrapheme_prompt_children EntaCompetitiveGrapheme[] @relation("EntaCompetitiveGrapheme_prompt")
+  CompetitiveRoundPin_prompt_children CompetitiveRoundPin[] @relation("CompetitiveRoundPin_prompt")
+  @@unique([releaseId, formatId])
+  @@unique([id, proofHash])
+  @@unique([id, questionRevisionId, questionHash])
+}
+model EntaCompetitiveHint {
+  id String @id
+  promptId String
+  questionRevisionId String
+  questionHash String
+  ordinal Int
+  text String
+  contentHash String
+  safeDrawing Boolean
+  prompt EntaCompetitivePrompt @relation("EntaCompetitiveHint_prompt", fields: [promptId, questionRevisionId, questionHash], references: [id, questionRevisionId, questionHash], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([promptId, ordinal])
+}
+model EntaCompetitiveGrapheme {
+  id String @id
+  promptId String
+  questionRevisionId String
+  questionHash String
+  answerRevisionId String
+  answerHash String
+  segmentationVersion String
+  grapheme String
+  proofHash String
+  prompt EntaCompetitivePrompt @relation("EntaCompetitiveGrapheme_prompt", fields: [promptId, questionRevisionId, questionHash], references: [id, questionRevisionId, questionHash], onDelete: Restrict, onUpdate: Restrict)
+  answer QuestionAnswerRevision @relation("EntaCompetitiveGrapheme_answer", fields: [answerRevisionId, questionRevisionId, questionHash, answerHash], references: [id, questionRevisionId, questionContentHash, contentHash], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([promptId, answerRevisionId])
+}
+model GameCompetitivePin {
+  gameId String @id
+  firebaseIdentityId String
+  admissionId String
+  releaseId String
+  proofRoot String
+  paletteRoot String
+  rulesVersion String
+  requestVersion Int
+  execution EntaExecutionPin @relation("GameCompetitivePin_execution", fields: [gameId, firebaseIdentityId], references: [gameId, firebaseIdentityId], onDelete: Restrict, onUpdate: Restrict)
+  admissionSource Game @relation("GameCompetitivePin_admissionSource", fields: [gameId, admissionId, firebaseIdentityId], references: [id, admissionId, firebaseIdentityId], onDelete: Restrict, onUpdate: Restrict)
+  release EntaCompetitiveRelease @relation("GameCompetitivePin_release", fields: [releaseId, proofRoot, paletteRoot], references: [id, proofRoot, paletteRoot], onDelete: Restrict, onUpdate: Restrict)
+  CompetitiveRuntimeHead_game_children CompetitiveRuntimeHead[] @relation("CompetitiveRuntimeHead_game")
+  @@unique([gameId, firebaseIdentityId])
+  @@unique([gameId, firebaseIdentityId, admissionId])
+  EngineTournamentBindingSnapshot_admission_children EngineTournamentBindingSnapshot[] @relation("EngineTournamentBindingSnapshot_admission")
+  EngineMatchResult_admission_children EngineMatchResult[] @relation("EngineMatchResult_admission")
+}
+model CompetitiveRosterPlayer {
+  gameId String
+  teamId String
+  playerId String
+  ordinal Int
+  team Team @relation("CompetitiveRosterPlayer_team", fields: [gameId, teamId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  player Player @relation("CompetitiveRosterPlayer_player", fields: [playerId, teamId], references: [id, teamId], onDelete: Restrict, onUpdate: Restrict)
+  CompetitiveAttempt_player_children CompetitiveAttempt[] @relation("CompetitiveAttempt_player")
+  CompetitiveAssignmentPlayer_player_children CompetitiveAssignmentPlayer[] @relation("CompetitiveAssignmentPlayer_player")
+  CompetitiveTargetDisclosure_player_children CompetitiveTargetDisclosure[] @relation("CompetitiveTargetDisclosure_player")
+  @@id([gameId, playerId])
+  @@unique([gameId, teamId, playerId])
+  @@unique([gameId, teamId, ordinal])
+}
+model CompetitiveRoundPin {
+  roundId String @id
+  gameId String
+  promptId String
+  proofHash String
+  targetHash String
+  pin Json
+  round GameRound @relation("CompetitiveRoundPin_round", fields: [gameId, roundId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  prompt EntaCompetitivePrompt @relation("CompetitiveRoundPin_prompt", fields: [promptId, proofHash], references: [id, proofHash], onDelete: Restrict, onUpdate: Restrict)
+  CompetitiveAssignmentPlayer_target_children CompetitiveAssignmentPlayer[] @relation("CompetitiveAssignmentPlayer_target")
+  CompetitiveTargetDisclosure_target_children CompetitiveTargetDisclosure[] @relation("CompetitiveTargetDisclosure_target")
+  @@unique([gameId, roundId])
+  @@unique([gameId, roundId, targetHash])
+}
+model CompetitiveAllowance {
+  id String @id
+  gameId String
+  teamId String
+  roundId String?
+  scope String
+  scopeId String
+  aid String
+  ordinal Int
+  round GameRound? @relation("CompetitiveAllowance_round", fields: [gameId, roundId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  team Team @relation("CompetitiveAllowance_team", fields: [gameId, teamId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  CompetitiveConsumption_allowance_children CompetitiveConsumption[] @relation("CompetitiveConsumption_allowance")
+  CompetitiveAttempt_allowance_children CompetitiveAttempt[] @relation("CompetitiveAttempt_allowance")
+  @@unique([gameId, id, teamId])
+  @@unique([gameId, teamId, scopeId, aid])
+  @@unique([gameId, teamId, scopeId, ordinal])
+}
+model CompetitiveEffect {
+  id String @id
+  gameId String
+  roundId String?
+  eventId String
+  sequence Int
+  kind String
+  amountKind String
+  reversible Boolean
+  barrier Boolean
+  predecessorId String?
+  predecessorHash String?
+  hash String
+  payload Json
+  round GameRound? @relation("CompetitiveEffect_round", fields: [gameId, roundId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  event RoundAuthorityEvent @relation("CompetitiveEffect_event", fields: [gameId, eventId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  predecessor CompetitiveEffect? @relation("CompetitiveEffect_predecessor", fields: [gameId, predecessorId, predecessorHash], references: [gameId, id, hash], onDelete: Restrict, onUpdate: Restrict)
+  CompetitiveEffect_predecessor_children CompetitiveEffect[] @relation("CompetitiveEffect_predecessor")
+  CompetitiveConsumption_effect_children CompetitiveConsumption[] @relation("CompetitiveConsumption_effect")
+  CompetitiveScorePosting_effect_children CompetitiveScorePosting[] @relation("CompetitiveScorePosting_effect")
+  CompetitiveScoreRead_effect_children CompetitiveScoreRead[] @relation("CompetitiveScoreRead_effect")
+  CompetitiveScorePosting_prior_children CompetitiveScorePosting[] @relation("CompetitiveScorePosting_prior")
+  CompetitiveScoreRead_source_children CompetitiveScoreRead[] @relation("CompetitiveScoreRead_source")
+  CompetitiveDependency_effect_children CompetitiveDependency[] @relation("CompetitiveDependency_effect")
+  CompetitiveDependency_source_children CompetitiveDependency[] @relation("CompetitiveDependency_source")
+  CompetitiveEffectAttempt_effect_children CompetitiveEffectAttempt[] @relation("CompetitiveEffectAttempt_effect")
+  CompetitiveRulingHead_original_children CompetitiveRulingHead[] @relation("CompetitiveRulingHead_original")
+  CompetitiveRulingHead_current_children CompetitiveRulingHead[] @relation("CompetitiveRulingHead_current")
+  CompetitiveReversal_original_children CompetitiveReversal[] @relation("CompetitiveReversal_original")
+  CompetitiveReversal_reversal_children CompetitiveReversal[] @relation("CompetitiveReversal_reversal")
+  CompetitiveItemConsumption_effect_children CompetitiveItemConsumption[] @relation("CompetitiveItemConsumption_effect")
+  CompetitiveItemReview_original_children CompetitiveItemReview[] @relation("CompetitiveItemReview_original")
+  CompetitiveItemResolution_effect_children CompetitiveItemResolution[] @relation("CompetitiveItemResolution_effect")
+  CompetitiveRuntimeHead_latest_children CompetitiveRuntimeHead[] @relation("CompetitiveRuntimeHead_latest")
+  CompetitiveAuditReport_effect_children CompetitiveAuditReport[] @relation("CompetitiveAuditReport_effect")
+  @@unique([gameId, id])
+  @@unique([gameId, id, hash])
+  @@unique([gameId, sequence])
+  @@index([gameId, eventId])
+}
+model CompetitiveConsumption {
+  id String @id
+  gameId String
+  roundId String
+  teamId String
+  allowanceId String @unique
+  eventId String
+  effectId String
+  aid String
+  allowance CompetitiveAllowance @relation("CompetitiveConsumption_allowance", fields: [gameId, allowanceId, teamId], references: [gameId, id, teamId], onDelete: Restrict, onUpdate: Restrict)
+  round GameRound @relation("CompetitiveConsumption_round", fields: [gameId, roundId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  effect CompetitiveEffect @relation("CompetitiveConsumption_effect", fields: [gameId, effectId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  event RoundAuthorityEvent @relation("CompetitiveConsumption_event", fields: [gameId, eventId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([gameId, id])
+}
+model CompetitiveAttempt {
+  id String @id
+  gameId String
+  roundId String
+  itemId String?
+  teamId String
+  playerId String
+  phase String
+  phaseOrdinal Int
+  generation Int
+  ordinal Int
+  acceptedAt DateTime @db.Timestamptz(3)
+  deadline DateTime @db.Timestamptz(3)
+  eventId String
+  pickedEventId String?
+  allowanceId String?
+  bonusEventId String?
+  disclosureHeadId String?
+  payload Json
+  eligibilityHash String
+  round GameRound @relation("CompetitiveAttempt_round", fields: [gameId, roundId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  item RoundItemPin? @relation("CompetitiveAttempt_item", fields: [roundId, itemId], references: [roundId, itemId], onDelete: Restrict, onUpdate: Restrict)
+  player CompetitiveRosterPlayer @relation("CompetitiveAttempt_player", fields: [gameId, teamId, playerId], references: [gameId, teamId, playerId], onDelete: Restrict, onUpdate: Restrict)
+  event RoundAuthorityEvent @relation("CompetitiveAttempt_event", fields: [gameId, eventId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  pickedEvent RoundAuthorityEvent? @relation("CompetitiveAttempt_pickedEventId", fields: [gameId, pickedEventId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  bonusEvent RoundAuthorityEvent? @relation("CompetitiveAttempt_bonusEventId", fields: [gameId, bonusEventId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  allowance CompetitiveAllowance? @relation("CompetitiveAttempt_allowance", fields: [gameId, allowanceId, teamId], references: [gameId, id, teamId], onDelete: Restrict, onUpdate: Restrict)
+  disclosure CompetitiveTargetDisclosure? @relation("CompetitiveAttempt_disclosure", fields: [gameId, disclosureHeadId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  CompetitiveClassification_attempt_children CompetitiveClassification[] @relation("CompetitiveClassification_attempt")
+  CompetitiveEffectAttempt_attempt_children CompetitiveEffectAttempt[] @relation("CompetitiveEffectAttempt_attempt")
+  @@unique([gameId, id])
+  @@unique([gameId, roundId, id])
+  @@unique([roundId, phaseOrdinal, generation, teamId, itemId, ordinal])
+  capacityClaims CompetitiveCapacityClaim[] @relation("CapacityAttempt")
+}
+model CompetitiveClassification {
+  id String @id
+  gameId String
+  attemptId String @unique
+  eventId String
+  correct Boolean
+  interim Boolean
+  attempt CompetitiveAttempt @relation("CompetitiveClassification_attempt", fields: [gameId, attemptId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  event RoundAuthorityEvent @relation("CompetitiveClassification_event", fields: [gameId, eventId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([gameId, id])
+  @@index([gameId, eventId])
+}
+model CompetitiveScorePosting {
+  id String @id
+  gameId String
+  effectId String
+  teamId String
+  delta Int
+  before Int
+  after Int
+  scoreVersion Int
+  previousHeadId String?
+  effect CompetitiveEffect @relation("CompetitiveScorePosting_effect", fields: [gameId, effectId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  team Team @relation("CompetitiveScorePosting_team", fields: [gameId, teamId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  prior CompetitiveEffect? @relation("CompetitiveScorePosting_prior", fields: [gameId, previousHeadId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([gameId, id])
+  @@unique([effectId, teamId])
+  @@unique([gameId, teamId, scoreVersion])
+}
+model CompetitiveScoreRead {
+  gameId String
+  effectId String
+  ordinal Int
+  teamId String
+  scoreVersion Int
+  value Int
+  sourceEffectId String?
+  kind String
+  effect CompetitiveEffect @relation("CompetitiveScoreRead_effect", fields: [gameId, effectId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  team Team @relation("CompetitiveScoreRead_team", fields: [gameId, teamId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  source CompetitiveEffect? @relation("CompetitiveScoreRead_source", fields: [gameId, sourceEffectId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  @@id([effectId, ordinal])
+  @@index([gameId, sourceEffectId])
+}
+model CompetitiveDependency {
+  gameId String
+  effectId String
+  sourceEffectId String
+  effect CompetitiveEffect @relation("CompetitiveDependency_effect", fields: [gameId, effectId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  source CompetitiveEffect @relation("CompetitiveDependency_source", fields: [gameId, sourceEffectId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  @@id([effectId, sourceEffectId])
+  @@index([gameId, sourceEffectId])
+}
+model CompetitiveEffectAttempt {
+  gameId String
+  effectId String
+  roundId String
+  attemptId String
+  correct Boolean
+  bonusMultiplier Int
+  bonusEventId String?
+  effect CompetitiveEffect @relation("CompetitiveEffectAttempt_effect", fields: [gameId, effectId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  attempt CompetitiveAttempt @relation("CompetitiveEffectAttempt_attempt", fields: [gameId, roundId, attemptId], references: [gameId, roundId, id], onDelete: Restrict, onUpdate: Restrict)
+  bonus RoundAuthorityEvent? @relation("CompetitiveEffectAttempt_bonus", fields: [gameId, bonusEventId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  @@id([effectId, attemptId])
+}
+model CompetitiveRulingHead {
+  gameId String
+  scopeId String
+  roundId String
+  itemId String?
+  originalEffectId String
+  effectId String
+  hash String
+  version Int
+  reversed Boolean
+  round GameRound @relation("CompetitiveRulingHead_round", fields: [gameId, roundId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  item RoundItemPin? @relation("CompetitiveRulingHead_item", fields: [roundId, itemId], references: [roundId, itemId], onDelete: Restrict, onUpdate: Restrict)
+  original CompetitiveEffect @relation("CompetitiveRulingHead_original", fields: [gameId, originalEffectId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  current CompetitiveEffect @relation("CompetitiveRulingHead_current", fields: [gameId, effectId, hash], references: [gameId, id, hash], onDelete: Restrict, onUpdate: Restrict)
+  @@id([gameId, scopeId])
+  @@index([gameId, roundId, scopeId])
+}
+model CompetitiveReversal {
+  originalEffectId String @id
+  gameId String
+  originalHash String
+  reversalEffectId String @unique
+  original CompetitiveEffect @relation("CompetitiveReversal_original", fields: [gameId, originalEffectId, originalHash], references: [gameId, id, hash], onDelete: Restrict, onUpdate: Restrict)
+  reversal CompetitiveEffect @relation("CompetitiveReversal_reversal", fields: [gameId, reversalEffectId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  CompetitiveItemReview_reversal_children CompetitiveItemReview[] @relation("CompetitiveItemReview_reversal")
+  capacityBoardReviews CompetitiveCapacityClaim[] @relation("CapacityBoardReview")
+  @@unique([gameId, reversalEffectId])
+  @@unique([gameId, originalEffectId, reversalEffectId])
+}
+model CompetitiveItemConsumption {
+  gameId String
+  roundId String
+  itemId String
+  effectId String
+  teamId String?
+  round GameRound @relation("CompetitiveItemConsumption_round", fields: [gameId, roundId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  item RoundItemPin @relation("CompetitiveItemConsumption_item", fields: [roundId, itemId], references: [roundId, itemId], onDelete: Restrict, onUpdate: Restrict)
+  effect CompetitiveEffect @relation("CompetitiveItemConsumption_effect", fields: [gameId, effectId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  team Team? @relation("CompetitiveItemConsumption_team", fields: [gameId, teamId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  CompetitiveItemReview_consumption_children CompetitiveItemReview[] @relation("CompetitiveItemReview_consumption")
+  @@id([roundId, itemId])
+  @@unique([gameId, roundId, itemId, effectId])
+  @@index([gameId, effectId])
+}
+model CompetitiveAssignmentPlayer {
+  assignmentId String @id
+  gameId String
+  roundId String
+  teamId String
+  playerId String
+  generation Int
+  targetHash String
+  assignment RoundActorAssignment @relation("CompetitiveAssignmentPlayer_assignment", fields: [assignmentId, gameId, roundId], references: [id, gameId, roundId], onDelete: Restrict, onUpdate: Restrict)
+  player CompetitiveRosterPlayer @relation("CompetitiveAssignmentPlayer_player", fields: [gameId, teamId, playerId], references: [gameId, teamId, playerId], onDelete: Restrict, onUpdate: Restrict)
+  target CompetitiveRoundPin @relation("CompetitiveAssignmentPlayer_target", fields: [gameId, roundId, targetHash], references: [gameId, roundId, targetHash], onDelete: Restrict, onUpdate: Restrict)
+  CompetitiveTargetDisclosure_assignment_children CompetitiveTargetDisclosure[] @relation("CompetitiveTargetDisclosure_assignment")
+  @@unique([gameId, roundId, assignmentId, playerId, generation])
+}
+model CompetitiveTargetDisclosure {
+  id String @id
+  gameId String
+  roundId String
+  targetRevisionId String
+  targetHash String
+  teamId String
+  playerId String
+  assignmentId String
+  assignmentGeneration Int
+  grantId String
+  grantGeneration Int
+  createdAt DateTime @db.Timestamptz(3)
+  CompetitiveAttempt_disclosure_children CompetitiveAttempt[] @relation("CompetitiveAttempt_disclosure")
+  target CompetitiveRoundPin @relation("CompetitiveTargetDisclosure_target", fields: [gameId, roundId, targetHash], references: [gameId, roundId, targetHash], onDelete: Restrict, onUpdate: Restrict)
+  assignment CompetitiveAssignmentPlayer @relation("CompetitiveTargetDisclosure_assignment", fields: [gameId, roundId, assignmentId, playerId, assignmentGeneration], references: [gameId, roundId, assignmentId, playerId, generation], onDelete: Restrict, onUpdate: Restrict)
+  player CompetitiveRosterPlayer @relation("CompetitiveTargetDisclosure_player", fields: [gameId, teamId, playerId], references: [gameId, teamId, playerId], onDelete: Restrict, onUpdate: Restrict)
+  grant RoundGrant @relation("CompetitiveTargetDisclosure_grant", fields: [grantId, gameId, roundId, grantGeneration, assignmentId], references: [id, gameId, roundId, generation, assignmentId], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([gameId, id])
+  @@unique([gameId, roundId, playerId, targetHash, assignmentId, grantId, grantGeneration])
+}
+model CompetitiveItemReview {
+  id String @id
+  gameId String
+  roundId String
+  itemId String
+  originalEffectId String
+  originalHash String
+  reversalEffectId String
+  consumptionEffectId String
+  eventId String
+  predecessorVersion Int
+  predecessorHash String
+  hash String
+  payload Json
+  reversal CompetitiveReversal @relation("CompetitiveItemReview_reversal", fields: [gameId, originalEffectId, reversalEffectId], references: [gameId, originalEffectId, reversalEffectId], onDelete: Restrict, onUpdate: Restrict)
+  original CompetitiveEffect @relation("CompetitiveItemReview_original", fields: [gameId, originalEffectId, originalHash], references: [gameId, id, hash], onDelete: Restrict, onUpdate: Restrict)
+  consumption CompetitiveItemConsumption @relation("CompetitiveItemReview_consumption", fields: [gameId, roundId, itemId, consumptionEffectId], references: [gameId, roundId, itemId, effectId], onDelete: Restrict, onUpdate: Restrict)
+  event RoundAuthorityEvent @relation("CompetitiveItemReview_event", fields: [gameId, eventId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  CompetitiveItemResolution_review_children CompetitiveItemResolution[] @relation("CompetitiveItemResolution_review")
+  CompetitiveRuntimeHead_itemReview_children CompetitiveRuntimeHead[] @relation("CompetitiveRuntimeHead_itemReview")
+  @@unique([gameId, id, hash])
+  @@unique([gameId, id])
+  capacityClaims CompetitiveCapacityClaim[] @relation("CapacityReview")
+}
+model CompetitiveItemResolution {
+  id String @id
+  gameId String
+  reviewId String @unique
+  reviewHash String
+  effectId String
+  eventId String
+  rulingVersion Int
+  rulingHash String
+  mode String
+  reason String
+  review CompetitiveItemReview @relation("CompetitiveItemResolution_review", fields: [gameId, reviewId, reviewHash], references: [gameId, id, hash], onDelete: Restrict, onUpdate: Restrict)
+  effect CompetitiveEffect @relation("CompetitiveItemResolution_effect", fields: [gameId, effectId, rulingHash], references: [gameId, id, hash], onDelete: Restrict, onUpdate: Restrict)
+  event RoundAuthorityEvent @relation("CompetitiveItemResolution_event", fields: [gameId, eventId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([gameId, id])
+}
+model CompetitiveRuntimeHead {
+  gameId String @id
+  latestEffectId String?
+  boardReviewRoundId String?
+  openItemReviewId String?
+  openItemReviewHash String?
+  game GameCompetitivePin @relation("CompetitiveRuntimeHead_game", fields: [gameId], references: [gameId], onDelete: Restrict, onUpdate: Restrict)
+  latest CompetitiveEffect? @relation("CompetitiveRuntimeHead_latest", fields: [gameId, latestEffectId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  boardReview GameRound? @relation("CompetitiveRuntimeHead_boardReview", fields: [gameId, boardReviewRoundId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  itemReview CompetitiveItemReview? @relation("CompetitiveRuntimeHead_itemReview", fields: [gameId, openItemReviewId, openItemReviewHash], references: [gameId, id, hash], onDelete: Restrict, onUpdate: Restrict)
+
+}
+model CompetitiveAuditReport {
+  id String @id
+  gameId String
+  ownerIdentityId String
+  roundId String
+  effectId String?
+  commandId String
+  commandHash String
+  reason String
+  blockingIds Json
+  createdAt DateTime @db.Timestamptz(3)
+  round GameRound @relation("CompetitiveAuditReport_round", fields: [gameId, roundId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  owner Game @relation("CompetitiveAuditReport_owner", fields: [gameId, ownerIdentityId], references: [id, firebaseIdentityId], onDelete: Restrict, onUpdate: Restrict)
+  effect CompetitiveEffect? @relation("CompetitiveAuditReport_effect", fields: [gameId, effectId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([gameId, commandId])
+}
+model EngineTournamentBindingSnapshot {
+  id String @id
+  gameId String @unique
+  ownerIdentityId String
+  admissionId String
+  logicalMatchId String
+  attemptId String
+  engine String
+  hash String
+  payload Json
+  owner Game @relation("EngineTournamentBindingSnapshot_owner", fields: [gameId, ownerIdentityId], references: [id, firebaseIdentityId], onDelete: Restrict, onUpdate: Restrict)
+  admission GameCompetitivePin @relation("EngineTournamentBindingSnapshot_admission", fields: [gameId, ownerIdentityId, admissionId], references: [gameId, firebaseIdentityId, admissionId], onDelete: Restrict, onUpdate: Restrict)
+  EngineTournamentBindingParticipant_binding_children EngineTournamentBindingParticipant[] @relation("EngineTournamentBindingParticipant_binding")
+  EngineMatchResult_binding_children EngineMatchResult[] @relation("EngineMatchResult_binding")
+  EngineMatchResultSignal_binding_children EngineMatchResultSignal[] @relation("EngineMatchResultSignal_binding")
+  @@unique([gameId, id, hash])
+  @@unique([gameId, id])
+  @@unique([gameId, id, attemptId])
+}
+model EngineTournamentBindingParticipant {
+  bindingId String
+  gameId String
+  participantId String
+  tournamentTeamId String
+  ordinal Int
+  binding EngineTournamentBindingSnapshot @relation("EngineTournamentBindingParticipant_binding", fields: [gameId, bindingId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  participant Team @relation("EngineTournamentBindingParticipant_participant", fields: [gameId, participantId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  @@id([bindingId, participantId])
+  @@unique([bindingId, tournamentTeamId])
+  @@unique([bindingId, ordinal])
+}
+model EngineMatchResult {
+  gameId String
+  resultVersion Int
+  resultHash String
+  ownerIdentityId String
+  admissionId String
+  terminalRevision Int
+  terminalEventId String
+  authorityEventId String
+  predecessorVersion Int?
+  predecessorHash String?
+  bindingId String?
+  bindingHash String?
+  payload Json
+  owner Game @relation("EngineMatchResult_owner", fields: [gameId, ownerIdentityId], references: [id, firebaseIdentityId], onDelete: Restrict, onUpdate: Restrict)
+  admission GameCompetitivePin @relation("EngineMatchResult_admission", fields: [gameId, ownerIdentityId, admissionId], references: [gameId, firebaseIdentityId, admissionId], onDelete: Restrict, onUpdate: Restrict)
+  terminal GameEvent @relation("EngineMatchResult_terminal", fields: [gameId, terminalRevision], references: [gameId, sequence], onDelete: Restrict, onUpdate: Restrict)
+  terminalAuthority RoundAuthorityEvent @relation("EngineMatchResult_terminalAuthority", fields: [gameId, terminalEventId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  authority RoundAuthorityEvent @relation("EngineMatchResult_authority", fields: [gameId, authorityEventId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  predecessor EngineMatchResult? @relation("EngineMatchResult_predecessor", fields: [gameId, predecessorVersion, predecessorHash], references: [gameId, resultVersion, resultHash], onDelete: Restrict, onUpdate: Restrict)
+  EngineMatchResult_predecessor_children EngineMatchResult[] @relation("EngineMatchResult_predecessor")
+  binding EngineTournamentBindingSnapshot? @relation("EngineMatchResult_binding", fields: [gameId, bindingId, bindingHash], references: [gameId, id, hash], onDelete: Restrict, onUpdate: Restrict)
+  EngineMatchResultHead_result_children EngineMatchResultHead[] @relation("EngineMatchResultHead_result")
+  EngineMatchResultSignal_result_children EngineMatchResultSignal[] @relation("EngineMatchResultSignal_result")
+  @@id([gameId, resultVersion])
+  @@unique([gameId, resultHash])
+  @@unique([gameId, resultVersion, resultHash])
+}
+model EngineMatchResultHead {
+  gameId String @id
+  resultVersion Int
+  resultHash String
+  result EngineMatchResult @relation("EngineMatchResultHead_result", fields: [gameId, resultVersion, resultHash], references: [gameId, resultVersion, resultHash], onDelete: Restrict, onUpdate: Restrict)
+
+}
+model EngineMatchResultSignal {
+  gameId String
+  resultVersion Int
+  resultHash String
+  bindingId String
+  attemptId String
+  result EngineMatchResult @relation("EngineMatchResultSignal_result", fields: [gameId, resultVersion, resultHash], references: [gameId, resultVersion, resultHash], onDelete: Restrict, onUpdate: Restrict)
+  binding EngineTournamentBindingSnapshot @relation("EngineMatchResultSignal_binding", fields: [gameId, bindingId, attemptId], references: [gameId, id, attemptId], onDelete: Restrict, onUpdate: Restrict)
+  @@id([gameId, resultVersion, resultHash, attemptId])
+}
+
+// INT-062 fresh5 guarded fact projections; partial/exclusive/deferred closure is SQL-owned.
+model CompetitiveCapacityClaim {
+  id String @id
+  gameId String
+  roundId String?
+  sourceKind String
+  sourceId String
+  lane String
+  cost Json
+  attemptId String?
+  itemId String?
+  reviewId String?
+  boardReversalEffectId String?
+  pauseEventId String?
+  grantId String?
+  game Game @relation(fields: [gameId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  round GameRound? @relation(fields: [gameId, roundId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  attempt CompetitiveAttempt? @relation("CapacityAttempt", fields: [gameId, roundId, attemptId], references: [gameId, roundId, id], onDelete: Restrict, onUpdate: Restrict)
+  item RoundItemPin? @relation("CapacityItem", fields: [roundId, itemId], references: [roundId, itemId], onDelete: Restrict, onUpdate: Restrict)
+  review CompetitiveItemReview? @relation("CapacityReview", fields: [gameId, reviewId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  boardReview CompetitiveReversal? @relation("CapacityBoardReview", fields: [gameId, boardReversalEffectId], references: [gameId, reversalEffectId], onDelete: Restrict, onUpdate: Restrict)
+  pause RoundAuthorityEvent? @relation("CapacityPause", fields: [gameId, pauseEventId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  grant RoundGrant? @relation("CapacityGrant", fields: [gameId, grantId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  disposition CompetitiveCapacityDisposition?
+  @@unique([gameId, id])
+  @@unique([gameId, roundId, sourceKind, sourceId])
+  @@index([gameId, roundId, lane])
+}
+model CompetitiveCapacityDisposition {
+  claimId String @id
+  gameId String
+  eventId String
+  kind String
+  claim CompetitiveCapacityClaim @relation(fields: [gameId, claimId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  event RoundAuthorityEvent @relation(fields: [gameId, eventId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([gameId, claimId])
+}
+model CompetitiveCapacityCharge {
+  eventId String @id
+  gameId String
+  roundId String?
+  lane String
+  cost Json
+  game Game @relation(fields: [gameId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  round GameRound? @relation(fields: [gameId, roundId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  event RoundAuthorityEvent @relation(fields: [gameId, eventId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([gameId, eventId])
+  @@index([gameId, roundId, lane])
+}
+model CompetitiveCapacityHead {
+  roundId String @id
+  gameId String
+  version Int
+  used Json
+  reserved Json
+  resourceEventId String?
+  game Game @relation(fields: [gameId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  round GameRound @relation(fields: [gameId, roundId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  resourceEvent RoundAuthorityEvent? @relation("CapacityResource", fields: [gameId, resourceEventId], references: [gameId, id], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([gameId, roundId])
+}
+
+// ENG03-02 additive Huroof-owned storage. SQL migration is authoritative for guards.
+
+model HuroofIdentityPolicyRevision {
+  namespace       String
+  revision        BigInt
+  policyHash      String
+  rawPolicy       Bytes
+  firebaseProjectId String
+  audience        Json
+  issuer          String
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+  namespaceRow DeploymentNamespace @relation(fields: [namespace], references: [namespaceId], onDelete: Restrict, onUpdate: Restrict)
+  heads HuroofIdentityPolicyHead[]
+  matches HuroofMatch[]
+  @@id([namespace, revision])
+  @@unique([namespace, revision, policyHash])
+}
+
+model HuroofIdentityPolicyHead {
+  namespace String @id
+  revision  BigInt
+  policyHash String
+  version BigInt @default(0)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  revisionRow HuroofIdentityPolicyRevision @relation(fields: [namespace, revision, policyHash], references: [namespace, revision, policyHash], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([namespace, revision, policyHash])
+}
+
+model HuroofRoom {
+  namespace String
+  id String
+  ownerFirebaseIdentityId String
+  generation BigInt @default(1)
+  version BigInt @default(0)
+  status String @default("SETUP")
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  owner FirebaseIdentity @relation(fields: [ownerFirebaseIdentityId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  locator HuroofLocator?
+  members HuroofMember[]
+  participants HuroofParticipant[]
+  matches HuroofMatch[]
+  state HuroofCanonicalState?
+  commands HuroofCommandReceipt[]
+  events HuroofEvent[]
+  projections HuroofProjection[]
+  outbox HuroofRealtimeOutbox[]
+  presence HuroofPresence[]
+  @@id([namespace, id])
+  @@unique([namespace, id, ownerFirebaseIdentityId])
+}
+
+model HuroofLocator {
+  namespace String
+  code String
+  roomId String
+  generation Int @default(2)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  room HuroofRoom @relation(fields: [namespace, roomId], references: [namespace, id], onDelete: Restrict, onUpdate: Restrict)
+  @@id([namespace, code])
+  @@unique([namespace, roomId])
+}
+
+model HuroofMember {
+  namespace String
+  roomId String
+  firebaseIdentityId String
+  role String
+  generation BigInt @default(1)
+  revokedAt DateTime? @db.Timestamptz(3)
+  version BigInt @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  room HuroofRoom @relation(fields: [namespace, roomId], references: [namespace, id], onDelete: Restrict, onUpdate: Restrict)
+  identity FirebaseIdentity @relation(fields: [firebaseIdentityId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  participant HuroofParticipant[]
+  presence HuroofPresence?
+  @@id([namespace, roomId, firebaseIdentityId])
+  @@unique([namespace, roomId, firebaseIdentityId, generation])
+}
+
+model HuroofParticipant {
+  namespace String
+  roomId String
+  id String
+  memberFirebaseIdentityId String?
+  displayName String
+  team String
+  ordinal Int
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  room HuroofRoom @relation(fields: [namespace, roomId], references: [namespace, id], onDelete: Restrict, onUpdate: Restrict)
+  member HuroofMember? @relation(fields: [namespace, roomId, memberFirebaseIdentityId], references: [namespace, roomId, firebaseIdentityId], onDelete: Restrict, onUpdate: Restrict)
+  @@id([namespace, roomId, id])
+  @@unique([namespace, roomId, ordinal])
+}
+
+model HuroofMatch {
+  namespace String
+  id String
+  roomId String
+  ownerFirebaseIdentityId String
+  admissionId String @unique
+  profile Json
+  profileRawArtifactId String
+  config Json
+  rawIntent Bytes
+  rawIntentHash String
+  policyRevision BigInt
+  policyHash String
+  profileHash String
+  configHash String
+  version BigInt @default(0)
+  state String @default("STARTED")
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  room HuroofRoom @relation(fields: [namespace, roomId, ownerFirebaseIdentityId], references: [namespace, id, ownerFirebaseIdentityId], onDelete: Restrict, onUpdate: Restrict)
+  admission Admission @relation(fields: [admissionId, ownerFirebaseIdentityId], references: [id, firebaseIdentityId], onDelete: Restrict, onUpdate: Restrict)
+  policyRevisionRow HuroofIdentityPolicyRevision @relation(fields: [namespace, policyRevision, policyHash], references: [namespace, revision, policyHash], onDelete: Restrict, onUpdate: Restrict)
+  profileArtifact HuroofRawArtifact @relation("HuroofMatchProfileRaw", fields: [namespace, profileRawArtifactId, profileHash], references: [namespace, id, contentHash], onDelete: Restrict, onUpdate: Restrict)
+  pin HuroofMatchPin?
+  stateRow HuroofCanonicalState?
+  events HuroofEvent[]
+  results HuroofMatchResult[]
+  commands HuroofCommandReceipt[]
+  rematch HuroofRematchLink? @relation("HuroofRematchChild")
+  @@id([namespace, id])
+  @@unique([namespace, id, ownerFirebaseIdentityId])
+  @@unique([namespace, roomId, id])
+  @@unique([namespace, id, roomId])
+  @@unique([namespace, id, roomId, ownerFirebaseIdentityId])
+  @@unique([namespace, roomId, id, ownerFirebaseIdentityId])
+  @@unique([namespace, id, roomId, ownerFirebaseIdentityId, admissionId])
+  @@unique([admissionId, ownerFirebaseIdentityId])
+}
+
+model HuroofMatchPin {
+  namespace String
+  matchId String
+  profileScope String
+  validationReceiptId String
+  catalogReleaseId String
+  releaseRootHash String
+  profileFamily String
+  profileSourceId String
+  profileRevision BigInt
+  profileRawArtifactId String
+  profileRawArtifactHash String
+  catalogSealHash String
+  sourceRef String
+  rawRefs Json
+  selector Json
+  config Json
+  profile Json
+  receipt CatalogValidationReceipt @relation(fields: [validationReceiptId, catalogReleaseId, releaseRootHash], references: [id, catalogReleaseId, releaseRootHash], onDelete: Restrict, onUpdate: Restrict)
+  profileRevisionRow HuroofContentRevision @relation(fields: [namespace, profileFamily, profileSourceId, profileRevision, profileRawArtifactId, profileRawArtifactHash, validationReceiptId, catalogReleaseId, releaseRootHash], references: [namespace, family, sourceId, revision, rawArtifactId, rawArtifactHash, validationReceiptId, catalogReleaseId, releaseRootHash], onDelete: Restrict, onUpdate: Restrict)
+  match HuroofMatch @relation(fields: [namespace, matchId], references: [namespace, id], onDelete: Restrict, onUpdate: Restrict)
+  @@id([namespace, matchId])
+}
+
+model HuroofCanonicalState {
+  namespace String
+  roomId String
+  ownerFirebaseIdentityId String
+  activeMatchId String?
+  status String
+  revision BigInt @default(0)
+  sequence BigInt @default(0)
+  privateState Json
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  room HuroofRoom @relation(fields: [namespace, roomId, ownerFirebaseIdentityId], references: [namespace, id, ownerFirebaseIdentityId], onDelete: Restrict, onUpdate: Restrict)
+  activeMatch HuroofMatch? @relation(fields: [namespace, roomId, activeMatchId, ownerFirebaseIdentityId], references: [namespace, roomId, id, ownerFirebaseIdentityId], onDelete: Restrict, onUpdate: Restrict)
+  @@id([namespace, roomId])
+  @@unique([namespace, roomId, ownerFirebaseIdentityId])
+  @@unique([namespace, roomId, activeMatchId, ownerFirebaseIdentityId])
+}
+
+model HuroofCommandReceipt {
+  namespace String
+  roomId String
+  actorFirebaseIdentityId String
+  requestKey String
+  matchId String
+  intent Bytes
+  intentHash String
+  outcome Bytes
+  outcomeHash String
+  resultingRevision BigInt
+  resultingSequence BigInt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  room HuroofRoom @relation(fields: [namespace, roomId], references: [namespace, id], onDelete: Restrict, onUpdate: Restrict)
+  actor FirebaseIdentity @relation(fields: [actorFirebaseIdentityId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  match HuroofMatch @relation(fields: [namespace, roomId, matchId], references: [namespace, roomId, id], onDelete: Restrict, onUpdate: Restrict)
+  events HuroofEvent[]
+  @@id([namespace, roomId, actorFirebaseIdentityId, requestKey])
+}
+
+model HuroofEvent {
+  namespace String
+  roomId String
+  sequence BigInt
+  id String @unique
+  matchId String?
+  actorFirebaseIdentityId String?
+  requestKey String?
+  revision BigInt
+  eventType String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  room HuroofRoom @relation(fields: [namespace, roomId], references: [namespace, id], onDelete: Restrict, onUpdate: Restrict)
+  match HuroofMatch? @relation(fields: [namespace, roomId, matchId], references: [namespace, roomId, id], onDelete: Restrict, onUpdate: Restrict)
+  command HuroofCommandReceipt? @relation(fields: [namespace, roomId, actorFirebaseIdentityId, requestKey], references: [namespace, roomId, actorFirebaseIdentityId, requestKey], onDelete: Restrict, onUpdate: Restrict)
+  terminalResults HuroofMatchResult[] @relation("HuroofResultTerminalEvent")
+  outbox HuroofRealtimeOutbox? @relation("HuroofOutboxEvent")
+  @@id([namespace, roomId, sequence])
+  @@unique([namespace, roomId, id])
+  @@unique([namespace, roomId, sequence, id])
+  @@unique([namespace, roomId, sequence, id, matchId])
+}
+
+model HuroofProjection {
+  namespace String
+  roomId String
+  audience String
+  scope String
+  revision BigInt
+  throughSequence BigInt
+  authGeneration BigInt
+  payload Json
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  room HuroofRoom @relation(fields: [namespace, roomId], references: [namespace, id], onDelete: Restrict, onUpdate: Restrict)
+  @@id([namespace, roomId, audience, scope])
+}
+
+model HuroofRealtimeOutbox {
+  namespace String
+  roomId String
+  sequence BigInt
+  eventId String @unique
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  room HuroofRoom @relation(fields: [namespace, roomId], references: [namespace, id], onDelete: Restrict, onUpdate: Restrict)
+  event HuroofEvent @relation("HuroofOutboxEvent", fields: [namespace, roomId, sequence, eventId], references: [namespace, roomId, sequence, id], onDelete: Restrict, onUpdate: Restrict)
+  delivery HuroofOutboxDelivery?
+  @@id([namespace, roomId, sequence])
+  @@unique([namespace, roomId, sequence, eventId])
+}
+
+model HuroofOutboxDelivery {
+  namespace String
+  roomId String
+  sequence BigInt
+  leaseOwner String?
+  leaseVersion BigInt @default(0)
+  leaseExpiresAt DateTime? @db.Timestamptz(3)
+  attemptCount Int @default(0)
+  state String @default("PENDING")
+  lastErrorCode String?
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  outbox HuroofRealtimeOutbox @relation(fields: [namespace, roomId, sequence], references: [namespace, roomId, sequence], onDelete: Restrict, onUpdate: Restrict)
+  @@id([namespace, roomId, sequence])
+}
+
+model HuroofPresence {
+  namespace String
+  roomId String
+  firebaseIdentityId String
+  memberGeneration BigInt
+  lastSeenAt DateTime @db.Timestamptz(3)
+  leaseExpiresAt DateTime @db.Timestamptz(3)
+  version BigInt @default(0)
+  room HuroofRoom @relation(fields: [namespace, roomId], references: [namespace, id], onDelete: Restrict, onUpdate: Restrict)
+  member HuroofMember @relation(fields: [namespace, roomId, firebaseIdentityId, memberGeneration], references: [namespace, roomId, firebaseIdentityId, generation], onDelete: Restrict, onUpdate: Restrict)
+  @@id([namespace, roomId, firebaseIdentityId])
+  @@unique([namespace, roomId, firebaseIdentityId, memberGeneration])
+}
+
+model HuroofRawArtifact {
+  namespace String
+  id String
+  contentHash String
+  byteLength BigInt
+  mediaType String
+  rawBytes Bytes
+  provenanceBytes Bytes
+  provenanceHash String
+  serialization String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  revisions HuroofContentRevision[] @relation("HuroofContentCurrentRaw")
+  previousOf HuroofContentRevision[] @relation("HuroofContentPreviousRaw")
+  mediaRevisions HuroofMediaRevision[] @relation("HuroofMediaRaw")
+  results HuroofMatchResult[] @relation("HuroofResultRaw")
+  matches HuroofMatch[] @relation("HuroofMatchProfileRaw")
+  @@id([namespace, id])
+  @@unique([namespace, id, contentHash])
+  @@unique([namespace, id, contentHash, mediaType, byteLength, provenanceHash])
+}
+
+model HuroofContentRevision {
+  namespace String
+  family String
+  sourceId String
+  revision BigInt
+  rawArtifactId String
+  rawArtifactHash String
+  previousRevision BigInt?
+  previousHash String?
+  previousRawArtifactId String?
+  validationReceiptId String?
+  catalogReleaseId String?
+  releaseRootHash String?
+  actorFirebaseIdentityId String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  raw HuroofRawArtifact @relation("HuroofContentCurrentRaw", fields: [namespace, rawArtifactId, rawArtifactHash], references: [namespace, id, contentHash], onDelete: Restrict, onUpdate: Restrict)
+  previousRaw HuroofRawArtifact? @relation("HuroofContentPreviousRaw", fields: [namespace, previousRawArtifactId, previousHash], references: [namespace, id, contentHash], onDelete: Restrict, onUpdate: Restrict)
+  nextRevisions HuroofContentRevision[] @relation("HuroofContentRevisionPrevious")
+  previous HuroofContentRevision? @relation("HuroofContentRevisionPrevious", fields: [namespace, family, sourceId, previousRevision, previousHash], references: [namespace, family, sourceId, revision, rawArtifactHash], onDelete: Restrict, onUpdate: Restrict)
+  actor FirebaseIdentity @relation(fields: [actorFirebaseIdentityId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  catalogReceipt CatalogValidationReceipt? @relation("HuroofProfileReceipt", fields: [validationReceiptId, catalogReleaseId, releaseRootHash], references: [id, catalogReleaseId, releaseRootHash], onDelete: Restrict, onUpdate: Restrict)
+  matchPins HuroofMatchPin[]
+  @@id([namespace, family, sourceId, revision])
+  @@unique([namespace, family, sourceId, revision, rawArtifactHash], map: "HuroofContentRevision_n_f_s_r_raw_key")
+  @@unique([namespace, family, sourceId, revision, rawArtifactId, rawArtifactHash, validationReceiptId, catalogReleaseId, releaseRootHash], map: "HuroofContentRevision_n_f_s_r_full_key")
+  pointers HuroofContentPointer[]
+}
+
+model HuroofContentPointer {
+  namespace String
+  kind String
+  scope String
+  family String
+  sourceId String
+  revision BigInt
+  rawArtifactHash String
+  version BigInt @default(0)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  revisionRow HuroofContentRevision @relation(fields: [namespace, family, sourceId, revision, rawArtifactHash], references: [namespace, family, sourceId, revision, rawArtifactHash], onDelete: Restrict, onUpdate: Restrict)
+  @@id([namespace, kind, scope])
+}
+
+model HuroofContentAudit {
+  namespace String
+  operationKey String
+  actorFirebaseIdentityId String
+  kind String
+  scope String
+  expectedVersion BigInt
+  outcome String
+  rawEvidence Bytes
+  evidenceHash String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  actor FirebaseIdentity @relation(fields: [actorFirebaseIdentityId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  @@id([namespace, operationKey])
+}
+
+model HuroofMediaRevision {
+  namespace String
+  objectId String
+  generation BigInt
+  contentHash String
+  mediaType String
+  byteLength BigInt
+  provenanceHash String
+  rawArtifactId String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  raw HuroofRawArtifact @relation("HuroofMediaRaw", fields: [namespace, rawArtifactId, contentHash, mediaType, byteLength, provenanceHash], references: [namespace, id, contentHash, mediaType, byteLength, provenanceHash], onDelete: Restrict, onUpdate: Restrict)
+  @@id([namespace, objectId, generation])
+  @@unique([namespace, objectId, generation, contentHash])
+}
+
+model HuroofMatchResult {
+  namespace String
+  matchId String
+  roomId String
+  resultVersion BigInt
+  resultHash String
+  ownerFirebaseIdentityId String
+  admissionId String
+  terminalEventId String
+  terminalSequence BigInt
+  rawArtifactId String
+  previousVersion BigInt?
+  previousHash String?
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  match HuroofMatch @relation(fields: [namespace, matchId, roomId, ownerFirebaseIdentityId, admissionId], references: [namespace, id, roomId, ownerFirebaseIdentityId, admissionId], onDelete: Restrict, onUpdate: Restrict)
+  admission Admission @relation(fields: [admissionId, ownerFirebaseIdentityId], references: [id, firebaseIdentityId], onDelete: Restrict, onUpdate: Restrict)
+  owner FirebaseIdentity @relation(fields: [ownerFirebaseIdentityId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  raw HuroofRawArtifact @relation("HuroofResultRaw", fields: [namespace, rawArtifactId, resultHash], references: [namespace, id, contentHash], onDelete: Restrict, onUpdate: Restrict)
+  terminalEvent HuroofEvent @relation("HuroofResultTerminalEvent", fields: [namespace, roomId, terminalSequence, terminalEventId, matchId], references: [namespace, roomId, sequence, id, matchId], onDelete: Restrict, onUpdate: Restrict)
+  historyEntries HuroofOwnerHistoryEntry[]
+  rematchLinks HuroofRematchLink[]
+  nextVersions HuroofMatchResult[] @relation("HuroofResultPrevious")
+  previousResult HuroofMatchResult? @relation("HuroofResultPrevious", fields: [namespace, matchId, previousVersion, ownerFirebaseIdentityId, previousHash], references: [namespace, matchId, resultVersion, ownerFirebaseIdentityId, resultHash], onDelete: Restrict, onUpdate: Restrict)
+  @@id([namespace, matchId, resultVersion])
+  @@unique([namespace, matchId, resultVersion, ownerFirebaseIdentityId], map: "HuroofMatchResult_owner_key")
+  @@unique([namespace, matchId, resultVersion, ownerFirebaseIdentityId, resultHash], map: "HuroofMatchResult_owner_hash_key")
+}
+
+model HuroofOwnerHistoryHead {
+  namespace String
+  ownerFirebaseIdentityId String
+  nextSequence BigInt @default(1)
+  version BigInt @default(0)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  owner FirebaseIdentity @relation(fields: [ownerFirebaseIdentityId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  entries HuroofOwnerHistoryEntry[]
+  @@id([namespace, ownerFirebaseIdentityId])
+}
+
+model HuroofOwnerHistoryEntry {
+  namespace String
+  ownerFirebaseIdentityId String
+  sequence BigInt
+  matchId String
+  resultVersion BigInt
+  resultHash String
+  occurredAt DateTime @db.Timestamptz(3)
+  provenance Bytes
+  provenanceHash String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  head HuroofOwnerHistoryHead @relation(fields: [namespace, ownerFirebaseIdentityId], references: [namespace, ownerFirebaseIdentityId], onDelete: Restrict, onUpdate: Restrict)
+  result HuroofMatchResult @relation(fields: [namespace, matchId, resultVersion, ownerFirebaseIdentityId, resultHash], references: [namespace, matchId, resultVersion, ownerFirebaseIdentityId, resultHash], onDelete: Restrict, onUpdate: Restrict)
+  @@id([namespace, ownerFirebaseIdentityId, sequence])
+  @@unique([namespace, ownerFirebaseIdentityId, matchId, resultVersion])
+}
+
+model HuroofRematchLink {
+  namespace String
+  childMatchId String @unique
+  predecessorMatchId String
+  ownerFirebaseIdentityId String
+  predecessorResultVersion BigInt
+  predecessorResultHash String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  child HuroofMatch @relation("HuroofRematchChild", fields: [namespace, childMatchId, ownerFirebaseIdentityId], references: [namespace, id, ownerFirebaseIdentityId], onDelete: Restrict, onUpdate: Restrict)
+  predecessorResult HuroofMatchResult @relation(fields: [namespace, predecessorMatchId, predecessorResultVersion, ownerFirebaseIdentityId, predecessorResultHash], references: [namespace, matchId, resultVersion, ownerFirebaseIdentityId, resultHash], onDelete: Restrict, onUpdate: Restrict)
+  @@id([namespace, childMatchId])
+  @@unique([namespace, childMatchId, ownerFirebaseIdentityId])
+}

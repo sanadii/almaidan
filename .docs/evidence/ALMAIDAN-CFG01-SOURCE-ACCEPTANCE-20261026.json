@@ -1,0 +1,134 @@
+{
+  "task": "ALMAIDAN-CFG01",
+  "parent": "PRO-259 / MID-TRN-05 / INT-060.E3.COMP02",
+  "decision": "ACCEPTED_WITH_LIMITS_PROSPECTIVE_SOURCE_CONFIGURATION_ONLY",
+  "acceptedBy": "Root coordinator existing integration chat",
+  "acceptedAtKuwait": "2026-10-26T06:30:48.137598+03:00",
+  "humanAuthority": {
+    "path": "D:/projects/huroof_wa_oloof/output/pro259-almaidan-20261025/ROOT-RESUME-20261026.json",
+    "sha256": "04d0e1dbd321e4e9f70638c38ab435bf2e4b703f01fe3fae57eaa16a27f90e49"
+  },
+  "plan": {
+    "path": "D:/projects/huroof_wa_oloof/output/pro259-almaidan-20261025/ALMAIDAN-PLAN.md",
+    "sha256": "19c7d83130909c3a68ae9f9e308a16fbff3d16270796f518712156de15b1087a"
+  },
+  "editRelease": {
+    "path": "D:/projects/huroof_wa_oloof/output/pro259-almaidan-20261025/ROOT-EDIT-RELEASE.json",
+    "sha256": "4e938e8ce55a6737a689ef58294ce596de1703cfe4b92133c1053161c5f39937"
+  },
+  "freeze": {
+    "path": "D:/projects/huroof_wa_oloof/output/pro259-almaidan-20261025/ROOT-CFG01-R1-FREEZE.json",
+    "sha256": "cbd149b564ccfc9dd98ea1f7eb1495fab87273a87afb7d1e65443aa1baf69b72"
+  },
+  "writerCandidate": {
+    "path": "D:/projects/huroof_wa_oloof/output/pro259-almaidan-20261025/forge/CFG01-R1-CANDIDATE.json",
+    "sha256": "ee151cf8e03ed0ddf4e0360ec165d77cd86a52c8efe7f94d4ea7cd8fa82fd6ce"
+  },
+  "writerReport": {
+    "path": "D:/projects/huroof_wa_oloof/output/pro259-almaidan-20261025/forge/CFG01-R1-IMPLEMENTATION-EVIDENCE.md",
+    "sha256": "463944638a285584567411b019345dd799c262ba3eee8b129dae3ee0f7094c1e"
+  },
+  "sourcePostimages": [
+    {
+      "path": "C:/Users/User/.codex/worktrees/huroof-enta-integration/huroof_wa_oloof/.env.example",
+      "sha256": "3a1bda6fd1bfca447cc21ad0d131aabf4245eea25ba2fd892fd2735fc753fb6b"
+    },
+    {
+      "path": "C:/Users/User/.codex/worktrees/huroof-enta-integration/huroof_wa_oloof/services/enta/server/src/runtime-config.ts",
+      "sha256": "fb9c5f86dffdb2f288a56b4221146ac423a3f31bf10574d99bfcfdfd06db7642"
+    },
+    {
+      "path": "C:/Users/User/.codex/worktrees/huroof-enta-integration/huroof_wa_oloof/services/enta/server/tests/runtime-config.test.ts",
+      "sha256": "7aef0ad8d5cd508607ac449680261b8f05559ec31682e79440213450aa472f23"
+    }
+  ],
+  "preimages": {
+    "path": "D:/projects/huroof_wa_oloof/output/pro259-almaidan-20261025/ROOT-CHANGE-IMPACT.json",
+    "sha256": "e157f53a9656cdcae458580b6019990ad9074763075d52ee8a8370142bcf2ae3"
+  },
+  "preservedR0": {
+    "path": "D:/projects/huroof_wa_oloof/output/pro259-almaidan-20261025/preserved-cfg-r0-20261026/PRESERVATION.json",
+    "sha256": "961edc7c7b95593e3643d8c396ae0141a9aa684c8f7889848d1ba27b0f8d60ee"
+  },
+  "reviews": [
+    {
+      "domain": "database",
+      "decision": "CONCUR_WITH_LIMITS",
+      "review": {
+        "path": "D:/projects/huroof_wa_oloof/output/pro259-almaidan-20261025/database/FINAL-REVIEW-R1.md",
+        "sha256": "1d688d6c3afa656ec8ac3f2deb400a813aba38dff64335f9b222a5e5f65184a3"
+      },
+      "metadata": {
+        "path": "D:/projects/huroof_wa_oloof/output/pro259-almaidan-20261025/database/FINAL-METADATA-R1.json",
+        "sha256": "6339ccd06f5fcd2e4dc76355a0377f547d7a09e52606f40557937291d9121b6f"
+      },
+      "executionByReviewer": false
+    },
+    {
+      "domain": "security",
+      "decision": "CONCUR_WITH_LIMITS",
+      "review": {
+        "path": "D:/projects/huroof_wa_oloof/output/pro259-almaidan-20261025/security/FINAL-REVIEW-R1.md",
+        "sha256": "3f97a952c111504da7bd4afae817bc55f0a3dc5ab7d62bb87fd8acc077582002"
+      },
+      "metadata": {
+        "path": "D:/projects/huroof_wa_oloof/output/pro259-almaidan-20261025/security/FINAL-METADATA-R1.json",
+        "sha256": "458a4b799d1fbdeddfd4d1a273a8833e6ca76c05652497d511cda3603bb4e8a4"
+      },
+      "executionByReviewer": false
+    }
+  ],
+  "rootVerification": {
+    "path": "D:/projects/huroof_wa_oloof/output/pro259-almaidan-20261025/root-verification-20261026/ROOT-R1-VERIFICATION.json",
+    "sha256": "6b242112f2edb5a42104949404a633033aa50052a72d748a500ab03da19e9ae1"
+  },
+  "checks": {
+    "CFG_C01": "Five actual runtime-config test groups pass, including original3guardgroups and repaired grammar/parser privacy controls.",
+    "CFG_C02": "Writer R1 final2 fullserver/focusedstrict noEmit exit0 with empty streams; exact commands/tool/log joins frozen.",
+    "CFG_C03": "Actual loadRuntimeConfig→app Prisma datasource path and declared Prisma variables verified by source/hash; unchanged type interface and erased import retain compatible prior functional conclusions.",
+    "CFG_C04": "68frozen files verified;14R0preservedcopies; exact current source/input/tool/log identity, both domain reviews, Root2/2actual-loader subset exit0 with unchanged68postimages. Subset adds no unique test credit."
+  },
+  "scope": "Actual default server runtime-loader enforces supplied PostgreSQL DATABASE_URL/DIRECT_URL canonical /almaidan, lexical/identity checks and fixed sanitized errors; blank server-only examples; original absence/auth/mock/payment guards unchanged.",
+  "limits": [
+    "No database created, renamed, deleted, reached or verified. Logical name agreement is not physical single-cluster identity or direct/pooler equivalence.",
+    "No Prisma CLI/generation, installed schema/grants/authority, runtime/financial, provisioning, deployment or Firestore/legacy migration/cutover.",
+    "Arbitrary injected RuntimeConfig and legacy db.ts are outside default-loader guarantee.",
+    "Historical first R0 failed test raw logs were overwritten and remain unavailable; never reconstructed. All available original/R1 logs preserved.",
+    "Duplicate-key regression test suggestion is advisory; all-occurrences rejection loop verified, no further scoped defect found.",
+    "Original PRO-259 genuine issuer/policy/lifecycle/custody/native/material/physical gates remain unmet; both-engine ENG02→ENG03→ENG04 convergence remains future work."
+  ],
+  "retention": {
+    "content01": {
+      "path": "D:/projects/huroof_wa_oloof/.docs/evidence/INT-060-E3-COMP02-CONTENT01-ACCEPTANCE-20261025.json",
+      "sha256": "bd633986f58c357e9a1646b14b43bd8257ef717c8e2f92c0abf5311c93250e98"
+    },
+    "srcClose": {
+      "path": "D:/projects/huroof_wa_oloof/.docs/evidence/INT-060-E3-COMP02-SRC-CLOSE-ACCEPTANCE-20261023.json",
+      "sha256": "86063fcc09c595114665f2a7037c0025adde1d55c76875cf056d0b7b67aa8bfe"
+    },
+    "typeOnlyProof": {
+      "path": "D:/projects/huroof_wa_oloof/output/pro259-almaidan-20261025/ROOT-CONTENT01-RETENTION.json",
+      "sha256": "8421bfb191a5c3a28f3891335bcbf7dacff31c39e1a4c5702cb67b3f5134625c"
+    },
+    "claim": "Retain original compatible source/functional checks only; no old29/content5 replay or new credit, current CFG01 compiler evidence required after source change."
+  },
+  "rollback": "Postimage-matched inverse of only owned three-file diff; preserve preimages, unrelated mixed work, approvals and all evidence. No DB restore or installed rollback.",
+  "R6": "STOP",
+  "parentDone": false,
+  "physicalDatabaseCreated": false,
+  "firestoreMigrated": false,
+  "next": "ENG02 reviewed persistence/realtime/admission migration design; no automatic following-part execution or operational admission.",
+  "usage": {
+    "elapsedMinutes": 15.9,
+    "originalEstimateMinutes": [
+      15,
+      30
+    ],
+    "revisedEstimateMinutes": [
+      20,
+      40
+    ],
+    "roles": "Root Sol6.1, same Forge Luna, same Database/Security Sol6.1; existing Astra plan retained; no new planner this resume",
+    "providerTokens": "unavailable"
+  }
+}

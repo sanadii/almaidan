@@ -1,0 +1,75 @@
+{
+  "task": "PRO-271 / INT-031.AUTH",
+  "status": "BOUNDED_COLLISION_SOURCE_ACCEPTED_FULL_TASK_PENDING",
+  "candidate": [
+    {
+      "path": "src/features/auth/auth-service.ts",
+      "sha256": "643563989c45c2e2d31950e1e91be0e3224a6772feb08e9cdd9b0b9e17c0863c"
+    },
+    {
+      "path": "tests/app/auth-service.test.tsx",
+      "sha256": "11efe837ce9f5be46af534c1bc20832ff8b02e17d0bb8c6b19bb8570bce7ab90"
+    },
+    {
+      "path": "tests/app/auth-collision-composition.test.tsx",
+      "sha256": "f9dd4bf9fbe4a46401460c23ef7b6b0ee806c45fcada9a721380b8ac0a21c6ce"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro271-auth-20261027\\forge\\candidate-manifest.json",
+      "sha256": "2834b06f459463467141be05cf1b939b9b5fa5b03c1828f0b0c582bad9512e03"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro271-auth-20261027\\forge\\import-audit.json",
+      "sha256": "06b75994a200ba6cc050aa69879f1feb2ada63c744e098e81ba9263ffb001c82"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro271-auth-20261027\\forge\\actual-composition.cjs",
+      "sha256": "4df59a8074cf4a63fb1cc16e96a7ac5856a7889eab2661101fb90f5305dfec22"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro271-auth-20261027\\forge\\actual-composition.log",
+      "sha256": "2bcae185b6ef4bd3e57357c02d02626262c212a17174f61c46eb5b74f6128a48"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro271-auth-20261027\\forge\\compatibility-join.json",
+      "sha256": "476ea1890da993e1346c8b59403938911784b13cd2899a8ae58d35aa00bb6636"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro271-auth-20261027\\root-composition.log",
+      "sha256": "2bcae185b6ef4bd3e57357c02d02626262c212a17174f61c46eb5b74f6128a48"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro271-auth-20261027\\root-test-tsconfig.json",
+      "sha256": "e94305e26aeecbefa2b19a2df124a8c4a74b261696edc799c0e8d2849bc60a90"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro271-auth-20261027\\root-test-tsc.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro271-auth-20261027\\database\\FINAL-REVIEW.md",
+      "sha256": "05cffe39d3395a9ee4a5db142956e5d141e79b3a948b8f52ec81447cbae58bc5"
+    },
+    {
+      "path": "D:\\projects\\huroof_wa_oloof\\output\\pro271-auth-20261027\\security\\FINAL-REVIEW.md",
+      "sha256": "7c17542f83bd7e2a0dd85c4a34793c267f0edad96432a61baaff91a895d3ce67"
+    }
+  ],
+  "checks": {
+    "actual_module_composition": "PASS_FORGE_AND_ROOT",
+    "app_noEmit": "PASS_FORGE",
+    "changed_test_sources_noEmit": "PASS_ROOT",
+    "database_review": "CONCUR_SOURCE_ONLY",
+    "security_review": "CONCUR_WITH_LIMITS",
+    "accepted03_04_compatibility": "39 hashes and 2 intentional absences; 41 path states compatible",
+    "vitest_execution": "NOT_RUN",
+    "runtime": "NOT_RUN"
+  },
+  "remaining": "Full identity roles and verified hosting joins depend on ENG03-05; not full PRO-271 acceptance. No SDK rollback/persistence claim.",
+  "holds": [
+    "R6 STOP"
+  ],
+  "rollback": "Only owned source preimages; no database or identity record changes."
+}
