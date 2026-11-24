@@ -1,6 +1,6 @@
 .enta-page select { min-block-size: 48px; max-inline-size: 100%; padding: 8px 16px; border: 1px solid var(--app-border); border-radius: 8px; background: var(--app-canvas); color: var(--app-ink); font: inherit; }
 .enta-page .enta-round-category { display: grid; align-content: start; gap: 16px; min-inline-size: 0; }
-.enta-page .enta-round-category .enta-category { display: grid; gap: 8px; inline-size: 100%; }
+.enta-page .enta-round-category .enta-category { inline-size: 100%; }
 .enta-page .enta-round-category fieldset { min-inline-size: 0; display: grid; gap: 8px; padding: 16px; border: 1px solid var(--app-border); border-radius: 12px; }
 .enta-page .enta-round-category fieldset label { display: flex; align-items: center; gap: 8px; min-block-size: 44px; }
 .enta-page :is(.enta-round-time,.enta-actor-fields,.enta-canvas-tools) { display: flex; flex-wrap: wrap; gap: 16px; min-inline-size: 0; }

@@ -16,11 +16,63 @@
 .enta-page button:disabled { opacity: 1; color: var(--app-muted); background: var(--app-subtle); border-color: var(--app-border); cursor: not-allowed; }
 .enta-page .enta-categories { display: grid; gap: 24px; }
 .enta-page .enta-section-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-.enta-page .enta-category-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,180px),1fr)); gap: 16px; }
-.enta-page .enta-category { text-align: start; padding: 16px; background: var(--app-surface); }
-.enta-page .enta-category[aria-pressed="true"] { border: 2px solid var(--app-accent); color: var(--app-accent); background: var(--app-surface); }
+/* Picture-first category cards (shared by classic, challenge and rounds setups). */
+.enta-page .enta-category-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(min(100%,9.5rem),1fr)); gap: var(--space-4); }
+.enta-page .enta-categories .enta-category { position: relative; display: grid; grid-template-rows: auto 1fr; inline-size: 100%; min-block-size: 0; padding: 0; overflow: hidden; border: 1px solid var(--app-border); border-radius: var(--spatial-radius-dock); background: var(--app-surface); color: var(--app-ink); font: inherit; text-align: center; cursor: pointer; transition: transform 180ms cubic-bezier(0.25, 1, 0.5, 1), border-color 180ms; }
+.enta-page .enta-categories .enta-category:not(:disabled):hover { filter: none; transform: translateY(-3px); border-color: var(--app-accent); background: var(--app-surface); color: var(--app-ink); box-shadow: var(--shadow-compact); }
+.enta-page .enta-categories .enta-category:focus-visible { outline: 3px solid var(--spatial-cyan); outline-offset: 3px; }
+.enta-page .enta-categories .enta-category[aria-pressed="true"] { border-color: var(--spatial-cyan); box-shadow: var(--shadow-team-focus); }
+.enta-page .enta-categories .enta-category[aria-pressed="true"] .enta-category__label { color: var(--app-accent); }
+.enta-page .enta-categories .enta-category:disabled { opacity: 0.5; cursor: not-allowed; background: var(--app-surface); color: var(--app-ink); }
+.enta-page .enta-categories .enta-category:disabled .enta-category__art img { filter: grayscale(0.7); }
+.enta-page .enta-category__art { display: block; aspect-ratio: 1 / 1; overflow: hidden; background: var(--app-subtle); }
+.enta-page .enta-category__art img { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; transition: transform 300ms cubic-bezier(0.25, 1, 0.5, 1); }
+.enta-page .enta-categories .enta-category:not(:disabled):hover .enta-category__art img { transform: scale(1.05); }
+.enta-page .enta-category__label { display: grid; align-content: center; gap: 2px; min-block-size: 3.25rem; padding: var(--space-2) var(--space-3); font-size: var(--text-sm); font-weight: var(--weight-bold); line-height: 1.35; text-wrap: balance; }
+.enta-page .enta-category__label small { color: var(--app-muted); font-size: var(--text-xs); font-weight: var(--weight-semibold); }
+.enta-page .enta-category__badge { position: absolute; inset-block-start: var(--space-2); inset-inline-start: var(--space-2); display: grid; place-items: center; inline-size: 1.9rem; block-size: 1.9rem; border-radius: 50%; background: var(--spatial-cyan); color: var(--spatial-cyan-ink); font-weight: 800; box-shadow: var(--shadow-compact); }
+.enta-page .enta-category-skeleton { aspect-ratio: 4 / 5; border-radius: var(--spatial-radius-dock); background: var(--app-subtle); animation: enta-skeleton 1.2s ease-in-out infinite alternate; }
+@keyframes enta-skeleton { from { opacity: 0.55; } to { opacity: 1; } }
+
+.enta-page .enta-picker { display: grid; gap: var(--space-4); }
+/* Cards scroll inside their own panel so teams and timing stay one short scroll away. */
+.enta-page .enta-picker__results { display: grid; gap: var(--space-6); max-block-size: min(72vh, 46rem); overflow-y: auto; overscroll-behavior: contain; padding: var(--space-4); border: 1px solid var(--app-border); border-radius: var(--spatial-radius-dock); background: var(--app-subtle); scrollbar-gutter: stable; }
+.enta-page .enta-picker__results:focus-visible { outline: 3px solid var(--spatial-cyan); outline-offset: 2px; }
+.enta-page .enta-picker__tools { display: flex; flex-wrap: wrap; align-items: end; gap: var(--space-3); }
+.enta-page .enta-picker__search { flex: 1 1 16rem; }
+.enta-page .enta-picker__random { display: inline-flex; align-items: center; gap: var(--space-2); }
+.enta-page :is(.enta-topic-chips, .enta-quick-times) { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.enta-page :is(.enta-topic-chips, .enta-quick-times) button { min-block-size: 2.5rem; padding: 0 var(--space-4); border: 1px solid var(--app-border); border-radius: var(--arena-radius-capsule); background: var(--app-surface); color: var(--app-ink); font-size: var(--text-sm); font-weight: var(--weight-bold); }
+.enta-page :is(.enta-topic-chips, .enta-quick-times) button[aria-pressed="true"] { border-color: var(--app-action); background: var(--app-action); color: var(--spatial-face); }
+.enta-page .enta-picker__tray { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.enta-page .enta-picker__chip { display: inline-flex; align-items: center; gap: var(--space-2); min-block-size: 2.5rem; padding: 0 var(--space-3); border: 1px solid var(--spatial-cyan); border-radius: var(--arena-radius-capsule); background: var(--app-surface); color: var(--app-ink); font-size: var(--text-sm); }
+.enta-page .enta-picker__chip > span:first-child { display: grid; place-items: center; inline-size: 1.5rem; block-size: 1.5rem; border-radius: 50%; background: var(--spatial-cyan); color: var(--spatial-cyan-ink); font-weight: 800; font-size: var(--text-xs); }
+.enta-page .enta-topic-section { display: grid; gap: var(--space-3); }
+.enta-page .enta-topic-section h3 { margin: 0; font-size: var(--text-base); }
+.enta-page .enta-topic-section h3 span { display: inline-flex; align-items: center; min-block-size: 2rem; padding: 0 var(--space-4); border-radius: var(--arena-radius-capsule); background: var(--app-subtle); color: var(--app-accent); font-weight: 800; }
+.enta-page .enta-step { display: inline-grid; place-items: center; inline-size: 2rem; block-size: 2rem; margin-inline-end: var(--space-2); border-radius: 50%; background: var(--app-action); color: var(--spatial-face); font-size: var(--text-base); font-weight: 800; vertical-align: middle; }
+.enta-page .enta-count { font-variant-numeric: tabular-nums; color: var(--app-muted); }
+.enta-page .enta-count strong { font-size: var(--text-xl); color: var(--app-accent); }
+.enta-page .enta-details { padding: var(--space-3) var(--space-4); border: 1px solid var(--app-border); border-radius: var(--spatial-radius-control); background: var(--app-surface); }
+.enta-page .enta-details summary { cursor: pointer; font-weight: var(--weight-bold); color: var(--app-muted); }
+.enta-page .enta-aside-note { color: var(--app-muted); }
+.enta-page .enta-summary-facts { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: 0; margin: 0; list-style: none; }
+.enta-page .enta-summary-facts li { padding: var(--space-1) var(--space-3); border-radius: var(--arena-radius-capsule); background: var(--app-subtle); font-size: var(--text-sm); }
+.enta-page .enta-summary-facts strong { color: var(--app-accent); font-variant-numeric: tabular-nums; }
+.enta-page .enta-summary-picks { display: grid; gap: var(--space-2); inline-size: 100%; padding: 0; margin: 0; list-style: none; }
+.enta-page .enta-summary-picks li { display: flex; align-items: center; gap: var(--space-3); font-weight: var(--weight-bold); }
+.enta-page .enta-summary-picks .enta-category__art { flex: none; inline-size: 2.5rem; border-radius: var(--spatial-radius-control); }
+.enta-page :is(.enta-summary-hint, .enta-summary-note) { color: var(--app-muted); font-size: var(--text-sm); }
+.enta-page .enta-start { inline-size: 100%; min-block-size: 3.5rem; font-size: var(--text-lg); }
+@media (max-width: 48rem) {
+  /* One swipeable row of topics on phones instead of a tall wall of chips. */
+  .enta-page .enta-topic-chips { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-inline: contain; padding-block-end: var(--space-1); scrollbar-width: thin; }
+  .enta-page .enta-topic-chips button { flex: none; }
+  .enta-page .enta-category-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+  .enta-page .enta-picker__results { padding: var(--space-3); max-block-size: 70vh; }
+}
+@media (prefers-reduced-motion: reduce) { .enta-page .enta-category-skeleton { animation: none; } .enta-page .enta-categories .enta-category:not(:disabled):hover, .enta-page .enta-categories .enta-category:not(:disabled):hover .enta-category__art img { transform: none; } }
 .enta-page :is(.enta-setup-summary,.enta-state,.enta-question,.enta-result,.enta-finish) { display: grid; gap: 24px; justify-items: start; padding: 24px; border: 1px solid var(--app-border); border-radius: 16px; background: var(--app-surface); min-inline-size: 0; }
-.enta-page .enta-setup-summary { border-inline-start: 4px solid var(--app-accent); }
 .enta-page [role="alert"] { color: var(--app-error); }
 /*
  * Game board and scoreboard: the theme-invariant arena language shared with the Huroof board

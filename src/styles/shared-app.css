@@ -131,7 +131,8 @@ main.maydan-app.maydan-public-page { background:var(--app-canvas); color:var(--a
 .maydan-host-setup .timing-fields__control { display:grid; gap:8px; }
 .maydan-host-setup .challenge-capability-fields label { display:flex; gap:12px; }
 .maydan-host-setup .challenge-capability-fields fieldset { border:1px solid var(--app-border); border-radius:8px; padding:16px; margin:0; }
-.maydan-host-setup .category-filter { display:grid; gap:16px; margin:0; padding:0; border:0; }
+.maydan-host-setup .category-filter { display:grid; grid-template-columns:minmax(0,1fr); gap:16px; margin:0; padding:0; border:0; }
+.maydan-host-setup .category-filter > * { grid-column:1; min-inline-size:0; }
 .maydan-host-setup .category-filter > label { display:grid; gap:8px; }
 .maydan-host-setup .category-filter__controls { display:grid; gap:16px; }
 .maydan-host-setup .category-topic-picker { display:grid; gap:8px; min-inline-size:0; }
@@ -286,3 +287,7 @@ main.auth-page--login .auth-status[data-state="error"] { color: var(--app-error)
 .verify-email-notice { display:grid; gap:.75rem; margin-block:.75rem 0; padding:1rem; border:1px solid var(--app-border); border-radius:var(--spatial-radius-control); background:var(--app-surface); color:inherit; text-align:start; }
 .verify-email-notice p { margin:0; line-height:1.7; }
 .verify-email-notice__actions { display:flex; flex-wrap:wrap; gap:.5rem; }
+/* Huroof setup: unavailable categories read as quietly unavailable, not as a shouted caption. */
+.maydan-host-setup .category-choice[aria-disabled="true"] img { filter: grayscale(0.75); opacity: 0.7; }
+.maydan-host-setup .category-choice[aria-disabled="true"] .category-choice__title { color: var(--app-muted); }
+.maydan-host-setup .category-choice__reason { display: block; padding: 0 12px 12px; color: var(--app-muted); font-size: 13px; font-weight: 600; line-height: 1.5; text-align: start; }
