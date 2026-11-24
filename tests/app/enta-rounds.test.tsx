@@ -1,11 +1,11 @@
 import { ObservedFirebaseAuthProvider, renderObservedOwnerHook } from './fixtures/observed-firebase-auth';
-import { act, cleanup, render, renderHook, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import type { User } from 'firebase/auth';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { ThemeProvider } from '../../src/app/ThemeProvider';
-import { FirebaseAuthContext, loadingAuthContext } from '../../src/features/auth/auth-context';
+import { loadingAuthContext } from '../../src/features/auth/auth-context';
 import { EntaNewRoute } from '../../src/routes/EntaRoutes';
 import { EntaRoundNewRoute, RoundPlay } from '../../src/features/enta/RoundRoutes';
 import { EntaCapabilityRoute } from '../../src/features/enta/CapabilityRoute';
@@ -69,4 +69,21 @@ it('same-tab recipient rescan consumes fresh fragment immediately and fences pri
 });
 it('cosmetic countdown uses monotonic elapsed time and ignores system wall clock jump', async () => {
   fetchMock.mockResolvedValue(json(opened())); let monotonic = 1000; vi.spyOn(performance, 'now').mockImplementation(() => monotonic); vi.spyOn(Date, 'now').mockReturnValue(1); render(<ThemeProvider><ObservedFirebaseAuthProvider value={auth}><MemoryRouter initialEntries={['/enta/round-matches/round-game']}><Routes><Route path="/enta/round-matches/:id" element={<RoundPlay />} /></Routes></MemoryRouter></ObservedFirebaseAuthProvider></ThemeProvider>); await screen.findByRole('heading', { name: 'قائمة اختبار' }); expect(document.querySelector('.enta-timer')?.textContent).toContain('٣٠'); vi.spyOn(Date, 'now').mockReturnValue(9000000000000); monotonic = 2000; await waitFor(() => expect(document.querySelector('.enta-timer')?.textContent).toContain('٢٩'));
+});
+it('a later definite 409 resolves an uncertain round command, keeps its reason and lets the host continue', async () => {
+  const bodies: Array<{ commandId: string }> = []; let posts = 0;
+  fetchMock.mockImplementation((url: string, init?: RequestInit) => { if (init?.method !== 'POST') return Promise.resolve(json(board())); bodies.push(JSON.parse(init.body as string)); return posts++ === 0 ? Promise.reject(new TypeError('lost reply')) : Promise.resolve(json({ error: 'INVALID_PHASE' }, 409)); });
+  const hook = renderObservedOwnerHook(user, () => useRoundMatch(user, 'round-game')); await waitFor(() => expect(hook.result.current.match).not.toBeNull());
+  await act(async () => { await hook.result.current.command({ type: 'NEXT_ROUND' }); }); expect(hook.result.current.uncertain).toBe(true);
+  await act(async () => { hook.result.current.retry(); }); await waitFor(() => expect(hook.result.current.busy).toBe(false)); expect(hook.result.current.uncertain).toBe(false); expect(bodies[1]).toEqual(bodies[0]);
+  await waitFor(() => expect(fetchMock.mock.calls.filter(c => c[1]?.method !== 'POST').length).toBeGreaterThan(1)); expect((hook.result.current.error as { code: string }).code).toBe('INVALID_PHASE');
+  await act(async () => { await hook.result.current.command({ type: 'NEXT_ROUND' }); }); expect(bodies[2].commandId).not.toBe(bodies[0].commandId);
+});
+it('award team defaults to the server scoring team and survives the answer reveal', async () => {
+  const match = opened(); match.executionFormat = 'MIXED_BOARD'; match.categories[0].format = 'ORDINARY_TIER'; match.rounds.forEach(round => { round.format = 'ORDINARY_TIER'; round.points = 200; }); Object.assign(match.currentRound!, { format: 'ORDINARY_TIER', points: 200, scoringTeamId: 'team_b', items: [] });
+  let adjudicated: Record<string, unknown> | null = null;
+  fetchMock.mockImplementation((url: string, init?: RequestInit) => { if (init?.method !== 'POST') return Promise.resolve(json(match)); const command = JSON.parse(init.body as string); match.version++; match.currentRound!.version++; if (command.type === 'REVEAL_TARGET') Object.assign(match.currentRound!, { revealed: true, target: 'الهدف' }); if (command.type === 'ADJUDICATE_ROUND') adjudicated = command; return Promise.resolve(json({ match, idempotent: false })); });
+  render(<ThemeProvider><ObservedFirebaseAuthProvider value={auth}><MemoryRouter initialEntries={['/enta/round-matches/round-game']}><Routes><Route path="/enta/round-matches/:id" element={<RoundPlay />} /></Routes></MemoryRouter></ObservedFirebaseAuthProvider></ThemeProvider>);
+  await userEvent.click(await screen.findByRole('button', { name: 'إظهار الإجابة' })); const select = await screen.findByRole('combobox', { name: 'الفريق الذي أجاب صح' }); await waitFor(() => expect(select).toHaveValue('team_b'));
+  await userEvent.click(screen.getByRole('button', { name: 'جاوب صح — احتساب النقاط' })); await waitFor(() => expect(adjudicated).toMatchObject({ type: 'ADJUDICATE_ROUND', correct: true, teamId: 'team_b' }));
 });

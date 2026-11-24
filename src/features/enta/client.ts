@@ -118,8 +118,13 @@ export function entaErrorText(error: unknown): string {
     ROUND_TIME_EXPIRED: 'انتهى وقت الدور أو الجولة. راجع حالتها قبل الإجراء التالي.', ROUND_PAUSED: 'الجولة متوقفة مؤقتاً. استأنفها قبل اللعب.', GRANT_DENIED: 'انتهى رمز الجهاز أو أُلغي. اطلب رمزاً جديداً من المضيف.',
     PAGE_SNAPSHOT_RESTART: 'تغيّرت تفاصيل الجولة أثناء التحميل. أعد تحميل الحالة ثم راجع الإجابات والمحاولات قبل المتابعة.',
     GRANT_ALREADY_ACTIVE: 'يوجد رمز لهذا الجهاز. استخدم تجديد الرمز لعرض رمز جديد.', STALE_GRANT_GENERATION: 'تغيّر رمز الجهاز. راجع الأجهزة المرتبطة.', CANVAS_BUDGET_EXCEEDED: 'وصل الرسم إلى سعته المحددة. لا يعيد المسح أو التراجع سعة الرسم.', STALE_CANVAS_REVISION: 'تغيّر الرسم من جهاز آخر. أعد تحميله.', ITEM_RESOLVED: 'احتُسبت هذه الإجابة بالفعل.', MEDIA_DENIED: 'هذه الوسائط غير متاحة في حالة الجولة الحالية.',
+    INVALID_PHASE: 'هذا الإجراء غير متاح في مرحلة الجولة الحالية. حدّثنا الحالة؛ راجعوها ثم اختاروا الإجراء المناسب.', ROUND_UNAVAILABLE: 'هذه الجولة غير متاحة الآن. أكملوا الجولة الجارية أولاً.', UNRESOLVED_ROUND: 'أكملوا الجولة الجارية قبل إنهاء المباراة.', UNRESOLVED_QUESTION: 'أكملوا السؤال المفتوح قبل إنهاء المباراة.', NO_MORE_ROUNDS: 'لا توجد جولات أخرى. أنهوا المباراة لعرض النتيجة.', MATCH_FINISHED: 'انتهت المباراة بالفعل.', ASSIGNMENT_UNAVAILABLE: 'تعذر تعيين هذا اللاعب أو الإجابة في الجولة الحالية.',
+    ROOM_REQUIRES_NEW_MATCH: 'بدأ اللعب في هذه المباراة قبل ربطها بغرفة، فلا يمكن فتح غرفة لها الآن. تابعوها من «مبارياتي»، أو ابدأوا مباراة جديدة لاستخدام غرفة اللعب.',
   };
-  return messages[code] ?? 'خدمة إنت صح غير متاحة الآن. تحقق من الاتصال وأعد المحاولة.';
+  if (messages[code]) return messages[code];
+  // A definite server rejection is never a connection problem; say so plainly.
+  if (error instanceof EntaClientError && error.status >= 400 && error.status < 500 && ![401, 408, 429].includes(error.status)) return 'تعذّر تنفيذ هذا الإجراء في حالة المباراة الحالية. حدّثنا الحالة؛ راجعوها ثم أعيدوا المحاولة.';
+  return 'خدمة إنت صح غير متاحة الآن. تحقق من الاتصال وأعد المحاولة.';
 }
 
 /** Pending intent only; never a game, answer, score or permission cache. */

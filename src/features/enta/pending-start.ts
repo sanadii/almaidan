@@ -1,6 +1,6 @@
 import {verifyLocalRematchCompletion} from './local-rematch-client';
 import { isAlmaidanLocalDevelopment } from '../../lib/local-development';
-import { roomRequest } from './room-client';
+import { isDefinitiveRoomRejection, roomRequest } from './room-client';
 import type { User } from 'firebase/auth';
 import { ownerEpoch, isOwnerEpoch } from './auth-epoch';
 import { EntaClientError, matchEnvelope, pendingStartStorageKey, requestEnta } from './client';
@@ -76,9 +76,23 @@ export async function completePendingStart(user: Pick<User, 'uid' | 'getIdToken'
   let roomCode: string | undefined;
   if (isAlmaidanLocalDevelopment) {
     const engine = intent.version === 6 ? intent.engine : intent.version === 5 ? 'competitive' : intent.version === 4 ? 'round' : intent.mode === 'KIDS' ? 'kids' : 'classic';
-    const attached = await roomRequest('', { user: actor, signal, body: { engine, matchId: gameId, requestKey: intent.command.requestKey } });
-    roomCode = (attached.room ?? attached).code;
-    if (typeof roomCode !== 'string' || !/^E1-[A-Z0-9]{8}$/.test(roomCode)) throw new EntaClientError('MALFORMED_RESPONSE');
+    let attached: { room?: { code?: unknown }; code?: unknown };
+    try { attached = await roomRequest('', { user: actor, signal, body: { engine, matchId: gameId, requestKey: intent.command.requestKey } }); }
+    catch (error) {
+      // The start itself is proven above. A match that already progressed can
+      // never get a lobby, so retrying this exact intent can only fail again:
+      // retire it and report the definite reason instead of staying uncertain.
+      if (isDefinitiveRoomRejection(error) && (error as Error).message === 'ROOM_REQUIRES_NEW_MATCH') {
+        assertCaptured();
+        try { sessionStorage.removeItem(storageKey); }
+        catch { throw new EntaClientError('PENDING_INTENT_STORAGE_UNAVAILABLE'); }
+        throw new EntaClientError('ROOM_REQUIRES_NEW_MATCH', 409);
+      }
+      throw error;
+    }
+    const attachedCode = (attached.room ?? attached).code;
+    if (typeof attachedCode !== 'string' || !/^E1-[A-Z0-9]{8}$/.test(attachedCode)) throw new EntaClientError('MALFORMED_RESPONSE');
+    roomCode = attachedCode;
     assertCaptured();
     sessionStorage.setItem(`almaidan:match-room:${uid}:${gameId}`, roomCode);
   }
@@ -94,3 +108,5 @@ export async function completePendingStart(user: Pick<User, 'uid' | 'getIdToken'
   }
   return { id: gameId, ...(roomCode ? {roomCode} : {}) };
 }
+/** True when completion retired the pending intent with a definite reason. */
+export const pendingStartRetired = (error: unknown): boolean => error instanceof EntaClientError && error.code === 'ROOM_REQUIRES_NEW_MATCH' && error.status === 409;

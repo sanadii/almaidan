@@ -531,7 +531,11 @@ const server = createServer(async (request, response) => {
 });
 const imposterSockets = new WebSocketServer({ noServer: true });
 const imposterConnections = new Map<string, Set<{ws: import('ws').WebSocket; token: string; lastRevision: number}>>();
-const broadcastImposter = (roomId: string) => { for (const c of imposterConnections.get(roomId) ?? []) { try { if (c.ws.readyState===c.ws.OPEN && imposterService) { const snapshot=imposterService.read(roomId,c.token); if (snapshot.projection.revision!==c.lastRevision) { c.lastRevision=snapshot.projection.revision; c.ws.send(JSON.stringify(snapshot)); } } } catch { c.ws.close(); } } };
+// Terminal failures (removed member, unknown room, forged token) end the socket with a reason the
+// client can show instead of retrying forever behind a "reconnecting" banner.
+const IMPOSTER_TERMINAL_CLOSE = 4403;
+const endImposterSocket = (ws: import('ws').WebSocket, error: unknown) => { const code = error instanceof Error && /^[A-Z_]{3,40}$/.test(error.message) ? error.message : 'ROOM_UNAVAILABLE'; try { ws.send(JSON.stringify({ error: code })); } catch { /* socket already closing */ } ws.close(IMPOSTER_TERMINAL_CLOSE, code); };
+const broadcastImposter = (roomId: string) => { for (const c of imposterConnections.get(roomId) ?? []) { try { if (c.ws.readyState===c.ws.OPEN && imposterService) { const snapshot=imposterService.read(roomId,c.token); if (snapshot.projection.revision!==c.lastRevision) { c.lastRevision=snapshot.projection.revision; c.ws.send(JSON.stringify(snapshot)); } } } catch (error) { endImposterSocket(c.ws, error); } } };
 const imposterTick = setInterval(() => { for (const id of imposterConnections.keys()) broadcastImposter(id); },1000);
 imposterTick.unref();
 const sockets = new WebSocketServer({ noServer: true });
@@ -546,11 +550,23 @@ type Connection = {
 const connections = new Map<string, Set<Connection>>();
 const presenceSeen = new Map<string, Map<string, number>>();
 const broadcast = (roomId: string) => {
-  for (const connection of connections.get(roomId) ?? [])
-    if (connection.ws.readyState === connection.ws.OPEN)
-      connection.ws.send(
-        JSON.stringify(service.metadata(roomId, connection.token)),
-      );
+  // Each recipient is projected separately; one projection failure must not starve the others
+  // (or turn an already-committed HTTP intent into an error response).
+  for (const connection of connections.get(roomId) ?? []) {
+    if (connection.ws.readyState !== connection.ws.OPEN) continue;
+    try {
+      connection.ws.send(JSON.stringify(service.metadata(roomId, connection.token)));
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : 'unknown';
+      // A seat the host removed can never read the room again: tell that client and stop its socket.
+      if (/^(UNAUTHORIZED|FORBIDDEN_ROLE|NOT_MEMBER|ROOM_NOT_FOUND)$/.test(reason)) {
+        try { connection.ws.send(JSON.stringify({ error: 'SEAT_REMOVED' })); } catch { /* already closing */ }
+        connection.ws.close(4403, 'SEAT_REMOVED');
+        continue;
+      }
+      console.error(`ROOM_BROADCAST_FAILED ${roomId}: ${reason.slice(0, 200)}`);
+    }
+  }
 };
 const presenceSnapshot = (roomId: string, refreshId?: string) => {
   const room = service.store.load(roomId);
@@ -604,8 +620,16 @@ const broadcastPresence = (roomId: string) => {
     )
       connection.ws.send(message);
 };
+service.onRoomChanged = (roomId) => broadcast(roomId);
+let gameTickRunning = false;
 const gameTick = setInterval(() => {
-  void service.tick().then((ids) => ids.forEach(broadcast));
+  // Never overlap ticks, and never let a rejected tick become an unhandled rejection.
+  if (gameTickRunning) return;
+  gameTickRunning = true;
+  void service.tick()
+    .then((ids) => ids.forEach(broadcast))
+    .catch((error: unknown) => console.error(`GAME_TICK_FAILED: ${error instanceof Error ? error.message.slice(0, 200) : 'unknown'}`))
+    .finally(() => { gameTickRunning = false; });
 }, 250);
 gameTick.unref();
 const presenceTick = setInterval(() => {
@@ -621,13 +645,19 @@ const presenceTick = setInterval(() => {
 }, 15_000);
 presenceTick.unref();
 server.on("upgrade", (request, socket, head) => {
+  // A malformed Host header or token must close this socket, never throw out of the listener.
+  socket.on("error", () => socket.destroy());
+  try { handleUpgrade(request, socket, head); } catch { socket.destroy(); }
+});
+function handleUpgrade(request: import("node:http").IncomingMessage, socket: import("node:stream").Duplex, head: Buffer) {
   if(localImportedSourceMode && !trustedLocalDbRequest(request)){socket.destroy();return;}
   const url = new URL(request.url ?? "/", `http://${request.headers.host}`);
   if (url.pathname === '/ws/imposter') {
     if (!imposterService) return socket.destroy();
     const id=url.searchParams.get('roomId') ?? '', capability=url.searchParams.get('token') ?? '';
-    try { imposterService.read(id,capability); } catch { socket.destroy(); return; }
-    imposterSockets.handleUpgrade(request,socket,head,ws=> { const item={ws,token:capability,lastRevision:-1}; const group=imposterConnections.get(id) ?? new Set(); group.add(item); imposterConnections.set(id,group); const initial=imposterService.read(id,capability); item.lastRevision=initial.projection.revision; ws.send(JSON.stringify(initial)); ws.on('close',()=>{group.delete(item); if (!group.size) imposterConnections.delete(id);}); });
+    let initial: ReturnType<NonNullable<typeof imposterService>['read']>;
+    try { initial=imposterService.read(id,capability); } catch (error) { imposterSockets.handleUpgrade(request,socket,head,ws=>{ ws.on('error',()=>ws.terminate()); endImposterSocket(ws,error); }); return; }
+    imposterSockets.handleUpgrade(request,socket,head,ws=> { ws.on('error',()=>ws.terminate()); const item={ws,token:capability,lastRevision:initial.projection.revision}; const group=imposterConnections.get(id) ?? new Set(); group.add(item); imposterConnections.set(id,group); ws.send(JSON.stringify(initial)); ws.on('close',()=>{group.delete(item); if (!group.size) imposterConnections.delete(id);}); });
     return;
   }
   if (url.pathname !== "/ws") return socket.destroy();
@@ -646,6 +676,8 @@ server.on("upgrade", (request, socket, head) => {
     return socket.destroy();
   }
   sockets.handleUpgrade(request, socket, head, (ws) => {
+    // An unhandled 'error' event (oversized frame, protocol error) would otherwise crash the process.
+    ws.on("error", () => ws.terminate());
     const connection: Connection = {
       ws,
       token: capabilityToken,
@@ -705,7 +737,7 @@ server.on("upgrade", (request, socket, head) => {
       broadcastPresence(roomId);
     });
   });
-});
+}
 const port = Number(process.env.PORT ?? 8787);
 const host = process.env.GAME_HOST ?? "127.0.0.1";
 server.listen(port, host, () =>

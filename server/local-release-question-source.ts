@@ -7,6 +7,7 @@ import { ChallengeDefinitionRepository } from './challenge-definition-repository
 import { validateContentDraft } from '../services/enta/server/src/local-development/content-admin-store.js';
 import {deriveChallengeEnvelope} from './local-challenge-overlay.js';
 import {isYouTubeMediaDescriptor,youtubeDescriptorBytes} from '../src/features/game/runtime/youtube-media.js';
+import {cleanAnswerText} from '../services/enta/server/src/utils/answer-text.js';
 
 export const localContentPath='D:/projects/huroof_wa_oloof/local/almaidan/real-content.json';
 export const localMediaIndexPath='D:/projects/huroof_wa_oloof/local/almaidan/media-index.json';
@@ -87,7 +88,9 @@ export async function loadLocalReleaseQuestionSource(retained?:any[]):Promise<Lo
   const declared=normalize(row.targetLetter??''),letterEligible=row.modality==='classic'&&row.letterModeEligible!==false&&row.categoryModeOnly!==true&&/^[ابتثجحخدذرزسشصضطظعغفقكلمنهوي]$/u.test(declared)&&row.acceptedAnswers.some((a:string)=>normalize(a).startsWith(declared));
   const modified=seenOverlay.has(`question:${row.id}`);
   let q=modified?undefined:sharedOriginalQuestions.get(row.id);
-  if(!q){q={...row,targetLetter:letterEligible?declared:undefined,status:'draft_test_import',difficulty:row.difficulty??'source-unspecified',sourceContentHash:row.sourceContentHash??createHash('sha256').update(JSON.stringify(row)).digest('hex')};}
+  // Display text drops escaped spoiler markers (\|\|X\|\) found in ~5,300 saved answers. Eligibility and
+  // hashes above still use the raw record so the pinned snapshot identity is unchanged.
+  if(!q){q={...row,canonicalAnswer:cleanAnswerText(row.canonicalAnswer),acceptedAnswers:row.acceptedAnswers.map((a:string)=>cleanAnswerText(a)),targetLetter:letterEligible?declared:undefined,status:'draft_test_import',difficulty:row.difficulty??'source-unspecified',sourceContentHash:row.sourceContentHash??createHash('sha256').update(JSON.stringify(row)).digest('hex')};}
   if(!q)throw new Error('LOCAL_DB_QUESTION_SOURCE_UNAVAILABLE');
   if(!modified)sharedOriginalQuestions.set(row.id,q);
   questions.push(q);const list=groups.get(q.categoryId)??[];list.push(q);groups.set(q.categoryId,list);

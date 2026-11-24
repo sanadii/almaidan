@@ -125,7 +125,10 @@ it('requires the existing verified Almaidan host account for room creation', () 
   mocks.verifiedHost = false;
   render(<MemoryRouter><ImposterNewRoute /></MemoryRouter>);
   expect(screen.getByRole('button', { name: 'أنشئ الغرفة' })).toBeDisabled();
-  expect(screen.getByRole('link', { name: 'سجّل الدخول للاستضافة' })).toHaveAttribute('href', '/login?returnTo=%2Fhost%2Fnew%3Fkind%3Dimposter');
+  // A signed-in but unverified host is offered verification, not a /login link that bounces back.
+  expect(screen.getByTestId('verify-email-notice')).toBeVisible();
+  expect(screen.getByRole('button', { name: 'أعد إرسال رابط التأكيد' })).toBeEnabled();
+  expect(screen.queryByRole('link', { name: 'سجّل الدخول للاستضافة' })).not.toBeInTheDocument();
 });
 
 it('clears the prior private room immediately when the URL changes to another room', async () => {

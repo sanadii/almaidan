@@ -104,7 +104,7 @@ export async function buildPrivateMediaUploadPlan(root: string, packages: Privat
   const uploads = groups.flat().sort((left, right) => left.mediaId.localeCompare(right.mediaId));
   if (new Set(uploads.map((upload) => upload.mediaId)).size !== uploads.length || new Set(uploads.map((upload) => upload.assetSha256)).size !== uploads.length)
     throw new Error("Private media IDs and hashes must be one-to-one.");
-  return { dryRun: true as const, assetCount: uploads.length, manifestSha256: hash(uploads.map(({ localFile, ...upload }) => upload)), uploads };
+  return { dryRun: true as const, assetCount: uploads.length, manifestSha256: hash(uploads.map((upload) => Object.fromEntries(Object.entries(upload).filter(([key]) => key !== 'localFile')))), uploads };
 }
 
 /** Validates every locally available V18 PNG, rebuilt JPEG, and T17 MP4 before any cloud action. */

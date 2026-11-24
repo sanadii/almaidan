@@ -22,5 +22,52 @@ test('eight local members fill room, names unique, settings reset readiness',()=
 test('replay clears secrets and readiness, preserves settings and consumed word; closed room stays closed',()=>{ let r=started(); r=reconcile(r,r.deadline!); const used=r.used.slice(),settings=structuredClone(r.settings); r=act(r,'a',{type:'replay'},r.deadline ?? 60100); assert.equal(r.phase,'lobby'); assert.deepEqual(r.used,used); assert.deepEqual(r.settings,settings); assert.equal(r.word,undefined); assert.ok(r.players.every(p=>!p.ready)); r=act(r,'a',{type:'close'},60100); assert.equal(r.phase,'closed'); assert.throws(()=>act(r,'a',{type:'cancel'},60100)); assert.throws(()=>join(r,'d','دلال',60100)); });
 test('local capability survives server restart', async()=>{ const fs=await import('node:fs'); const os=await import('node:os'); const path=await import('node:path'); const dir=fs.mkdtempSync(path.join(os.tmpdir(),'imposter-test-')); const db=path.join(dir,'rooms.sqlite'); try { const first=new LocalImposterService(db); const created=first.create('أحمد'); first.close(); const next=new LocalImposterService(db); assert.equal(next.read(created.roomId,created.token).projection.me,created.uid); next.close(); } finally { fs.rmSync(dir,{recursive:true,force:true}); } });
 test('three and eight player local service rounds complete with persisted deadlines',()=>{ for(const count of [3,8]) { let now=1000; const service=new LocalImposterService(':memory:',()=>now); const members=[service.create('أحمد')]; for(let i=1;i<count;i++) members.push(service.join(members[0].roomCode,`لاعب${i}`)); const id=members[0].roomId; const send=(i:number,type:Record<string,unknown>,n:string)=>{const current=service.read(id,members[i].token).projection; return service.intent(id,members[i].token,{...type,phaseId:current.phaseId,requestId:n} as Intent);}; for(let i=0;i<count;i++) send(i,{type:'ready',ready:true},`ready${i}`); send(0,{type:'start'},'start'); for(let i=0;i<count;i++) send(i,{type:'ack'},`ack${i}`); let snapshot=service.read(id,members[0].token); while(snapshot.projection.phase==='clues') { now=snapshot.projection.deadline!; snapshot=service.read(id,members[0].token); } assert.equal(snapshot.projection.phase,'discussion'); now=snapshot.projection.deadline!; snapshot=service.read(id,members[0].token); assert.equal(snapshot.projection.phase,'vote'); now=snapshot.projection.deadline!; snapshot=service.read(id,members[0].token); assert.equal(snapshot.projection.phase,'results'); assert.equal(snapshot.projection.result?.winner,'imposter'); assert.equal(snapshot.projection.result?.abstentions,count); service.close(); } });
-test('server pack entries have version-bound reviewed identities that stay out of projections',()=>{ assert.equal(new Set(pack.map(entry=>entry.id)).size,360); for(const entry of pack) { assert.match(entry.id,/^imposter-v1-[a-f0-9]{24}$/); assert.equal(entry.packVersion,'imposter-starter-v1'); assert.equal(entry.reviewStatus,'agent-reviewed-local'); } let room=started(); room.word=pack[0]; for(const uid of ['a','b','c']) { const snapshot=JSON.stringify(project(room,uid,100)); assert.ok(!snapshot.includes(pack[0].id)); assert.ok(!snapshot.includes('agent-reviewed-local')); assert.ok(!snapshot.includes('imposter-starter-v1')); } });
+test('server pack entries have version-bound reviewed identities that stay out of projections',()=>{ assert.equal(new Set(pack.map(entry=>entry.id)).size,360); for(const entry of pack) { assert.match(entry.id,/^imposter-v1-[a-f0-9]{24}$/); assert.equal(entry.packVersion,'imposter-starter-v1'); assert.equal(entry.reviewStatus,'agent-reviewed-local'); } const room=started(); room.word=pack[0]; for(const uid of ['a','b','c']) { const snapshot=JSON.stringify(project(room,uid,100)); assert.ok(!snapshot.includes(pack[0].id)); assert.ok(!snapshot.includes('agent-reviewed-local')); assert.ok(!snapshot.includes('imposter-starter-v1')); } });
 
+
+test('final guess tolerates common spelling variants but not a different word', async()=>{
+ const { guessMatches } = await import('../../src/features/imposter/engine.js');
+ const word={category:'فواكه',word:'فراولة',aliases:[]};
+ assert.equal(guessMatches('فراوله',word),true);
+ assert.equal(guessMatches('الفراولة',word),true);
+ assert.equal(guessMatches(' فَراولة ',word),true);
+ assert.equal(guessMatches('مستشفي',{category:'أماكن',word:'مستشفى',aliases:[]}),true);
+ assert.equal(guessMatches('تفاحة',word),false);
+ assert.equal(guessMatches('',word),false);
+ let r=started(); for(const id of ['a','b','c']) r=act(r,id,{type:'ack'}); for(const id of ['a','b','c','a','b','c']) r=act(r,id,{type:'clue'});
+ r=reconcile(r,r.deadline!); for(const id of ['a','c']) r=act(r,id,{type:'vote',target:'b'},r.deadline!-1); r=reconcile(r,r.deadline!);
+ assert.equal(r.phase,'guess'); r=act(r,'b',{type:'guess',text:'تفاحه'},r.deadline!-1); assert.equal(r.result?.winner,'imposter');
+});
+
+test('a departed player no longer stalls the reveal or burns clue turns; losing the imposter cancels', ()=>{
+ const four=()=>{ let r=newRoom('ABCD','a','أحمد',0); for(const [id,name] of [['b','بدر'],['c','خالد'],['d','دانة']]) r=join(r,id,name,0); for(const id of ['a','b','c','d']) r=act(r,id,{type:'ready',ready:true}); return applyIntent(r,'a',{requestId:'start',phaseId:r.phaseId,type:'start'},100,()=>({word:{category:'اختبار',word:'تفاح',aliases:[]},imposter:'b',order:['a','b','c','d']})); };
+ let r=four(); for(const id of ['a','b','c']) r=act(r,id,{type:'ack'}); assert.equal(r.phase,'reveal');
+ r=act(r,'d',{type:'leave'}); assert.equal(r.phase,'clues','remaining players already acknowledged');
+ for(const id of ['a','b','c']) r=act(r,id,{type:'clue'}); assert.equal(r.clues.at(-1)?.uid,'d'); assert.equal(r.clues.at(-1)?.text,null); assert.equal(r.order[r.turn % 4],'a','departed speaker skipped without waiting');
+ for(const id of ['a','b','c']) r=act(r,id,{type:'clue'}); assert.equal(r.phase,'discussion');
+ r=reconcile(r,r.deadline!); assert.deepEqual(r.candidates,['a','b','c'],'departed players are not vote candidates');
+ let s=four(); s=act(s,'b',{type:'leave'}); assert.equal(s.phase,'cancelled'); assert.equal(s.word,undefined); assert.equal(s.imposter,undefined);
+ let t=started(); t=act(t,'c',{type:'leave'}); assert.equal(t.phase,'cancelled','fewer than three players cannot continue');
+});
+
+test('heartbeats do not accumulate receipts and results keep departed players visible', ()=>{
+ let r=started(); for(let i=0;i<20;i++) r=applyIntent(r,'a',{requestId:`hb-${i}`,phaseId:r.phaseId,type:'heartbeat'},100+i,select);
+ assert.equal(Object.keys(r.receipts).some(key=>key.startsWith('a:hb-')),false);
+ let s=newRoom('ABCD','a','أحمد',0); for(const [id,name] of [['b','بدر'],['c','خالد'],['d','دانة']]) s=join(s,id,name,0); for(const id of ['a','b','c','d']) s=act(s,id,{type:'ready',ready:true});
+ s=applyIntent(s,'a',{requestId:'start',phaseId:s.phaseId,type:'start'},100,()=>({word:{category:'اختبار',word:'تفاح',aliases:[]},imposter:'b',order:['a','b','c','d']}));
+ for(const id of ['a','b','c','d']) s=act(s,id,{type:'ack'}); for(const id of ['a','b','c','d']) s=act(s,id,{type:'clue'});
+ s=act(s,'d',{type:'leave'}); for(const id of ['a','b','c']) s=act(s,id,{type:'clue'}); s=reconcile(s,s.deadline!); s=reconcile(s,s.deadline!);
+ assert.equal(s.phase,'results'); assert.ok(project(s,'a',s.deadline ?? 1e9).players.some(player=>player.uid==='d'));
+});
+
+test('local service keeps background readers connected and lets a closed tab reclaim its seat by name', ()=>{
+ let now=1000; const service=new LocalImposterService(':memory:',()=>now);
+ const host=service.create('أحمد'); const guest=service.join(host.roomCode,'بدر');
+ now+=40_000; service.read(guest.roomId,guest.token); now+=40_000;
+ assert.equal(service.read(host.roomId,host.token).projection.players.find(p=>p.uid===guest.uid)?.connected,true,'an open socket read refreshes the lease');
+ now+=50_000; service.read(host.roomId,host.token);
+ assert.equal(service.read(host.roomId,host.token).projection.players.find(p=>p.uid===guest.uid)?.connected,false);
+ const back=service.join(host.roomCode,'بدر'); assert.equal(back.uid,guest.uid,'same seat reclaimed'); assert.equal(back.projection.players.length,2);
+ assert.throws(()=>service.join(host.roomCode,'بدر'),/DUPLICATE_NAME/,'a connected seat cannot be taken over');
+ service.close();
+});

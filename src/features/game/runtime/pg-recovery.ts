@@ -8,6 +8,7 @@ export interface PgFrame {
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const exact = (v: Record<string, unknown>, keys: string[]) => Object.keys(v).every(k => keys.includes(k));
 const counter = (v: unknown): v is string => typeof v === 'string' && v.length <= 16 && /^(0|[1-9][0-9]*)$/.test(v) && BigInt(v) <= BigInt(Number.MAX_SAFE_INTEGER);
+// eslint-disable-next-line no-control-regex -- control characters are exactly what this rejects
 const text = (v: unknown): v is string => typeof v === 'string' && v.length > 0 && v.length <= 512 && !/[\u0000-\u001f]/.test(v);
 const forbidden = /^(?:token|authorization|credential|password|secret|raw|rawBytes|privateState|memberBindings|identityId|intent|outcome|artifact|admission|policyHash|sourceBytes)$/i;
 function bounded(v: unknown, depth = 0): boolean {

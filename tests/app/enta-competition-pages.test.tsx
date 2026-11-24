@@ -9,7 +9,7 @@ import { CompetitionPageControls } from '../../src/features/enta/CompetitionPage
 import { CompetitionCapabilityPage } from '../../src/features/enta/CompetitionCapability';
 import { CompetitionSetupForm } from '../../src/features/enta/CompetitionSetup';
 import { MemoryRouter } from 'react-router-dom';
-import { FirebaseAuthContext, loadingAuthContext } from '../../src/features/auth/auth-context';
+import { loadingAuthContext } from '../../src/features/auth/auth-context';
 import userEvent from '@testing-library/user-event';
 const mocks = vi.hoisted(() => ({ request: vi.fn() }));
 vi.mock('../../src/features/enta/competition-client', async original => ({ ...await original<typeof import('../../src/features/enta/competition-client')>(), competitionRequest: mocks.request }));

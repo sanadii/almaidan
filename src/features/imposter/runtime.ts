@@ -10,6 +10,9 @@ export type Resolution = { gameKind: 'imposter' | 'huroof' | 'categories'; joina
 // Hosted play stays closed until Almaidan's existing admission contract supports this game.
 export const imposterRuntimeKind = () => isAlmaidanLocalDevelopment ? 'local' as const : 'fixture' as const;
 const sessionKey = (code: string) => `imposter:session:${code}`;
+const IMPOSTER_TERMINAL_CLOSE = 4403;
+/** Errors after which this browser session can never read the room again. */
+export const terminalImposterError = (error: unknown) => error instanceof Error && /NOT_MEMBER|UNAUTHORIZED|ROOM_NOT_FOUND|ROOM_UNAVAILABLE/.test(error.message);
 export function saveSession(session: Session) { sessionStorage.setItem(sessionKey(session.roomCode), JSON.stringify({ roomId: session.roomId, roomCode: session.roomCode, token: session.token, uid: session.uid })); }
 export function loadSession(code: string): Session | undefined {
   try { const value = JSON.parse(sessionStorage.getItem(sessionKey(code)) ?? 'null') as Session | null; return value && typeof value.roomId === 'string' && value.roomCode === code ? value : undefined; } catch { return undefined; }
@@ -63,16 +66,20 @@ export function subscribeImposterRoom(session: Session, onSnapshot: (value: Snap
     let socket: WebSocket | undefined;
     let retry: ReturnType<typeof setTimeout> | undefined;
     let attempt = 0;
+    let terminal = false;
     const open = () => {
       if (stopped) return;
       socket = new WebSocket(`${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}/ws/imposter?roomId=${encodeURIComponent(session.roomId)}&token=${encodeURIComponent(session.token ?? '')}`);
       socket.addEventListener('open', () => { attempt = 0; });
       socket.addEventListener('message', event => { if (!stopped) { try {
-        const value = JSON.parse(String(event.data)) as Snapshot;
-        if (value.roomId !== session.roomId || value.projection?.gameKind !== 'imposter' || !Number.isFinite(value.serverTime) || !Number.isFinite(value.projection.revision)) throw new Error('INVALID_SNAPSHOT');
-        onSnapshot(value);
+        const value = JSON.parse(String(event.data)) as Snapshot | { error?: unknown };
+        if ('error' in value && typeof value.error === 'string') { terminal = true; onError(new Error(value.error)); return; }
+        const snapshot = value as Snapshot;
+        if (snapshot.roomId !== session.roomId || snapshot.projection?.gameKind !== 'imposter' || !Number.isFinite(snapshot.serverTime) || !Number.isFinite(snapshot.projection.revision)) throw new Error('INVALID_SNAPSHOT');
+        onSnapshot(snapshot);
       } catch { onConnection(false); onError(new Error('INVALID_SNAPSHOT')); } } });
-      socket.addEventListener('close', () => { if (!stopped) { onConnection(false); retry = setTimeout(open, Math.min(1_000 * 2 ** attempt++, 10_000)); } });
+      // The server closes with 4403 when this seat can no longer read the room (removed, room gone).
+      socket.addEventListener('close', event => { if (stopped) return; onConnection(false); if (terminal || event.code === IMPOSTER_TERMINAL_CLOSE) { stopped = true; if (!terminal) onError(new Error(event.reason || 'ROOM_UNAVAILABLE')); return; } retry = setTimeout(open, Math.min(1_000 * 2 ** attempt++, 10_000)); });
       socket.addEventListener('error', () => { if (!stopped) onConnection(false); });
     };
     open(); dispose = () => { clearTimeout(retry); socket?.close(); };
@@ -97,5 +104,9 @@ const errors: Record<string, string> = {
   NOT_TURN: 'انتظر دورك.',
   ALREADY_VOTED: 'تم تثبيت صوتك بالفعل.',
   CONTENT_EXHAUSTED: 'انتهت الكلمات المتاحة. اختر فئات أخرى أو أنشئ غرفة جديدة.',
+  NOT_MEMBER: 'لم تعد ضمن هذه الغرفة؛ ربما أزالك المضيف أو غادرت. ادخل من جديد باسمك.',
+  UNAUTHORIZED: 'انتهت صلاحية جلستك في هذه الغرفة. ادخل من جديد باسمك.',
+  ROOM_UNAVAILABLE: 'لم تعد هذه الغرفة متاحة.',
+  ROOM_CLOSED: 'أغلق المضيف الغرفة.',
 };
 export function imposterError(error: unknown) { const detail = error instanceof Error ? error.message : ''; const key = Object.keys(errors).find(code => detail.includes(code)); return key ? errors[key] : 'تعذر إتمام الطلب. تحقق من الاتصال وأعد المحاولة.'; }

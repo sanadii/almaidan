@@ -1,7 +1,7 @@
 import { isAlmaidanLocalDevelopment } from '../lib/local-development';
 
-import { Component, lazy, Suspense, type ReactNode } from 'react';
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Component, lazy, Suspense, useLayoutEffect, type ReactNode } from 'react';
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
 import { ThemeProvider } from './ThemeProvider';
 import { InternalHeader } from '../design-system/InternalHeader';
 import { DeferredFirebaseAuthProvider } from '../features/auth/auth-context';
@@ -106,15 +106,25 @@ export function StaticPreviewUnavailableRoute() {
   return <RouteStatusSurface message={staticPreviewNotice} title="هذه الخدمة غير متاحة في المعاينة" />;
 }
 
-export class RouteChunkBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
-  state = { failed: false };
-  static getDerivedStateFromError() { return { failed: true }; }
+const isChunkLoadFailure = (error: unknown) => error instanceof Error && (error.name === 'ChunkLoadError' || /dynamically imported module|Importing a module script failed|Loading chunk|error loading dynamically/i.test(error.message));
+
+/**
+ * Catches route render and lazy-chunk failures. Navigating to another path (`resetKey`) clears
+ * the failure so header links keep working after an error instead of leaving the error screen up.
+ */
+export class RouteChunkBoundary extends Component<{ children: ReactNode; resetKey?: string }, { failed: boolean; chunk: boolean; failedAt?: string }> {
+  state: { failed: boolean; chunk: boolean; failedAt?: string } = { failed: false, chunk: true };
+  static getDerivedStateFromError(error: unknown) { return { failed: true, chunk: isChunkLoadFailure(error) }; }
+  static getDerivedStateFromProps(props: { resetKey?: string }, state: { failed: boolean; failedAt?: string }) {
+    if (!state.failed) return state.failedAt === props.resetKey ? null : { failedAt: props.resetKey };
+    return state.failedAt !== props.resetKey ? { failed: false, chunk: true, failedAt: props.resetKey } : null;
+  }
   render() {
     if (!this.state.failed) return this.props.children;
     return (
       <RouteStatusSurface
         action={<button className="button button--primary" onClick={() => window.location.reload()} type="button">إعادة المحاولة</button>}
-        message="تحقق من الاتصال ثم أعد المحاولة."
+        message={this.state.chunk ? "تحقق من الاتصال ثم أعد المحاولة." : "حدث خطأ غير متوقع في هذه الصفحة. أعد المحاولة أو انتقل إلى صفحة أخرى."}
         messageRole="alert"
         title="تعذر تحميل الصفحة"
       />
@@ -122,10 +132,38 @@ export class RouteChunkBoundary extends Component<{ children: ReactNode }, { fai
   }
 }
 
+function RouteBoundary({ children }: { children: ReactNode }) {
+  const { pathname } = useLocation();
+  return <RouteChunkBoundary resetKey={pathname}>{children}</RouteChunkBoundary>;
+}
+
+/** New pages open at the top (or at their #anchor); back/forward keeps the browser's position. */
+export function RouteScrollManager() {
+  const { pathname, hash } = useLocation();
+  const navigationType = useNavigationType();
+  useLayoutEffect(() => {
+    if (navigationType === 'POP') return;
+    if (!hash) { window.scrollTo(0, 0); return; }
+    const id = decodeURIComponent(hash.slice(1));
+    let frame = 0; let attempts = 0;
+    const find = () => {
+      const target = document.getElementById(id);
+      if (target) { target.scrollIntoView(); return; }
+      if (++attempts < 20) frame = window.requestAnimationFrame(find);
+    };
+    find();
+    return () => window.cancelAnimationFrame(frame);
+  }, [pathname, hash, navigationType]);
+  return null;
+}
+
+/** Pages whose header shows the account (or that act on it) load auth on a direct visit too. */
+const authPathPrefixes = ['/admin', '/enta/', '/history', '/host/new', '/huroof/', '/how-to-play', '/contact', '/episodes', '/media-credits'];
+
 export function RouteAuthRuntime({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   if (['/enta/capability', '/enta/competitive/capability'].includes(pathname.replace(/\/$/, '').toLowerCase())) return <>{children}</>;
-  return <DeferredFirebaseAuthProvider enabled={!isStaticPreviewBuild() && (isAlmaidanLocalDevelopment || pathname === '/' || pathname === '/login' || pathname === '/account' || pathname === '/study' || pathname.startsWith('/admin') || pathname.startsWith('/enta/'))}>{children}</DeferredFirebaseAuthProvider>;
+  return <DeferredFirebaseAuthProvider enabled={!isStaticPreviewBuild() && (isAlmaidanLocalDevelopment || pathname === '/' || pathname === '/login' || pathname === '/account' || pathname === '/study' || authPathPrefixes.some(prefix => pathname.startsWith(prefix)))}>{children}</DeferredFirebaseAuthProvider>;
 }
 
 function HostSetupRoute() {
@@ -139,8 +177,9 @@ export function App({ pgRuntime = null }: { pgRuntime?: PgGameAdapter | null } =
   return (
     <PgRuntimeContext.Provider value={pgRuntime}><ThemeProvider>
       <BrowserRouter>
+        <RouteScrollManager />
         <RouteAuthRuntime>
-          <RouteChunkBoundary><Suspense fallback={<RouteLoading />}><Routes>
+          <RouteBoundary><Suspense fallback={<RouteLoading />}><Routes>
             <Route path="/" element={<EntryRoute />} />
             <Route path="/local-admin" element={isAlmaidanLocalDevelopment ? <LocalAdminRoute /> : <NotFoundRoute />} />
             <Route path="/enta/local-rematch/:engine/:id" element={isAlmaidanLocalDevelopment ? <LocalRematchRoute /> : <NotFoundRoute />} />
@@ -207,7 +246,7 @@ export function App({ pgRuntime = null }: { pgRuntime?: PgGameAdapter | null } =
             <Route path="/login" element={staticPreview ? unavailable : <LoginRoute />} />
             <Route path="/account" element={staticPreview ? unavailable : <AccountRoute />} />
             <Route path="*" element={<NotFoundRoute />} />
-          </Routes></Suspense></RouteChunkBoundary>
+          </Routes></Suspense></RouteBoundary>
         </RouteAuthRuntime>
       </BrowserRouter>
     </ThemeProvider></PgRuntimeContext.Provider>

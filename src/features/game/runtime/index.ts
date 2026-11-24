@@ -1,5 +1,3 @@
-import { createContext } from 'react';
-import type { PgGameAdapter } from './pg-game-adapter';
 import { FixtureGameAdapter } from './fixture-game-adapter';
 import { LocalRealtimeGameAdapter } from './local-realtime-game-adapter';
 import type { GameRuntimeAdapter } from './contracts';

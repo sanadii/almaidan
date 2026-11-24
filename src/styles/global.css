@@ -5103,6 +5103,10 @@
 .game-arena--host .host-lobby__team ul,
 .game-arena--host .host-lobby__unassigned ul { display: grid; gap: var(--space-2); list-style: none; margin: 0; padding: 0; }
 .game-arena--host .host-lobby__member { border: 0; display: block; flex: 1 1 100%; min-inline-size: 0; padding: 0; }
+.game-arena--host .host-lobby__member > .host-lobby__remove,
+.game-arena--host .host-lobby__remove-confirm { margin-block-start: var(--space-1); }
+.game-arena--host .host-lobby__remove-confirm { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.game-arena--host .host-lobby__remove { font-size: var(--text-xs); min-block-size: 2.25rem; padding-block: 0; padding-inline: var(--space-2); }
 .game-arena--host .host-lobby__team ul,
 .game-arena--host .host-lobby__unassigned ul { display: flex; flex-wrap: wrap; }
 .game-arena--host .host-player-capsule {

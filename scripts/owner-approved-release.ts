@@ -203,7 +203,7 @@ export function buildOwnerAuthorizedReleasePlan(snapshot: SourceDocument[], opti
   if (!requestedScope.length || requestedScope.some((id) => !sourceLabels[id]))
     throw new Error("Owner-authorized release scope contains an unknown source category identity.");
   const expected = { sha256: options.snapshotSha256 ?? OWNER_SNAPSHOT_SHA256, count: options.snapshotCount ?? OWNER_SNAPSHOT_COUNT };
-  const { decoded, bindings } = assertSnapshot(snapshot, expected);
+  const { decoded } = assertSnapshot(snapshot, expected);
   const exclusions: Record<string, number> = {};
   const candidates: Array<{ question: RuntimeQuestionV32; binding: ReturnType<typeof sourceBinding> }> = [];
   for (const source of decoded) {

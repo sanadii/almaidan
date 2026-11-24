@@ -4,6 +4,7 @@ import {createHash,randomInt} from 'node:crypto';
 import {resolve} from 'node:path';
 import type {PinnedQuestion} from '../gameplay/types';
 import {assertLocalDevelopment} from './guard';
+import {cleanAnswerText} from '../utils/answer-text';
 // Local-only adapter shares the authority's canonical validator.
 const challengeOverlay=()=>require('../../../../../server/local-challenge-overlay') as {deriveChallengeEnvelope:(question:unknown,payload:Record<string,unknown>)=>{id:string;schemaVersion:string;definitionSha256:string;manifestSha256:string}};
 type Raw=Record<string,any>;
@@ -33,7 +34,8 @@ export function buildRealCategories(data:Content,version?:CategoryProjectionVers
  for(const q of data.questions){if(q.modality!=='classic'||q.challenge||typeof q.canonicalAnswer!=='string'||!q.canonicalAnswer.trim()||q.canonicalAnswer.startsWith('challenge:')||typeof q.promptAr!=='string'||!q.promptAr.trim()||typeof q.id!=='string'||typeof q.categoryId!=='string')continue;
  const explicit=q.points??q.sourceProvenance?.points;if(explicit!==undefined&&![200,400,600].includes(explicit))continue;
  const points=(explicit??([200,400,600] as const)[parseInt(digest(q.id).slice(0,8),16)%3]) as 200|400|600;
- const answers=[...new Set([q.canonicalAnswer,...(Array.isArray(q.acceptedAnswers)?q.acceptedAnswers:[])].filter(a=>typeof a==='string'&&a.trim()))] as string[];
+ // Display text drops escaped spoiler markers from the saved source; identity/hashes above still use the raw record.
+ const answers=[...new Set([q.canonicalAnswer,...(Array.isArray(q.acceptedAnswers)?q.acceptedAnswers:[])].filter(a=>typeof a==='string'&&a.trim()).map(a=>cleanAnswerText(a as string)))] as string[];
  const localGroups=[q.duplicateGroupId&&`duplicate:${q.duplicateGroupId}`,q.sourceBaseItem&&`base:${q.sourceBaseItem}`,q.sourceContentFamily&&`family:${q.sourceContentFamily}`,hasCategoryGroup(q.categoryId,version)&&q.sourceFamilyId&&`family:${q.sourceFamilyId}`].filter(Boolean) as string[];
  const question:Question={revisionId:`real-${digest(q).slice(0,40)}`,sourceQuestionId:q.id,contentHash:digest(q),categoryKey:canonicalCategoryId(q.categoryId,version),points,prompt:q.promptAr,answers:answers.map(text=>({text,isCorrect:true,isTrap:false})),localGroups,localTierAssigned:explicit===undefined};
  const key=canonicalCategoryId(q.categoryId,version);const rows=byCategory.get(key)??[];rows.push(question);byCategory.set(key,rows);

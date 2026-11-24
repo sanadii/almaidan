@@ -9,7 +9,7 @@ vi.mock('../../src/routes/EntaRoutes',()=>({EntaAccess:({children}:{children:Rea
 import {LocalRematchRoute} from '../../src/features/enta/LocalRematchRoute';
 import {parseLocalRematchPending,parseLocalRematchSetup,type LocalRematchEngine} from '../../src/features/enta/local-rematch-client';
 import {pendingOccupancy,persistPendingIntent,pendingIntentRoute} from '../../src/features/enta/pending-intent';
-import {completePendingStart} from '../../src/features/enta/pending-start';
+import {completePendingStart,pendingStartRetired} from '../../src/features/enta/pending-start';
 import {beginOwnerProvider,observeProviderOwner,invalidateOwner} from '../../src/features/enta/auth-epoch';
 const uid='local-rematch-owner',user={uid,getIdToken:vi.fn(async()=>'owner-token')};
 const source=(engine:LocalRematchEngine)=>({baseReleaseId:'saved-v1',baseRoot:'a'.repeat(64),formatReleaseId:'formats-v1',formatRoot:'b'.repeat(64),mediaRoot:'c'.repeat(64),...(engine==='competitive'?{competitiveReleaseId:'competition-v1',proofRoot:'d'.repeat(64)}:{})});
@@ -62,4 +62,8 @@ it('renders retained settings and retries the same rematch from the review scree
  });vi.stubGlobal('fetch',fetcher);
  render(<MemoryRouter initialEntries={['/enta/local-rematch/round/parent-game']}><Routes><Route path="/enta/local-rematch/:engine/:id" element={<LocalRematchRoute/>}/><Route path="/enta/rooms/:code/host" element={<p>غرفة الإعادة جاهزة</p>}/></Routes></MemoryRouter>);
  expect(await screen.findByText('الفئة الأصلية')).toBeInTheDocument();expect(screen.getByText('الفريق الأول')).toBeInTheDocument();expect(screen.getByText(/وقت السؤال: 60 ثانية/)).toBeInTheDocument();expect(screen.getByText('saved-v1')).toBeInTheDocument();fireEvent.click(screen.getByRole('button',{name:'بدء الإعادة'}));await waitFor(()=>expect(screen.getByRole('alert')).toBeInTheDocument());expect(pendingOccupancy(uid).state).toBe('VALID');fireEvent.click(screen.getByRole('button',{name:'تأكيد طلب الإعادة نفسه'}));expect(await screen.findByText('غرفة الإعادة جاهزة')).toBeInTheDocument();const sends=fetcher.mock.calls.filter(([url,options])=>String(url).includes('/local-rematches/')&&options?.method==='POST');expect(sends).toHaveLength(2);expect(sends[1][1]?.body).toBe(sends[0][1]?.body);
+});
+it.each([[409,'EMPTY'],[503,'VALID']] as const)('a started match the room service refuses with ROOM_REQUIRES_NEW_MATCH (%s) is retired only for the definite rejection',async(status,state)=>{
+ const intent=pending('round');persistPendingIntent(uid,intent);vi.stubGlobal('fetch',vi.fn(async(url:RequestInfo|URL)=>String(url).endsWith('/rooms')?json({error:'ROOM_REQUIRES_NEW_MATCH'},status):json({match:match('round'),idempotent:true,predecessor:intent.predecessor,source:intent.source})));
+ const failure=await completePendingStart(user,intent,new AbortController().signal,()=>true).catch(e=>e);expect(failure.message).toBe('ROOM_REQUIRES_NEW_MATCH');expect(pendingStartRetired(failure)).toBe(status===409);expect(pendingOccupancy(uid).state).toBe(state);
 });

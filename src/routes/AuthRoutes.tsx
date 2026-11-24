@@ -5,6 +5,7 @@ import { BrandMark } from '../design-system/BrandMark';
 import { InternalHeader } from '../design-system/InternalHeader';
 import {FavoritesPanel} from '../features/favorites/FavoritesPanel';
 import { useFirebaseAuth } from '../features/auth/AuthProvider';
+import { VerifyEmailNotice } from '../features/auth/VerifyEmailNotice';
 
 function useDocumentTitle(title: string) {
   useEffect(() => { document.title = `${title} | الميدان`; }, [title]);
@@ -79,6 +80,7 @@ export function AccountRoute() {
       <div><dt>الحالة</dt><dd>{error?.message ?? statusCopy(status)}</dd></div>
     </dl>
     {!user.isAnonymous ? <p className="auth-status" data-state={user.emailVerified ? 'verified' : 'unverified'}>{user.emailVerified ? 'حسابك موثّق.' : 'استضافة المباراة تتطلب حساباً موثقاً.'}</p> : null}
+    {!user.isAnonymous && !user.emailVerified && user.providerData?.some(provider => provider.providerId === 'password') ? <VerifyEmailNotice user={user} /> : null}
     </section>
     <section className="account-section" id="account-favorites" aria-label="المفضلة"><FavoritesPanel /></section>
     <section className="account-section" id="account-session" aria-labelledby="account-session-title"><h2 id="account-session-title">الجلسة</h2>

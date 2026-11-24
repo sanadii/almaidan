@@ -187,7 +187,7 @@ main.maydan-app.maydan-public-page { background:var(--app-canvas); color:var(--a
 }
 @media(prefers-reduced-motion:reduce) { .maydan-public-page :is(button,.button,input,a) { transition:none; animation:none; } }
 .maydan-rules__board .game-board__overlays { display:none; }
-.maydan-public-page > .skip-link { inset-block-start:8px; background:var(--app-surface); color:var(--app-accent); }
+.maydan-public-page > .skip-link, :where(#app-chrome) > .skip-link { inset-block-start:8px; background:var(--app-surface); color:var(--app-accent); }
 /* The game arena keeps its board and team semantics, with shared application surfaces. */
 .game-arena {
  --arena-canvas:var(--app-canvas); --arena-panel:var(--app-surface); --arena-panel-deep:var(--app-subtle);
@@ -282,3 +282,7 @@ main.auth-page--login .auth-status[data-state="error"] { color: var(--app-error)
   grid-template-areas:"brand utilities";
   grid-template-columns:minmax(0,1fr) auto;
 }
+/* Signed-in host whose email still needs verification (home, Imposter setup, account). */
+.verify-email-notice { display:grid; gap:.75rem; margin-block:.75rem 0; padding:1rem; border:1px solid var(--app-border); border-radius:var(--spatial-radius-control); background:var(--app-surface); color:inherit; text-align:start; }
+.verify-email-notice p { margin:0; line-height:1.7; }
+.verify-email-notice__actions { display:flex; flex-wrap:wrap; gap:.5rem; }

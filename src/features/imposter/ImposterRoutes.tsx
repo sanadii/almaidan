@@ -9,7 +9,8 @@ import type { Projection, Settings } from './contracts';
 import { IMPOSTER_CATEGORIES as categories } from './catalog';
 import { PrivateReveal } from './PrivateReveal';
 import { ImposterMark } from './ImposterMark';
-import { clearSession, createImposterRoom, joinImposterRoom, imposterError, imposterRuntimeKind, loadSession, resumeImposterRoom, submitImposterIntent, subscribeImposterRoom, syncImposterRoom, type Command, type Session, type Snapshot } from './runtime';
+import { VerifyEmailNotice } from '../auth/VerifyEmailNotice';
+import { clearSession, createImposterRoom, joinImposterRoom, imposterError, imposterRuntimeKind, loadSession, resumeImposterRoom, submitImposterIntent, subscribeImposterRoom, syncImposterRoom, terminalImposterError, type Command, type Session, type Snapshot } from './runtime';
 import './imposter.css';
 
 const phaseTitles: Record<Projection['phase'], string> = { lobby: 'اجمعوا الشلة', reveal: 'كل واحد وسرّه', clues: 'كلمة واحدة تكفي', discussion: 'مين تشكون فيه؟', vote: 'صوّت بسرية', runoff: 'تعادل! احسموها', guess: 'فرصة الدخيل الأخيرة', results: 'انكشف السر!', cancelled: 'أُلغيت الجولة', closed: 'أُغلقت الغرفة' };
@@ -35,7 +36,7 @@ export function ImposterNewRoute() {
     setBusy(true); setError('');
     try { const room = await createImposterRoom(name.trim()); navigate(`/room/${room.roomCode}/imposter`); } catch (failure) { setError(imposterError(failure)); } finally { setBusy(false); }
   }
-  return <Page><Heading subtitle="واحد منكم ما يدري!" /><div className="imposter-grid"><section className="imposter-panel"><h2>أنشئ غرفة الدخيل</h2><p className="imposter-muted">٣–٨ لاعبين · جلسة مستقلة لكل لاعب · جولتان من التلميحات</p><p>الكل يعرف الكلمة… إلا واحد. لمّح، راقب، واكشف الدخيل!</p>{!unavailable && !verified && <p className="imposter-notice" role="status">{status === 'loading' ? 'جارٍ استعادة حساب المضيف…' : <>استضافة الدخيل تحتاج حساب الميدان الموثّق. <Link to="/login?returnTo=%2Fhost%2Fnew%3Fkind%3Dimposter">سجّل الدخول للاستضافة</Link></>}</p>}<form className="imposter-stack" onSubmit={create}><label>اسمك في الغرفة<input name="displayName" autoComplete="name" maxLength={48} value={name} onChange={event => setName(event.target.value)} required disabled={busy || unavailable || !verified} /></label>{error && <p className="imposter-error" role="alert">{error}</p>}{unavailable && <p className="imposter-notice" role="status">الدخيل متاح في نسخة الميدان المحلية. اللعب المستضاف غير مفعّل حالياً.</p>}<button className="button button--primary" type="submit" disabled={busy || unavailable || !verified}>{busy ? 'جارٍ إنشاء الغرفة…' : 'أنشئ الغرفة'}</button></form></section><aside className="imposter-panel"><h2>كيف تفوز؟</h2><p>إذا تعرف الكلمة: أعط تلميحاً يثبت معرفتك بدون ما تفضحها.</p><p>إذا أنت الدخيل: اسمع، خمّن الموضوع، واندمج معهم!</p><div className="imposter-actions"><Link to="/how-to-play/imposter">تعلّم اللعبة</Link><Link to="/#join-room">عندي رمز غرفة</Link></div></aside></div></Page>;
+  return <Page><Heading subtitle="واحد منكم ما يدري!" /><div className="imposter-grid"><section className="imposter-panel"><h2>أنشئ غرفة الدخيل</h2><p className="imposter-muted">٣–٨ لاعبين · جلسة مستقلة لكل لاعب · جولتان من التلميحات</p><p>الكل يعرف الكلمة… إلا واحد. لمّح، راقب، واكشف الدخيل!</p>{!unavailable && !verified && <p className="imposter-notice" role="status">{status === 'loading' ? 'جارٍ استعادة حساب المضيف…' : user && !user.isAnonymous ? <VerifyEmailNotice user={user} /> : <>استضافة الدخيل تحتاج حساب الميدان الموثّق. <Link to="/login?returnTo=%2Fhost%2Fnew%3Fkind%3Dimposter">سجّل الدخول للاستضافة</Link></>}</p>}<form className="imposter-stack" onSubmit={create}><label>اسمك في الغرفة<input name="displayName" autoComplete="name" maxLength={48} value={name} onChange={event => setName(event.target.value)} required disabled={busy || unavailable || !verified} /></label>{error && <p className="imposter-error" role="alert">{error}</p>}{unavailable && <p className="imposter-notice" role="status">الدخيل متاح في نسخة الميدان المحلية. اللعب المستضاف غير مفعّل حالياً.</p>}<button className="button button--primary" type="submit" disabled={busy || unavailable || !verified}>{busy ? 'جارٍ إنشاء الغرفة…' : 'أنشئ الغرفة'}</button></form></section><aside className="imposter-panel"><h2>كيف تفوز؟</h2><p>إذا تعرف الكلمة: أعط تلميحاً يثبت معرفتك بدون ما تفضحها.</p><p>إذا أنت الدخيل: اسمع، خمّن الموضوع، واندمج معهم!</p><div className="imposter-actions"><Link to="/how-to-play/imposter">تعلّم اللعبة</Link><Link to="/#room-code">عندي رمز غرفة</Link></div></aside></div></Page>;
 }
 
 /** D1 locators never enter Almaidan's existing E1/PG/board join adapters. */
@@ -123,6 +124,7 @@ function ImposterRoomSession({ roomCode }: { roomCode: string }) {
   const [error, setError] = useState('');
   const [clock, setClock] = useState(0);
   const [confirmation, setConfirmation] = useState<'cancel' | 'leave' | 'close'>();
+  const [ended, setEnded] = useState('');
   const clockSample = useRef({ server: 0, local: 0 });
   const current = useRef<Snapshot | undefined>(undefined);
   const unavailable = isStaticPreviewBuild() || imposterRuntimeKind() === 'fixture';
@@ -137,20 +139,25 @@ function ImposterRoomSession({ roomCode }: { roomCode: string }) {
     if (!session || unavailable) return;
     let active = true;
     const receive = (value: Snapshot) => { if (active) apply(value); };
-    const failure = (reason: Error) => { if (active) { setError(imposterError(reason)); setConnected(false); } };
+    const failure = (reason: Error) => {
+      if (!active) return;
+      // A removed seat or a vanished room cannot recover by reconnecting; say so and offer a rejoin.
+      if (terminalImposterError(reason)) { clearSession(roomCode); setEnded(imposterError(reason)); return; }
+      setError(imposterError(reason)); setConnected(false);
+    };
     void resumeImposterRoom(session).then(receive).catch(failure);
     const unsubscribe = subscribeImposterRoom(session, receive, value => { if (active) setConnected(value); }, failure);
     const heartbeat = () => {
       const value = current.current;
-      if (!active || !value || document.visibilityState === 'hidden') return;
-      void submitImposterIntent(session, value.projection, { type: 'heartbeat' }).then(receive).catch(() => { if (active) setConnected(false); });
+      if (!active || !value || value.projection.phase === 'closed' || document.visibilityState === 'hidden') return;
+      void submitImposterIntent(session, value.projection, { type: 'heartbeat' }).then(receive).catch((reason: unknown) => { if (active && !(reason instanceof Error && reason.message.includes('ROOM_CLOSED'))) setConnected(false); });
     };
     const resume = () => { if (document.visibilityState !== 'hidden') { setConnected(false); void resumeImposterRoom(session).then(receive).catch(failure); } };
     const heartbeatTimer = setInterval(heartbeat, 15_000);
     const clockTimer = setInterval(() => { if (active) setClock(clockSample.current.server + performance.now() - clockSample.current.local); }, 250);
     window.addEventListener('online', resume); window.addEventListener('offline', resume); window.addEventListener('focus', resume); document.addEventListener('visibilitychange', resume);
     return () => { active = false; unsubscribe(); clearInterval(heartbeatTimer); clearInterval(clockTimer); window.removeEventListener('online', resume); window.removeEventListener('offline', resume); window.removeEventListener('focus', resume); document.removeEventListener('visibilitychange', resume); current.current = undefined; };
-  }, [session, unavailable, apply]);
+  }, [session, unavailable, apply, roomCode]);
   const p = snapshot?.projection;
   useEffect(() => {
     if (!session || !p?.deadline || !connected) return;
@@ -169,7 +176,8 @@ function ImposterRoomSession({ roomCode }: { roomCode: string }) {
     catch (failure) { setError(imposterError(failure)); }
     finally { setBusy(false); setConfirmation(undefined); }
   }
-  if (!session || unavailable) return <Page gameContext><Heading subtitle="انضم إلى الشلة" /><section className="imposter-panel"><p>{unavailable ? 'اللعب غير متاح في المعاينة.' : 'انضم إلى الغرفة باسمك أولاً. إذا فقدت هوية جلستك، يمكنك العودة بين الجولات.'}</p><div className="imposter-actions"><Link className="button button--primary" to={`/room/${roomCode}/join`}>الانضمام إلى الغرفة</Link><Link to="/">الرئيسية</Link></div></section></Page>;
+  if (!session || unavailable) return <Page gameContext><Heading subtitle="انضم إلى الشلة" /><section className="imposter-panel"><p>{unavailable ? 'اللعب غير متاح في المعاينة.' : 'انضم إلى الغرفة باسمك أولاً. إذا أُغلقت صفحتك، ادخل بنفس اسمك لتستعيد مكانك.'}</p><div className="imposter-actions"><Link className="button button--primary" to={`/room/${roomCode}/join`}>الانضمام إلى الغرفة</Link><Link to="/">الرئيسية</Link></div></section></Page>;
+  if (ended) return <Page gameContext><Heading subtitle="خرجت من الغرفة" /><section className="imposter-panel"><p role="alert">{ended}</p><div className="imposter-actions"><Link className="button button--primary" to={`/room/${roomCode}/join`}>الانضمام من جديد</Link><Link to="/">الرئيسية</Link></div></section></Page>;
   if (!p) return <Page gameContext><Heading subtitle="جارٍ فتح الغرفة…" />{error && <p className="imposter-error" role="alert">{error}</p>}<button type="button" className="button button--quiet" onClick={() => window.location.reload()}>أعد الاتصال</button></Page>;
   const remaining = p.deadline ? Math.max(0, Math.ceil((p.deadline - clock) / 1_000)) : null;
   const disabled = busy || !connected || remaining === 0;
@@ -187,7 +195,7 @@ function ImposterRoomSession({ roomCode }: { roomCode: string }) {
       {canReplay && <div className="imposter-actions">{organizer ? <button className="button button--primary" disabled={busy || !connected} type="button" onClick={() => void send({ type: 'replay' })}>جولة جديدة</button> : <p className="imposter-notice">ننتظر المضيف ليبدأ جولة جديدة.</p>}</div>}
       {p.phase === 'cancelled' && <><h2>أُلغيت الجولة بدون فائز</h2><p>لم يُكشف السر. استعدوا لجولة جديدة أو عدّلوا الإعدادات.</p></>}
       {lobby && <><h2>{p.phase === 'lobby' ? 'جهّزوا القعدة' : 'جولة ثانية؟'}</h2>{p.phase === 'lobby' && <Invite code={roomCode} />}<p className="imposter-muted">كل لاعب يحتاج جهازه. المضيف يلعب معكم، وسرّه مثل سرّ أي لاعب.</p><div className="imposter-actions"><button className="button button--primary" disabled={busy || !connected} onClick={() => void send({ type: 'ready', ready: !me?.ready })} type="button">{me?.ready ? 'أنا غير مستعد' : 'أنا مستعد'}</button>{organizer && <button className="button button--quiet" disabled={busy || !connected || !canStart} type="button" onClick={() => void send({ type: 'start' })}>ابدأ الجولة</button>}</div>{p.contentExhausted && <p className="imposter-notice">انتهت كلمات الفئات المختارة. غيّر الفئات أو أنشئ غرفة جديدة.</p>}{!canStart && <p className="imposter-muted">نحتاج ٣–٨ لاعبين متصلين، وكلهم مستعدون، وفئة واحدة على الأقل.</p>}</>}
-      {p.phase === 'reveal' && <><p>اعرض سرك بعيداً عن العيون، ثم أكّد استعدادك. يبدأ الوقت عندما يستعد الجميع.</p>{!p.hasActed ? <button className="button button--primary" type="button" disabled={disabled} onClick={() => void send({ type: 'ack' })}>عرفت دوري — جاهز</button> : <p role="status" className="imposter-notice">تم التأكيد. ننتظر الباقين.</p>}</>}
+      {p.phase === 'reveal' && <><p>اعرض سرك بعيداً عن العيون، ثم أكّد استعدادك قبل انتهاء الوقت. تبدأ التلميحات عندما يستعد الجميع.</p>{!p.hasActed ? <button className="button button--primary" type="button" disabled={disabled} onClick={() => void send({ type: 'ack' })}>عرفت دوري — جاهز</button> : <p role="status" className="imposter-notice">تم التأكيد. ننتظر الباقين.</p>}</>}
       {p.phase === 'clues' && <ClueForm key={p.phaseId + p.turn} p={p} send={send} disabled={disabled} />}
       {p.phase === 'discussion' && <><h2>ناقشوا التلميحات</h2><p>مين أعطى كلمة عامة؟ ومين تلميحه بعيد عن الموضوع؟ اسمعوا بعض بدون ما تقولون السر.</p><p className="imposter-notice">يبدأ التصويت تلقائياً عند انتهاء الوقت.</p></>}
       {(p.phase === 'vote' || p.phase === 'runoff') && <Ballot key={p.phaseId} p={p} send={send} disabled={disabled} />}

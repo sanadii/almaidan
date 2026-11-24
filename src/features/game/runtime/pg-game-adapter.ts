@@ -1,4 +1,4 @@
-import type { ClientRole, CreateRoomRequest, GameIntent, GameRuntimeAdapter, JoinRoomRequest, ProjectionEnvelope } from './contracts.js';
+import type { ClientRole, GameIntent, GameRuntimeAdapter, JoinRoomRequest, ProjectionEnvelope } from './contracts.js';
 import { CLIENT_CHALLENGE_CAPABILITY } from './contracts.js';
 import { RoomContextEpoch, pgContextKey, type PgRoomContext, type ContextTicket } from './room-context.js';
 import { parseRoomLocator } from './room-locator.js';
@@ -91,7 +91,7 @@ export class PgGameAdapter implements GameRuntimeAdapter {
   });
  }
  isJoinCurrent(locator:string,ticket:ContextTicket):boolean { return this.route===locator && this.epochs.current(ticket); }
- async createRoom(_request:CreateRoomRequest):Promise<{roomId:string;roomCode:string;revision:number}> { throw new Error('CREATE_UNAVAILABLE'); }
+ async createRoom():Promise<{roomId:string;roomCode:string;revision:number}> { throw new Error('CREATE_UNAVAILABLE'); }
  async joinRoom(request:JoinRoomRequest):Promise<{roomId:string;revision:number;ticket:ContextTicket}> { return this.join(request.roomCode,request.displayName); }
  async resumeRoom(locator:string):Promise<{revision:number;serverTime?:string}> { const value=await this.open(locator); return {revision:value.revision,serverTime:value.serverTime}; }
  currentRole():ClientRole | undefined { return this.context?.role; }

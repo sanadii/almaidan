@@ -23,7 +23,7 @@ afterEach(()=>{cleanup();vi.useRealTimers();vi.unstubAllGlobals();vi.restoreAllM
 
 describe('E1 room routes with actual client and mocked transport',()=>{
  it('joins once, stores the member capability only in this tab, and loads the guest lobby without owner auth',async()=>{
-  fetcher.mockImplementation(async(url,init)=>String(url).endsWith('/join')?response({token:'member-secret'}):response({room:room()}));mount('join');
+  fetcher.mockImplementation(async(url)=>String(url).endsWith('/join')?response({token:'member-secret'}):response({room:room()}));mount('join');
   expect(screen.getByLabelText('اسم اللاعب')).toHaveAttribute('maxLength','30');fireEvent.change(screen.getByLabelText('اسم اللاعب'),{target:{value:'  نور  '}});fireEvent.click(screen.getByRole('button',{name:'الدخول'}));await flush();
   expect(sessionStorage.getItem(roomTokenKey(code))).toBe('member-secret');expect(localStorage.getItem(roomTokenKey(code))).toBeNull();expect(screen.getByText('بانتظار اللاعبين')).toBeInTheDocument();expect(screen.getByText('انتظر بدء المباراة وقبول المضيف.')).toBeInTheDocument();
   const [url,init]=fetcher.mock.calls[0];expect(url).toBe(base+'/join');expect(JSON.parse(String(init?.body))).toEqual({name:'نور',requestKey:expect.any(String)});expect(init?.headers).not.toHaveProperty('authorization');
@@ -86,5 +86,39 @@ describe('E1 room routes with actual client and mocked transport',()=>{
  });
  it('keeps the owner command transport usable after StrictMode effect replay',async()=>{
   fetcher.mockResolvedValue(response({room:room()}));render(<StrictMode><MemoryRouter initialEntries={[`/enta/rooms/${code}/host`]}><Routes><Route path="/enta/rooms/:code/host" element={<EntaRoomRoute host/>}/></Routes></MemoryRouter></StrictMode>);await flush();fireEvent.click(screen.getByRole('button',{name:'بدء المباراة'}));await flush();const command=fetcher.mock.calls.find(([u])=>String(u).endsWith('/host'))!;expect(command).toBeDefined();expect(command[1]?.signal?.aborted).toBe(false);
+ });
+});
+describe('E1 room definite rejections, join recovery and captain aids',()=>{
+ it('a definite START rejection releases the command, explains it and keeps other host controls working',async()=>{
+  fetcher.mockImplementation(async(url,init)=>{if(String(url).endsWith('/host')){const body=JSON.parse(String(init?.body));return body.type==='START'?response({error:'ROOM_ASSIGNMENT_REQUIRED'},409):response({room:{...room(),version:2,locked:true}});}return response({room:room()});});
+  mount('host');await flush();fireEvent.click(screen.getByRole('button',{name:'بدء المباراة'}));await flush();
+  expect(screen.getByRole('alert')).toHaveTextContent('وزّعوا كل اللاعبين المقبولين على الفرق قبل بدء المباراة');expect(screen.getByRole('button',{name:'بدء المباراة'})).toBeEnabled();
+  fireEvent.click(screen.getByRole('button',{name:'قفل الانضمام'}));await flush();const types=fetcher.mock.calls.filter(([u])=>String(u).endsWith('/host')).map(([,i])=>JSON.parse(String(i?.body)).type);expect(types).toEqual(['START','LOCK']);
+ });
+ it('explains the display link limit and can revoke every display link',async()=>{
+  fetcher.mockImplementation(async(url,init)=>{if(String(url).endsWith('/host')){const body=JSON.parse(String(init?.body));return body.type==='DISPLAY'?response({error:'DISPLAY_LIMIT'},409):response({room:{...room(),version:2}});}return response({room:room()});});
+  mount('host');await flush();fireEvent.click(screen.getByRole('button',{name:'إنشاء رابط شاشة العرض'}));await flush();expect(screen.getByRole('alert')).toHaveTextContent('الحد الأقصى لروابط شاشة العرض');
+  fireEvent.click(screen.getByRole('button',{name:'إلغاء كل روابط شاشة العرض'}));await flush();const sent=fetcher.mock.calls.filter(([u])=>String(u).endsWith('/host')).map(([,i])=>JSON.parse(String(i?.body)));expect(sent.map(c=>c.type)).toEqual(['DISPLAY','REVOKE_DISPLAY']);expect(sent[1].commandId).not.toBe(sent[0].commandId);
+ });
+ it('a lost join reply survives reload with the same request key and name, then clears after the token arrives',async()=>{
+  let joins=0;fetcher.mockImplementation(async(url)=>{if(String(url).endsWith('/join')){if(joins++===0)throw Error('network disconnected');return response({token:'recovered-token'});}return response({room:room()});});
+  const first=mount('join');fireEvent.change(screen.getByLabelText('اسم اللاعب'),{target:{value:'نور'}});fireEvent.click(screen.getByRole('button',{name:'الدخول'}));await flush();expect(screen.getByRole('alert')).toBeInTheDocument();first.unmount();
+  mount('join');expect(screen.getByLabelText('اسم اللاعب')).toHaveValue('نور');fireEvent.click(screen.getByRole('button',{name:'الدخول'}));await flush();
+  const bodies=fetcher.mock.calls.filter(([u])=>String(u).endsWith('/join')).map(([,i])=>JSON.parse(String(i?.body)));expect(bodies).toHaveLength(2);expect(bodies[1]).toEqual(bodies[0]);expect(sessionStorage.getItem(roomTokenKey(code))).toBe('recovered-token');expect(sessionStorage.getItem(roomTokenKey(code)+':pending-join')).toBeNull();
+ });
+ it('a definite name rejection starts a fresh join request for the next name',async()=>{
+  fetcher.mockImplementation(async(url)=>String(url).endsWith('/join')?response({error:'ROOM_NAME_TAKEN'},409):response({room:room()}));
+  mount('join');fireEvent.change(screen.getByLabelText('اسم اللاعب'),{target:{value:'نور'}});fireEvent.click(screen.getByRole('button',{name:'الدخول'}));await flush();expect(screen.getByRole('alert')).toHaveTextContent('يوجد لاعب بهذا الاسم');
+  fireEvent.change(screen.getByLabelText('اسم اللاعب'),{target:{value:'نور ٢'}});fireEvent.click(screen.getByRole('button',{name:'الدخول'}));await flush();const bodies=fetcher.mock.calls.filter(([u])=>String(u).endsWith('/join')).map(([,i])=>JSON.parse(String(i?.body)));expect(bodies[1].requestKey).not.toBe(bodies[0].requestKey);
+ });
+ function aidRoom(currentTeamId:string){return {...room('PLAYING'),actionsVersion:2,teams:[{id:'t1',name:'فريق الشمس',players:[{id:'p1',name:'نور'}]},{id:'t2',name:'فريق القمر',players:[{id:'p2',name:'ريم'}]}],members:[{id:'m1',name:'نور',status:'ADMITTED',teamIndex:0,playerIndex:0,captain:true}],match:{id:'match-one',version:4,serverNow:1000,executionFormat:'MIXED_BOARD',teams:[{id:'t1',name:'فريق الشمس',score:0},{id:'t2',name:'فريق القمر',score:0}],allowances:[{id:'a1',teamId:'t1',aid:'DOUBLE_ANSWER',roundId:null,consumed:false},{id:'a2',teamId:'t2',aid:'DOUBLE_ANSWER',roundId:null,consumed:false}],currentRound:{id:'round-one',format:'LIST_ITEMS',phase:'SHARED',prompt:'قائمة',originalTeamId:'t1',currentTeamId,publicRevealed:false,pause:null,eligibleAids:['DOUBLE_ANSWER'],items:[{id:'i1',ordinal:0,consumed:false,revealed:false}],hints:[],graphemeHints:[]}}};}
+ it('board captains see aids for the original team even after another scoring team is selected, and an unavailable aid unlocks the answer box',async()=>{
+  sessionStorage.setItem(roomTokenKey(code),'captain-token');fetcher.mockImplementation(async(url)=>String(url).endsWith('/actions')?response({error:'AID_UNAVAILABLE'},409):String(url).endsWith('/private')?response({error:'ROOM_ACTION_DENIED'},403):response({room:aidRoom('t2')}));
+  mount();await flush();const aid=screen.getByRole('button',{name:'إجابتان'});fireEvent.click(aid);await flush();
+  expect(screen.getByRole('alert')).toHaveTextContent('هذه المساعدة غير متاحة لفريقك الآن');expect(screen.getByLabelText('إجابتك')).toBeEnabled();expect(screen.queryByRole('button',{name:'تأكيد الإجراء نفسه'})).not.toBeInTheDocument();
+ });
+ it('a captain of the selected scoring team that is not the original team sees no board aids',async()=>{
+  const view=aidRoom('t2');view.members[0].teamIndex=1;sessionStorage.setItem(roomTokenKey(code),'captain-token');fetcher.mockImplementation(async(url)=>String(url).endsWith('/private')?response({error:'ROOM_ACTION_DENIED'},403):response({room:view}));
+  mount();await flush();expect(screen.getByText('قائمة')).toBeInTheDocument();expect(screen.queryByRole('button',{name:'إجابتان'})).not.toBeInTheDocument();
  });
 });

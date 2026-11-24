@@ -143,11 +143,15 @@ function scoreOwnershipDelta(scores: Record<TeamAxis, number>, priorOwner: TeamA
   return next;
 }
 
+export const CORRECTABLE_STATES: readonly GameState['lifecycle'][] = ['CELL_SELECTION', 'ROUND_COMPLETE', 'MATCH_COMPLETE'];
+
 /** Pure, total-on-valid-events reducer. The switch is intentionally exhaustive by lifecycle. */
 export function reduceGame(state: GameState, event: GameEvent): GameState {
   if (event.type === 'PAUSE' && state.lifecycle !== 'PAUSED' && state.lifecycle !== 'MATCH_COMPLETE') return { ...state, lifecycle: 'PAUSED', pausedFrom: state.lifecycle };
   // Corrections intentionally remain available from MATCH_COMPLETE: they can reopen a terminal match.
-  if (event.type === 'BEGIN_CORRECTION' && state.lifecycle !== 'CORRECTION' && state.board) return { ...state, lifecycle: 'CORRECTION', pausedFrom: state.lifecycle, correction: { cellId: event.cellId, owner: event.owner, reason: event.reason } };
+  // They are limited to settled board states: mid-question a correction would abandon the live question
+  // (and its server timer), and from PAUSED it would overwrite the paused-from resume point.
+  if (event.type === 'BEGIN_CORRECTION' && CORRECTABLE_STATES.includes(state.lifecycle) && state.board) return { ...state, lifecycle: 'CORRECTION', pausedFrom: state.lifecycle, correction: { cellId: event.cellId, owner: event.owner, reason: event.reason } };
   switch (state.lifecycle) {
     case 'LOBBY': if (event.type === 'START_MATCH') return { ...state, lifecycle: 'ROUND_SETUP', board: event.board, currentRound: Math.max(1, state.currentRound) }; return reject(state, event);
     case 'ROUND_SETUP': if (event.type === 'ROUND_READY') return { ...state, lifecycle: 'CELL_SELECTION' }; return reject(state, event);

@@ -9,7 +9,10 @@ import {loadLocalReleaseQuestionSource} from '../../server/local-release-questio
 import {createLocalOwnedRoom,localVerifiedHost} from '../../server/local-owned-room-creation.js';
 import type {FirebaseClaims} from '../../services/enta/server/src/identity.js';
 const owner=(uid:string):FirebaseClaims=>({aud:'demo-almaidan-local',iss:'https://securetoken.google.com/demo-almaidan-local',sub:uid,uid,currentUser:{disabled:false,emailVerified:true,email:'history@almaidan.local'},firebase:{sign_in_provider:'password'}});
-test('local history is read-only, owner-scoped, excludes legacy rooms and exposes only safe summaries',async()=>{
+// These suites read the private local Almaidan content and need its explicit local environment.
+const localEnvironment=process.env.ALMAIDAN_LOCAL_ONLY==='true'&&process.env.FIREBASE_PROJECT_ID==='demo-almaidan-local'&&process.env.GAME_HOST==='127.0.0.1';
+const localOnly={skip:localEnvironment?false:'requires ALMAIDAN_LOCAL_ONLY=true, FIREBASE_PROJECT_ID=demo-almaidan-local and GAME_HOST=127.0.0.1'};
+test('local history is read-only, owner-scoped, excludes legacy rooms and exposes only safe summaries',localOnly,async()=>{
  const source=await loadLocalReleaseQuestionSource(),dir=await mkdtemp('D:/projects/huroof_wa_oloof/local/almaidan/history-review-'),path=join(dir,'rooms.sqlite');
  const service=new AuthoritativeGameService({dbPath:path,secret:'history-review-only',localFirestoreQuestionSource:source});
  try{

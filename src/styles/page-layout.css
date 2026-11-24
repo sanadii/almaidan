@@ -150,7 +150,10 @@ main.challenge-frame {
   margin-inline: auto;
   padding-inline: var(--page-gutter);
 }
-html body > .app-header.stable-header.maydan-app-header {
+/* The shared header is portalled into #app-chrome, which sits before #root and adds no box. */
+#app-chrome { display: contents; }
+html body > .app-header.stable-header.maydan-app-header,
+html body > :where(#app-chrome) > .app-header.stable-header.maydan-app-header {
   box-sizing: border-box;
   inset-inline: 0;
   inline-size: min(100%, var(--page-canvas-max));

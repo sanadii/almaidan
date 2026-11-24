@@ -14,11 +14,27 @@ export async function roomRequest(path:string, options:{user?:Pick<User,'getIdTo
  if(options.user)headers.authorization=`Bearer ${await options.user.getIdToken()}`;
  if(options.token)headers['x-enta-room-token']=options.token;
  const response=await fetch(`/api/v1/enta/rooms${path}`,{method:options.body===undefined?'GET':'POST',headers,body:options.body===undefined?undefined:JSON.stringify(options.body),signal:options.signal});
- const data=await response.json();if(!response.ok)throw new Error(data.error??'ROOM_UNAVAILABLE');return data;
+ const data=await response.json();if(!response.ok)throw new RoomRequestError(data.error??'ROOM_UNAVAILABLE',response.status);return data;
 }
+/** A server answer, unlike a transport failure, carries its HTTP status. */
+export class RoomRequestError extends Error { constructor(code:string,readonly status:number){super(code);} }
+/** Room and engine commands check their idempotency receipt before any domain
+ * rule, so a 4xx domain answer proves this exact command was not applied.
+ * Authentication, timeout and throttling answers stay retryable. */
+export const isDefinitiveRoomRejection=(error:unknown)=>error instanceof RoomRequestError&&error.status>=400&&error.status<500&&![401,408,429].includes(error.status)&&/^[A-Z][A-Z_]{1,79}$/.test(error.message);
 export function roomError(error:unknown) {
  const code=error instanceof Error?error.message:'';
  if(code==='ROOM_ACTIONS_UPGRADE_REQUIRED')return 'حدّث الخدمات المحلية لتفعيل إرسال الإجابات.';
+ if(code==='ROOM_ASSIGNMENT_REQUIRED')return 'وزّعوا كل اللاعبين المقبولين على الفرق قبل بدء المباراة، أو أزيلوا من لن يلعب.';
+ if(code==='DISPLAY_LIMIT')return 'وصلت الغرفة إلى الحد الأقصى لروابط شاشة العرض. ألغوا الروابط السابقة ثم أنشئوا رابطاً جديداً.';
+ if(code==='ROOM_ALREADY_STARTED')return 'بدأت المباراة بالفعل. افتحوا لوحة المضيف لمتابعتها.';
+ if(code==='ROOM_MEMBER_NOT_FOUND')return 'لم يعد هذا اللاعب في الغرفة. حدّثنا القائمة؛ راجعوها ثم أعيدوا المحاولة.';
+ if(code==='INVALID_ROOM_ASSIGNMENT')return 'هذا المقعد غير متاح في الفريق المختار.';
+ if(code==='ROOM_NAME_TAKEN')return 'يوجد لاعب بهذا الاسم في الغرفة. اختر اسماً مختلفاً.';
+ if(code==='ROOM_KEY_CONFLICT')return 'تعذر إكمال طلب الدخول السابق بهذا الاسم. أدخل الاسم نفسه أو حدّث الصفحة ثم أعد الدخول.';
+ if(code==='AID_UNAVAILABLE'||code==='AID_PAIRING_DENIED')return 'هذه المساعدة غير متاحة لفريقك الآن أو استُخدمت من قبل.';
+ if(code==='HINT_UNAVAILABLE')return 'لا يوجد تلميح متاح لهذه الجولة.';
+ if(code==='ROUND_PAUSED')return 'الجولة متوقفة مؤقتاً. انتظر استئناف المضيف.';
  if(/NOT_FOUND/.test(code))return 'لم نجد هذه الغرفة. تحقق من الرمز أو اطلب رابطاً جديداً.';
  if(/LOCK|CLOSED|FINISHED/.test(code))return 'الانضمام إلى هذه الغرفة مغلق حالياً.';
  if(code==='ROOM_SUBMISSION_LIMIT')return 'بلغت الغرفة الحد المسموح للإجابات المكتوبة. أكملوا الجولة شفهياً مع المضيف، أو ابدأوا غرفة جديدة.';

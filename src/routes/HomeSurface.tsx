@@ -13,6 +13,7 @@ import { catalogCategoryCovers, fetchLocalQuestionInventory, inventoryCategoryCo
 import type { ApprovedReleaseCatalog } from "../features/game/runtime/contracts";
 import { approvedCategoryPlayable, localCategoryPlayable } from "../data/category-playability";
 import { isAlmaidanLocalDevelopment } from "../lib/local-development";
+import { VerifyEmailNotice } from "../features/auth/VerifyEmailNotice";
 
 type HomeSurfaceProps = {
   joinForm: ReactNode;
@@ -222,6 +223,7 @@ export function HomeSurface({ joinForm, joinMessage, staticPreview = false }: Ho
                 <h3 id="create-match-title" tabIndex={-1}>ابدأوا مباراة الخلية</h3><p className="maydan-action__note" id="host-requirement">{hostStatus}</p>
                 {canHost ? <Link aria-describedby="host-requirement" className="maydan-button maydan-button--primary" to="/host/new?kind=huroof">إنشاء مباراة</Link>
                   : disabledHost ? <button aria-busy={status === "loading" || undefined} aria-describedby="host-requirement" className="maydan-button maydan-button--primary" disabled type="button">{status === "loading" ? "جارٍ التحقق…" : "الاستضافة غير متاحة"}</button>
+                    : user && !user.isAnonymous && !user.emailVerified ? <VerifyEmailNotice user={user} />
                     : <Link aria-describedby="host-requirement" className="maydan-text-link" to="/login?returnTo=%2Fhost%2Fnew%3Fkind%3Dhuroof">تسجيل الدخول للاستضافة <span aria-hidden="true">←</span></Link>}
               </div>
             </div>

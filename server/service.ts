@@ -333,6 +333,11 @@ function validIntent(intent: unknown): intent is GameIntent {
       (value.payload.team === "horizontal" || value.payload.team === "vertical")
     );
   }
+  if (value.type === "LOBBY_REMOVE_PARTICIPANT") {
+    const member = typeof value.payload.memberUid === "string" && value.payload.memberUid.length > 0 && value.payload.memberUid.length <= 128;
+    const manual = typeof value.payload.manualParticipantId === "string" && value.payload.manualParticipantId.length > 0 && value.payload.manualParticipantId.length <= 128;
+    return keys.length === 1 && member !== manual;
+  }
   if (value.type === "LOBBY_ADD_MANUAL_PLAYER")
     return (
       keys.length === 2 &&
@@ -385,6 +390,7 @@ function validIntent(intent: unknown): intent is GameIntent {
       "RESUME",
       "CONFIRM_CORRECTION",
       "CANCEL_CORRECTION",
+      "CLOSE_QUESTION",
     ].includes(value.type) && keys.length === 0
   );
 }
@@ -596,6 +602,15 @@ export class RoomStore {
       .get(idOrCode, idOrCode) as { data: string } | undefined;
     return row ? this.hydrate(row.data) : undefined;
   }
+  /**
+   * Rooms the server clock may need to advance: an open buzzer deadline or an active challenge.
+   * Filtering in SQLite keeps the 250ms tick from re-parsing every room ever created.
+   */
+  tickCandidateIds(): string[] {
+    return (
+      this.db.prepare("SELECT id FROM rooms WHERE json_extract(data,'$.challenge') IS NOT NULL OR json_extract(data,'$.deadlineAt') IS NOT NULL OR json_extract(data,'$.buzzOpen')=1").all() as Array<{ id: string }>
+    ).map((row) => row.id);
+  }
   rooms(): Room[] {
     return (
       this.db.prepare("SELECT data FROM rooms").all() as Array<{ data: string }>
@@ -687,9 +702,12 @@ export class AuthoritativeGameService {
     const expected = createHmac("sha256", this.secret)
       .update(encoded)
       .digest("base64url");
+    // Compare byte lengths: a same-length string with multi-byte characters would otherwise make
+    // timingSafeEqual throw (ERR_CRYPTO_TIMING_SAFE_EQUAL_LENGTH) instead of rejecting the token.
+    const expectedBytes = Buffer.from(expected), signatureBytes = Buffer.from(signature);
     if (
-      expected.length !== signature.length ||
-      !timingSafeEqual(Buffer.from(expected), Buffer.from(signature))
+      expectedBytes.length !== signatureBytes.length ||
+      !timingSafeEqual(expectedBytes, signatureBytes)
     )
       return undefined;
     try {
@@ -952,11 +970,16 @@ export class AuthoritativeGameService {
     }
     if (room.config.challenge && !this.sameChallengeCapability(challenge, room.config.challenge))
       throw new Error("CHALLENGE_PROTOCOL_REQUIRED");
-    // Reconcile before the caller fetches a projection or upgrades to WebSocket.
-    // Client timers are display-only; an elapsed observation must never reappear.
-    this.expire(room);
+    // Reconcile an elapsed deadline inside the per-room lock (never racing a concurrent intent's
+    // write) and tell connected clients, instead of committing silently from this read path.
+    if (room.challenge || (room.buzzOpen && room.deadlineAt && this.clock().getTime() >= Date.parse(room.deadlineAt)))
+      void this.serialize(room.id, async () => this.expire(this.mustRoom(room.id)))
+        .then((changed) => { if (changed) this.onRoomChanged?.(room.id); })
+        .catch(() => undefined);
     return { revision: room.revision, serverTime: this.now() };
   }
+  /** Set by the transport so server-side state changes outside an intent reach every client. */
+  onRoomChanged?: (roomId: string) => void;
   presenceActor(
     roomId: string,
     token: string,
@@ -1332,24 +1355,26 @@ export class AuthoritativeGameService {
       release();
     }
   }
+  private readonly tickFailures = new Map<string, string>();
   async tick(): Promise<string[]> {
     const changed: string[] = [];
-    for (const snapshot of this.store.rooms()) {
+    for (const id of this.store.tickCandidateIds()) {
       try {
         if (
-          await this.serialize(snapshot.id, async () =>
-            this.expire(this.mustRoom(snapshot.id)),
+          await this.serialize(id, async () =>
+            this.expire(this.mustRoom(id)),
           )
         )
-          changed.push(snapshot.id);
+          changed.push(id);
+        this.tickFailures.delete(id);
       } catch (error) {
-        // A restored DB-backed room stays unavailable until its exact source snapshot
-        // returns; it must not interrupt ticks for unrelated local rooms.
-        if (
-          !(error instanceof Error) ||
-          error.message !== "QUESTION_SOURCE_SNAPSHOT_UNAVAILABLE"
-        )
-          throw error;
+        // One room that cannot advance (a restored room whose source snapshot is missing, a
+        // challenge definition that changed between restarts) must never stop the clock for
+        // the other rooms or crash the server. Report each distinct failure once.
+        const reason = error instanceof Error ? error.message : String(error);
+        if (reason !== "QUESTION_SOURCE_SNAPSHOT_UNAVAILABLE" && this.tickFailures.get(id) !== reason)
+          console.error(`ROOM_TICK_FAILED ${id}: ${reason.slice(0, 200)}`);
+        this.tickFailures.set(id, reason);
       }
     }
     return changed;
@@ -1431,10 +1456,21 @@ export class AuthoritativeGameService {
       if (next.result !== "correct") {
         if (!room.game.activeCellId) throw new Error("CHALLENGE_CONTINUATION_CELL_MISSING");
         // A continued failed/void category cell must have a fresh family-safe reservation before it returns unclaimed.
-        if (room.config.gameKind === "categories") await this.replaceFailedCategory(room);
+        // When the category has nothing left, fall back to the same content hold as ordinary cells so the
+        // host can still end the match; otherwise every host intent stays blocked behind the challenge.
+        let exhausted = false;
+        if (room.config.gameKind === "categories") {
+          try { await this.replaceFailedCategory(room); }
+          catch (error) {
+            if (!(error instanceof Error && /CONTENT_EXHAUSTED|No unused question/.test(error.message))) throw error;
+            exhausted = true;
+          }
+        }
+        const heldCellId = room.game.activeCellId;
         const bridged = applyChallengeContinuation(next, room.game, room.challengeBridge ?? createChallengeBridgeContext(next.occurrence, room.game.activeCellId));
         room.game = bridged.game;
         room.challengeBridge = bridged.context;
+        if (exhausted) this.holdContent(room, "CONTINUE", heldCellId);
       }
       // Terminal data remains projected until this explicit host action. Once it
       // is accepted, return to the audited board lifecycle without a second
@@ -1652,6 +1688,23 @@ export class AuthoritativeGameService {
         projection: this.project(room, capability),
       };
     }
+    if (intent.type === "LOBBY_REMOVE_PARTICIPANT") {
+      // A stale seat (closed tab, re-joined from another tab, dead phone) would otherwise keep the
+      // lobby from ever starting, because every joined player must be ready.
+      if (room.game.lifecycle !== "LOBBY") throw new Error("LOBBY_REMOVAL_NOT_ALLOWED");
+      const { memberUid, manualParticipantId } = intent.payload;
+      if (typeof memberUid === "string") {
+        const target = room.members.find((member) => member.uid === memberUid);
+        if (!target || target.role !== "player") throw new Error("LOBBY_REMOVAL_TARGET_INVALID");
+        room.members = room.members.filter((member) => member.uid !== memberUid);
+      } else {
+        const before = room.manualParticipants ?? [];
+        if (!before.some((participant) => participant.id === manualParticipantId)) throw new Error("LOBBY_REMOVAL_TARGET_INVALID");
+        room.manualParticipants = before.filter((participant) => participant.id !== manualParticipantId);
+      }
+      this.commit(room, intent.type, capability.uid, intent.payload, receiptKey, receiptHash);
+      return { revision: room.revision, replayed: false, projection: this.project(room, capability) };
+    }
     if (intent.type === "LOBBY_ASSIGN_TEAM") {
       const { memberUid, manualParticipantId, team } = intent.payload;
       const hasMember = typeof memberUid === "string" && memberUid.length > 0;
@@ -1776,6 +1829,17 @@ export class AuthoritativeGameService {
       room.buzzOpen = false;
       room.deadlineAt = undefined;
       room.pausedTimer = undefined;
+      room.buzzWinner = undefined;
+      return;
+    }
+    if (intent.type === "CLOSE_QUESTION") {
+      // "Nobody answered": once the host stopped the timer (e.g. by revealing the answer) this is the
+      // same outcome as the timer running out, without judging two teams wrong by hand.
+      if (room.game.lifecycle !== "QUESTION_READING" && room.game.lifecycle !== "OPPONENT_CHANCE")
+        throw new Error("CLOSE_QUESTION_NOT_ALLOWED");
+      room.game = reduceGame(room.game, { type: "TIME_EXPIRED" });
+      room.buzzOpen = false;
+      room.deadlineAt = undefined;
       room.buzzWinner = undefined;
       return;
     }
@@ -1908,6 +1972,8 @@ export class AuthoritativeGameService {
         | "LOBBY_SET_READY"
         | "LOBBY_ASSIGN_TEAM"
         | "LOBBY_ADD_MANUAL_PLAYER"
+        | "LOBBY_REMOVE_PARTICIPANT"
+        | "CLOSE_QUESTION"
         | "START_MATCH"
         | "START_NEXT_ROUND"
         | "BUZZ"
@@ -2137,9 +2203,16 @@ export class AuthoritativeGameService {
             : [],
       ),
     );
-    const candidates = Object.keys(room.questionSelection.queues)
+    // Letters still hidden behind other surprise cells are used too: prefer anything else, and if
+    // one must be taken, withdraw it from the pending pool so it can never appear twice.
+    const pending = new Set(room.surpriseLetters);
+    const available = Object.keys(room.questionSelection.queues)
       .filter((letter) => letter !== cell.revealedLetter && !used.has(letter))
       .sort();
+    const candidates = [
+      ...available.filter((letter) => !pending.has(letter)),
+      ...available.filter((letter) => pending.has(letter)),
+    ];
     let selected: ReturnType<typeof reserveQuestionForCell> | undefined;
     let letter: string | undefined;
     for (const candidate of candidates)
@@ -2156,6 +2229,8 @@ export class AuthoritativeGameService {
         /* retain explicit exhaustion state */
       }
     if (!selected || !letter) throw new Error("CONTENT_EXHAUSTED");
+    const chosen = letter;
+    if (pending.has(chosen)) room.surpriseLetters = room.surpriseLetters.filter((value) => value !== chosen);
     room.questionSelection = selected.selection;
     room.game = {
       ...room.game,

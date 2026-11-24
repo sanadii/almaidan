@@ -1,17 +1,17 @@
 import { ObservedFirebaseAuthProvider, renderObservedOwnerHook } from './fixtures/observed-firebase-auth';
 import { createHash, webcrypto } from 'node:crypto';
-import { act, cleanup, render, renderHook, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import type { User } from 'firebase/auth';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { ThemeProvider } from '../../src/app/ThemeProvider';
-import { FirebaseAuthContext, loadingAuthContext } from '../../src/features/auth/auth-context';
+import { loadingAuthContext } from '../../src/features/auth/auth-context';
 import { EntaCompetitionNewRoute } from '../../src/features/enta/CompetitionSetup';
 import { EntaCompetitionCapabilityRoute } from '../../src/features/enta/CompetitionCapability';
-import { CompetitionPlay } from '../../src/features/enta/CompetitionRoutes';
+import { CompetitionPlay, CompetitionResult } from '../../src/features/enta/CompetitionRoutes';
 import { useCompetitionMatch } from '../../src/features/enta/use-competition-match';
-import { parseCompetitionMatch, parseCompetitionPending } from '../../src/features/enta/competition-client';
+import { competitionErrorText, competitionLeaderIds, parseCompetitionMatch, parseCompetitionPending } from '../../src/features/enta/competition-client';
 import { pendingIntentRoute, persistPendingIntent, readPendingIntent } from '../../src/features/enta/pending-intent';
 import { pendingStartStorageKey } from '../../src/features/enta/client';
 import fixtures from './fixtures/enta-competition.json';
@@ -112,9 +112,40 @@ it.each(['OPTIONAL_CAPACITY_EXHAUSTED', 'ATTEMPT_BUDGET_EXCEEDED'])('lost %s rep
   const hook = renderObservedOwnerHook(user, () => useCompetitionMatch(user, intent.command.logicalMatchId)); await waitFor(() => expect(hook.result.current.uncertain).toBe(true)); await act(async () => { hook.result.current.retry(); }); await waitFor(() => expect(hook.result.current.uncertain).toBe(false)); await waitFor(() => expect(hook.result.current.match).not.toBeNull()); expect(bodies[0]).toEqual(command); expect(readCompetitionCommand(user.uid, intent.command.logicalMatchId)).toBeNull();
   await act(async () => { await hook.result.current.command({ type: 'PUBLIC_REVEAL', roundId: hook.result.current.match!.rounds[0].id, itemId: null }); }); expect(hook.result.current.uncertain).toBe(false); expect((bodies[1] as { commandId: string }).commandId).not.toEqual(command.commandId);
 });
-it('unsupported rejection stays unknown and late old-owner proof cannot clear a newer scoped intent', async () => {
-  const command = parseDurableCompetitionCommand({ type: 'NEXT_ROUND', commandId: crypto.randomUUID(), expectedVersion: board().version }); saveCompetitionCommand(user.uid, intent.command.logicalMatchId, command); fetchMock.mockResolvedValueOnce(json({ error: 'INVALID_PHASE' }, 409));
+it('unavailable-service rejection stays unknown and late old-owner proof cannot clear a newer scoped intent', async () => {
+  const command = parseDurableCompetitionCommand({ type: 'NEXT_ROUND', commandId: crypto.randomUUID(), expectedVersion: board().version }); saveCompetitionCommand(user.uid, intent.command.logicalMatchId, command); fetchMock.mockResolvedValueOnce(json({ error: 'ENTA_UNAVAILABLE' }, 503));
   const hook = renderObservedOwnerHook(({ actor }: { actor: User }) => actor, ({ actor }: { actor: User }) => useCompetitionMatch(actor, intent.command.logicalMatchId), { initialProps: { actor: user } }); await waitFor(() => expect(hook.result.current.uncertain).toBe(true)); await act(async () => { hook.result.current.retry(); }); await waitFor(() => expect(hook.result.current.busy).toBe(false)); expect(hook.result.current.uncertain).toBe(true); expect(readCompetitionCommand(user.uid, intent.command.logicalMatchId)).toEqual(command);
   let resolve!: (value: Response) => void; fetchMock.mockImplementationOnce(() => new Promise<Response>(done => { resolve = done; })); await act(async () => { hook.result.current.retry(); }); const other = { ...user, uid: 'other-owner' } as User, newer = { ...command, commandId: crypto.randomUUID() }; saveCompetitionCommand(other.uid, intent.command.logicalMatchId, newer); hook.rerender({ actor: other });
   await act(async () => { resolve(json({ error: 'OPTIONAL_CAPACITY_EXHAUSTED', commandRejection: { version: 1, state: 'REJECTED', projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID ?? 'unconfigured', principalUid: user.uid, gameId: intent.command.logicalMatchId, commandId: command.commandId, hash: admissionHash(command), expectedVersion: command.expectedVersion, currentRevision: command.expectedVersion, reason: 'OPTIONAL_CAPACITY_EXHAUSTED' } }, 409)); }); expect(readCompetitionCommand(other.uid, intent.command.logicalMatchId)).toEqual(newer); expect(readCompetitionCommand(user.uid, intent.command.logicalMatchId)).toEqual(command);
+});
+it.each([['FINISH', 'EARLY_FINISH_CONFIRMATION_REQUIRED'], ['NEXT_ROUND', 'INVALID_PHASE'], ['NEXT_ROUND', 'AID_UNAVAILABLE']] as const)('reloaded %s with a plain definite %s rejection is released, explained and polling resumes', async (type, code) => {
+  const command = parseDurableCompetitionCommand({ type, commandId: crypto.randomUUID(), expectedVersion: board().version, ...(type === 'FINISH' ? { confirmEarly: false } : {}) }); saveCompetitionCommand(user.uid, intent.command.logicalMatchId, command); let gets = 0;
+  fetchMock.mockImplementation((url: string) => { if (url.endsWith('/commands')) return Promise.resolve(json({ error: code }, 409)); gets++; return Promise.resolve(json(board())); });
+  const hook = renderObservedOwnerHook(user, () => useCompetitionMatch(user, intent.command.logicalMatchId)); await waitFor(() => expect(hook.result.current.uncertain).toBe(true));
+  await act(async () => { hook.result.current.retry(); }); await waitFor(() => expect(hook.result.current.match).not.toBeNull());
+  expect(hook.result.current.uncertain).toBe(false); expect(hook.result.current.busy).toBe(false); expect(readCompetitionCommand(user.uid, intent.command.logicalMatchId)).toBeNull(); expect(gets).toBeGreaterThan(0);
+  expect((hook.result.current.error as { code: string }).code).toBe(code); expect(competitionErrorText(hook.result.current.error)).not.toBe(competitionErrorText(new TypeError('offline')));
+  await act(async () => { await hook.result.current.command({ type: 'NEXT_ROUND' }); }); expect(fetchMock.mock.calls.filter(c => String(c[0]).endsWith('/commands')).length).toBe(2);
+});
+it('a definite status with mismatched receipt material still cannot clear the durable command', async () => {
+  const command = parseDurableCompetitionCommand({ type: 'NEXT_ROUND', commandId: crypto.randomUUID(), expectedVersion: board().version }); saveCompetitionCommand(user.uid, intent.command.logicalMatchId, command);
+  fetchMock.mockResolvedValue(json({ error: 'STALE_VERSION', commandReceipt: { state: 'ABSENT', gameId: 'foreign', commandId: command.commandId, expectedVersion: command.expectedVersion, hash: 'a'.repeat(64), eventId: null, revision: command.expectedVersion + 1 } }, 409));
+  const hook = renderObservedOwnerHook(user, () => useCompetitionMatch(user, intent.command.logicalMatchId)); await waitFor(() => expect(hook.result.current.uncertain).toBe(true)); await act(async () => { hook.result.current.retry(); }); await waitFor(() => expect(hook.result.current.busy).toBe(false)); expect(hook.result.current.uncertain).toBe(true); expect(readCompetitionCommand(user.uid, intent.command.logicalMatchId)).toEqual(command);
+});
+const play = (id: string, element = <CompetitionPlay />, path = '/enta/competitive/matches/:id') => render(<ThemeProvider><ObservedFirebaseAuthProvider value={auth}><MemoryRouter initialEntries={[path.replace(':id', id)]}><Routes><Route path={path} element={element} /></Routes></MemoryRouter></ObservedFirebaseAuthProvider></ThemeProvider>);
+it('finish with unplayed rounds is enabled only after the early-finish confirmation is ticked', async () => {
+  fetchMock.mockResolvedValue(json(board())); play(board().id); const finish = await screen.findByRole('button', { name: 'إنهاء المباراة وعرض النتيجة' }); expect(finish).toBeDisabled();
+  await userEvent.click(screen.getByRole('checkbox', { name: 'إنهاء مبكر مع جولات لم تُلعب' })); expect(finish).toBeEnabled();
+});
+it('a steal phase defaults the attempt team to the eligible stealing team, not the first team', async () => {
+  const opened = structuredClone(fixtures.openedMixed) as typeof fixtures.openedMixed & { currentRound: { currentTeamId: string | null } }, round = opened.currentRound; round.phase = 'STEAL'; round.currentTeamId = null; opened.rounds.find(r => r.id === round.id)!.phase = 'STEAL'; fetchMock.mockResolvedValue(json(opened));
+  play(opened.id); const team = await screen.findByRole('combobox', { name: 'الفريق' }); await waitFor(() => expect(team).toHaveValue(opened.teams.find(t => t.id !== round.originalTeamId)!.id));
+});
+it('host-ended results name a single leader and keep equal leaders a tie', async () => {
+  const scores = (a: number, b: number) => [{ participantId: 'a', score: a }, { participantId: 'b', score: b }];
+  expect(competitionLeaderIds({ outcome: 'HOST_ENDED', winnerParticipantIds: [], scores: scores(400, 200) })).toEqual(['a']); expect(competitionLeaderIds({ outcome: 'HOST_ENDED', winnerParticipantIds: [], scores: scores(200, 200) })).toEqual(['a', 'b']); expect(competitionLeaderIds({ outcome: 'DECISIVE', winnerParticipantIds: ['b'], scores: scores(0, 600) })).toEqual(['b']);
+  const finished = board() as ReturnType<typeof board> & { result: unknown }, [lead, other] = finished.teams; lead.score = 400; finished.finished = true; finished.rounds[0].phase = 'RESOLVED';
+  finished.result = { hash: 'b'.repeat(64), payload: { schemaVersion: 1, rulesVersion: finished.rulesVersion, requestVersion: 5, executionFormat: finished.executionFormat, projectId: 'project', engine: 'ENTA', gameId: finished.id, admissionId: 'admission', logicalMatchId: finished.id, resultVersion: 1, predecessor: null, terminal: { eventId: 'finish', revision: 3 }, authority: { eventId: 'finish', kind: 'HOST', correctionReason: null }, participants: [lead.id, other.id], reason: 'HOST_ENDED', prescribedCount: 4, completedCount: 1, unplayedCount: 3, outcome: 'HOST_ENDED', scores: [{ participantId: lead.id, score: 400 }, { participantId: other.id, score: 0 }], winnerParticipantIds: [], tournamentBinding: null } };
+  fetchMock.mockResolvedValue(json(finished)); play(finished.id, <CompetitionResult />, '/enta/competitive/matches/:id/result');
+  expect(await screen.findByRole('heading', { name: `الفائز: ${lead.name}` })).toBeInTheDocument(); expect(screen.getByText('أنهى المضيف المباراة مبكراً.')).toBeInTheDocument();
 });

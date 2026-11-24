@@ -142,7 +142,9 @@ it("requires a verified account before showing the Huroof host action", async ()
   );
 
   await screen.findByText("لا توجد فئات جاهزة للعرض حالياً.");
-  expect(screen.getByRole("link", { name: "تسجيل الدخول للاستضافة" })).toHaveAttribute("href", "/login?returnTo=%2Fhost%2Fnew%3Fkind%3Dhuroof");
+  // Signed in but unverified: verification help instead of a sign-in link that would bounce back.
+  expect(screen.getByTestId("verify-email-notice")).toBeVisible();
+  expect(screen.queryByRole("link", { name: "تسجيل الدخول للاستضافة" })).not.toBeInTheDocument();
   expect(screen.queryByRole("link", { name: "إنشاء مباراة" })).not.toBeInTheDocument();
 });
 

@@ -1,4 +1,4 @@
-import type {RoomView} from './room-client';
+import {isDefinitiveRoomRejection,type RoomView} from './room-client';
 /** Public affordances only. The engine rechecks phase, disclosure and attempt budget. */
 export function roomAttemptOptions(room:RoomView,display=false):{itemId:string|null;label:string}[]{
  const match=room.match as any,current=match?.currentRound,member=room.members.find(m=>m.id===room.self?.id);
@@ -13,5 +13,14 @@ export function roomAttemptOptions(room:RoomView,display=false):{itemId:string|n
 }
 
 
-const definitiveActionErrors=new Set(['STALE_VERSION','INVALID_PHASE','ROOM_ACTION_DENIED','ROOM_CAPABILITY_DENIED','INVALID_ROOM_REQUEST','INVALID_SUBMITTED_ANSWER','ROOM_COMMAND_CONFLICT','NO_ELIGIBLE_PLAYER','ATTEMPT_UNAVAILABLE','ATTEMPT_BUDGET_EXCEEDED','ROUND_TIME_EXPIRED','DUPLICATE_SUBMITTED_ANSWER','ROOM_SUBMISSION_LIMIT']);
-export const isDefinitiveRoomActionError=(error:unknown)=>error instanceof Error&&definitiveActionErrors.has(error.message);
+const definitiveActionErrors=new Set(['STALE_VERSION','INVALID_PHASE','ROOM_ACTION_DENIED','ROOM_CAPABILITY_DENIED','INVALID_ROOM_REQUEST','INVALID_SUBMITTED_ANSWER','ROOM_COMMAND_CONFLICT','NO_ELIGIBLE_PLAYER','ATTEMPT_UNAVAILABLE','ATTEMPT_BUDGET_EXCEEDED','ROUND_TIME_EXPIRED','DUPLICATE_SUBMITTED_ANSWER','ROOM_SUBMISSION_LIMIT','AID_UNAVAILABLE','HINT_UNAVAILABLE','AID_PAIRING_DENIED','ROUND_PAUSED']);
+export const isDefinitiveRoomActionError=(error:unknown)=>error instanceof Error&&definitiveActionErrors.has(error.message)||isDefinitiveRoomRejection(error);
+/** Captain aids mirror the engine's public rule: board formats spend the
+ * original team's aids, standalone formats the team whose turn it is. */
+export function roomCaptainAids(room:RoomView,display=false):{id:string;aid:string}[]{
+ const match=room.match as any,current=match?.currentRound,member=room.members.find(m=>m.id===room.self?.id),team=member?.teamIndex==null?null:room.teams[member.teamIndex];
+ if(room.actionsVersion!==2||display||room.engine!=='competitive'||room.phase!=='PLAYING'||!current||!member||member.status!=='ADMITTED'||!member.captain||!team||current.publicRevealed||current.pause||!['MAIN','SHARED','TURN'].includes(current.phase))return [];
+ const allowedTeam=String(match.executionFormat??'').startsWith('STANDALONE')?current.currentTeamId:current.originalTeamId;
+ if(!allowedTeam||team.id!==allowedTeam)return [];
+ return (match.allowances??[]).filter((a:any)=>a.teamId===team.id&&!a.consumed&&(a.roundId===null||a.roundId===current.id)&&(current.eligibleAids??[]).includes(a.aid)&&!(a.aid==='MORE_HINT'&&['ORDINARY_TIER','DRAWING_TARGET'].includes(current.format)&&!current.hints?.length)&&!(a.aid==='STEAL_POINTS'&&!(match.teams??[]).some((t:any)=>t.id!==team.id&&t.score>0))).map((a:any)=>({id:a.id,aid:a.aid}));
+}

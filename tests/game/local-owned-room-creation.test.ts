@@ -8,7 +8,10 @@ import {loadLocalReleaseQuestionSource} from '../../server/local-release-questio
 import {createLocalOwnedRoom} from '../../server/local-owned-room-creation.js';
 import type {FirebaseClaims} from '../../services/enta/server/src/identity.js';
 const owner=(uid='review-host'):FirebaseClaims=>({aud:'demo-almaidan-local',iss:'https://securetoken.google.com/demo-almaidan-local',sub:uid,uid,currentUser:{disabled:false,emailVerified:true,email:'review@almaidan.local'},firebase:{sign_in_provider:'password'}});
-test('authenticated local creation is owner scoped, atomic and replays exact host authority after reconnect',async()=>{
+// These suites read the private local Almaidan content and need its explicit local environment.
+const localEnvironment=process.env.ALMAIDAN_LOCAL_ONLY==='true'&&process.env.FIREBASE_PROJECT_ID==='demo-almaidan-local'&&process.env.GAME_HOST==='127.0.0.1';
+const localOnly={skip:localEnvironment?false:'requires ALMAIDAN_LOCAL_ONLY=true, FIREBASE_PROJECT_ID=demo-almaidan-local and GAME_HOST=127.0.0.1'};
+test('authenticated local creation is owner scoped, atomic and replays exact host authority after reconnect',localOnly,async()=>{
  const source=await loadLocalReleaseQuestionSource(),dir=await mkdtemp('D:/projects/huroof_wa_oloof/local/almaidan/owned-create-review-'),path=join(dir,'rooms.sqlite');
  let service=new AuthoritativeGameService({dbPath:path,secret:'review-only-secret',localFirestoreQuestionSource:source});
  const request={requestKey:randomUUID(),demo:true,displayName:'مراجعة',categories:source.inventory.recommendedHuroofCategoryIds};
@@ -28,7 +31,7 @@ test('authenticated local creation is owner scoped, atomic and replays exact hos
   service.close();service=new AuthoritativeGameService({dbPath:path,secret:'review-only-secret',localFirestoreQuestionSource:source});const resumed=await createLocalOwnedRoom(service,'Bearer test',request,async()=>owner());assert.equal(resumed.roomId,original.roomId);assert.equal(resumed.token,original.token);assert.equal(resumed.audienceToken,original.audienceToken);assert.equal(resumed.idempotent,true);assert.ok(service.metadata(resumed.roomId,resumed.token));assert.equal(service.store.rooms().length,4);
  }finally{service.close();}
 });
-test('real local emulator host verification admits verified account and rejects forged identity',async()=>{
+test('real local emulator host verification admits verified account and rejects forged identity',localOnly,async()=>{
  const identity=JSON.parse(await readFile('D:/projects/huroof_wa_oloof/local/almaidan/admin-identity.private.json','utf8'));
  const response=await fetch('http://127.0.0.1:19099/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=local-emulator-only',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:identity.email,password:identity.password,returnSecureToken:true})});assert.equal(response.status,200);const login=await response.json();
  const source=await loadLocalReleaseQuestionSource(),dir=await mkdtemp('D:/projects/huroof_wa_oloof/local/almaidan/owned-auth-review-'),service=new AuthoritativeGameService({dbPath:join(dir,'rooms.sqlite'),secret:'review-auth-only',localFirestoreQuestionSource:source});

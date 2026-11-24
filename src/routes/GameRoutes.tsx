@@ -47,6 +47,7 @@ import {
 } from "../data/category-playability";
 import { GameBoard, type BoardCell, type BoardPresentationContext } from "../features/board/game-board";
 import { generateBoard } from "../features/game/domain/board";
+import { CORRECTABLE_STATES } from "../features/game/domain/lifecycle";
 import {
   matchModeOptions,
   parseSetupQuery,
@@ -316,10 +317,12 @@ const saveAudienceCapability = (id: string, value: StoredCapability) =>
 export const readableError = (error: unknown) => {
   let message =
     error instanceof Error ? error.message.replace(/^Error:\s*/, "") : "";
-  try{const parsed=JSON.parse(message);if(typeof parsed.error==='string')message=parsed.error;}catch{}
+  try{const parsed=JSON.parse(message);if(typeof parsed.error==='string')message=parsed.error;}catch{/* plain-text message */}
   if(/AUTHENTICATION|ID_TOKEN|VERIFIED_ACCOUNT/.test(message))return 'سجّل الدخول بحساب المضيف المحلي ثم أعد المحاولة.';
   if(/IDEMPOTENCY|REQUEST_KEY/.test(message))return 'طلب إنشاء الغرفة محفوظ بإعدادات مختلفة. استعد الطلب الأصلي قبل إنشاء مباراة أخرى.';
   if(/ORIGIN|LOCAL_ONLY/.test(message))return 'افتح التطبيق من عنوانه المحلي على هذا الكمبيوتر.';
+  if(/^(SEAT_REMOVED|UNAUTHORIZED|NOT_MEMBER)$/.test(message))return 'لم تعد ضمن هذه الغرفة؛ ربما أزالك المضيف. ادخل من جديد باسمك.';
+  if(message==='ROOM_NOT_FOUND')return 'لم نجد هذه الغرفة. تحقق من الرمز أو اطلب رابطاً جديداً من المضيف.';
   if (message === "STALE_REVISION")
     return "تغيّرت الغرفة للتو. راجع الحالة الحالية ثم حاول مرة أخرى.";
   if (
@@ -1635,7 +1638,7 @@ function useRoom(
             error?: string;
           };
           if (envelopeValue.error) {
-            setError(envelopeValue.error);
+            setError(readableError(new Error(envelopeValue.error)));
             return;
           }
           // HTTP intent acknowledgements can arrive before an older queued
@@ -1647,10 +1650,19 @@ function useRoom(
           setEnvelope(envelopeValue);
           setConnection("connected");
         };
-        socket.onclose = () => {
+        socket.onclose = (event) => {
           if (socketRef.current === socket) socketRef.current = undefined;
           connecting.current = false;
           setPresence(null);
+          // 4403: this seat was removed or can no longer read the room; reconnecting cannot help.
+          if (event.code === 4403) {
+            if (!alive) return;
+            envelopeRef.current = null;
+            setEnvelope(null);
+            setConnection("offline");
+            setError(readableError(new Error(event.reason || "SEAT_REMOVED")));
+            return;
+          }
           if (alive && online()) {
             setConnection("reconnecting");
             schedule(() => void connect());
@@ -1661,6 +1673,10 @@ function useRoom(
         connecting.current = false;
         if (!alive) return;
         setError(readableError(reason));
+        if (reason instanceof Error && /^(?:Error:\s*)?(UNAUTHORIZED|SEAT_REMOVED|NOT_MEMBER|ROOM_NOT_FOUND)$/.test(reason.message)) {
+          setConnection("offline");
+          return;
+        }
         if (online()) {
           setConnection("reconnecting");
           schedule(() => void connect());
@@ -2230,6 +2246,7 @@ export function HostActions({
   gameKind = "huroof",
   endedWithoutWinner,
   newMatchHref = "/host/new",
+  timerStopped = false,
 }: {
   state: string;
   answeringTeam?: "horizontal" | "vertical";
@@ -2241,6 +2258,8 @@ export function HostActions({
   gameKind?: "huroof" | "categories";
   endedWithoutWinner?: boolean;
   newMatchHref?: string;
+  /** True when the question is open but its timer is stopped (answer revealed); local runtime only. */
+  timerStopped?: boolean;
 }) {
   const manualSelection =
     state === "QUESTION_READING" || state === "OPPONENT_CHANCE";
@@ -2385,6 +2404,16 @@ export function HostActions({
               </button>
             ))}
           </div>
+          {timerStopped ? (
+            <button
+              className="button host-close-question"
+              data-testid="host-close-question"
+              onClick={() => action("CLOSE_QUESTION")}
+              type="button"
+            >
+              لم يُجب أحد — أغلق السؤال
+            </button>
+          ) : null}
         </section>
       )}
       </div>
@@ -2548,6 +2577,13 @@ export function HostLobbyControls({
   const [manualTeam, setManualTeam] = useState<TeamAxis>("horizontal");
   const [manualError, setManualError] = useState("");
   const [manualBusy, setManualBusy] = useState(false);
+  const [pendingRemoval, setPendingRemoval] = useState<string>();
+  // Only the local authority implements removal; hosted rooms keep their existing lobby contract.
+  const canRemove = canManage && state === "LOBBY" && gameRuntime.kind === "local";
+  const removeParticipant = (target: AssignmentTarget) => {
+    setPendingRemoval(undefined);
+    void Promise.resolve(action("LOBBY_REMOVE_PARTICIPANT", { ...target })).catch(() => undefined);
+  };
   const focusTargetKey = useRef<string | undefined>(undefined);
   useEffect(() => {
     const key = focusTargetKey.current;
@@ -2609,6 +2645,18 @@ export function HostLobbyControls({
         presence={member.uid ? presence?.[member.uid]?.state : undefined}
         showReadiness
       />
+      {canRemove && targetForMember(member) ? (() => {
+        const target = targetForMember(member)!;
+        const key = targetKey(target);
+        return pendingRemoval === key ? (
+          <span className="host-lobby__remove-confirm">
+            <button className="button button--quiet host-lobby__remove" data-testid="confirm-remove-participant" disabled={busy || manualBusy} onClick={() => removeParticipant(target)} type="button">تأكيد إزالة {member.displayName}</button>
+            <button className="button button--quiet host-lobby__remove" onClick={() => setPendingRemoval(undefined)} type="button">تراجع</button>
+          </span>
+        ) : (
+          <button aria-label={`إزالة ${member.displayName} من الغرفة`} className="button button--quiet host-lobby__remove" data-testid="remove-participant" disabled={busy || manualBusy} onClick={() => setPendingRemoval(key)} type="button">إزالة</button>
+        );
+      })() : null}
     </li>
   );
   return (
@@ -4246,6 +4294,7 @@ function RoomRouteInstance({
                     ).length ?? 0
                   }
                   state={state}
+                  timerStopped={gameRuntime.kind === "local" && Boolean(projection.question?.revealedAnswer) && !projection.buzzOpen}
                   contentHold={projection.contentHold}
                   endedWithoutWinner={projection.endedWithoutWinner}
                   gameKind={projection.room.matchSettings?.gameKind}
@@ -4327,7 +4376,7 @@ function RoomRouteInstance({
               <button className="button" type="button" onClick={() => isAlmaidanLocalDevelopment ? void hostJoin.copyLink() : setJoinDialogOpen(true)}>{isAlmaidanLocalDevelopment ? "نسخ رابط الدعوة" : "رمز QR"}</button>
             </div>
             {state !== "LOBBY" && <div className="host-controls__action-row host-controls__action-row--three">
-              <button className="button" data-testid="correction-trigger" ref={correctionTriggerRef} type="button" onClick={() => setCorrectionDialogOpen(true)}>تصحيح</button>
+              <button className="button" data-testid="correction-trigger" disabled={!CORRECTABLE_STATES.includes(state as never) && state !== "CORRECTION"} ref={correctionTriggerRef} title={!CORRECTABLE_STATES.includes(state as never) && state !== "CORRECTION" ? "التصحيح متاح بين الأسئلة، بعد إغلاق السؤال الحالي أو استئناف المباراة." : undefined} type="button" onClick={() => setCorrectionDialogOpen(true)}>تصحيح</button>
               {visibilityControls}
               <HostPauseAction action={action} contentHold={Boolean(projection.contentHold)} state={state} />
             </div>}

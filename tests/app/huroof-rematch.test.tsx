@@ -6,7 +6,7 @@ vi.mock('../../src/features/auth/auth-context',()=>({useFirebaseAuth:()=>({user:
 vi.mock('../../src/design-system/InternalHeader',()=>({InternalHeader:()=>null}));
 vi.mock('../../src/features/game/runtime',()=>({gameRuntime:{kind:'local',rematchRoom:mocks.rematch}}));
 import {HuroofRematch} from '../../src/features/game/HuroofRematch';
-import {parseHuroofRematchPending,parseHuroofRematchResult} from '../../src/features/game/huroof-rematch-client';
+import {parseHuroofRematchResult} from '../../src/features/game/huroof-rematch-client';
 import {beginOwnerProvider,observeProviderOwner,invalidateProviderOwner,invalidateOwner} from '../../src/features/enta/auth-epoch';
 const id='11111111-1111-4111-8111-111111111111',child='22222222-2222-4222-8222-222222222222',key=`almaidan:huroof-rematch:owner:${id}`;
 const result=()=>({roomId:child,roomCode:'ABCDEF',revision:1,token:'child-capability'.repeat(3),predecessorRoomId:id,source:{snapshotId:'a'.repeat(64),selection:'UNSEEN_PREDECESSOR'}});

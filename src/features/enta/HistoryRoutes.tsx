@@ -32,7 +32,7 @@ export function HistoryView() {
     {current.value?.nextCursor ? <button type="button" className="button" disabled={current.loading} onClick={() => setCursor(current.value!.nextCursor)}>عرض المزيد</button> : null}
   </section>;
 }
-export function EntaRematchRoute() { return <EntaShell title="ألعبوا إنت صح من جديد"><EntaAccess><Rematch /></EntaAccess></EntaShell>; }
+export function EntaRematchRoute() { return <EntaShell title="العبوا إنت صح من جديد"><EntaAccess><Rematch /></EntaAccess></EntaShell>; }
 function Rematch() {
   const { user } = useFirebaseAuth(), { id } = useParams(); const key = `${pendingStartStorageKey(user?.uid ?? '')}:${id ?? ''}`, epoch = useRef(0), [attempt, setAttempt] = useState(0);
   const [state, setState] = useState<{ key: string; value: ReturnType<typeof parseRematchSetup> | null; loading: boolean; error: unknown }>({ key, value: null, loading: true, error: null });

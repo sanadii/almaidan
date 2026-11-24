@@ -1,4 +1,5 @@
 import { fail, type EntaMode, type MatchProjection, type MatchRecord } from "./types";
+import { cleanAnswerText } from "../utils/answer-text";
 
 export function storedMatchMode(game: MatchRecord): EntaMode {
   if (game.mode === "CLASSIC" && (game.setup.version === 2 || game.setup.version === 3) && game.categories.length === 6 && game.questions.length === 36) return "CLASSIC";
@@ -16,7 +17,8 @@ export function projectMatch(game: MatchRecord, serverNow: number): MatchProject
   if (active && (!question || !game.activeTeamId || game.deadlineAt === null)) return fail(503, "MATCH_DATA_UNAVAILABLE");
   const currentQuestion = question ? {
     id: question.id, prompt: question.prompt, points: question.points, answeringTeamId: game.activeTeamId!, deadlineAt: game.deadlineAt!,
-    ...(game.phase === "REVEALED" ? { answers: question.answers.filter(answer => answer.isCorrect && !answer.isTrap).map(answer => answer.text) } : {}),
+    // Matches pinned before display cleaning still hold raw saved-source text; clean it on the way out.
+    ...(game.phase === "REVEALED" ? { answers: question.answers.filter(answer => answer.isCorrect && !answer.isTrap).map(answer => cleanAnswerText(answer.text)) } : {}),
   } : null;
   const highest = Math.max(...game.teams.map(team => team.score));
   const winners = game.teams.filter(team => team.score === highest).map(team => team.id);

@@ -54,13 +54,13 @@ describe('R2 provider lifecycle leases',()=>{
   let finish!:()=>void,reject!:(e:Error)=>void;seam.signIn.mockImplementationOnce(()=>new Promise<void>((r,j)=>{finish=r;reject=j;}));
   const old=render(<FirebaseAuthProvider><Probe/></FirebaseAuthProvider>);await waitFor(()=>expect(context.user?.uid).toBe(A.uid));let work!:Promise<void>;act(()=>{work=context.signInWithGoogle();});await waitFor(()=>expect(finish).toBeDefined());old.unmount();
   seam.auth.currentUser=B;render(<FirebaseAuthProvider><Probe/></FirebaseAuthProvider>);await waitFor(()=>expect(context.user?.uid).toBe(B.uid));const current=ownerEpoch(B.uid),replacement=context;
-  await act(async()=>{outcome==='resolve'?finish():reject(Error('late'));await work;});
+  await act(async()=>{if(outcome==='resolve')finish();else reject(Error('late'));await work;});
   expect(isOwnerEpoch(current)).toBe(true);expect(context.user?.uid).toBe(B.uid);expect(context.status).toBe('password');expect(context.pendingAction).toBe(replacement.pendingAction);expect(()=>ownerEpoch(A.uid)).toThrow();
  });
  it.each(['resolve','reject'])('queued action is never started after unmount following %s',async outcome=>{
   let finish!:()=>void,reject!:(e:Error)=>void;seam.signIn.mockImplementationOnce(()=>new Promise<void>((r,j)=>{finish=r;reject=j;}));
   const old=render(<FirebaseAuthProvider><Probe/></FirebaseAuthProvider>);await waitFor(()=>expect(context.user?.uid).toBe(A.uid));let first!:Promise<void>,queued!:Promise<void>;act(()=>{first=context.signInWithGoogle();queued=context.signInWithGoogle();});await waitFor(()=>expect(finish).toBeDefined());old.unmount();
-  await act(async()=>{outcome==='resolve'?finish():reject(Error('late'));await first;await queued;});expect(seam.signIn).toHaveBeenCalledTimes(1);expect(()=>ownerEpoch(A.uid)).toThrow();
+  await act(async()=>{if(outcome==='resolve')finish();else reject(Error('late'));await first;await queued;});expect(seam.signIn).toHaveBeenCalledTimes(1);expect(()=>ownerEpoch(A.uid)).toThrow();
  });
  it('queued stale method invoked after replacement cannot start auth side effects',async()=>{
   const old=render(<FirebaseAuthProvider><Probe/></FirebaseAuthProvider>);await waitFor(()=>expect(context.user?.uid).toBe(A.uid));const stale=context.signInWithGoogle;old.unmount();seam.auth.currentUser=B;render(<FirebaseAuthProvider><Probe/></FirebaseAuthProvider>);await waitFor(()=>expect(context.user?.uid).toBe(B.uid));const current=ownerEpoch(B.uid);await act(async()=>{await stale();});expect(seam.signIn).not.toHaveBeenCalled();expect(isOwnerEpoch(current)).toBe(true);

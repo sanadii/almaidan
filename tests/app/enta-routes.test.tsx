@@ -1,11 +1,11 @@
 import { ObservedFirebaseAuthProvider, renderObservedOwnerHook } from './fixtures/observed-firebase-auth';
-import { act, cleanup, render, renderHook, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import type { User } from 'firebase/auth';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { ThemeProvider } from '../../src/app/ThemeProvider';
-import { FirebaseAuthContext, loadingAuthContext, type FirebaseAuthContextValue } from '../../src/features/auth/auth-context';
+import { loadingAuthContext, type FirebaseAuthContextValue } from '../../src/features/auth/auth-context';
 import { EntaAccess, EntaMatchRoute, EntaNewRoute } from '../../src/routes/EntaRoutes';
 import { matchEnvelope, pendingStartStorageKey, readPendingStart, type MatchProjection, type StartCommand } from '../../src/features/enta/client';
 import { useEntaMatch } from '../../src/features/enta/use-match';
@@ -26,7 +26,7 @@ afterEach(() => { cleanup(); vi.useRealTimers(); vi.unstubAllGlobals(); vi.unstu
 it('static preview and unavailable/unverified auth perform no catalogue request', () => {
   vi.stubEnv('VITE_STATIC_PREVIEW', 'true'); const view = render(surface()); expect(screen.getByText('إنت صح غير متاحة في المعاينة')).toBeVisible(); expect(fetchMock).not.toHaveBeenCalled();
   vi.stubEnv('VITE_STATIC_PREVIEW', 'false'); view.rerender(surface({ ...auth, status: 'unavailable', isAvailable: false })); expect(screen.getByText('تسجيل الدخول غير متاح الآن')).toBeVisible();
-  view.rerender(surface({ ...auth, user: { ...user, emailVerified: false } as User })); expect(screen.getByText('ابدأ بحساب موثّق')).toBeVisible(); expect(fetchMock).not.toHaveBeenCalled();
+  view.rerender(surface({ ...auth, user: { ...user, emailVerified: false } as User })); expect(screen.getByText('أكّد بريدك للاستضافة')).toBeVisible(); expect(fetchMock).not.toHaveBeenCalled();
 });
 
 it('preserves the requested Enta setup and query through sign-in', () => {

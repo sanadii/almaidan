@@ -5,7 +5,7 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import type { User } from 'firebase/auth';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { ThemeProvider } from '../../src/app/ThemeProvider';
-import { FirebaseAuthContext, loadingAuthContext, type FirebaseAuthContextValue } from '../../src/features/auth/auth-context';
+import { loadingAuthContext, type FirebaseAuthContextValue } from '../../src/features/auth/auth-context';
 import { EntaKidsRoute } from '../../src/routes/EntaRoutes';
 import { EntaHistoryRoute, EntaRematchRoute } from '../../src/features/enta/HistoryRoutes';
 import { pendingStartStorageKey, type MatchProjection } from '../../src/features/enta/client';
@@ -70,5 +70,5 @@ it('history filters/pagination use fixed scoped GET and malformed data is retrya
 });
 
 it('KIDS/history/rematch static preview and unverified auth never request or fake states', () => {
-  vi.stubEnv('VITE_STATIC_PREVIEW', 'true'); const view = render(surface('/enta/history')); expect(screen.getByText('إنت صح غير متاحة في المعاينة')).toBeVisible(); expect(fetchMock).not.toHaveBeenCalled(); view.unmount(); vi.stubEnv('VITE_STATIC_PREVIEW', 'false'); render(surface('/enta/matches/parent-game/rematch', { ...auth, user: { ...user, emailVerified: false } as User })); expect(screen.getByText('ابدأ بحساب موثّق')).toBeVisible(); expect(fetchMock).not.toHaveBeenCalled();
+  vi.stubEnv('VITE_STATIC_PREVIEW', 'true'); const view = render(surface('/enta/history')); expect(screen.getByText('إنت صح غير متاحة في المعاينة')).toBeVisible(); expect(fetchMock).not.toHaveBeenCalled(); view.unmount(); vi.stubEnv('VITE_STATIC_PREVIEW', 'false'); render(surface('/enta/matches/parent-game/rematch', { ...auth, user: { ...user, emailVerified: false } as User })); expect(screen.getByText('أكّد بريدك للاستضافة')).toBeVisible(); expect(fetchMock).not.toHaveBeenCalled();
 });

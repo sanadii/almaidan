@@ -83,7 +83,12 @@ async function main() {
   const server=app.listen(14001,'127.0.0.1',()=>console.log('Almaidan local development API listening on 127.0.0.1:14001; practice content; payments disabled'));
   for(const signal of ['SIGINT','SIGTERM'] as const)process.once(signal,()=>server.close(()=>{void Promise.all([contentAdmin.close(),store.close(),competitionStore.close(),roundStore.close(),roomStore.close()]).then(()=>process.exit(0));}));
 }
-void main().catch(()=>{console.error('LOCAL_STARTUP_FAILED');process.exitCode=1;});
+void main().catch((error:unknown)=>{
+  // Report the cause without leaking connection strings or credentials.
+  const code=typeof (error as {code?:unknown})?.code==='string'?` ${(error as {code:string}).code}`:'';
+  const message=(error instanceof Error?error.message:String(error)).replace(/[a-z][a-z0-9+.-]*:\/\/[^\s'"]+/gi,'<redacted-url>').slice(0,300);
+  console.error(`LOCAL_STARTUP_FAILED${code}: ${message}`);process.exitCode=1;
+});
 
 
 
