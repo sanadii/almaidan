@@ -144,14 +144,14 @@ function CategoryChooser({ staticPreview }: { staticPreview: boolean }) {
             <ul className="maydan-categories">
               {categories.slice(0, showAll || query ? categories.length : 6).map((category) => (
                 <li key={category.id}>
-                  {previewCatalogue || !eligibleCategories.some(c=>c.id===category.id) ? <div className="maydan-category-preview">
-                    <span aria-hidden="true" className="maydan-category__index">فئة</span>
+                  {previewCatalogue || !eligibleCategories.some(c=>c.id===category.id) ? <div className="maydan-category-preview maydan-category-card maydan-category-card--unavailable">
+                    <span aria-hidden="true" className="maydan-category-card__art"><img src={`/${category.cover.web320}`} alt="" width={320} height={320} loading="lazy" decoding="async" /></span>
                     <strong>{category.displayNameAr}</strong>
-                    <span>{previewCatalogue?'للمعاينة فقط':inventory?.categories.find(c=>c.id===category.id)?.unavailableReason??'تحتاج هذه الفئة أسئلة إضافية للعب'}</span>
-                  </div> : <Link to={`/host/new?kind=categories&category=${encodeURIComponent(category.id)}`}>
-                    <span aria-hidden="true" className="maydan-category__index">فئة</span>
+                    <span className="maydan-category-card__hint">{previewCatalogue?'للمعاينة فقط':inventory?.categories.find(c=>c.id===category.id)?.unavailableReason??'تحتاج هذه الفئة أسئلة إضافية للعب'}</span>
+                  </div> : <Link className="maydan-category-card" to={`/host/new?kind=categories&category=${encodeURIComponent(category.id)}`}>
+                    <span aria-hidden="true" className="maydan-category-card__art"><img src={`/${category.cover.web320}`} alt="" width={320} height={320} loading="lazy" decoding="async" /></span>
                     <strong>{category.displayNameAr}</strong>
-                    <span>افتح إعداد الفئات</span>
+                    <span className="maydan-category-card__hint">العبوا بهذه الفئة</span>
                   </Link>}
                 </li>
               ))}

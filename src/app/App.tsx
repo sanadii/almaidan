@@ -228,6 +228,8 @@ export function App({ pgRuntime = null }: { pgRuntime?: PgGameAdapter | null } =
             <Route path="/questions/new" element={staticPreview ? unavailable : <Navigate replace to="/admin/drafts/new" />} />
             <Route path="/questions/:questionId" element={staticPreview ? unavailable : <LegacyQuestionRedirect />} />
             <Route path="/local-import-review" element={staticPreview ? unavailable : <LocalImportReviewRoute />} />
+            {/* The hosted admin studio needs the Firebase backend; locally, content is managed at /local-admin. */}
+            {isAlmaidanLocalDevelopment ? <Route path="/admin/*" element={<Navigate replace to="/local-admin" />} /> : null}
             <Route path="/admin" element={staticPreview ? unavailable : <AdminRootRedirect />} />
             <Route path="/admin" element={staticPreview ? unavailable : <AdminShell />}>
               <Route path="overview" element={<AdminOverviewRoute />} />

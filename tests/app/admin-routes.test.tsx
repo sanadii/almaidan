@@ -5,7 +5,7 @@ import { Link, MemoryRouter, Route, Routes, useLocation } from 'react-router-dom
 import { beforeEach, expect, it, vi } from 'vitest';
 import { beginOwnerProvider, observeProviderOwner, invalidateOwner } from '../../src/features/enta/auth-epoch';
 import { ThemeProvider } from '../../src/app/ThemeProvider';
-import { AdminOverviewRoute, AdminPublishedCategoriesRoute, AdminPublishedQuestionsRoute, AdminQuestionEditorRoute, AdminRecordRoute, AdminRootRedirect, AdminShell, LegacyQuestionRedirect, PublishedQuestionDetail } from '../../src/features/admin/AdminRoutes';
+import { AdminOverviewRoute, AdminPublishedCategoriesRoute, AdminPublishedQuestionsRoute, AdminQuestionEditorRoute, AdminRecordRoute, AdminRootRedirect, AdminSettingsRoute, AdminShell, AdminUsersRoute, LegacyQuestionRedirect, PublishedQuestionDetail } from '../../src/features/admin/AdminRoutes';
 
 const editorSession = { uid: 'editor-1', roles: ['content_admin'], authzVersion: 1, capabilities: ['session', 'questions.read', 'questions.inspect', 'questions.write', 'reviews.read', 'categories.read', 'categories.write', 'releases.read', 'releases.stage', 'audit.read', 'health.read', 'settings.read'], mutationMode: 'enabled', categoryCorrectionDraftMode: 'enabled', publishedQuestionInspectionMode: 'enabled' } as const;
 const viewerSession = { uid: 'viewer-1', roles: ['viewer'], authzVersion: 1, capabilities: ['session', 'questions.read', 'reviews.read', 'categories.read', 'releases.read', 'rooms.read', 'audit.read', 'health.read', 'settings.read'], mutationMode: 'staged', categoryCorrectionDraftMode: 'staged' } as const;
@@ -128,4 +128,71 @@ it.each(['repeat', 'release'])('rejects %s in category pagination', async kind =
   renderAdmin('/admin/questions', <Route path="questions" element={<AdminPublishedQuestionsRoute />} />);
   await waitFor(() => expect(serviceMocks.listPublishedCategories).toHaveBeenCalledTimes(2));
   await waitFor(() => expect(screen.getByLabelText('فئة منشورة')).toBeDisabled());
+});
+
+const opsSession = { uid: 'ops-1', roles: ['super_admin'], authzVersion: 1, capabilities: ['session', 'rooms.read', 'rooms.act', 'users.read', 'users.write', 'settings.read', 'settings.write', 'health.read', 'audit.read'], mutationMode: 'enabled', categoryCorrectionDraftMode: 'staged' } as const;
+const lookedUp = (uid: string, roles: string[], authzVersion: number) => ({ uid, email: `${uid}@example.test`, disabled: false, admin: { roles, categoryScopes: [], reviewerScopes: [], enabled: true, authzVersion } });
+
+it('keeps the review decision confirmation after the list reloads and clears the submitted reason', async () => {
+  serviceMocks.session = reviewerSession; serviceMocks.listReviews.mockResolvedValue({ items: [{ id: 'review-1', questionId: 'q1', categoryId: 'tahadani-001', status: 'in_review', revision: 1 }], nextCursor: null });
+  const user = userEvent.setup(); renderAdmin('/admin/reviews', <Route path="reviews" element={<AdminRecordRoute section="reviews" />} />);
+  await user.type(await screen.findByLabelText('سبب طلب التعديلات'), 'يرجى توثيق المرجع.');
+  await user.click(screen.getByRole('button', { name: 'طلب تعديلات' }));
+  expect(await screen.findByText(/طلب التعديلات\./)).toBeVisible();
+  expect(serviceMocks.listReviews).toHaveBeenCalledTimes(2);
+  expect(screen.getByLabelText('سبب طلب التعديلات')).toHaveValue('');
+});
+
+it('ignores a slow list response from the previous section after navigating to another section', async () => {
+  const drafts = deferred<{ items: Record<string, unknown>[]; nextCursor: null }>(); serviceMocks.listQuestions.mockReturnValueOnce(drafts.promise);
+  serviceMocks.listReviews.mockResolvedValue({ items: [{ id: 'review-1', questionId: 'q-review', categoryId: 'tahadani-001', status: 'in_review', revision: 1 }], nextCursor: null });
+  const user = userEvent.setup(); renderAdmin('/admin/drafts', <Route path=":section" element={<AdminRecordRoute />} />);
+  await user.click(await screen.findByRole('link', { name: 'المراجعات' }));
+  expect(await screen.findByText('q-review')).toBeVisible();
+  await act(async () => { drafts.resolve({ items: [{ id: 'late-draft', headerAr: 'مسودة متأخرة', status: 'draft', categoryId: 'tahadani-001', modality: 'classic', revision: 1 }], nextCursor: null }); await drafts.promise; });
+  expect(screen.getByText('q-review')).toBeVisible(); expect(screen.queryByText('مسودة متأخرة')).not.toBeInTheDocument();
+});
+
+it('keeps the room action confirmation after reloading the room and links back to the room list', async () => {
+  serviceMocks.session = opsSession; serviceMocks.getRoom.mockResolvedValue({ id: 'room-1', revision: 2, lifecycle: 'LOBBY', roomCode: 'ABCD', paused: false, memberCount: 3 }); serviceMocks.roomAction.mockResolvedValue({ operationId: 'room-op', revision: 3, replayed: false, serverTime: 'now' });
+  const user = userEvent.setup(); renderAdmin('/admin/rooms/room-1', <Route path="rooms/:id" element={<AdminRecordRoute section="rooms" />} />);
+  expect(await screen.findByRole('link', { name: 'العودة إلى عمليات الغرف' })).toHaveAttribute('href', '/admin/rooms');
+  await user.type(screen.getByLabelText('سبب الإجراء التشغيلي'), 'اختبار تشغيلي');
+  await user.click(await screen.findByRole('button', { name: 'إيقاف مؤقت' }));
+  await waitFor(() => expect(serviceMocks.roomAction).toHaveBeenCalledWith(expect.objectContaining({ id: 'room-1', action: 'pause', expectedRevision: 2, reason: 'اختبار تشغيلي' })));
+  expect(await screen.findByText(/العملية إلى الخادم/)).toBeVisible(); expect(serviceMocks.getRoom).toHaveBeenCalledTimes(2);
+});
+
+it('resets role fields for each looked-up account and refreshes the mutated account by uid', async () => {
+  serviceMocks.session = opsSession; serviceMocks.lookupUser.mockImplementation(async (identifier: string) => identifier === 'user-a' ? lookedUp('user-a', ['content_admin'], 4) : lookedUp('user-b', ['viewer'], 1)); serviceMocks.updateUserRole.mockResolvedValue({ operationId: 'role-op', revision: 2, replayed: false, serverTime: 'now' });
+  const user = userEvent.setup(); renderAdmin('/admin/users', <Route path="users" element={<AdminUsersRoute />} />);
+  const search = await screen.findByLabelText('UID أو البريد الدقيق');
+  await user.type(search, 'user-a{Enter}');
+  expect(await screen.findByLabelText('الأدوار، مفصولة بفاصلة')).toHaveValue('content_admin');
+  await user.clear(search); await user.type(search, 'user-b'); await user.click(screen.getByRole('button', { name: 'بحث' }));
+  await waitFor(() => expect(screen.getByLabelText('الأدوار، مفصولة بفاصلة')).toHaveValue('viewer'));
+  await user.clear(search); await user.type(search, 'user-a');
+  await user.click(screen.getByRole('button', { name: 'حفظ الأدوار والنطاقات' }));
+  await waitFor(() => expect(serviceMocks.updateUserRole).toHaveBeenCalledWith(expect.objectContaining({ uid: 'user-b', roles: ['viewer'], expectedRevision: 1 })));
+  await waitFor(() => expect(serviceMocks.lookupUser).toHaveBeenLastCalledWith('user-b'));
+});
+
+it('asks before disabling an account or revoking its sessions and sends nothing when cancelled', async () => {
+  serviceMocks.session = opsSession; serviceMocks.lookupUser.mockResolvedValue(lookedUp('user-a', ['viewer'], 1)); const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+  const user = userEvent.setup(); renderAdmin('/admin/users', <Route path="users" element={<AdminUsersRoute />} />);
+  await user.type(await screen.findByLabelText('UID أو البريد الدقيق'), 'user-a{Enter}');
+  await user.click(await screen.findByRole('button', { name: 'تعطيل Auth' }));
+  await user.click(screen.getByRole('button', { name: 'إلغاء الجلسات' }));
+  expect(confirm).toHaveBeenCalledTimes(2); expect(serviceMocks.setUserStatus).not.toHaveBeenCalled(); expect(serviceMocks.revokeUserSessions).not.toHaveBeenCalled();
+  confirm.mockRestore();
+});
+
+it('offers a retry when settings fail to load and recognises a Functions conflict on save', async () => {
+  serviceMocks.session = opsSession; serviceMocks.getSettings.mockRejectedValueOnce(new Error('offline')).mockResolvedValue({ runtime: { revision: 2, maintenanceMode: false, roomCreationEnabled: true, defaultQuestionTimerSeconds: 30, defaultOpponentTimerSeconds: 10, roomRetentionDays: 30 } });
+  serviceMocks.updateSettings.mockRejectedValueOnce(Object.assign(new Error('STALE_REVISION'), { code: 'functions/aborted' }));
+  const user = userEvent.setup(); renderAdmin('/admin/settings', <Route path="settings" element={<AdminSettingsRoute />} />);
+  await user.click(await screen.findByRole('button', { name: 'إعادة المحاولة' }));
+  await user.click(await screen.findByRole('button', { name: 'حفظ الإعدادات' }));
+  expect(await screen.findByText(/^تعارض:/)).toBeVisible();
+  expect(serviceMocks.updateSettings).toHaveBeenCalledWith(expect.objectContaining({ expectedRevision: 2 }));
 });

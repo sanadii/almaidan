@@ -69,7 +69,7 @@ describe('local admin session',()=>{
 
  it('closes an open editor when the admin token expires',async()=>{
   const identity={uid:'expiring',getIdToken:vi.fn().mockResolvedValue('ok')};state.user=identity;
-  renderRoute();await screen.findByRole('heading',{name:'تصفح المحتوى'});
+  renderRoute();fireEvent.click(await screen.findByRole('tab',{name:/مراجعة الأسئلة/}));await screen.findByRole('heading',{name:'تصفح المحتوى'});
   identity.getIdToken.mockRejectedValue({code:'auth/user-token-expired'});
   const before=state.fetch.mock.calls.length;
   fireEvent.click(screen.getByRole('button',{name:'بحث'}));
@@ -88,7 +88,7 @@ describe('local admin session',()=>{
    if(url.includes('/challenge-definition')){identity.getIdToken.mockImplementation(()=>new Promise(resolve=>pending.push(resolve)));return Promise.resolve(response({publicData:{},privateGrading:{}}));}
    return Promise.resolve(response(url.endsWith('/session')?{email:'old@example.test'}:{categories:[]}));
   });
-  renderRoute();await screen.findByRole('heading',{name:'تصفح المحتوى'});
+  renderRoute();fireEvent.click(await screen.findByRole('tab',{name:/مراجعة الأسئلة/}));await screen.findByRole('heading',{name:'تصفح المحتوى'});
   fireEvent.click(screen.getByRole('button',{name:'بحث'}));
   fireEvent.click(await screen.findByRole('button',{name:/سؤال خاص/}));
   await waitFor(()=>expect(pending).toHaveLength(2));

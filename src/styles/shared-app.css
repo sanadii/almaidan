@@ -3,7 +3,7 @@
 html[data-theme="dark"] { --app-canvas:#081321; --app-surface:#142236; --app-subtle:#20334c; --app-ink:#f4f7fc; --app-muted:#bdcbdc; --app-border:#71849e; --app-accent:#80d9f5; --app-action:#175bc4; --app-error:#ffb4ad; --app-focus:#80d9f5; }
 /* INT-070.A: functional surfaces reuse the approved homepage, scoped away from gameplay. */
 .brand-mark.brand-mark--maydan { display:inline-flex; gap:8px; max-inline-size:none; color:inherit; white-space:nowrap; align-items:center; }
-.brand-mark--maydan .brand-mark__emblem { display:block; inline-size:36px; block-size:36px; color:var(--app-accent); flex:none; filter:drop-shadow(0 0 10px rgba(0,240,255,0.85)); transition:filter 0.3s ease; }
+.brand-mark--maydan .brand-mark__emblem { display:block; inline-size:42px; block-size:42px; color:var(--app-accent); flex:none; filter:drop-shadow(0 0 6px rgba(0,240,255,0.45)); transition:filter 0.3s ease; }
 .brand-mark--maydan:hover .brand-mark__emblem { filter:drop-shadow(0 0 16px #00f0ff); }
 .brand-mark--maydan .brand-mark__word { font-family:var(--font-ui); font-size:36px; font-weight:900; line-height:1.2; color:var(--app-accent); text-shadow:0 0 16px rgba(0,240,255,0.75), 0 0 32px rgba(0,240,255,0.35); letter-spacing:normal; }
 .brand-mark--maydan .brand-mark__suffix { font-family:var(--font-ui); font-size:12px; }
@@ -64,13 +64,13 @@ main.maydan-app::before, main.maydan-app::after { content:none; }
 @media(max-width:48rem) {
   .app-header.stable-header.maydan-app-header { padding-inline:24px; grid-template-columns:minmax(0,1fr) auto auto; gap:8px; }
   .app-header.stable-header.maydan-app-header .brand-mark__word { font-size:26px; }
-  .app-header.stable-header.maydan-app-header .brand-mark__emblem { inline-size:28px; block-size:28px; }
+  .app-header.stable-header.maydan-app-header .brand-mark__emblem { inline-size:34px; block-size:34px; }
   .maydan-app.auth-page .auth-panel, .maydan-app.maydan-join-page .maydan-join-card { padding:24px; margin:32px auto; gap:24px; }
   .maydan-app :is(.auth-panel,.maydan-join-card) h1 { font-size:28px; }
 }
 @media(max-width:360px) {
   .app-header.stable-header.maydan-app-header { padding-inline:16px; }
-  .app-header.stable-header.maydan-app-header .brand-mark__emblem { inline-size:24px; block-size:24px; }
+  .app-header.stable-header.maydan-app-header .brand-mark__emblem { inline-size:28px; block-size:28px; }
   .app-header.stable-header.maydan-app-header .brand-mark__word { font-size:19px; }
   .app-header.stable-header.maydan-app-header .app-header__menu-toggle { padding-inline:4px; }
   .app-header.stable-header.maydan-app-header .app-header__utilities { padding:4px; gap:0; }

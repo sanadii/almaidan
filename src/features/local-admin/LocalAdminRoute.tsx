@@ -1,13 +1,18 @@
-import {useEffect,useRef,useState} from 'react';
+import {useEffect,useRef,useState,type KeyboardEvent as ReactKeyboardEvent} from 'react';
 import {Link} from 'react-router-dom';
 import {InternalHeader} from '../../design-system/InternalHeader';
 import {getApps,initializeApp} from 'firebase/app';
 import {connectAuthEmulator,getAuth,browserSessionPersistence,setPersistence,onAuthStateChanged,signInWithEmailAndPassword,signOut,type User} from 'firebase/auth';
 import './local-admin.css';
 import {initialPayload,refreshedContent,parseChallengeObject,hasQuestionMedia,hasMediaDescriptor} from './editor-model';
+import {LocalAdminCategories} from './LocalAdminCategories';
+import {AdminMediaPreview} from './AdminMediaPreview';
 type Row=Record<string,any>;
 const mediaKey=(media:Row)=>`${media.type}:${media.mediaId}:${media.assetSha256}`;
 const formatLabels:Row={KIDS:'للأطفال · 7–10 سنوات',LIST_ITEMS:'القوائم',ACTING_ITEMS:'التمثيل',DRAWING_TARGET:'الرسم'};
+const kindLabels:Row={'':'كل الأنواع',text:'نصية',image:'بصورة',video:'بفيديو',challenge:'تحدٍّ تفاعلي'};
+const questionKind=(q:Row)=>q.challenge?'تحدٍّ تفاعلي':q.modality==='image'?'صورة':q.modality==='video'?'فيديو':q.format?formatLabels[q.format]??q.format:'نصي';
+type Tab='categories'|'questions';
 function AuthoredPreview({row}:{row:Row}){return <div className="local-admin-preview">
  <p>محتوى محلي مؤلف ومراجَع، محفوظ بإصدار مستقل؛ تظهر التعديلات في سجل المراجعات.</p>
  <dl><div><dt>النوع</dt><dd>{formatLabels[row.format]??row.format}</dd></div><div><dt>الإصدار</dt><dd dir="ltr">{row.releaseId}</dd></div><div><dt>مراجعة العنصر</dt><dd dir="ltr">{row.revisionId}</dd></div><div><dt>بصمة المصدر</dt><dd dir="ltr">{row.releaseRootHash}</dd></div>{row.contentHash&&<div><dt>بصمة المحتوى</dt><dd dir="ltr">{row.contentHash}</dd></div>}{row.questionCount!==undefined&&<div><dt>عدد العناصر</dt><dd>{row.questionCount}</dd></div>}{row.points!==undefined&&row.points!==null&&<div><dt>النقاط</dt><dd>{row.points}</dd></div>}</dl>
@@ -26,12 +31,12 @@ function DraftFields({row,entity,payload,setPayload,mediaOptions}:{row:Row;entit
  const list=row.format==='LIST_ITEMS'||row.format==='ACTING_ITEMS';
  return <><label>السؤال أو التعليمات<textarea required maxLength={2000} value={payload.promptAr??''} onChange={e=>update('promptAr',e.target.value)}/></label>
  {list?<label>{row.format==='LIST_ITEMS'?'الإجابات المقبولة (إجابة في كل سطر)':'عناصر التمثيل (عنصر في كل سطر)'}<span>حافظ على عدد العناصر وترتيبها؛ تبقى النقاط وخصائص كل عنصر مرتبطة بموضعه.</span><textarea required value={(payload.items??[]).join('\n')} onChange={e=>update('items',e.target.value.split('\n'))}/></label>:row.format==='DRAWING_TARGET'?<label>الكلمة الخاصة بالرسّام<input required maxLength={500} value={payload.target??''} onChange={e=>update('target',e.target.value)}/></label>:<><label>الإجابة الأساسية<input required maxLength={500} value={payload.canonicalAnswer??''} onChange={e=>update('canonicalAnswer',e.target.value)}/></label><label>الإجابات المقبولة (إجابة في كل سطر)<textarea required value={(payload.acceptedAnswers??[]).join('\n')} onChange={e=>update('acceptedAnswers',e.target.value.split('\n'))}/></label></>}
- {hasMedia&&<><p>اختر من ملفات المصدر المحلية المتحقق منها؛ لا يمكن إدخال رابط خارجي. يجب أن تختلف وسائط السؤال والإجابة.</p>{(['media','answerMedia'] as const).map(key=><label key={key}>{key==='media'?'وسائط السؤال':'وسائط الإجابة'}<select value={payload[key]?mediaKey(payload[key]):''} required={key==='media'&&hasMediaDescriptor(row.media)} onChange={e=>update(key,e.target.value?mediaOptions.find(option=>mediaKey(option)===e.target.value):null)}><option value="">بدون وسائط</option>{mediaOptions.filter(option=>key==='answerMedia'||option.type===row.media?.type).map(option=><option key={mediaKey(option)} value={mediaKey(option)}>{option.altAr||option.mediaId} · {option.type} · {option.assetSha256?.slice(0,12)}</option>)}</select></label>)}</>}
+ {hasMedia&&<><p>اختر من ملفات المصدر المحلية المتحقق منها؛ لا يمكن إدخال رابط خارجي. يجب أن تختلف وسائط السؤال والإجابة.</p>{(['media','answerMedia'] as const).map(key=><label key={key}>{key==='media'?'وسائط السؤال':'وسائط الإجابة'}<select value={payload[key]?mediaKey(payload[key]):''} required={key==='media'&&hasMediaDescriptor(row.media)} onChange={e=>update(key,e.target.value?mediaOptions.find(option=>mediaKey(option)===e.target.value):null)}><option value="">بدون وسائط</option>{mediaOptions.filter(option=>key==='answerMedia'||option.type===row.media?.type).map(option=><option key={mediaKey(option)} value={mediaKey(option)}>{option.altAr||option.mediaId} · {option.type==='video'?'فيديو':option.type==='image'?'صورة':option.type} · {option.assetSha256?.slice(0,12)}</option>)}</select></label>)}</>}
  {!list&&!hasMedia&&<label>النقاط {row.sourceKind==='local-authored'&&<span>درجة العنصر ثابتة في المصدر.</span>}<select disabled={row.sourceKind==='local-authored'} value={payload.points??200} onChange={e=>update('points',Number(e.target.value))}>{[200,400,600].map(n=><option key={n}>{n}</option>)}</select></label>}</>;
 }
 function RevisionValue({value}:{value:unknown}){return <pre>{typeof value==='object'&&value!==null?JSON.stringify(value,null,2):String(value??'')}</pre>;}
 
-const errors:Record<string,string>={LOCAL_ADMIN_REQUIRED:'هذا الحساب لا يملك صلاحية الإدارة المحلية.',INVALID_CATEGORY_LABEL:'اكتب اسماً للفئة بين حرف و100 حرف، دون أسطر جديدة أو رموز تنسيق.',INVALID_QUESTION_CONTENT:'تحقق من السؤال (حتى 2000 حرف)، وكل إجابة أو عنصر (حتى 500 حرف)، وعدد العناصر الأصلي ودرجة المصدر.' ,ITEM_COUNT:'حافظ على عدد العناصر الأصلي، واكتب عنصراً غير فارغ في كل سطر.',CANONICAL_ANSWER_REQUIRED:'أضف الإجابة الأساسية إلى قائمة الإجابات المقبولة.',ACTIVE_REVISION_CONFLICT:'تغيّرت النسخة الفعّالة. أعد اختيار العنصر لتحديث سجل المراجعات.',REVIEW_REQUIRED:'اعتمد مراجعة المسودة قبل تفعيلها.',LOCAL_ADMIN_UNAVAILABLE:'تعذرت خدمة الإدارة المحلية. حاول مرة أخرى.',LOCAL_TEXT_EDIT_ONLY:'هذا السؤال يحتاج محرر الوسائط أو آلية التحدي.',INVALID_CHALLENGE_JSON:'تحقق من بيانات التحدي: يجب أن يكون كل حقل كائن JSON صالحاً.',INVALID_ID_TOKEN:'انتهت الجلسة. ادخل بحساب الإدارة مجدداً.'};
+const errors:Record<string,string>={LOCAL_ADMIN_REQUIRED:'هذا الحساب لا يملك صلاحية الإدارة المحلية.',INVALID_CATEGORY_LABEL:'اكتب اسماً للفئة بين حرف و100 حرف، دون أسطر جديدة أو رموز تنسيق.',INVALID_QUESTION_CONTENT:'تحقق من السؤال (حتى 2000 حرف)، وكل إجابة أو عنصر (حتى 500 حرف)، وعدد العناصر الأصلي ودرجة المصدر.' ,ITEM_COUNT:'حافظ على عدد العناصر الأصلي، واكتب عنصراً غير فارغ في كل سطر.',CANONICAL_ANSWER_REQUIRED:'أضف الإجابة الأساسية إلى قائمة الإجابات المقبولة.',ACTIVE_REVISION_CONFLICT:'تغيّرت النسخة الفعّالة من جلسة أخرى، فحُدّث العنصر وسجل المراجعات. راجع النسخة الفعّالة الحالية ثم أعد المحاولة.',REVIEW_REQUIRED:'اعتمد مراجعة المسودة قبل تفعيلها.',LOCAL_ADMIN_UNAVAILABLE:'تعذرت خدمة الإدارة المحلية. حاول مرة أخرى.',LOCAL_TEXT_EDIT_ONLY:'هذا السؤال يحتاج محرر الوسائط أو آلية التحدي.',INVALID_CHALLENGE_JSON:'تحقق من بيانات التحدي: يجب أن يكون كل حقل كائن JSON صالحاً.',INVALID_ID_TOKEN:'انتهت الجلسة. ادخل بحساب الإدارة مجدداً.',AUTHENTICATION_REQUIRED:'انتهت الجلسة. ادخل بحساب الإدارة مجدداً.',INVALID_CHALLENGE_CONTENT:'رفض الخادم بيانات التحدي: تحقق من الحقول المطلوبة لهذه الآلية وروابطها، وألا يتجاوز حجمها 256 كيلوبايت.',INVALID_MEDIA_BINDING:'اختر وسائط سؤال من الملفات المحلية المتحقق منها، ووسائط إجابة مختلفة عنها أو بدون وسائط.',INVALID_CONTENT_DRAFT:'تعذرت قراءة المسودة. أعد اختيار العنصر ثم حاول مجدداً.',CATEGORY_NOT_FOUND:'لم تعد هذه الفئة موجودة في المصدر المحلي. ابحث مجدداً.',QUESTION_NOT_FOUND:'لم يعد هذا السؤال موجوداً في المصدر المحلي. ابحث مجدداً.',REVISION_NOT_FOUND:'لم تعد هذه المراجعة موجودة. أعد اختيار العنصر لتحديث السجل.'};
 const allowed=()=>import.meta.env.VITE_ALMAIDAN_LOCAL_ONLY==='true'&&import.meta.env.VITE_FIREBASE_PROJECT_ID==='demo-almaidan-local'&&['127.0.0.1','localhost'].includes(location.hostname);
 let adminAuthPromise:Promise<ReturnType<typeof getAuth>>|null=null;
 function adminAuth(){
@@ -54,11 +59,14 @@ export function LocalAdminRoute(){
  const [user,setUser]=useState<User|null>(null),[session,setSession]=useState<Row|null>(null),[email,setEmail]=useState(''),[password,setPassword]=useState(''),[error,setError]=useState(''),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false);
  const [categories,setCategories]=useState<Row[]>([]),[category,setCategory]=useState(''),[query,setQuery]=useState(''),[rows,setRows]=useState<Row[]>([]),[offset,setOffset]=useState(0),[total,setTotal]=useState(0),[selected,setSelected]=useState<Row|null>(null),[entity,setEntity]=useState<'question'|'category'>('question'),[payload,setPayload]=useState<Row>({}),[revisions,setRevisions]=useState<Row[]>([]);
  const [mediaOptions,setMediaOptions]=useState<Row[]>([]);
+ const [baseline,setBaseline]=useState(''),[searched,setSearched]=useState(false);
+ const [tab,setTab]=useState<Tab>('categories'),[kind,setKind]=useState('');
+ const editorHeading=useRef<HTMLHeadingElement>(null);
  const [restoring,setRestoring]=useState(true),[checking,setChecking]=useState(false),[logoutFailed,setLogoutFailed]=useState(false);
  const epoch=useRef(0),authEpoch=useRef(0),currentAdminUser=useRef<User|null>(null),mounted=useRef(false),errorRef=useRef<HTMLParagraphElement>(null);
  function clearPrivate(){
   setSession(null);setCategories([]);setCategory('');setQuery('');setRows([]);setOffset(0);setTotal(0);
-  setSelected(null);setEntity('question');setPayload({});setRevisions([]);setMediaOptions([]);setNotice('');
+  setSelected(null);setEntity('question');setPayload({});setRevisions([]);setMediaOptions([]);setNotice('');setBaseline('');setSearched(false);setKind('');
  }
  useEffect(()=>{if(error)errorRef.current?.focus();},[error]);
  useEffect(()=>{const previous=document.title;document.title='إدارة المحتوى المحلي | الميدان';return()=>{document.title=previous;};},[]);
@@ -74,6 +82,9 @@ export function LocalAdminRoute(){
   }).catch(()=>{if(active){setRestoring(false);setError('تعذر تهيئة جلسة الإدارة المحلية.');}});
   return()=>{active=false;mounted.current=false;currentAdminUser.current=null;authEpoch.current++;epoch.current++;unsubscribe?.();};
  },[]);
+ const dirty=Boolean(selected)&&JSON.stringify(payload)!==baseline;
+ const confirmDiscard=()=>!dirty||window.confirm('لديك تعديلات غير محفوظة على العنصر الحالي. هل تريد تجاهلها؟');
+ useEffect(()=>{if(!dirty)return;const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue='';};window.addEventListener('beforeunload',warn);return()=>window.removeEventListener('beforeunload',warn);},[dirty]);
  const renderAuthority=authEpoch.current;
  async function api(path:string,body?:unknown){
   if(!allowed()||!user||currentAdminUser.current!==user||authEpoch.current!==renderAuthority)throw Error('ADMIN_SIGN_IN_REQUIRED');
@@ -90,12 +101,13 @@ export function LocalAdminRoute(){
    throw error;
   }
   if(!valid())throw Error('STALE_ADMIN_SESSION');
-  const response=await fetch(`/api/v1/local-admin${path}`,{method:body===undefined?'GET':'POST',headers:{authorization:`Bearer ${token}`,'content-type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),cache:'no-store'});
-  const data=await response.json();if(!valid())throw Error('STALE_ADMIN_SESSION');
+  let response:Response,data:Row;
+  try{response=await fetch(`/api/v1/local-admin${path}`,{method:body===undefined?'GET':'POST',headers:{authorization:`Bearer ${token}`,'content-type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),cache:'no-store'});data=await response.json();}catch{throw Error(valid()?'LOCAL_ADMIN_UNAVAILABLE':'STALE_ADMIN_SESSION');}
+  if(!valid())throw Error('STALE_ADMIN_SESSION');
   if(!response.ok){
    if(response.status===401||response.status===403){
     authEpoch.current++;epoch.current++;currentAdminUser.current=null;clearPrivate();setUser(null);setChecking(false);setBusy(false);
-    setError(errors[data.error]??errors.LOCAL_ADMIN_REQUIRED);
+    setError(errors[data.error]??(response.status===401?errors.INVALID_ID_TOKEN:errors.LOCAL_ADMIN_REQUIRED));
     const rejectedGeneration=authEpoch.current;
     void adminAuth().then(auth=>{if(mounted.current&&authEpoch.current===rejectedGeneration&&auth.currentUser?.uid===user.uid)return signOut(auth);}).catch(()=>{});
    }
@@ -122,7 +134,52 @@ export function LocalAdminRoute(){
   catch{if(mounted.current&&generation===authEpoch.current){setLogoutFailed(true);setError('تعذر تسجيل الخروج. حاول مجدداً قبل مغادرة هذه الجلسة.');}}
   finally{if(mounted.current&&generation===authEpoch.current)setBusy(false);}
  }
- async function search(page=0){const generation=++epoch.current;const data=await api(`/questions?category=${encodeURIComponent(category)}&q=${encodeURIComponent(query)}&offset=${page}`);if(generation!==epoch.current)return;setRows(data.questions);setTotal(data.total);setOffset(page);}
+ async function search(page=0,filters:{category?:string;query?:string;kind?:string}={}):Promise<Row[]|null>{const generation=++epoch.current;const c=filters.category??category,q=filters.query??query,k=filters.kind??kind;const data=await api(`/questions?category=${encodeURIComponent(c)}&q=${encodeURIComponent(q)}&kind=${encodeURIComponent(k)}&offset=${page}`);if(generation!==epoch.current)return null;setRows(data.questions);setTotal(data.total);setOffset(page);setSearched(true);return data.questions;}
+ // Admin-only media bytes are fetched with the admin token and shown from a blob URL.
+ async function mediaBlob(media:Row){
+  if(!allowed()||!user||currentAdminUser.current!==user)throw Error('ADMIN_SIGN_IN_REQUIRED');
+  const token=await user.getIdToken();
+  const response=await fetch(`/api/v1/local-admin/media?mediaId=${encodeURIComponent(media.mediaId)}&assetSha256=${encodeURIComponent(media.assetSha256)}`,{headers:{authorization:`Bearer ${token}`},cache:'no-store'});
+  if(!response.ok)throw Error('MEDIA_UNAVAILABLE');
+  return URL.createObjectURL(await response.blob());
+ }
+ function toggleCategory(row:Row,disabled:boolean){
+  void run(async()=>{
+   await api('/categories/availability',{categoryId:row.id,disabled});
+   setCategories(list=>list.map(c=>c.availabilityKey===row.availabilityKey?{...c,disabled}:c));
+   setNotice(disabled?`أُوقفت فئة «${row.labelAr}»؛ لن تظهر في إعداد المباريات الجديدة.`:`أصبحت فئة «${row.labelAr}» متاحة للمباريات الجديدة.`);
+  });
+ }
+ function reviewCategory(row:Row){
+  if(!confirmDiscard())return;
+  setCategory(row.id);setQuery('');setKind('');setTab('questions');
+  void run(async()=>{await search(0,{category:row.id,query:'',kind:''});});
+ }
+ function renameCategory(row:Row){
+  if(!confirmDiscard())return;
+  setCategory(row.id);setTab('questions');
+  void run(()=>select(row,'category'));
+ }
+ const position=entity==='question'&&selected?rows.findIndex(r=>r.id===selected.id):-1;
+ const hasNext=position>=0&&(position<rows.length-1||offset+30<total),hasPrevious=position>0||(position===0&&offset>0);
+ // Step through the result list for quick review; crosses page boundaries when needed.
+ function step(direction:1|-1){
+  if(!confirmDiscard())return;
+  void run(async()=>{
+   const next=position+direction;
+   if(next>=0&&next<rows.length){await select(rows[next],'question');return;}
+   const page=direction===1?await search(offset+30):await search(Math.max(0,offset-30));
+   const target=direction===1?page?.[0]:page?.[page.length-1];
+   if(target)await select(target,'question');
+  });
+ }
+ function tabKeys(event:ReactKeyboardEvent<HTMLButtonElement>){
+  if(event.key!=='ArrowLeft'&&event.key!=='ArrowRight'&&event.key!=='Home'&&event.key!=='End')return;
+  event.preventDefault();
+  const next:Tab=tab==='categories'?'questions':'categories';
+  setTab(event.key==='Home'?'categories':event.key==='End'?'questions':next);
+  window.setTimeout(()=>document.getElementById(`local-admin-tab-${event.key==='Home'?'categories':event.key==='End'?'questions':next}`)?.focus(),0);
+ }
  async function select(row:Row,kind:'question'|'category') {
   const generation=renderAuthority;
   const valid=()=>mounted.current&&generation===authEpoch.current&&currentAdminUser.current===user;
@@ -137,7 +194,8 @@ export function LocalAdminRoute(){
    setMediaOptions([...images.options,...videos.options]);
   }
   if(!valid())return;
-  setSelected(current);setPayload(initialPayload(current,kind));
+  const loaded=initialPayload(current,kind);setSelected(current);setPayload(loaded);setBaseline(JSON.stringify(loaded));
+  window.setTimeout(()=>{if(valid())editorHeading.current?.focus();},0);
   const data=await api(`/revisions?entity=${kind}&entityId=${encodeURIComponent(row.id)}`);if(valid())setRevisions(data.revisions);
  }
  async function reload(refreshContent=false){
@@ -148,21 +206,33 @@ export function LocalAdminRoute(){
   setRevisions(data.revisions);
   if(refreshContent){
    const refreshed=await refreshedContent(api,selected,entity);if(!valid())return;
-   setCategories(refreshed.categories);if(refreshed.row){setSelected(refreshed.row);setPayload(refreshed.payload!);}
-   await search(offset);
+   setCategories(refreshed.categories);if(refreshed.row){setSelected(refreshed.row);setPayload(refreshed.payload!);setBaseline(JSON.stringify(refreshed.payload));}
+   if(searched)await search(offset);
   }
+ }
+ async function headChange(work:()=>Promise<void>){
+  try{await work();}
+  catch(error){if(error instanceof Error&&error.message==='ACTIVE_REVISION_CONFLICT'){try{await reload(true);}catch{/* the conflict message stays authoritative */}}throw error;}
  }
  if(!allowed())return <main className="maydan-app local-content-admin" dir="rtl"><h1>الإدارة المحلية غير متاحة</h1></main>;
  return <div className="maydan-app"><InternalHeader/><main id="main-content" className="local-content-admin" dir="rtl">
-  <header><div><p>الميدان · المحتوى المحلي</p><h1>إدارة الفئات والأسئلة</h1><p>تعديلات مستقلة للمباريات الجديدة. المصدر الأصلي والمباريات السابقة محفوظة.</p></div><Link className="button button--secondary" to="/">العودة للميدان</Link></header>
-  {error&&<p ref={errorRef} tabIndex={-1} role="alert" className="local-admin-error">{error}</p>}{notice&&<p role="status">{notice}</p>}
+  <header className="local-admin-head"><div className="local-admin-head__titles"><p className="local-admin-eyebrow">الميدان · المحتوى المحلي</p><h1>إدارة الفئات والأسئلة</h1><p>تعديلات مستقلة للمباريات الجديدة. المصدر الأصلي والمباريات السابقة محفوظة.</p></div>
+   <div className="local-admin-head__actions">{session&&!restoring&&!checking&&<span className="local-admin-account" title={session.email}><span className="local-admin-account__dot" aria-hidden="true"/>حساب الإدارة</span>}<Link className="button button--secondary" to="/" onClick={e=>{if(!confirmDiscard())e.preventDefault();}}>العودة للميدان</Link>{session&&!restoring&&!checking&&<button className="button button--secondary" disabled={busy} onClick={()=>{if(confirmDiscard())void logout();}}>خروج الإدارة</button>}</div></header>
+  {error&&<p ref={errorRef} tabIndex={-1} role="alert" className="local-admin-error">{error}</p>}{notice&&<p role="status" className="local-admin-notice">{notice}</p>}
   {logoutFailed&&<button className="button button--secondary" disabled={busy} onClick={()=>void logout()}>إعادة محاولة خروج الإدارة</button>}
   {restoring||checking?<section className="local-admin-panel local-admin-auth" role="status">جارٍ التحقق من جلسة الإدارة…</section>:!session?<section className="local-admin-panel local-admin-auth"><h2>الدخول بحساب الإدارة المحلي</h2><p>حساب الإدارة مستقل عن حساب اللعب. تستمر جلسته في علامة التبويب هذه عند التنقل والتحديث، حتى تسجيل الخروج أو إغلاقها.</p><form onSubmit={e=>{e.preventDefault();void run(async()=>{const auth=await adminAuth();await signInWithEmailAndPassword(auth,email,password);setPassword('');});}}><label>البريد الإلكتروني<input dir="ltr" type="email" autoComplete="username" required value={email} onChange={e=>setEmail(e.target.value)}/></label><label>كلمة المرور<input dir="ltr" type="password" autoComplete="current-password" required value={password} onChange={e=>setPassword(e.target.value)}/></label><button className="button button--primary" disabled={busy}>الدخول</button></form></section>:<>
-  <div className="local-admin-session"><span>{session.email}</span><button className="button button--secondary" disabled={busy} onClick={()=>void logout()}>خروج الإدارة</button></div>
-  <section className="local-admin-panel"><h2>تصفح المحتوى</h2><form className="local-admin-search" onSubmit={e=>{e.preventDefault();void run(()=>search());}}><label>الفئة<select value={category} onChange={e=>setCategory(e.target.value)}><option value="">كل الفئات ({categories.length})</option>{categories.map(c=><option key={c.id} value={c.id}>{c.labelAr} · {c.questionCount} · {formatLabels[c.format]??c.id}</option>)}</select></label><label>بحث في السؤال أو المعرّف<input value={query} onChange={e=>setQuery(e.target.value)} maxLength={200}/></label><button className="button button--primary" disabled={busy}>بحث</button>{category&&<button type="button" className="button button--secondary" disabled={busy} onClick={()=>void run(()=>select(categories.find(c=>c.id===category)!,'category'))}>معاينة الفئة</button>}</form></section>
-  <div className="local-admin-grid"><section className="local-admin-panel"><h2>الأسئلة <small>({total})</small></h2>{rows.map(q=><button key={q.id} className="local-admin-question" disabled={busy} onClick={()=>void run(()=>select(q,'question'))}><strong>{q.promptAr}</strong><small>{q.id} · {q.format?formatLabels[q.format]??q.format:'محتوى أصلي'}</small></button>)}{!rows.length&&<p>اختر فئة أو اكتب عبارة ثم ابحث.</p>}<nav aria-label="صفحات الأسئلة"><button className="button button--secondary" disabled={busy||offset===0} onClick={()=>void run(()=>search(Math.max(0,offset-30)))}>السابق</button><span>{total?offset+1:0}–{Math.min(offset+30,total)}</span><button className="button button--secondary" disabled={busy||offset+30>=total} onClick={()=>void run(()=>search(offset+30))}>التالي</button></nav></section>
-  <section className="local-admin-panel"><h2>{selected?(entity==='category'?'تحرير الفئة':'معاينة وتحرير السؤال'):'اختر عنصراً'}</h2>{selected&&<><p className="local-admin-id">{selected.id}</p>{selected.sourceKind==='local-authored'&&<AuthoredPreview row={selected}/>}<details className="local-admin-provenance"><summary>المصدر والمعاينة</summary><dl><div><dt>المصدر</dt><dd>{selected.sourceKind==='local-authored'?'محتوى محلي مؤلف':'الإصدار الأصلي المحفوظ'}</dd></div><div><dt>الإصدار</dt><dd dir="ltr">{selected.releaseId}</dd></div><div><dt>بصمة المصدر</dt><dd dir="ltr">{selected.releaseRootHash}</dd></div></dl>{selected.media&&<><h3>وسائط السؤال</h3><RevisionValue value={selected.media}/></>}{selected.answerMedia&&<><h3>وسائط الإجابة</h3><RevisionValue value={selected.answerMedia}/></>}{selected.challenge&&<><h3>التحدي</h3><RevisionValue value={selected.challenge}/></>}</details><form onSubmit={e=>{e.preventDefault();void run(async()=>{if(entity==='question'&&(selected.format==='LIST_ITEMS'||selected.format==='ACTING_ITEMS')&&((payload.items??[]).length!==(selected.items??[]).length||(payload.items??[]).some((item:string)=>!item.trim())))throw Error('ITEM_COUNT');const draftPayload=selected.challenge?{promptAr:payload.promptAr,publicData:parseChallengeObject(payload.publicDataText),privateGrading:parseChallengeObject(payload.privateGradingText)}:payload;await api('/drafts',{entity,entityId:selected.id,payload:draftPayload});await reload();setNotice('حُفظت مسودة مستقلة. راجعها قبل التفعيل.');});}}><DraftFields row={selected} entity={entity} payload={payload} setPayload={setPayload} mediaOptions={mediaOptions}/><p>الحفظ ينشئ مسودة جديدة ولا يغيّر النسخ السابقة أو المحتوى الفعّال.</p><button className="button button--primary" disabled={busy}>حفظ مسودة جديدة</button></form>
-  <h3>سجل المراجعات</h3>{revisions.some(r=>r.active)&&<button className="button button--secondary" disabled={busy} onClick={()=>void run(async()=>{await api('/restore-original',{entity,entityId:selected.id,expectedRevisionId:revisions.find(r=>r.active)!.id});await reload(true);setNotice('عاد المصدر الأصلي للمباريات الجديدة؛ بقي سجل المراجعات محفوظاً.');})}>استعادة المصدر الأصلي</button>}{revisions.map(r=><article key={r.id} className="local-admin-revision"><p>{r.active?'فعّالة':r.reviewerUid?'مراجَعة':'مسودة'} · {new Date(r.createdAt).toLocaleString('ar')}</p><dl>{Object.entries(r.payload).map(([k,v])=><div key={k}><dt>{({labelAr:'اسم الفئة',promptAr:'السؤال',canonicalAnswer:'الإجابة',acceptedAnswers:'الإجابات المقبولة',points:'النقاط',items:'العناصر',target:'الكلمة الخاصة بالرسّام',media:'وسائط السؤال',answerMedia:'وسائط الإجابة',challenge:'التحدي'} as Row)[k]??k}</dt><dd><RevisionValue value={v}/></dd></div>)}</dl>{!r.reviewerUid?<button className="button button--secondary" disabled={busy} onClick={()=>void run(async()=>{await api(`/revisions/${r.id}/review`,{});await reload();setNotice('اكتملت المراجعة. لم تُفعّل بعد.');})}>اعتماد المراجعة</button>:!r.active?<button className="button button--primary" disabled={busy} onClick={()=>void run(async()=>{await api(`/revisions/${r.id}/activate`,{expectedRevisionId:revisions.find(x=>x.active)?.id??null});await reload(true);setNotice('فُعّلت للمباريات الجديدة، وحُدثت المعاينة.');})}>تفعيل للمباريات الجديدة</button>:null}</article>)}</>}</section></div>
+  <div className="local-admin-tabs" role="tablist" aria-label="أقسام الإدارة">
+   <button type="button" role="tab" id="local-admin-tab-categories" aria-controls="local-admin-tabpanel" aria-selected={tab==='categories'} tabIndex={tab==='categories'?0:-1} onKeyDown={tabKeys} onClick={()=>setTab('categories')}>الفئات<span className="local-admin-tabs__count">{categories.length}</span></button>
+   <button type="button" role="tab" id="local-admin-tab-questions" aria-controls="local-admin-tabpanel" aria-selected={tab==='questions'} tabIndex={tab==='questions'?0:-1} onKeyDown={tabKeys} onClick={()=>setTab('questions')}>مراجعة الأسئلة</button>
+  </div>
+  <div role="tabpanel" id="local-admin-tabpanel" aria-labelledby={`local-admin-tab-${tab}`}>
+  {tab==='categories'?<LocalAdminCategories categories={categories} busy={busy} onToggle={toggleCategory} onReview={reviewCategory} onRename={renameCategory}/>:<>
+  <section className="local-admin-panel"><h2>تصفح المحتوى</h2><form className="local-admin-search" onSubmit={e=>{e.preventDefault();void run(async()=>{await search();});}}><label>الفئة<select value={category} onChange={e=>setCategory(e.target.value)}><option value="">كل الفئات ({categories.length})</option>{categories.map(c=><option key={c.id} value={c.id}>{c.labelAr} · {c.questionCount} سؤال{c.format?` · ${formatLabels[c.format]??c.format}`:''}{c.disabled?' · معطّلة':''}</option>)}</select></label><label>بحث في السؤال أو المعرّف<input value={query} onChange={e=>setQuery(e.target.value)} maxLength={200}/></label><label className="local-admin-search__kind">نوع السؤال<select value={kind} onChange={e=>setKind(e.target.value)}>{Object.entries(kindLabels).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label><button className="button button--primary" disabled={busy}>بحث</button>{category&&<button type="button" className="button button--secondary" disabled={busy} onClick={()=>{if(confirmDiscard())void run(()=>select(categories.find(c=>c.id===category)!,'category'));}}>معاينة الفئة</button>}</form></section>
+  <div className="local-admin-grid"><section className="local-admin-panel"><h2>الأسئلة <small>({total})</small></h2>{rows.map(q=><button key={q.id} type="button" className="local-admin-question" aria-current={entity==='question'&&selected?.id===q.id?'true':undefined} disabled={busy} onClick={()=>{if(confirmDiscard())void run(()=>select(q,'question'));}}><strong>{q.promptAr}</strong>{(q.canonicalAnswer||q.target)&&<span className="local-admin-question__answer">الإجابة: {q.canonicalAnswer??q.target}</span>}<span className="local-admin-question__meta">{categories.find(c=>c.id===q.categoryId)?.labelAr&&<span>{categories.find(c=>c.id===q.categoryId)!.labelAr}</span>}{q.points?<span>{q.points} نقطة</span>:null}<span>{questionKind(q)}</span></span><small className="local-admin-question__id" dir="ltr">{q.id}</small></button>)}{!rows.length&&<p>{searched?'لا توجد أسئلة مطابقة لهذا البحث. غيّر الفئة أو العبارة ثم ابحث مجدداً.':'اختر فئة أو اكتب عبارة ثم ابحث.'}</p>}<nav aria-label="صفحات الأسئلة"><button className="button button--secondary" disabled={busy||offset===0} onClick={()=>void run(async()=>{await search(Math.max(0,offset-30));})}>السابق</button><span>{total?offset+1:0}–{Math.min(offset+30,total)}</span><button className="button button--secondary" disabled={busy||offset+30>=total} onClick={()=>void run(async()=>{await search(offset+30);})}>التالي</button></nav></section>
+  <section className="local-admin-panel local-admin-editor"><div className="local-admin-editor__head"><h2 ref={editorHeading} tabIndex={-1}>{selected?(entity==='category'?'تحرير الفئة':'معاينة وتحرير السؤال'):'اختر عنصراً'}</h2>{position>=0&&<nav className="local-admin-stepper" aria-label="التنقل بين الأسئلة"><button type="button" className="button button--secondary" disabled={busy||!hasPrevious} onClick={()=>step(-1)}>السؤال السابق</button><span>{offset+position+1} / {total}</span><button type="button" className="button button--secondary" disabled={busy||!hasNext} onClick={()=>step(1)}>السؤال التالي</button></nav>}</div>{!selected&&<p className="local-admin-empty">اختر سؤالاً من القائمة لمعاينته وتعديله، أو افتح فئة من تبويب الفئات.</p>}{selected&&<><p className="local-admin-id" dir="ltr">{selected.id}</p>{entity==='question'&&(selected.media||selected.answerMedia)&&<div className="local-admin-media-row"><AdminMediaPreview label="وسائط السؤال" media={selected.media} load={mediaBlob}/><AdminMediaPreview label="وسائط الإجابة" media={selected.answerMedia} load={mediaBlob}/></div>}{selected.sourceKind==='local-authored'&&<AuthoredPreview row={selected}/>}<details className="local-admin-provenance"><summary>المصدر والمعاينة</summary><dl><div><dt>المصدر</dt><dd>{selected.sourceKind==='local-authored'?'محتوى محلي مؤلف':'الإصدار الأصلي المحفوظ'}</dd></div><div><dt>الإصدار</dt><dd dir="ltr">{selected.releaseId}</dd></div><div><dt>بصمة المصدر</dt><dd dir="ltr">{selected.releaseRootHash}</dd></div></dl>{selected.media&&<><h3>وسائط السؤال</h3><RevisionValue value={selected.media}/></>}{selected.answerMedia&&<><h3>وسائط الإجابة</h3><RevisionValue value={selected.answerMedia}/></>}{selected.challenge&&<><h3>التحدي</h3><RevisionValue value={selected.challenge}/></>}</details><form onSubmit={e=>{e.preventDefault();void run(async()=>{if(entity==='question'&&(selected.format==='LIST_ITEMS'||selected.format==='ACTING_ITEMS')&&((payload.items??[]).length!==(selected.items??[]).length||(payload.items??[]).some((item:string)=>!item.trim())))throw Error('ITEM_COUNT');const draftPayload=selected.challenge?{promptAr:payload.promptAr,publicData:parseChallengeObject(payload.publicDataText),privateGrading:parseChallengeObject(payload.privateGradingText)}:Array.isArray(payload.acceptedAnswers)?{...payload,acceptedAnswers:payload.acceptedAnswers.filter((answer:string)=>answer.trim())}:payload;await api('/drafts',{entity,entityId:selected.id,payload:draftPayload});setBaseline(JSON.stringify(payload));await reload();setNotice('حُفظت مسودة مستقلة. راجعها قبل التفعيل.');});}}><DraftFields row={selected} entity={entity} payload={payload} setPayload={setPayload} mediaOptions={mediaOptions}/><p>الحفظ ينشئ مسودة جديدة ولا يغيّر النسخ السابقة أو المحتوى الفعّال.</p><button className="button button--primary" disabled={busy}>حفظ مسودة جديدة</button></form>
+  <h3>سجل المراجعات</h3>{revisions.some(r=>r.active)&&<button className="button button--secondary" disabled={busy} onClick={()=>{if(confirmDiscard())void run(()=>headChange(async()=>{await api('/restore-original',{entity,entityId:selected.id,expectedRevisionId:revisions.find(r=>r.active)!.id});await reload(true);setNotice('عاد المصدر الأصلي للمباريات الجديدة؛ بقي سجل المراجعات محفوظاً.');}));}}>استعادة المصدر الأصلي</button>}{revisions.map(r=><article key={r.id} className="local-admin-revision"><p>{r.active?'فعّالة':r.reviewerUid?'مراجَعة':'مسودة'} · {new Date(r.createdAt).toLocaleString('ar')}</p><dl>{Object.entries(r.payload).map(([k,v])=><div key={k}><dt>{({labelAr:'اسم الفئة',promptAr:'السؤال',canonicalAnswer:'الإجابة',acceptedAnswers:'الإجابات المقبولة',points:'النقاط',items:'العناصر',target:'الكلمة الخاصة بالرسّام',media:'وسائط السؤال',answerMedia:'وسائط الإجابة',challenge:'التحدي'} as Row)[k]??k}</dt><dd><RevisionValue value={v}/></dd></div>)}</dl>{!r.reviewerUid?<button className="button button--secondary" disabled={busy} onClick={()=>void run(async()=>{await api(`/revisions/${r.id}/review`,{});await reload();setNotice('اكتملت المراجعة. لم تُفعّل بعد.');})}>اعتماد المراجعة</button>:!r.active?<button className="button button--primary" disabled={busy} onClick={()=>{if(confirmDiscard())void run(()=>headChange(async()=>{await api(`/revisions/${r.id}/activate`,{expectedRevisionId:revisions.find(x=>x.active)?.id??null});await reload(true);setNotice('فُعّلت للمباريات الجديدة، وحُدثت المعاينة.');}));}}>تفعيل للمباريات الجديدة</button>:null}</article>)}</>}</section></div>
+  </>}
+  </div>
   </>}
  </main></div>;
 }

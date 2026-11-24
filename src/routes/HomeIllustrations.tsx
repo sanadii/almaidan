@@ -1,5 +1,6 @@
+import { BrandEmblem } from "../design-system/BrandMark";
 export function HomeEmblem({ closing = false }: { closing?: boolean }) {
-  return <span className={`maydan-emblem${closing ? " maydan-emblem--closing" : ""}`} aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><path d="M12 12h12l6 10-6 10H12L6 22l6-10Z" fill="currentColor" /><path d="M29 24h9l5 8-5 8h-9l-5-8 5-8Z" fill="currentColor" opacity=".65" /><path d="M13 20h9m-4-4v12" stroke="#fff" strokeWidth="3" strokeLinecap="round" /></svg></span>;
+  return <span className={`maydan-emblem${closing ? " maydan-emblem--closing" : ""}`} aria-hidden="true"><BrandEmblem /></span>;
 }
 
 export function HomeGraphicIcon({ kind }: { kind: "link" | "screen" | "people" | "code" | "arrow" | "check" | "wifi" | "settings" }) {

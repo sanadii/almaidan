@@ -87,7 +87,7 @@ html[data-theme="dark"] .maydan-home-page{--maydan-canvas:#080e1e;--maydan-surfa
 .maydan-showcase__examples{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px;list-style:none;padding:0;margin:76.8px 0 40px}.maydan-showcase__examples .maydan-phone{width:100%}.maydan-showcase__examples>li:first-child .maydan-phone{transform:rotate(-2deg)}.maydan-showcase__examples>li:nth-child(2){padding-top:48px}.maydan-showcase__examples>li:nth-child(2) .maydan-phone{transform:rotate(2deg)}.maydan-showcase__examples>li:nth-child(3) .maydan-phone{transform:rotate(-1deg)}.maydan-showcase__caption{margin-top:32px}.maydan-showcase__caption p{font-size:16px;line-height:26px}.maydan-choice--unavailable{margin-top:40px;padding-top:24px;border-top:1px solid var(--maydan-border);font-size:16px}.maydan-choice--unavailable h3{display:inline;margin-inline-end:16px}.maydan-choice--unavailable p{display:inline}.maydan-coming-soon{display:inline-block;margin-inline-start:16px;color:var(--maydan-muted);font-size:14px}.maydan-discovery{padding-block:48px 64px}.maydan-discovery h2,.maydan-catalogue h2{font-size:28px}.maydan-discovery p,.maydan-catalogue p{font-size:16px;line-height:26px}.maydan-catalogue{padding-block:32px 64px}
 .maydan-gathering{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:64px;align-items:center}.maydan-gathering__copy{grid-column:2;grid-row:1}.maydan-gathering__art{grid-column:1;grid-row:1}.maydan-gathering__copy>p{font-size:20px;line-height:32px}.maydan-gathering__note,.maydan-account-note p{font-size:16px!important;line-height:26px!important}.maydan-account-note{margin-top:28px}.maydan-account-note h3{font-size:20px}.maydan-credit-note{color:var(--maydan-muted)!important}
 .maydan-faq__items{margin-top:48px}.maydan-faq details{border-top:1px solid var(--maydan-border)}.maydan-faq details:last-child{border-bottom:1px solid var(--maydan-border)}.maydan-faq summary{min-height:96px;padding:28px 0;display:flex;justify-content:space-between;align-items:center;gap:24px;font-size:20px;font-weight:600;cursor:pointer;list-style:none}.maydan-faq summary::-webkit-details-marker{display:none}.maydan-faq-chevron{width:24px;height:24px;flex:none;transition:transform .2s}.maydan-faq details[open] .maydan-faq-chevron{transform:rotate(180deg)}.maydan-faq details p{font-size:18px;line-height:30px;max-width:880px;padding-bottom:16px}
-.maydan-final{text-align:center;padding:96px 64px 76px;background:#050914;color:#fff}.maydan-emblem--closing{width:88px;height:88px;background:#252021;border-radius:24px;margin:0 auto 40px;padding:8px}.maydan-final h2{font-size:52px;line-height:1.1;color:#fff;margin-bottom:24px}.maydan-final p{font-size:16px;color:#ded7d1;margin-bottom:32px}.maydan-final .maydan-shortcuts{justify-content:center}.maydan-final .maydan-button--secondary{background:transparent;color:#fff;border-color:#655453}.maydan-footer{background:#050914;color:#94a3b8;padding:0 max(64px,calc((100% - 1072px)/2)) 64px;display:flex;align-items:center;justify-content:space-between;gap:24px;font-size:14px}.maydan-footer p{color:inherit;margin:0;padding-top:32px}.maydan-footer nav{display:flex;gap:24px;padding-top:32px}.maydan-footer a{color:#fff;min-height:44px;display:inline-flex;align-items:center;text-decoration:none}.maydan-footer{position:relative}.maydan-footer:before{content:"";position:absolute;top:0;left:max(64px,calc((100% - 1072px)/2));right:max(64px,calc((100% - 1072px)/2));height:1px;background:#ffffff30}
+.maydan-final{text-align:center;padding:96px 64px 76px;background:#050914;color:#fff}.maydan-emblem--closing{width:88px;height:88px;background:var(--spatial-canvas-deep);border-radius:24px;margin:0 auto 40px;padding:8px}.maydan-final h2{font-size:52px;line-height:1.1;color:#fff;margin-bottom:24px}.maydan-final p{font-size:16px;color:#ded7d1;margin-bottom:32px}.maydan-final .maydan-shortcuts{justify-content:center}.maydan-final .maydan-button--secondary{background:transparent;color:#fff;border-color:#655453}.maydan-footer{background:#050914;color:#94a3b8;padding:0 max(64px,calc((100% - 1072px)/2)) 64px;display:flex;align-items:center;justify-content:space-between;gap:24px;font-size:14px}.maydan-footer p{color:inherit;margin:0;padding-top:32px}.maydan-footer nav{display:flex;gap:24px;padding-top:32px}.maydan-footer a{color:#fff;min-height:44px;display:inline-flex;align-items:center;text-decoration:none}.maydan-footer{position:relative}.maydan-footer:before{content:"";position:absolute;top:0;left:max(64px,calc((100% - 1072px)/2));right:max(64px,calc((100% - 1072px)/2));height:1px;background:#ffffff30}
 .maydan-hero-cards { position: relative; z-index: 1; direction: ltr; max-inline-size: 100%; }
 .maydan-hero-card-list { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); padding: 16px 8px 24px; margin: 0; list-style: none; }
 .maydan-hero-card-slot { min-inline-size: 0; }
@@ -1676,18 +1676,6 @@ html { scrollbar-gutter: stable; scroll-padding-top: 5.75rem; }
 }
 
 /* Category Chooser Cards & Discovery Cards */
-.maydan-categories a {
-  background: rgba(11, 20, 44, 0.65) !important;
-  backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(30, 46, 93, 0.8) !important;
-  border-radius: 16px !important;
-  transition: all 0.25s ease !important;
-}
-.maydan-categories a:hover {
-  transform: translateY(-4px) !important;
-  border-color: #00f0ff !important;
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.3) !important;
-}
 .maydan-hero-card {
   background: rgba(11, 20, 44, 0.65) !important;
   border: 1px solid rgba(30, 46, 93, 0.8) !important;
@@ -1734,14 +1722,22 @@ html[data-theme="dark"] .maydan-home-page { color:#f1f5f9 !important; }
 .maydan-home-page .maydan-join-form input::placeholder { color:#53657e !important; opacity:1; }
 .maydan-home-page .maydan-join-form button { flex:none; min-width:112px; white-space:nowrap; background:#194dbb !important; color:#fff !important; box-shadow:none !important; border-radius:10px !important; }
 .maydan-home-page .maydan-join-form button:hover:not(:disabled) { background:#123b91 !important; transform:none !important; box-shadow:none !important; }
+html[data-theme="dark"] .maydan-home-page .maydan-setup__form { background: var(--app-surface) !important; color: var(--app-ink); border-color: var(--app-border) !important; }
+html[data-theme="dark"] .maydan-home-page .maydan-setup__form :is(h3, label) { color: var(--app-ink); }
+html[data-theme="dark"] .maydan-home-page .maydan-setup__form :is(.maydan-prompt-note, .maydan-action__note) { color: var(--app-muted); }
+html[data-theme="dark"] .maydan-home-page .maydan-setup__form .maydan-text-link { color: var(--app-accent); }
+html[data-theme="dark"] .maydan-home-page .maydan-prompt-row + .maydan-prompt-row { border-color: var(--app-border); }
+html[data-theme="dark"] .maydan-home-page .maydan-join-form form { background: var(--app-canvas) !important; border-color: var(--app-border) !important; }
+html[data-theme="dark"] .maydan-home-page .maydan-join-form :is(label, input) { color: var(--app-ink) !important; }
+html[data-theme="dark"] .maydan-home-page .maydan-join-form input::placeholder { color: var(--app-muted) !important; }
 .maydan-home-page .maydan-button--primary { background:#194dbb !important; color:#fff !important; border:1px solid #194dbb !important; box-shadow:none !important; animation:none; }
 .maydan-home-page .maydan-button--primary:hover:not(:disabled) { background:#123b91 !important; box-shadow:none !important; transform:translateY(-1px) !important; }
 .maydan-home-page .maydan-button--primary:disabled { background:#e5eaf1 !important; color:#53657e !important; border-color:#c2cfe0 !important; }
 .maydan-home-page .maydan-status { max-width:45rem; font-size:16px; line-height:1.8; }
 .maydan-home-page .maydan-inline-action { font-size:16px; font-weight:700; text-decoration:underline; text-underline-offset:3px; }
 .maydan-home-page .maydan-category-preview { display:grid; gap:8px; min-block-size:140px; padding:24px; border:1px solid var(--maydan-border); border-radius:16px; background:var(--maydan-surface); color:var(--maydan-ink); }
-html[data-theme="light"] .maydan-home-page :is(.maydan-categories a,.maydan-hero-card,.maydan-faq details) { background:#fff !important; border-color:#cbd8e8 !important; color:#14213d; }
-html[data-theme="light"] .maydan-home-page :is(.maydan-categories a,.maydan-faq summary,.maydan-faq details p) { color:#14213d; }
+html[data-theme="light"] .maydan-home-page :is(.maydan-hero-card,.maydan-faq details) { background:#fff !important; border-color:#cbd8e8 !important; color:#14213d; }
+html[data-theme="light"] .maydan-home-page :is(.maydan-faq summary,.maydan-faq details p) { color:#14213d; }
 html[data-theme="light"] .maydan-home-page .maydan-text-link, html[data-theme="light"] .maydan-home-page .maydan-inline-action { color:#1649ad; }
 html[data-theme="light"] .maydan-home-page .maydan-credit-note { color:#43536b !important; }
 .maydan-home-page .maydan-game-status { font-size:16px; line-height:1.6; }
@@ -1868,52 +1864,70 @@ html[data-theme="light"] .maydan-home-page .maydan-game-card__rules { border-col
   .maydan-home-page .maydan-game-card__rules { padding-inline: 6px; font-size: 16px; }
 }
 
-/* Selected homepage sections use a light surface in both themes. */
+/*
+ * Homepage sections follow the active theme. Content sections alternate between the canvas and
+ * surface tokens (light: soft grey / white, dark: deep navy / navy panel) so a dark page never
+ * flips to a bright white band. The hero, final call to action and footer stay dark brand moments.
+ */
 html[data-theme] .maydan-home-page :is(.maydan-showcase, .maydan-discovery, .maydan-gathering) {
-  background: #fff;
-  color: #14213d;
+  background: var(--app-canvas);
+  color: var(--app-ink);
 }
-html[data-theme] .maydan-home-page :is(.maydan-showcase, .maydan-discovery, .maydan-gathering) :is(.maydan-section-heading > p, .maydan-gathering__copy p) {
-  color: #43536b;
+html[data-theme] .maydan-home-page :is(.maydan-phone-showcase, .maydan-catalogue, .maydan-faq) {
+  background: var(--app-surface);
+  color: var(--app-ink);
 }
-html[data-theme] .maydan-home-page :is(.maydan-showcase, .maydan-gathering) .maydan-text-link { color: #1649ad; }
+html[data-theme] .maydan-home-page :is(.maydan-showcase, .maydan-discovery, .maydan-gathering, .maydan-phone-showcase, .maydan-catalogue, .maydan-faq) :is(.maydan-section-heading > p, .maydan-gathering__copy p, .maydan-showcase__caption p, .maydan-status) {
+  color: var(--app-muted);
+}
+html[data-theme] .maydan-home-page :is(.maydan-showcase, .maydan-discovery, .maydan-gathering, .maydan-phone-showcase, .maydan-catalogue, .maydan-faq) :is(.maydan-text-link, .maydan-inline-action) {
+  color: var(--app-accent);
+}
 html[data-theme] .maydan-home-page .maydan-showcase .maydan-game-card {
-  background: #fff !important;
-  border-color: #cbd8e8 !important;
-  box-shadow: 0 8px 24px rgb(20 33 61 / 8%) !important;
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+  box-shadow: var(--shadow-compact) !important;
 }
-html[data-theme] .maydan-home-page .maydan-showcase .maydan-game-card__title { color: #14213d !important; text-shadow: none; }
-html[data-theme] .maydan-home-page .maydan-showcase .maydan-game-card__badge { background: #eaf1fc; border-color: #c2d3ed; color: #174794; }
-html[data-theme] .maydan-home-page .maydan-showcase :is(.maydan-game-card__description, .maydan-game-status) { color: #43536b; }
-html[data-theme] .maydan-home-page .maydan-showcase :is(.maydan-game-card__rules, .maydan-game-card__icon-wrap) { color: #075caa; }
-html[data-theme] .maydan-home-page .maydan-showcase .maydan-game-card__rules { border-color: #075caa; }
-html[data-theme] .maydan-home-page .maydan-discovery .maydan-hero-card {
-  background: #fff !important; border-color: #cbd8e8 !important;
-  box-shadow: 0 8px 24px rgb(20 33 61 / 8%); --card-ink: #14213d;
-}
+html[data-theme] .maydan-home-page .maydan-showcase .maydan-game-card__title { color: var(--app-ink) !important; text-shadow: none; }
+html[data-theme] .maydan-home-page .maydan-showcase .maydan-game-card__badge { background: var(--app-subtle); border-color: var(--app-border); color: var(--app-accent); }
+html[data-theme] .maydan-home-page .maydan-showcase :is(.maydan-game-card__description, .maydan-game-status) { color: var(--app-muted); }
+html[data-theme] .maydan-home-page .maydan-showcase :is(.maydan-game-card__rules, .maydan-game-card__icon-wrap) { color: var(--app-accent); }
+html[data-theme] .maydan-home-page .maydan-showcase .maydan-game-card__rules { border-color: var(--app-accent); }
+/* Discovery cards keep their white playing-card face in both themes (see the rule above). */
 html[data-theme] .maydan-home-page .maydan-gathering .maydan-sharing-illustration__panel {
-  background: #eaf1fc; border-color: #cbd8e8; color: #14213d;
+  background: var(--app-subtle); border-color: var(--app-border); color: var(--app-ink);
 }
-html[data-theme] .maydan-home-page .maydan-gathering .maydan-sharing-illustration__panel > p { color: #43536b; }
+html[data-theme] .maydan-home-page .maydan-gathering .maydan-sharing-illustration__panel > p { color: var(--app-muted); }
 html[data-theme] .maydan-home-page .maydan-gathering :is(.maydan-sharing-illustration__tabs > span, .maydan-sharing-illustration__role, .maydan-sharing-illustration__tools > span) {
-  background: #fff; border-color: #cbd8e8; color: #14213d;
+  background: var(--app-surface); border-color: var(--app-border); color: var(--app-ink);
 }
-html[data-theme] .maydan-home-page .maydan-gathering .maydan-sharing-illustration__role .maydan-avatar { background: #dceaff; color: #175bc4; }
-
-/* The phone guide separates the white sections with a dark product surface. */
-html[data-theme] .maydan-home-page .maydan-phone-showcase { background: #0f1a36; color: #f4f7fc; }
+html[data-theme] .maydan-home-page .maydan-gathering .maydan-sharing-illustration__role .maydan-avatar { background: var(--app-subtle); color: var(--app-accent); }
 html[data-theme] .maydan-home-page .maydan-phone-showcase .maydan-showcase__examples { margin-block-start: 0; }
-html[data-theme] .maydan-home-page .maydan-phone-showcase .maydan-showcase__caption p { color: #bdcbdc; }
-html[data-theme] .maydan-home-page .maydan-phone-showcase .maydan-text-link { color: #80d9f5; }
-html[data-theme] .maydan-home-page .maydan-gathering .maydan-credit-note { color: #43536b !important; }
+html[data-theme] .maydan-home-page .maydan-gathering .maydan-credit-note { color: var(--app-muted) !important; }
+html[data-theme] .maydan-home-page .maydan-faq details { background: var(--app-canvas) !important; border-color: var(--app-border) !important; color: var(--app-ink); }
+html[data-theme] .maydan-home-page :is(.maydan-faq summary, .maydan-faq details p) { color: var(--app-ink); }
 
-/* Keep the intervening catalogue and FAQ dark in either theme. */
-html[data-theme] .maydan-home-page :is(.maydan-catalogue, .maydan-faq) { background: #0f1a36; color: #f4f7fc; }
-html[data-theme] .maydan-home-page .maydan-catalogue .maydan-section-heading > p,
-html[data-theme] .maydan-home-page .maydan-catalogue > .maydan-status { color: #bdcbdc; }
-html[data-theme] .maydan-home-page .maydan-catalogue > .maydan-inline-action { color: #80d9f5; }
-html[data-theme] .maydan-home-page .maydan-faq details { background: #142236 !important; border-color: #71849e !important; }
-html[data-theme] .maydan-home-page .maydan-faq :is(summary, details p) { color: #f4f7fc; }
+/* Home category chooser: picture cards in the same language as the setup pickers. */
+.maydan-home-page .maydan-categories { grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr)); gap: var(--space-4); }
+.maydan-home-page .maydan-categories .maydan-category-card {
+  display: grid; grid-template-rows: auto auto 1fr; gap: 0; min-block-size: 0; padding: 0; overflow: hidden;
+  background: var(--app-surface); color: var(--app-ink);
+  border: 1px solid var(--app-border); border-radius: var(--spatial-radius-dock);
+  text-align: center; text-decoration: none;
+  transition: transform 180ms cubic-bezier(0.25, 1, 0.5, 1), border-color 180ms;
+}
+.maydan-home-page .maydan-categories a.maydan-category-card:hover { transform: translateY(-3px); border-color: var(--app-accent); box-shadow: var(--shadow-compact); }
+.maydan-home-page .maydan-categories a.maydan-category-card:focus-visible { outline: 3px solid var(--spatial-cyan); outline-offset: 3px; }
+.maydan-home-page .maydan-category-card__art { display: block; aspect-ratio: 1 / 1; overflow: hidden; background: var(--app-subtle); }
+.maydan-home-page .maydan-category-card__art img { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; transition: transform 300ms cubic-bezier(0.25, 1, 0.5, 1); }
+.maydan-home-page a.maydan-category-card:hover .maydan-category-card__art img { transform: scale(1.05); }
+.maydan-home-page .maydan-categories .maydan-category-card strong { padding: var(--space-3) var(--space-3) var(--space-1); font-size: var(--text-base); font-weight: var(--weight-bold); line-height: 1.35; text-wrap: balance; }
+.maydan-home-page .maydan-categories .maydan-category-card__hint { padding: 0 var(--space-3) var(--space-3); color: var(--app-accent); font-size: var(--text-sm); font-weight: var(--weight-semibold); }
+.maydan-home-page .maydan-category-card--unavailable .maydan-category-card__art img { filter: grayscale(0.75); opacity: 0.7; }
+.maydan-home-page .maydan-category-card--unavailable .maydan-category-card__hint { color: var(--app-muted); font-weight: var(--weight-regular); }
+@media (max-width: 48rem) { .maydan-home-page .maydan-categories { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); } }
+@media (prefers-reduced-motion: reduce) { .maydan-home-page .maydan-categories a.maydan-category-card:hover, .maydan-home-page a.maydan-category-card:hover .maydan-category-card__art img { transform: none; } }
+html[data-theme] .maydan-home-page .maydan-faq :is(summary, details p) { color: var(--app-ink); }
 
 /* Approved homepage type and section rhythm. */
 .maydan-home-page .maydan-hero h1 { font-size:56px !important; line-height:1.25 !important; font-weight:900 !important; }

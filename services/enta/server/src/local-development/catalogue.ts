@@ -1,5 +1,6 @@
 import {text,ID} from '../rounds/validation';
 import {realContentEnabled,realCategories,selectLocalQuestions} from './real-content';
+import {enabledCategories} from './category-availability';
 import { createHash } from 'node:crypto';
 import type { PinnedQuestion } from '../gameplay/types';
 
@@ -14,7 +15,7 @@ const sources: [string, string, [string,string][]][] = [
 ];
 export const localCategories = sources.map(([key,label,rows]) => ({key:`local-${key}`,label:`${label} · تدريب محلي`,revisionId:`local-${key}-v1`,questions:rows.map(([prompt,answer],index) => ({revisionId:`local-${key}-${index}-v1`,sourceQuestionId:`local-${key}-${index}`,contentHash:createHash('sha256').update(JSON.stringify([prompt,answer])).digest('hex'),categoryKey:`local-${key}`,points:([200,200,400,400,600,600] as const)[index],prompt,answers:[{text:answer,isCorrect:true,isTrap:false}]} satisfies Omit<PinnedQuestion,'id'|'isOpened'|'isCorrect'|'answeredByTeamId'>))}));
 
-export const currentLocalCategories=()=>realContentEnabled()?realCategories():localCategories;
+export const currentLocalCategories=()=>realContentEnabled()?enabledCategories(realCategories()):enabledCategories(localCategories);
 export const selectedLocalCategories=(seen:ReadonlySet<string>=new Set())=>currentLocalCategories().map(c=>({...c,questions:realContentEnabled()?c.questions.filter(q=>{try{return ID.test(q.sourceQuestionId)&&ID.test('format-'+q.sourceQuestionId)&&text(q.prompt,1,2000)===q.prompt&&text(q.answers[0].text,1,512)===q.answers[0].text&&text(c.label,1,100)===c.label;}catch{return false;}}):c.questions})).filter(c=>[200,400,600].every(points=>c.questions.filter(q=>q.points===points).length>=2)).map(c=>({...c,questions:realContentEnabled()?selectLocalQuestions(c as ReturnType<typeof realCategories>[number],seen,true):c.questions}));
 
 

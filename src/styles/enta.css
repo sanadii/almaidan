@@ -164,7 +164,8 @@
 .enta-page a.enta-mode-card--primary:not(.button) { border-color: var(--app-action); background: var(--app-action); color: var(--app-action-ink, #fff); }
 .enta-page .enta-mode-card:hover { border-color: var(--app-accent); transform: translateY(-2px); }
 .enta-page .enta-mode-card:focus-visible { outline: 3px solid var(--app-accent); outline-offset: 3px; }
-@media (max-width: 48rem) { .enta-page .enta-mode-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* Phones: the ten game modes become one swipeable row so the setup itself starts on screen. */
+@media (max-width: 48rem) { .enta-page .enta-mode-cards { display: flex; gap: var(--space-3); overflow-x: auto; overscroll-behavior-inline: contain; padding-block-end: var(--space-2); scrollbar-width: thin; } .enta-page a.enta-mode-card:not(.button) { flex: 0 0 7.5rem; } .enta-page .enta-mode-card img { block-size: 5.5rem; } .enta-page .enta-mode-card > span { min-block-size: 3rem; padding: var(--space-2); font-size: var(--text-sm); } }
 @media (prefers-reduced-motion: reduce) { .enta-page .enta-mode-card { transition: none; } .enta-page .enta-mode-card:hover { transform: none; } }
 
 /* Keep game content and recovery controls readable at each board size. */
