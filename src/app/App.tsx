@@ -1,9 +1,13 @@
 import { isAlmaidanLocalDevelopment } from '../lib/local-development';
 
-import { Component, lazy, Suspense, useLayoutEffect, type ReactNode } from 'react';
+import { Component, lazy, Suspense, useEffect, useLayoutEffect, type ReactNode } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
 import { ThemeProvider } from './ThemeProvider';
+import { listenForSoundActivation } from '../lib/sound';
 import { InternalHeader } from '../design-system/InternalHeader';
+import { PublicFooter } from '../design-system/PublicFooter';
+import { StatusToastProvider } from '../design-system/StatusToast';
+import { EpisodeNavigation } from '../features/episodes/episode-navigation';
 import { DeferredFirebaseAuthProvider } from '../features/auth/auth-context';
 import { EntryRoute } from '../routes/EntryRoute';
 import { PgRuntimeContext } from '../features/game/runtime/room-context';
@@ -39,7 +43,6 @@ const AdminShell = lazy(() => import('../features/admin/AdminRoutes').then(({ Ad
 const AdminUsersRoute = lazy(() => import('../features/admin/AdminRoutes').then(({ AdminUsersRoute }) => ({ default: AdminUsersRoute })));
 const LegacyQuestionRedirect = lazy(() => import('../features/admin/AdminRoutes').then(({ LegacyQuestionRedirect }) => ({ default: LegacyQuestionRedirect })));
 const LocalImportReviewRoute = lazy(() => import('../routes/LocalImportReviewRoute').then(({ LocalImportReviewRoute }) => ({ default: LocalImportReviewRoute })));
-const StudyRoute = lazy(() => import('../features/study/StudyRoute').then(({ StudyRoute }) => ({ default: StudyRoute })));
 const ContactRoute = lazy(() => import('../routes/ContactRoute').then(({ ContactRoute }) => ({ default: ContactRoute })));
 const MediaCreditsRoute = lazy(() => import('../routes/MediaCredits').then(({ MediaCreditsRoute }) => ({ default: MediaCreditsRoute })));
 const EpisodesRoute = lazy(() => import('../routes/EpisodesRoute').then(({ EpisodesRoute }) => ({ default: EpisodesRoute })));
@@ -158,12 +161,22 @@ export function RouteScrollManager() {
 }
 
 /** Pages whose header shows the account (or that act on it) load auth on a direct visit too. */
-const authPathPrefixes = ['/admin', '/enta/', '/history', '/host/new', '/huroof/', '/how-to-play', '/contact', '/episodes', '/media-credits'];
+const authPathPrefixes = ['/admin', '/enta/', '/history', '/host/new', '/huroof/', '/room/', '/how-to-play', '/contact', '/episodes', '/media-credits'];
 
 export function RouteAuthRuntime({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   if (['/enta/capability', '/enta/competitive/capability'].includes(pathname.replace(/\/$/, '').toLowerCase())) return <>{children}</>;
-  return <DeferredFirebaseAuthProvider enabled={!isStaticPreviewBuild() && (isAlmaidanLocalDevelopment || pathname === '/' || pathname === '/login' || pathname === '/account' || pathname === '/study' || authPathPrefixes.some(prefix => pathname.startsWith(prefix)))}>{children}</DeferredFirebaseAuthProvider>;
+  return <DeferredFirebaseAuthProvider enabled={!isStaticPreviewBuild() && (isAlmaidanLocalDevelopment || pathname === '/' || pathname === '/login' || pathname === '/account' || authPathPrefixes.some(prefix => pathname.startsWith(prefix)))}>{children}</DeferredFirebaseAuthProvider>;
+}
+
+function RouteFooter() {
+  const { pathname } = useLocation();
+  const path = pathname.toLowerCase().replace(/\/+$/, '');
+  const consoleRoute = /^\/(?:local-admin|local-import-review|admin|questions)(?:\/|$)/.test(path);
+  const roomStage = /^\/(?:enta\/rooms|room)\/[^/]+\/(?:display|host|play|imposter)$/.test(path);
+  const entaStage = /^\/enta\/(?:competitive\/)?(?:round-)?matches\/[^/]+$/.test(path);
+  const capability = /^\/enta\/(?:competitive\/)?capability$/.test(path);
+  return !path || consoleRoute || roomStage || entaStage || capability ? null : <PublicFooter />;
 }
 
 function HostSetupRoute() {
@@ -172,12 +185,15 @@ function HostSetupRoute() {
 }
 
 export function App({ pgRuntime = null }: { pgRuntime?: PgGameAdapter | null } = {}) {
+  useEffect(listenForSoundActivation, []);
   const staticPreview = isStaticPreviewBuild();
   const unavailable = <StaticPreviewUnavailableRoute />;
   return (
     <PgRuntimeContext.Provider value={pgRuntime}><ThemeProvider>
       <BrowserRouter>
         <RouteScrollManager />
+        <EpisodeNavigation enabled={!staticPreview}>
+        <StatusToastProvider>
         <RouteAuthRuntime>
           <RouteBoundary><Suspense fallback={<RouteLoading />}><Routes>
             <Route path="/" element={<EntryRoute />} />
@@ -187,7 +203,6 @@ export function App({ pgRuntime = null }: { pgRuntime?: PgGameAdapter | null } =
             <Route path="/how-to-play" element={<HowToPlayRoute />} />
             <Route path="/media-credits" element={<MediaCreditsRoute />} />
             <Route path="/contact" element={<ContactRoute />} />
-            <Route path="/study" element={<StudyRoute />} />
             <Route path="/episodes" element={<EpisodesRoute />} />
             <Route path="/enta/competitive/new/classic" element={<EntaCompetitionNewRoute format="TIER_BOARD" />} />
             <Route path="/enta/competitive/new/mixed" element={<EntaCompetitionNewRoute format="MIXED_BOARD" />} />
@@ -224,32 +239,41 @@ export function App({ pgRuntime = null }: { pgRuntime?: PgGameAdapter | null } =
             <Route path="/room/:roomCode/play" element={staticPreview ? unavailable : <RoomRoute surface="play" />} />
             <Route path="/room/:roomCode/display" element={staticPreview ? unavailable : <RoomRoute surface="display" />} />
             <Route path="/room/:roomCode/results" element={staticPreview ? unavailable : <RoomRoute surface="results" />} />
-            <Route path="/questions" element={staticPreview ? unavailable : <Navigate replace to="/admin/questions" />} />
-            <Route path="/questions/new" element={staticPreview ? unavailable : <Navigate replace to="/admin/drafts/new" />} />
-            <Route path="/questions/:questionId" element={staticPreview ? unavailable : <LegacyQuestionRedirect />} />
             <Route path="/local-import-review" element={staticPreview ? unavailable : <LocalImportReviewRoute />} />
-            {/* The hosted admin studio needs the Firebase backend; locally, content is managed at /local-admin. */}
-            {isAlmaidanLocalDevelopment ? <Route path="/admin/*" element={<Navigate replace to="/local-admin" />} /> : null}
-            <Route path="/admin" element={staticPreview ? unavailable : <AdminRootRedirect />} />
-            <Route path="/admin" element={staticPreview ? unavailable : <AdminShell />}>
-              <Route path="overview" element={<AdminOverviewRoute />} />
-              <Route path="questions" element={<AdminPublishedQuestionsRoute />} />
-              <Route path="questions/:id" element={<AdminPublishedQuestionsRoute />} />
-              <Route path="drafts" element={<AdminRecordRoute section="drafts" />} />
-              <Route path="drafts/new" element={<AdminQuestionEditorRoute />} />
-              <Route path="drafts/:questionId" element={<AdminQuestionEditorRoute />} />
-              <Route path="categories" element={<AdminPublishedCategoriesRoute />} /><Route path="categories/:id" element={<AdminPublishedCategoriesRoute />} />
-              <Route path="reviews" element={<AdminRecordRoute section="reviews" />} /><Route path="reviews/:id" element={<AdminRecordRoute section="reviews" />} />
-              <Route path="releases" element={<AdminRecordRoute section="releases" />} /><Route path="releases/:id" element={<AdminRecordRoute section="releases" />} />
-              <Route path="rooms" element={<AdminRecordRoute section="rooms" />} /><Route path="rooms/:id" element={<AdminRecordRoute section="rooms" />} />
-              <Route path="users" element={<AdminUsersRoute />} /><Route path="audit" element={<AdminRecordRoute section="audit" />} />
-              <Route path="health" element={<AdminRecordRoute section="health" />} /><Route path="settings" element={<AdminSettingsRoute />} />
-            </Route>
+            {isAlmaidanLocalDevelopment ? (
+              <>
+                <Route path="/admin/*" element={<Navigate replace to="/local-admin" />} />
+                <Route path="/questions/*" element={<Navigate replace to="/local-admin" />} />
+              </>
+            ) : (
+              <>
+                <Route path="/questions" element={staticPreview ? unavailable : <Navigate replace to="/admin/questions" />} />
+                <Route path="/questions/new" element={staticPreview ? unavailable : <Navigate replace to="/admin/drafts/new" />} />
+                <Route path="/questions/:questionId" element={staticPreview ? unavailable : <LegacyQuestionRedirect />} />
+                <Route path="/admin" element={staticPreview ? unavailable : <AdminRootRedirect />} />
+                <Route path="/admin" element={staticPreview ? unavailable : <AdminShell />}>
+                  <Route path="overview" element={<AdminOverviewRoute />} />
+                  <Route path="questions" element={<AdminPublishedQuestionsRoute />} />
+                  <Route path="questions/:id" element={<AdminPublishedQuestionsRoute />} />
+                  <Route path="drafts" element={<AdminRecordRoute section="drafts" />} />
+                  <Route path="drafts/new" element={<AdminQuestionEditorRoute />} />
+                  <Route path="drafts/:questionId" element={<AdminQuestionEditorRoute />} />
+                  <Route path="categories" element={<AdminPublishedCategoriesRoute />} /><Route path="categories/:id" element={<AdminPublishedCategoriesRoute />} />
+                  <Route path="reviews" element={<AdminRecordRoute section="reviews" />} /><Route path="reviews/:id" element={<AdminRecordRoute section="reviews" />} />
+                  <Route path="releases" element={<AdminRecordRoute section="releases" />} /><Route path="releases/:id" element={<AdminRecordRoute section="releases" />} />
+                  <Route path="rooms" element={<AdminRecordRoute section="rooms" />} /><Route path="rooms/:id" element={<AdminRecordRoute section="rooms" />} />
+                  <Route path="users" element={<AdminUsersRoute />} /><Route path="audit" element={<AdminRecordRoute section="audit" />} />
+                  <Route path="health" element={<AdminRecordRoute section="health" />} /><Route path="settings" element={<AdminSettingsRoute />} />
+                </Route>
+              </>
+            )}
             <Route path="/login" element={staticPreview ? unavailable : <LoginRoute />} />
             <Route path="/account" element={staticPreview ? unavailable : <AccountRoute />} />
             <Route path="*" element={<NotFoundRoute />} />
-          </Routes></Suspense></RouteBoundary>
+          </Routes><RouteFooter /></Suspense></RouteBoundary>
         </RouteAuthRuntime>
+        </StatusToastProvider>
+        </EpisodeNavigation>
       </BrowserRouter>
     </ThemeProvider></PgRuntimeContext.Provider>
   );

@@ -7,6 +7,7 @@ export interface PublicEpisode {
   description: string | null;
   /** Calendar date, never a timezone-dependent instant. */
   airDate: string | null;
+  youtubeId?: string;
 }
 
 export type EpisodeReleaseReader = () => Promise<unknown>;
@@ -19,10 +20,11 @@ const LINK = /(?:\b[a-z][a-z0-9+.-]*:\/\/|\bwww\.|\b(?:https?|javascript|data):)
 
 function unavailable(): never { throw new Error("EPISODE_CATALOG_UNAVAILABLE"); }
 
-function object(value: unknown, keys: readonly string[]): Record<string, unknown> {
+function object(value: unknown, keys: readonly string[], optionalKey?: string): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) return unavailable();
   const record = value as Record<string, unknown>;
-  if (Object.keys(record).length !== keys.length || keys.some(key => !Object.hasOwn(record, key))) return unavailable();
+  const hasOptionalKey = optionalKey !== undefined && Object.hasOwn(record, optionalKey);
+  if (Object.keys(record).length !== keys.length + Number(hasOptionalKey) || keys.some(key => !Object.hasOwn(record, key))) return unavailable();
   return record;
 }
 
@@ -59,19 +61,21 @@ export function projectPublicEpisodes(input: unknown): { episodes: PublicEpisode
   const numbers = new Set<number>();
   let characters = 0;
   const episodes = release.episodes.map((inputEpisode): PublicEpisode => {
-    const row = object(inputEpisode, ["id", "number", "title", "description", "airDate"]);
+    const row = object(inputEpisode, ["id", "number", "title", "description", "airDate"], "youtubeId");
     if (typeof row.id !== "string" || !ID.test(row.id) || ids.has(row.id)
       || typeof row.number !== "number" || !Number.isSafeInteger(row.number)
       || row.number < 1 || row.number > 100_000 || numbers.has(row.number)) return unavailable();
     const title = text(row.title, 160);
     const description = row.description === null ? null : text(row.description, 2_000);
     const airDate = row.airDate === null ? null : calendarDate(row.airDate);
+    const hasVideo = Object.hasOwn(row, "youtubeId");
+    const youtubeId = hasVideo ? row.youtubeId : undefined;
+    if (hasVideo && (typeof youtubeId !== "string" || !/^[A-Za-z0-9_-]{11}$/.test(youtubeId))) return unavailable();
     characters += row.id.length + title.length + (description?.length ?? 0);
     if (characters > MAX_TEXT_CHARACTERS) return unavailable();
     ids.add(row.id);
     numbers.add(row.number);
-    // Explicit public projection: no ORM row, source, URL, or release metadata.
-    return { id: row.id, number: row.number, title, description, airDate };
+    return { id: row.id, number: row.number, title, description, airDate, ...(typeof youtubeId === "string" ? { youtubeId } : {}) };
   });
   episodes.sort((left, right) => left.number - right.number || left.id.localeCompare(right.id, "en"));
   return { episodes };

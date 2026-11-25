@@ -16,8 +16,11 @@ function getSystemTheme(): Exclude<ThemeChoice, 'system'> {
 }
 
 function readSavedTheme(): ThemeChoice {
-  const saved = window.localStorage.getItem(STORAGE_KEY);
-  return saved === 'light' || saved === 'dark' || saved === 'system' ? saved : 'system';
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEY);
+    if (saved === 'light' || saved === 'dark' || saved === 'system') return saved;
+  } catch { /* Storage can be disabled on the display device. */ }
+  return 'system';
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
@@ -36,14 +39,19 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     document.documentElement.dataset.theme = resolvedTheme;
     document.documentElement.lang = 'ar';
     document.documentElement.dir = 'rtl';
-  }, [resolvedTheme]);
+    for (const meta of document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"][data-theme]')) {
+      meta.setAttribute('media', theme === 'system'
+        ? `(prefers-color-scheme: ${meta.dataset.theme})`
+        : meta.dataset.theme === theme ? 'all' : 'not all');
+    }
+  }, [resolvedTheme, theme]);
 
   const value = useMemo<ThemeContextValue>(() => ({
     theme,
     resolvedTheme,
     setTheme: (nextTheme) => {
       setThemeState(nextTheme);
-      window.localStorage.setItem(STORAGE_KEY, nextTheme);
+      try { window.localStorage.setItem(STORAGE_KEY, nextTheme); } catch { /* Keep the choice for this visit. */ }
     },
   }), [resolvedTheme, theme]);
 

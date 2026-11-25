@@ -4,6 +4,7 @@ export interface PublicEpisode {
   title: string;
   description: string | null;
   airDate: string | null;
+  youtubeId?: string;
 }
 
 export class EpisodeCatalogError extends Error {
@@ -46,16 +47,19 @@ export function parseEpisodeCatalog(value: unknown): PublicEpisode[] {
   const episodes = catalog.episodes.map((input): PublicEpisode => {
     if (!input || typeof input !== 'object' || Array.isArray(input)) return malformed();
     const row = input as Record<string, unknown>;
-    if (Object.keys(row).length !== fields.length || fields.some(field => !Object.hasOwn(row, field))
+    const hasVideo = Object.hasOwn(row, 'youtubeId');
+    const youtubeId = hasVideo ? row.youtubeId : undefined;
+    if (Object.keys(row).length !== fields.length + Number(hasVideo) || fields.some(field => !Object.hasOwn(row, field))
       || typeof row.id !== 'string' || !idPattern.test(row.id) || ids.has(row.id)
       || typeof row.number !== 'number' || !Number.isSafeInteger(row.number) || row.number < 1 || row.number > 100_000 || numbers.has(row.number)
       || !publicText(row.title, 160) || (row.description !== null && !publicText(row.description, 2_000))
+      || (hasVideo && (typeof youtubeId !== 'string' || !/^[A-Za-z0-9_-]{11}$/.test(youtubeId)))
       || (row.airDate !== null && !isEpisodeCalendarDate(row.airDate))) return malformed();
     characters += row.id.length + row.title.length + (typeof row.description === 'string' ? row.description.length : 0);
     if (characters > 32_000) return malformed();
     ids.add(row.id);
     numbers.add(row.number);
-    return { id: row.id, number: row.number, title: row.title, description: row.description as string | null, airDate: row.airDate as string | null };
+    return { id: row.id, number: row.number, title: row.title, description: row.description as string | null, airDate: row.airDate as string | null, ...(typeof youtubeId === 'string' ? { youtubeId } : {}) };
   });
   return episodes.sort((left, right) => left.number - right.number || left.id.localeCompare(right.id, 'en'));
 }
@@ -84,7 +88,7 @@ export async function loadEpisodeCatalog(signal: AbortSignal): Promise<PublicEpi
   return parseEpisodeCatalog(value);
 }
 
-const dateFormatter = new Intl.DateTimeFormat('ar-KW', { calendar: 'gregory', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+const dateFormatter = new Intl.DateTimeFormat('ar-KW', { numberingSystem: 'latn', calendar: 'gregory', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
 export function formatEpisodeDate(date: string): string {
   return dateFormatter.format(new Date(`${date}T00:00:00.000Z`));
 }

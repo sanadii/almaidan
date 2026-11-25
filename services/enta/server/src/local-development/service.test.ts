@@ -5,9 +5,19 @@ import { emptyOwnerState, type OwnerState } from './store';
 import { assertLocalDevelopment, LOCAL_PROJECT } from './guard';
 import {kidsCategories} from './content-pack';
 import { localCategories } from './catalogue';
+import { parseStartCommand } from '../gameplay/service';
 const principal={projectId:LOCAL_PROJECT,uid:'owner',email:'owner@example.test',verifiedAccount:true,anonymous:false};
 function fixture() {const owners=new Map<string,OwnerState>();return createLocalEntaService({async transaction(uid,work){const draft=JSON.parse(JSON.stringify(owners.get(uid)??emptyOwnerState())) as OwnerState;const value=await work(draft);owners.set(uid,JSON.parse(JSON.stringify(draft)) as OwnerState);return value;}});}
 const setup={version:2 as const,categoryKeys:localCategories.map(c=>c.key),teams:[{name:'الفريق الأول',players:['أحمد'],lifelines:[]},{name:'الفريق الثاني',players:['سارة'],lifelines:[]}],rules:{questionSeconds:30}};
+test('local classic and kids setup can start without pre-seated player names', async () => {
+ const service = fixture();
+ const teams = setup.teams.map(team => ({ ...team, players: [] }));
+ const classic = { requestKey: 'empty-classic-key', logicalMatchId: 'empty-classic', setup: { ...setup, teams } };
+ const kids = { requestKey: 'empty-kids-key', logicalMatchId: 'empty-kids', setup: { ...setup, version: 3, categoryKeys: [kidsCategories[0].key], teams } };
+ assert.throws(() => parseStartCommand(classic), /INVALID_SETUP/);
+ assert.deepEqual((await service.start(principal, classic)).match.teams.map(team => team.players), [[], []]);
+ assert.deepEqual((await service.startKids(principal, kids)).match.teams.map(team => team.players), [[], []]);
+});
 test('classic local match preserves answer secrecy, scoring, retries, owner isolation and history',async()=>{
  const service=fixture(),input={requestKey:'start-key-1',logicalMatchId:'match-1',setup};const started=await service.start(principal,input);assert.equal(started.match.tiles.length,36);assert.equal(started.match.currentQuestion,null);
  assert.equal((await service.start(principal,input)).match.id,started.match.id);

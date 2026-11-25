@@ -9,7 +9,7 @@ import {parseHuroofHistory,parseHuroofOwnerAccess} from '../../src/features/game
 import {beginOwnerProvider,observeProviderOwner,invalidateOwner,invalidateProviderOwner} from '../../src/features/enta/auth-epoch';
 import * as ownerAuthority from '../../src/features/enta/auth-epoch';
 const id='11111111-1111-4111-8111-111111111111';
-const row={id,code:'ABC123',revision:3,phase:'LOBBY',complete:false,teams:{horizontal:'فريق الشمس',vertical:'فريق القمر'},scores:{horizontal:0,vertical:1},roundWins:{horizontal:0,vertical:0},createdAt:'2026-11-05T00:00:00.000Z',completionReason:null,settings:{gameKind:'huroof'},source:{snapshot:'a'.repeat(64)}};
+const row={id,code:'ABC123',revision:3,phase:'LOBBY',complete:false,teams:{horizontal:'فريق الشمس',vertical:'فريق القمر'},scores:{horizontal:0,vertical:1},roundWins:{horizontal:0,vertical:0},createdAt:new Date().toISOString(),completionReason:null,settings:{gameKind:'huroof'},source:{snapshot:'a'.repeat(64)}};
 const response=(v:unknown,status=200)=>new Response(JSON.stringify(v),{status});const fetcher=vi.fn<typeof fetch>();let lease:ReturnType<typeof beginOwnerProvider>;
 beforeEach(()=>{auth.user={uid:'history-owner',getIdToken:vi.fn(async()=>'owner-token')};lease=beginOwnerProvider();observeProviderOwner(lease,auth.user.uid);sessionStorage.clear();fetcher.mockReset();vi.stubGlobal('fetch',fetcher);});
 afterEach(()=>{cleanup();invalidateOwner();vi.unstubAllGlobals();vi.restoreAllMocks();});
@@ -57,6 +57,13 @@ it('does not save a late capability after unmounting the access request',async()
 it('fences same-UID signout/signin while access token retrieval is pending',async()=>{
  fetcher.mockResolvedValue(response({items:[row],nextOffset:null}));mount();await screen.findByRole('button',{name:'العودة إلى غرفة الخلية'});let resolve!:(t:string)=>void;auth.user.getIdToken.mockImplementation(()=>new Promise(r=>{resolve=r;}));fireEvent.click(screen.getByRole('button',{name:'العودة إلى غرفة الخلية'}));await act(async()=>{invalidateProviderOwner(lease);observeProviderOwner(lease,auth.user.uid);resolve('stale-token');});expect(fetcher.mock.calls.some(([u])=>String(u).includes('owner-access'))).toBe(false);expect(sessionStorage.getItem(`huroof:${id}`)).toBeNull();
 });
-it('requests the validated next page then returns to the first page',async()=>{
- const page=Array.from({length:100},(_,i)=>({...row,id:`${String(i).padStart(8,'0')}-1111-4111-8111-111111111111`,code:`A${String(i).padStart(5,'0')}`}));fetcher.mockImplementation(async(url)=>response(String(url).endsWith('offset=100')?{items:[],nextOffset:null}:{items:page,nextOffset:100}));mount();fireEvent.click(await screen.findByRole('button',{name:'التالي'}));await screen.findByText('لم تُسجّل مباريات خلية بهذا الحساب بعد.');expect(fetcher.mock.calls.some(([u])=>String(u).endsWith('offset=100'))).toBe(true);fireEvent.click(screen.getByRole('button',{name:'السابق'}));await screen.findByRole('button',{name:'التالي'});
+it('requests the validated next page and retains already loaded rooms',async()=>{
+ const page=Array.from({length:100},(_,i)=>({...row,id:`${String(i).padStart(8,'0')}-1111-4111-8111-111111111111`,code:`A${String(i).padStart(5,'0')}`}));fetcher.mockImplementation(async(url)=>response(String(url).endsWith('offset=100')?{items:[],nextOffset:null}:{items:page,nextOffset:100}));mount();fireEvent.click(await screen.findByRole('button',{name:'عرض المزيد من مباريات الخلية'}));await waitFor(()=>expect(screen.queryByRole('button',{name:'عرض المزيد من مباريات الخلية'})).toBeNull());expect(fetcher.mock.calls.some(([u])=>String(u).endsWith('offset=100'))).toBe(true);expect(screen.getAllByText(/فريق الشمس/)).toHaveLength(100);
+});
+it('shows the stored board categories and a Western-digit date and score',async()=>{
+ fetcher.mockResolvedValue(response({items:[{...row,categories:[{id:'science',labelAr:'العلوم'}]}],nextOffset:null}));
+ mount();expect(await screen.findByText('العلوم')).toBeVisible();
+ expect(document.querySelector('time')).toHaveAttribute('datetime',row.createdAt);
+ expect(document.querySelector('time')?.textContent).not.toMatch(/[٠-٩۰-۹]/u);
+ expect(screen.getByText(/فريق الشمس/)).toHaveTextContent('0');
 });

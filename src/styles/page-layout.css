@@ -137,10 +137,10 @@ main#main-content[data-page-layout="wide"].local-import-review .local-import-rev
   main#main-content[data-page-layout="wide"].maydan-home-page .maydan-header__nav { inline-size: 100%; justify-content: space-between; }
 }
 
-/* Contained page canvases; only the homepage hero spans the viewport. */
+/* Contained page canvases. The homepage and audience stage span the viewport. */
 @media (max-width: 360px) { main#main-content[data-page-layout="wide"] :is(.auth-panel, .maydan-join-card) > .page-readable { padding: 16px; } }
 @media (min-width: 64rem) { main#main-content[data-page-layout="wide"] :is(.auth-panel, .maydan-join-card) > .page-readable { padding: 32px; } }
-main#main-content[data-page-layout="wide"]:not(.maydan-home-page),
+main#main-content[data-page-layout="wide"]:not(.maydan-home-page):not(:where(.spatial-stage.game-arena)),
 main.local-content-admin,
 main.challenge-frame {
   box-sizing: border-box;
@@ -179,6 +179,14 @@ html:has(main:not(.maydan-home-page)),
 body:has(main:not(.maydan-home-page)) {
   background-color: var(--app-canvas);
   background-image: none;
+}
+
+html:has(main.spatial-stage.game-arena),
+body:has(main.spatial-stage.game-arena) {
+  background-color: var(--arena-canvas);
+}
+html:has(main.spatial-stage.game-arena) {
+  scrollbar-gutter: auto;
 }
 
 /* Non-arena Huroof screens use the same theme surfaces as other inner pages. */

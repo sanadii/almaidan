@@ -4,9 +4,11 @@ import {useOwnerGeneration} from '../enta/use-owner-generation';
 import {ownerEpoch,assertOwnerEpoch} from '../enta/auth-epoch';
 import {parsePublicHuroofHistory,type PublicHuroofHistoryRow} from './public-huroof-history';
 
+import { MatchHistoryList, type MatchHistorySource, type HistoryChildren } from './MatchHistoryList';
+
 /** Public history is independent of the local room-capability history. */
-export function PublicHuroofHistory(){const {user}=useFirebaseAuth(),generation=useOwnerGeneration();return <PublicHistorySession key={`${user?.uid}:${generation}`}/>;}
-function PublicHistorySession(){
+export function PublicHuroofHistory({children}:HistoryChildren){const {user}=useFirebaseAuth(),generation=useOwnerGeneration();return <PublicHistorySession key={`${user?.uid}:${generation}`}>{children}</PublicHistorySession>;}
+function PublicHistorySession({children}:HistoryChildren){
  const {user}=useFirebaseAuth(),generation=useOwnerGeneration();const key=`${user?.uid}:${generation}`;
  const [cursor,setCursor]=useState<string|null>(null),[retry,setRetry]=useState(0);
  const [state,setState]=useState<{key:string;rows:PublicHuroofHistoryRow[];next:string|null;loading:boolean;error:boolean}>({key,rows:[],next:null,loading:true,error:false});
@@ -17,5 +19,12 @@ function PublicHistorySession(){
   return()=>{serial.current++;controller.abort();};
  },[user,key,cursor,retry]);
  const current=state.key===key?state:null;
- return <section className="enta-history" aria-busy={current?.loading??true}><h2>مباريات الخلية والمجموعات</h2>{!current||current.loading?<p role="status">جارٍ تحميل سجل الخلية…</p>:null}{current?.error?<div><p role="alert">تعذر تحميل سجل الخلية حالياً.</p><button type="button" className="button" onClick={()=>{setCursor(null);setRetry(value=>value+1);}}>إعادة المحاولة</button></div>:null}{current?.rows.length?<ol className="enta-history-list" aria-label="مباريات الخلية">{current.rows.map(row=><li key={`huroof:${row.matchId}:${row.resultVersion}`}><article><h3>مباراة الخلية</h3><time dateTime={row.occurredAt}>{new Intl.DateTimeFormat('ar-KW',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kuwait'}).format(new Date(row.occurredAt))}</time><p>تفاصيل النتيجة غير متاحة حالياً.</p></article></li>)}</ol>:current&&!current.loading&&!current.error?<p>لا توجد مباريات خلية في هذا السجل بعد.</p>:null}{current?.next?<button type="button" className="button" disabled={current.loading} onClick={()=>setCursor(current.next)}>عرض المزيد من مباريات الخلية</button>:null}</section>;
+ const source:MatchHistorySource={
+   entries:(current?.rows??[]).map(row=>({key:`huroof:${row.matchId}:${row.resultVersion}`,game:'huroof',date:row.occurredAt,complete:true,title:'مباراة الخلية',details:<p>تفاصيل النتيجة غير متاحة حالياً.</p>})),
+   ready:!!current&&!current.loading&&!current.error,
+   feedback:<>{(!current||current.loading)&&<p role="status">جارٍ تحميل سجل الخلية…</p>}
+     {current?.error&&<div><p role="alert">تعذر تحميل سجل الخلية حالياً.</p><button type="button" className="button" onClick={()=>{setCursor(null);setRetry(value=>value+1);}}>إعادة المحاولة</button></div>}</>,
+   paging:current?.next&&<button type="button" className="button" disabled={current.loading} onClick={()=>setCursor(current.next)}>عرض المزيد من مباريات الخلية</button>,
+ };
+ return children ? children(source) : <>{source.feedback}<MatchHistoryList entries={source.entries}/>{source.paging}</>;
 }

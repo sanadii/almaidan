@@ -1,7 +1,7 @@
 import { httpsCallable } from 'firebase/functions';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { getOptionalFirebaseClient, signInAnonymouslyIfNeeded } from '../../../lib/firebase/client.js';
-import { CLIENT_CHALLENGE_CAPABILITY, isApprovedReleaseCatalog, type ApprovedReleaseCatalog, type ClientRole, type CreateRoomRequest, type GameIntent, type GameRuntimeAdapter, type HostPresenceSnapshot, type JoinRoomRequest, type ProjectionEnvelope } from './contracts.js';
+import { CLIENT_CHALLENGE_CAPABILITY, isApprovedReleaseCatalog, type ApprovedReleaseCatalog, type ClientRole, type CreateRoomRequest, type GameIntent, type GameRuntimeAdapter, type HostPresenceSnapshot, type HuroofRoomCodeLookup, type JoinRoomRequest, type ProjectionEnvelope } from './contracts.js';
 import { authenticateYouTubeMedia, youtubeEmbedUrl } from './youtube-media.js';
 
 const PRESENCE_SNAPSHOT_FRESHNESS_MS = 30_000;
@@ -91,6 +91,31 @@ export class FirebaseGameAdapter implements GameRuntimeAdapter {
     await signInAnonymouslyIfNeeded();
     const result = await httpsCallable<JoinRoomRequest, { roomId: string; revision: number }>(configuredClient().functions, 'joinRoom')(request);
     return result.data;
+  }
+
+  async carryRematch(_predecessorRoomId: string, successorRoomId: string, _capability: string, signal: AbortSignal) {
+    const client = configuredClient();
+    await client.auth.authStateReady();
+    signal.throwIfAborted();
+    const uid = client.auth.currentUser?.uid;
+    if (!uid) throw new Error('SEAT_REMOVED');
+    await this.resumeRoom(successorRoomId);
+    signal.throwIfAborted();
+    if (client.auth.currentUser?.uid !== uid) throw new Error('SEAT_REMOVED');
+    return { token: '' };
+  }
+
+  async lookupRoomCode(roomCode: string) {
+    await signInAnonymouslyIfNeeded();
+    const { data } = await httpsCallable<{ roomCode: string }, HuroofRoomCodeLookup>(
+      configuredClient().functions, 'roomCodeExists', { timeout: 8000 },
+    )({ roomCode });
+    if (typeof data?.exists !== 'boolean') throw new Error('ROOM_UNAVAILABLE');
+    return data;
+  }
+
+  async restoreHostRoomAccess(roomCode: string) {
+    return (await httpsCallable<{ roomCode: string }, { roomId: string; roomCode: string; revision: number }>(configuredClient().functions, 'restoreHostRoomAccess')({ roomCode })).data;
   }
 
   async submitGameIntent(roomId: string, intent: GameIntent) {

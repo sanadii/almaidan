@@ -37,6 +37,13 @@ function room() { return render(<MemoryRouter initialEntries={['/room/D1-ABCD123
 beforeEach(() => { mocks.verifiedHost = true; vi.stubEnv('VITE_STATIC_PREVIEW', 'false'); mocks.resume.mockResolvedValue(snapshot()); mocks.submit.mockImplementation(async (_session, p) => snapshot(p)); });
 afterEach(() => { cleanup(); vi.clearAllMocks(); vi.unstubAllEnvs(); mocks.receive = undefined; mocks.connection = undefined; sessionStorage.clear(); });
 
+it('shows the Imposter picture in its setup and dedicated guide', () => {
+  const view = render(<MemoryRouter><ImposterNewRoute /></MemoryRouter>);
+  expect(view.container.querySelector('header.game-artwork-heading img')).toHaveAttribute('src', '/assets/games/imposter-art-v1-360.webp');
+  view.rerender(<MemoryRouter><ImposterTutorialRoute /></MemoryRouter>);
+  expect(view.container.querySelector('.status-panel__illustration img')).toHaveAttribute('src', '/assets/games/imposter-art-v1-360.webp');
+});
+
 describe('private reveal', () => {
   it('mounts secrets only during a deliberate pointer hold and hides on cancellation', () => {
     render(<PrivateReveal identity="round-one"><strong>سر تجريبي</strong></PrivateReveal>);
@@ -72,8 +79,12 @@ describe('private reveal', () => {
 
 it('conceals an insider secret until held and again when connection is lost', async () => {
   room(); await screen.findByText('كل واحد وسرّه');
+  await waitFor(() => expect(mocks.connection).toBeTypeOf('function'));
+  await act(async () => mocks.connection!(true));
+  const hold = screen.getByRole('button', { name: 'اضغط مطولاً لعرض سرك' });
+  await waitFor(() => expect(hold).toBeEnabled());
   expect(screen.queryByText('تفاح')).not.toBeInTheDocument();
-  fireEvent.keyDown(screen.getByRole('button', { name: 'اضغط مطولاً لعرض سرك' }), { key: ' ' });
+  fireEvent.keyDown(hold, { key: ' ' });
   expect(screen.getByText('تفاح')).toBeInTheDocument();
   act(() => mocks.connection?.(false));
   expect(screen.queryByText('تفاح')).not.toBeInTheDocument();
@@ -94,14 +105,50 @@ it('locks a private vote without displaying submission counts or self as a targe
   fireEvent.click(screen.getByRole('button', { name: 'تأكيد التصويت' }));
   await waitFor(() => expect(mocks.submit).toHaveBeenCalledWith(expect.anything(), expect.anything(), { type: 'vote', target: 'b' }));
   act(() => mocks.receive?.(snapshot(projection({ phase: 'vote', revision: 2, hasActed: true }))));
-  expect(screen.getByText('تم تثبيت صوتك بسرية. ننتظر انتهاء الوقت.')).toBeInTheDocument();
+  expect(screen.getByText('تم تثبيت صوتك بسرية. ننتظر باقي الأصوات.')).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'تأكيد التصويت' })).not.toBeInTheDocument();
+});
+
+it.each(['a', 'c'])('offers early voting only to the organizer (%s)', async me => {
+  mocks.resume.mockResolvedValue(snapshot(projection({ phase: 'discussion', me })));
+  room();
+  await screen.findByText('ناقشوا التلميحات');
+  expect(screen.getByRole('timer')).toHaveTextContent(/^[0-9]+ ثانية$/);
+  const begin = screen.queryByRole('button', { name: 'ابدأوا التصويت الآن' });
+  if (me !== 'a') { expect(begin).not.toBeInTheDocument(); return; }
+  expect(begin).toBeEnabled();
+  fireEvent.click(begin!);
+  await waitFor(() => expect(mocks.submit).toHaveBeenCalledWith(expect.anything(), expect.anything(), { type: 'startVote' }));
+});
+
+it('shares the lobby room code and requires a dialog to close the room', async () => {
+  mocks.resume.mockResolvedValue(snapshot(projection({ phase: 'lobby', deadline: null })));
+  room();
+  expect(await screen.findByRole('heading', { name: 'غرفة الانتظار' })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'انسخ الرمز' })).toBeEnabled();
+  const close = screen.getByRole('button', { name: 'إغلاق الغرفة' });
+  close.focus();
+  fireEvent.click(close);
+  expect(screen.getByRole('dialog', { name: 'إغلاق الغرفة' })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'تراجع' })).toHaveFocus();
+  fireEvent.click(screen.getByRole('button', { name: 'تراجع' }));
+  expect(close).toHaveFocus();
+  expect(mocks.submit).not.toHaveBeenCalled();
+  fireEvent.click(close);
+  fireEvent.click(screen.getByRole('button', { name: 'أغلق الغرفة' }));
+  await waitFor(() => expect(mocks.submit).toHaveBeenCalledWith(expect.anything(), expect.anything(), { type: 'close' }));
 });
 
 it('routes generic code joining to الدخيل using room metadata', async () => {
   mocks.resolve.mockResolvedValue({ gameKind: 'imposter', joinable: true });
   mocks.join.mockResolvedValue({ roomId: 'test-room', roomCode: 'D1-ABCD1234' });
   render(<Suspense fallback={<p>تحميل</p>}><MemoryRouter initialEntries={['/room/D1-ABCD1234/join']}><Routes><Route path="/room/:roomCode/join" element={<NameJoinRoute />} /><Route path="/room/:roomCode/imposter" element={<p>وصلنا للدخيل</p>} /></Routes></MemoryRouter></Suspense>);
+  const name = await screen.findByRole('textbox', { name: 'اسم اللاعب' });
+  expect(screen.getByRole('link', { name: 'غيّر الرمز' })).toHaveAttribute('href', '/');
+  fireEvent.change(name, { target: { value: 'سارة\u202e' } });
+  fireEvent.click(screen.getByRole('button', { name: 'دخول الغرفة' }));
+  expect(screen.getByRole('alert')).toHaveTextContent('اكتب اسمك (حتى 30 حرفاً).');
+  expect(mocks.join).not.toHaveBeenCalled();
   fireEvent.change(await screen.findByLabelText('اسم اللاعب'), { target: { value: 'سارة' } });
   fireEvent.click(screen.getByRole('button', { name: 'دخول الغرفة' }));
   expect(await screen.findByText('وصلنا للدخيل')).toBeInTheDocument();
@@ -117,8 +164,9 @@ it('blocks creating live rooms in static preview', () => {
 
 it('explains both objectives and the final-guess exception in Arabic', () => {
   render(<MemoryRouter><ImposterTutorialRoute /></MemoryRouter>);
-  expect(screen.getByText('إذا أنت الدخيل')).toBeInTheDocument();
+  expect(screen.getByText('إذا أنت الدخيل.')).toBeInTheDocument();
   expect(screen.getByText('لا تفضحون الكلمة في النهاية!')).toBeInTheDocument();
+  expect(screen.getByRole('region', { name: 'كيف تلعب الدخيل؟' })).toHaveTextContent('المضيف يقدر يبدأ التصويت فوراً');
 });
 
 it('requires the existing verified Almaidan host account for room creation', () => {
@@ -133,9 +181,13 @@ it('requires the existing verified Almaidan host account for room creation', () 
 
 it('clears the prior private room immediately when the URL changes to another room', async () => {
   function Jump() { const navigate = useNavigate(); return <button onClick={() => navigate('/room/D1-ZZZZ1234/imposter')}>غرفة أخرى</button>; }
+  let finishResume!: (value: Snapshot) => void;
+  mocks.resume.mockReturnValueOnce(new Promise<Snapshot>(resolve => { finishResume = resolve; }));
   render(<MemoryRouter initialEntries={['/room/D1-ABCD1234/imposter']}><Jump /><Routes><Route path="/room/:roomCode/imposter" element={<ImposterRoomRoute />} /></Routes></MemoryRouter>);
-  await screen.findByText('كل واحد وسرّه');
-  fireEvent.keyDown(screen.getByRole('button', { name: 'اضغط مطولاً لعرض سرك' }), { key: ' ' });
+  await act(async () => finishResume(snapshot()));
+  const reveal = screen.getByRole('button', { name: 'اضغط مطولاً لعرض سرك' });
+  expect(reveal).toBeEnabled();
+  fireEvent.keyDown(reveal, { key: ' ' });
   expect(screen.getByText('تفاح')).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'غرفة أخرى' }));
   expect(screen.queryByText('تفاح')).not.toBeInTheDocument();

@@ -8,9 +8,16 @@ import { validateContentDraft } from '../services/enta/server/src/local-developm
 import {deriveChallengeEnvelope} from './local-challenge-overlay.js';
 import {isYouTubeMediaDescriptor,youtubeDescriptorBytes} from '../src/features/game/runtime/youtube-media.js';
 import {cleanAnswerText} from '../services/enta/server/src/utils/answer-text.js';
+import {cacheLocalQuestionSource} from './local-question-source-cache.js';
 
 export const localContentPath='D:/projects/huroof_wa_oloof/local/almaidan/real-content.json';
 export const localMediaIndexPath='D:/projects/huroof_wa_oloof/local/almaidan/media-index.json';
+const localOverlayPath='D:/projects/huroof_wa_oloof/local/almaidan/content-overlays.json';
+const loadCurrentRelease = cacheLocalQuestionSource([localContentPath, localOverlayPath], () => loadLocalReleaseQuestionSource());
+export function currentLocalReleaseQuestionSource() {
+ assertLocalRealContent();
+ return loadCurrentRelease();
+}
 export function assertLocalRealContent(){
  if(isHosted(process.env)||process.env.NETLIFY||process.env.ALMAIDAN_LOCAL_ONLY!=='true'||process.env.FIREBASE_PROJECT_ID!=='demo-almaidan-local'||process.env.GAME_HOST!=='127.0.0.1')throw Error('LOCAL_REAL_CONTENT_ONLY');
 }
@@ -53,7 +60,7 @@ export async function loadLocalReleaseQuestionSource(retained?:any[]):Promise<Lo
  if(createHash('sha256').update(bytes).digest('hex')!=='7ce29d3d9e58f8ca89cb32f50bf47342f86e138d90f85b283ecefbf5eca28a54')throw Error('LOCAL_REAL_CONTENT_HASH_MISMATCH');
  if(raw.schemaVersion!==1||raw.source.sha256!=='e3d4bcf074489eb0751767793c3ba5af12f719e5c94f4ed8e1be1949193bb23a'||raw.categories.length!==530||raw.questions.length!==115636)throw Error('LOCAL_REAL_CONTENT_INVALID');
  let overlays:any[]=retained??[];
- if(retained===undefined){try{const snapshot=JSON.parse(await readFile('D:/projects/huroof_wa_oloof/local/almaidan/content-overlays.json','utf8'));if(snapshot.schemaVersion!==1||snapshot.sourceSha256!==raw.source.sha256||!Array.isArray(snapshot.overlays)||createHash('sha256').update(JSON.stringify(snapshot.overlays)).digest('hex')!==snapshot.revision)throw Error('LOCAL_OVERLAY_INVALID');overlays=snapshot.overlays;}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}}
+ if(retained===undefined){try{const snapshot=JSON.parse(await readFile(localOverlayPath,'utf8'));if(snapshot.schemaVersion!==1||snapshot.sourceSha256!==raw.source.sha256||!Array.isArray(snapshot.overlays)||createHash('sha256').update(JSON.stringify(snapshot.overlays)).digest('hex')!==snapshot.revision)throw Error('LOCAL_OVERLAY_INVALID');overlays=snapshot.overlays;}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}}
  const overlayRevision=createHash('sha256').update(JSON.stringify(overlays)).digest('hex');
  const questionsById=new Map<string,any>(raw.questions.map((q:any)=>[q.id,q]));
  const seenOverlay=new Set<string>();

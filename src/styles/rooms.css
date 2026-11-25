@@ -1,12 +1,55 @@
-.room-code{font-size:clamp(1.4rem,4vw,2rem);letter-spacing:.08em;color:var(--app-ink)}
-.room-members{list-style:none;margin:0;padding:0;display:grid;gap:1rem;width:100%}.room-members>li{display:grid;gap:.75rem;border-block-end:1px solid var(--app-border);padding-block:1rem}.room-members select{min-height:44px;max-width:100%;background:var(--app-surface);color:var(--app-ink);border:1px solid var(--app-border);border-radius:8px;padding:8px}.enta-state>.enta-section-heading{width:100%;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.room-members { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4); inline-size: 100%; }
+.room-members > li { display: grid; gap: var(--space-3); border-block-end: var(--border-default) solid var(--app-border); padding-block: var(--space-4); }
+.enta-state > .enta-section-heading { inline-size: 100%; display: flex; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
 
-.maydan-app :is(button,.button,input,select,textarea):focus-visible {outline:3px solid var(--app-focus);outline-offset:3px}
-.maydan-public-page :is(.button,button):not(:disabled){text-shadow:none;box-shadow:none}
-.maydan-public-page .button--primary:not(:disabled){background:var(--app-action);color:#fff;border-color:var(--app-action)}
 .maydan-public-page :is(p,small){color:var(--app-muted)}
 .maydan-public-page [role="alert"]{color:var(--app-error)}
 
 .category-choice[aria-disabled='true'] { filter: none; border-style: dashed; cursor: not-allowed; }
 .category-choice__reason { display:block; padding: 8px 12px 12px; color:var(--app-muted); background:var(--app-surface); font-size:0.9rem; line-height:1.7; }
 
+.enta-join-code { display: block; direction: ltr; unicode-bidi: isolate; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.enta-join-card .enta-join-teams { min-inline-size: 0; }
+.enta-join-teams > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+.enta-join-card .enta-join-teams .button { min-block-size: 2.75rem; min-inline-size: 2.75rem; overflow-wrap: anywhere; }
+.enta-join-teams .button[aria-pressed='false']:not(:disabled) { background: transparent; border-color: var(--app-border); color: var(--app-ink); }
+.enta-join-teams .button[aria-pressed='true'] { background: var(--app-ink); border-color: var(--app-ink); color: var(--app-surface); }
+.enta-page .enta-room-rail { min-inline-size: 0; }
+.enta-page .enta-room-lobby { inline-size: 100%; }
+.enta-room-options { inline-size: 100%; }
+.enta-room-options > .button { margin-block-start: var(--space-2); }
+.enta-page .enta-room-status { margin: 0; text-align: center; align-self: start; font-size: var(--text-xl); font-weight: var(--weight-bold); color: var(--app-ink); overflow-wrap: anywhere; }
+.enta-page .enta-room-play > .enta-stage { padding: 0; background: none; box-shadow: none; }
+.enta-room-play :is(.enta-scores > li > span, .enta-board-column h2) { overflow-wrap: anywhere; }
+.enta-page .enta-board .enta-room-tile { cursor: default; }
+.enta-page .enta-board .enta-room-tile:hover, .enta-page .enta-board .enta-room-tile:active { transform: none; box-shadow: var(--arena-plate-shadow); }
+.enta-page .enta-room-play .enta-timer { font-size: var(--text-2xl); }
+.enta-page #enta-room-question-title { overflow-wrap: anywhere; }
+
+.enta-page.enta-room-display {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--space-4);
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  padding: clamp(var(--space-3), 3vw, var(--space-8));
+  background: var(--arena-stage-surface);
+  color: var(--arena-ink);
+}
+.enta-room-display > :is(.enta-room-play, .enta-display-lobby) { inline-size: min(100%, 90rem); min-inline-size: 0; }
+.enta-room-display .enta-room-play { align-content: center; }
+.enta-room-display .enta-room-status { color: var(--arena-ink); font-size: clamp(var(--text-lg), 3vw, var(--text-3xl)); }
+.enta-room-display .enta-display-lobby { padding: 0; box-shadow: none; background: transparent; justify-items: center; text-align: center; }
+.enta-room-display .enta-display-lobby > h1 { font-size: clamp(var(--text-xl), 5vw, 4.5rem); margin: 0; }
+.enta-room-display .enta-display-lobby .enta-room-names { justify-content: center; font-size: max(24px, var(--text-xl)); }
+.enta-room-display .enta-scores > li > :is(span, strong) { font-size: clamp(28px, 3vw, 3rem); }
+.enta-room-display .enta-question { inline-size: 100%; padding: clamp(var(--space-4), 4vw, var(--space-8)); }
+.enta-room-display .enta-question h2 { font-size: clamp(var(--text-2xl), 5vw, 4rem); line-height: 1.35; overflow-wrap: anywhere; }
+.enta-page.enta-room-display .enta-question .enta-timer { justify-self: center; margin-block: 0; font-size: clamp(48px, 6vw, 5rem); }
+.enta-room-display .room-code__details bdi { font-size: clamp(var(--text-lg), 7vw, 5rem); }
+.enta-room-display .room-code__details p { color: var(--arena-ink); }
+
+.enta-room-rematch {
+  inline-size: 100%;
+}

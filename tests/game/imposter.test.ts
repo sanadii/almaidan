@@ -7,7 +7,54 @@ import { pack } from '../../functions/src/imposter/pack.js';
 import type { Intent, Room } from '../../src/features/imposter/contracts.js';
 const select=()=>({word:{category:'اختبار',word:'تفاح',aliases:['تفاحة']},imposter:'b',order:['a','b','c']});
 const act=(r:Room,uid:string,body:Record<string,unknown>,now=100)=>applyIntent(r,uid,{requestId:`${uid}-${r.phaseId}-${JSON.stringify(body)}`,phaseId:r.phaseId,...body} as Intent,now,select);
+test('local creation persists the chosen categories and rejects invalid picks', () => {
+ const service = new LocalImposterService(':memory:');
+ try {
+  const host = service.create('أحمد', ['الفواكه', 'الحيوانات']);
+  assert.deepEqual(service.read(host.roomId, host.token).projection.settings.categories, ['الفواكه', 'الحيوانات']);
+  for (const invalid of [[], ['الفواكه', 'الفواكه'], ['فئة مفقودة'], null]) assert.throws(() => service.create('أحمد', invalid), /INVALID_SETTINGS/);
+ } finally { service.close(); }
+});
 function started(){ let r=newRoom('ABCD','a','أحمد',0); r=join(r,'b','بدر',0); r=join(r,'c','خالد',0); for(const id of ['a','b','c']) r=act(r,id,{type:'ready',ready:true}); return act(r,'a',{type:'start'}); }
+
+function discussion() {
+  let room = started();
+  for (const uid of ['a', 'b', 'c']) room = act(room, uid, { type: 'ack' });
+  for (const uid of ['a', 'b', 'c', 'a', 'b', 'c']) room = act(room, uid, { type: 'clue' });
+  return room;
+}
+
+test('the host can start voting early, and every connected confirmation advances the vote and runoff', () => {
+  const room = discussion();
+  assert.throws(() => act(room, 'c', { type: 'startVote' }, 1000), /NOT_ORGANIZER/);
+  assert.throws(() => act(started(), 'a', { type: 'startVote' }, 1000), /INVALID_PHASE/);
+  let vote = act(room, 'a', { type: 'startVote' }, 1000);
+  assert.equal(vote.phase, 'vote');
+  assert.equal(vote.deadline, 31000);
+  vote = act(vote, 'a', { type: 'vote', target: 'b' }, 1100);
+  vote = act(vote, 'b', { type: 'vote', target: 'a' }, 1200);
+  assert.equal(vote.phase, 'vote');
+  assert.equal(project(vote, 'c', 1200).hasActed, false);
+  vote = act(vote, 'c', { type: 'vote', target: null }, 1300);
+  assert.equal(vote.phase, 'runoff');
+  assert.deepEqual(vote.candidates.sort(), ['a', 'b']);
+  assert.equal(project(vote, 'c', 1300).hasActed, false);
+  vote = act(vote, 'a', { type: 'vote', target: 'b' }, 1400);
+  vote = act(vote, 'b', { type: 'vote', target: 'a' }, 1500);
+  vote = act(vote, 'c', { type: 'vote', target: 'b' }, 1600);
+  assert.equal(vote.phase, 'guess');
+  assert.equal(vote.deadline, 21600);
+});
+
+test('an unconfirmed disconnected player does not hold the vote until its deadline', () => {
+  let vote = act(discussion(), 'a', { type: 'startVote' }, 30000);
+  vote = act(vote, 'a', { type: 'heartbeat' }, 40000);
+  vote = act(vote, 'b', { type: 'heartbeat' }, 40000);
+  vote = act(vote, 'a', { type: 'vote', target: 'b' }, 41000);
+  vote = act(vote, 'b', { type: 'vote', target: null }, 42000);
+  assert.equal(vote.phase, 'vote');
+  assert.equal(reconcile(vote, 45000).phase, 'guess');
+});
 test('private roles, timed phases and blind ballots',()=>{ let r=started(); assert.equal(project(r,'a',100).word,'تفاح'); const spy=JSON.stringify(project(r,'b',100)); assert.ok(!spy.includes('تفاح')); assert.ok(!spy.includes('تفاحة')); for(const id of ['a','b','c']) r=act(r,id,{type:'ack'}); for(const id of ['a','b','c','a','b','c']) r=act(r,id,{type:'clue'}); assert.equal(r.phase,'discussion'); r=reconcile(r,r.deadline!); assert.equal(r.phase,'vote'); r=act(r,'a',{type:'vote',target:'b'},r.deadline!-1); r=act(r,'b',{type:'vote',target:'c'},r.deadline!-1); assert.ok(!JSON.stringify(project(r,'c',r.deadline!-1)).includes('votes')); r=reconcile(r,r.deadline!); assert.equal(r.phase,'runoff'); for(const [id,target] of [['a','b'],['b','c'],['c','b']]) r=act(r,id,{type:'vote',target},r.deadline!-1); r=reconcile(r,r.deadline!); assert.equal(r.phase,'guess'); r=act(r,'b',{type:'guess',text:'تفاحة'},r.deadline!-1); assert.equal(r.result?.winner,'imposter'); assert.equal(r.result?.abstentions,1); });
 test('deadlines are strict, replay bound, timeout reveal consumes content',()=>{ let r=started(); const phase=r.phaseId; r=reconcile(r,r.deadline!); assert.equal(r.phase,'cancelled'); assert.equal(r.word,undefined); assert.deepEqual(r.used,['تفاح']); assert.throws(()=>applyIntent(r,'a',{requestId:'x',phaseId:phase,type:'ack'},60000,select)); let x=newRoom('ABCD','a','أحمد',0); const i:Intent={type:'ready',ready:true,requestId:'r',phaseId:'0'}; x=applyIntent(x,'a',i,1,select); assert.deepEqual(applyIntent(x,'a',i,2,select),x); assert.throws(()=>applyIntent(x,'a',{...i,ready:false},2,select)); });
 test('normalization preserves important distinctions and validates content',()=>{ assert.equal(normalizeGuess('إِ  أ'), 'ا ا'); assert.notEqual(normalizeGuess('ه'),normalizeGuess('ة')); assert.notEqual(normalizeGuess('ي'),normalizeGuess('ى')); assert.equal(pack.length,360); });

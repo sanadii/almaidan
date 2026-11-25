@@ -38,6 +38,13 @@ const renderStage = (challenge: ChallengeProjection, onIntent = vi.fn().mockReso
   return onIntent;
 };
 
+it("opens the Huroof guide in another tab from a player challenge", () => {
+  renderStage(base("missing_tile"));
+  const guide = screen.getByRole("link", { name: "كيف نلعب؟" });
+  expect(guide).toHaveAttribute("href", "/how-to-play#rules-khaliah");
+  expect(guide).toHaveAttribute("target", "_blank");
+});
+
 it("lets the host cancel setup when no eligible guide can be assigned", async () => {
   const onIntent=vi.fn().mockResolvedValue(true),challenge={...base("navigation"),recipient:"host" as const,stage:"setup" as const,assignments:{},legalActions:["ASSIGN","START","VOID"],readinessSummary:[]};
   render(<ChallengeStage challenge={challenge} role="host" connection="connected" authoritative serverTime={new Date().toISOString()} teams={{horizontal:"الأحمر",vertical:"الأخضر"}} onIntent={onIntent}/>);

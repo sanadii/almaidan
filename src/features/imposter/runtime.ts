@@ -19,18 +19,18 @@ export function loadSession(code: string): Session | undefined {
 }
 export function clearSession(code: string) { sessionStorage.removeItem(sessionKey(code)); }
 
-async function local<T>(path: string, data: unknown, token?: string): Promise<T> {
-  const response = await fetch(path, { method: 'POST', headers: { 'content-type': 'application/json', ...(token ? { authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(data), cache: 'no-store' });
+async function local<T>(path: string, data: unknown, token?: string, signal?: AbortSignal): Promise<T> {
+  const response = await fetch(path, { method: 'POST', headers: { 'content-type': 'application/json', ...(token ? { authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(data), cache: 'no-store', signal });
   if (!response.ok) { const value = await response.json().catch(() => ({})) as { error?: string }; throw new Error(value.error ?? `HTTP_${response.status}`); }
   return response.json() as Promise<T>;
 }
 function playable() { if (imposterRuntimeKind() !== 'local') throw new Error('IMPOSTER_LOCAL_ONLY'); }
 
-export async function resolveRoom(roomCode: string): Promise<Resolution> {
+export async function resolveRoom(roomCode: string, signal?: AbortSignal): Promise<Resolution> {
   playable();
-  return local(`/api/imposter/resolve/${encodeURIComponent(roomCode)}`, {});
+  return local(`/api/imposter/resolve/${encodeURIComponent(roomCode)}`, {}, undefined, signal);
 }
-export async function createImposterRoom(displayName: string): Promise<Joined> {
+export async function createImposterRoom(displayName: string, categories?: string[]): Promise<Joined> {
   playable();
   const { getOptionalFirebaseAuth } = await import('../../lib/firebase/client');
   const auth = getOptionalFirebaseAuth();
@@ -38,7 +38,7 @@ export async function createImposterRoom(displayName: string): Promise<Joined> {
   await auth.authStateReady();
   const user = auth.currentUser;
   if (!user || user.isAnonymous || !user.emailVerified) throw new Error('VERIFIED_HOST_REQUIRED');
-  const joined = await local<Joined>('/api/imposter/rooms', { displayName }, await user.getIdToken());
+  const joined = await local<Joined>('/api/imposter/rooms', { displayName, ...(categories ? { categories } : {}) }, await user.getIdToken());
   saveSession(joined); return joined;
 }
 export async function joinImposterRoom(roomCode: string, displayName: string): Promise<Joined> {
@@ -92,12 +92,12 @@ const errors: Record<string, string> = {
   VERIFIED_HOST_REQUIRED: 'سجّل الدخول بحساب موثّق لإنشاء غرفة الدخيل.',
   IMPOSTER_PREVIEW_ONLY: 'هذه معاينة فقط. اللعب متاح عند تشغيل الخادم المحلي أو Firebase.',
   ROOM_NOT_FOUND: 'لم نجد هذه الغرفة. تحقق من الرمز.',
-  ROOM_FULL: 'اكتملت الغرفة؛ الحد الأقصى ٨ لاعبين.',
+  ROOM_FULL: 'اكتملت الغرفة؛ الحد الأقصى 8 لاعبين.',
   DUPLICATE_NAME: 'هذا الاسم مستخدم. اختر اسماً آخر.',
   ROUND_ACTIVE: 'بدأت الجولة. انتظر الجولة التالية للانضمام.',
   JOIN_LOCKED: 'بدأت الجولة. انتظر الجولة التالية للانضمام.',
-  INVALID_NAME: 'أدخل اسماً صالحاً من ١ إلى ٤٨ حرفاً.',
-  INVALID_CLUE: 'اكتب كلمة واحدة من الحروف فقط، دون مسافات، وبحد أقصى ٤٠ حرفاً.',
+  INVALID_NAME: 'أدخل اسماً صالحاً من 1 إلى 48 حرفاً.',
+  INVALID_CLUE: 'اكتب كلمة واحدة من الحروف فقط، دون مسافات، وبحد أقصى 40 حرفاً.',
   INVALID_GUESS: 'أدخل تخمينك أولاً.',
   STALE_PHASE: 'انتقلت الجولة إلى مرحلة جديدة. راجع الشاشة ثم حاول مجدداً.',
   NOT_YOUR_TURN: 'انتظر دورك.',

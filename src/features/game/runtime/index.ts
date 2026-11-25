@@ -3,6 +3,7 @@ import { LocalRealtimeGameAdapter } from './local-realtime-game-adapter';
 import type { GameRuntimeAdapter } from './contracts';
 import { DeferredFirebaseGameAdapter } from './deferred-firebase-adapter';
 import { selectGameRuntimeKind } from './runtime-selector';
+import { huroofSessionsCleared } from './huroof-session';
 
 export * from './contracts';
 export { LocalRealtimeGameAdapter } from './local-realtime-game-adapter';
@@ -22,6 +23,9 @@ export function createGameRuntime(): GameRuntimeAdapter {
 
 /** One adapter instance preserves the local capability token and is the only room transport used by routes. */
 export const gameRuntime = createGameRuntime();
+if (typeof window !== 'undefined' && gameRuntime.kind === 'local') {
+  window.addEventListener(huroofSessionsCleared, () => gameRuntime.setCapabilityToken?.(''));
+}
 
 /** Explicit injection only; null preserves all existing runtime defaults. */
 export { PgRuntimeContext } from './room-context';

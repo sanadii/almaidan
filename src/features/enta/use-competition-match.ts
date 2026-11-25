@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { User } from 'firebase/auth';
 import { EntaClientError, pendingStartStorageKey } from './client';
+import { pollVisibleMatch } from './match-polling';
 import { parseGrantMetadata } from './round-client';
 import { CompetitionClientError, competitionEnvelope, competitionRequest, parseCompetitionMatch, type CompetitionCommand, type CompetitionMatch } from './competition-client';
 import type { Issuance } from './use-round-match';
@@ -15,12 +16,28 @@ function parseIssuance(input: unknown): Issuance | null { if (input === undefine
 export function useCompetitionMatch(user: User | null, id: string | undefined) {
   const key = `${pendingStartStorageKey(user?.uid ?? '')}:${id ?? ''}`, [state, setState] = useState<{ key: string; match: CompetitionMatch | null; loading: boolean; busy: boolean; uncertain: boolean; error: unknown; issuance: Issuance | null; privateEpoch: number }>({ key, match: null, loading: true, busy: false, uncertain: false, error: null, issuance: null, privateEpoch: 0 });
   const match = useRef<CompetitionMatch | null>(null), intent = useRef<CompetitionCommand | null>(null), unknown = useRef(false), epoch = useRef(0), poll = useRef<AbortController | null>(null), write = useRef<AbortController | null>(null), writing = useRef(false), rejected = useRef(false);
-  const refresh = useCallback(async () => {
-    if (!user || !id || intent.current || !/^[A-Za-z0-9_-]{1,128}$/.test(id)) return; const generation = epoch.current, controller = new AbortController(); poll.current?.abort(); poll.current = controller;
+  const refresh = useCallback(async (controller = new AbortController()) => {
+    if (!user || !id || intent.current || !/^[A-Za-z0-9_-]{1,128}$/.test(id)) return; const generation = epoch.current; poll.current?.abort(); poll.current = controller;
     try { const next = parseCompetitionMatch(await competitionRequest(`/matches/${id}`, { user }, controller.signal), id); if (generation !== epoch.current || controller.signal.aborted || intent.current || next.version < (match.current?.version ?? 0)) return; match.current = next; setState(s => ({ ...s, key, match: next, loading: false, error: rejected.current ? s.error : null })); }
     catch (error) { if (generation === epoch.current && !controller.signal.aborted && !intent.current) { const loss = error instanceof EntaClientError && [401, 403, 404].includes(error.status); if (loss) match.current = null; setState(s => ({ ...s, key, error, loading: false, ...(loss ? { match: null, issuance: null, privateEpoch: s.privateEpoch + 1 } : {}) })); } }
   }, [id, key, user]);
-  useEffect(() => { epoch.current++; intent.current = null; unknown.current = false; rejected.current = false; match.current = null; writing.current = false; setState(s => ({ key, match: null, loading: true, busy: false, uncertain: false, error: null, issuance: null, privateEpoch: s.privateEpoch + 1 })); if (!id || !/^[A-Za-z0-9_-]{1,128}$/.test(id)) setState(s => ({ ...s, loading: false, error: new EntaClientError('MATCH_NOT_FOUND', 404) })); else { try { intent.current = user ? readCompetitionCommand(user.uid, id) : null; if (intent.current) { unknown.current = true; setState(s => ({ ...s, loading: false, uncertain: true })); } else void refresh(); } catch (error) { unknown.current = true; setState(s => ({ ...s, loading: false, uncertain: true, error })); } } const timer = window.setInterval(() => void refresh(), 1500); return () => { epoch.current++; window.clearInterval(timer); poll.current?.abort(); write.current?.abort(); }; }, [id, key, refresh, user]);
+  useEffect(() => {
+    epoch.current++; intent.current = null; unknown.current = false; rejected.current = false; match.current = null; writing.current = false;
+    setState(s => ({ key, match: null, loading: true, busy: false, uncertain: false, error: null, issuance: null, privateEpoch: s.privateEpoch + 1 }));
+    if (!id || !/^[A-Za-z0-9_-]{1,128}$/.test(id)) {
+      setState(s => ({ ...s, loading: false, error: new EntaClientError('MATCH_NOT_FOUND', 404) }));
+    } else {
+      try {
+        intent.current = user ? readCompetitionCommand(user.uid, id) : null;
+        if (intent.current) { unknown.current = true; setState(s => ({ ...s, loading: false, uncertain: true })); }
+      } catch (error) { unknown.current = true; setState(s => ({ ...s, loading: false, uncertain: true, error })); }
+    }
+    return () => { epoch.current++; poll.current?.abort(); write.current?.abort(); };
+  }, [id, key, user]);
+  const terminal = state.key === key && (state.match?.finished || (state.error instanceof EntaClientError && state.error.status === 404));
+  useEffect(() => {
+    if (user && id && !terminal) return pollVisibleMatch(refresh, 1500);
+  }, [user, id, terminal, refresh]);
   const clearIssuance = useCallback(() => setState(s => s.issuance === null ? s : { ...s, issuance: null, privateEpoch: s.privateEpoch + 1 }), []);
   useEffect(() => { const issuance = state.issuance, current = state.match?.currentRound, grant = state.match?.grants.find(g => g.id === issuance?.id); if (!issuance) return; if (!state.match || !grant || grant.revoked || current?.id !== issuance.roundId || current.pause || current.resourceStop || current.publicRevealed || state.match.review || state.match.boardCorrectionRoundId || grant.generation !== issuance.generation) { clearIssuance(); return; } const remaining = issuance.expiresAt - state.match.serverNow; if (remaining <= 0) { clearIssuance(); return; } const timer = window.setTimeout(clearIssuance, remaining); return () => window.clearTimeout(timer); }, [state.issuance, state.match, clearIssuance]);
   const command = async (input?: Input<CompetitionCommand>) => {

@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createRef } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, it, vi } from 'vitest';
-import { applyLocalIntentResponse, audienceQuestionBandVisible, canManageTeamsInState, CorrectionDialog, createGameIntentId, HostActions, HostJoinDialog, HostJoinInlineQr, HostLobbyControls, HostPauseAction, HostVisibilityControls, isReadOnlyFixtureRoom, playerJoinUrl, shouldShowHostAnswers } from '../../src/routes/GameRoutes';
+import { applyLocalIntentResponse, audienceQuestionBandVisible, canManageTeamsInState, CorrectionDialog, createGameIntentId, EndWithoutWinnerControl, HostActions, HostJoinDialog, HostJoinInlineQr, HostLobbyControls, HostPauseAction, HostVisibilityControls, isReadOnlyFixtureRoom, playerJoinUrl, shouldShowHostAnswers } from '../../src/routes/GameRoutes';
 
 const hostJoin = (overrides = {}) => ({
   copyLink: vi.fn().mockResolvedValue(undefined),
@@ -265,7 +265,7 @@ it('adds manual players only after validation and retains their form after an au
   expect(capsule).toHaveTextContent('بدون بازر');
   await user.click(screen.getByTestId('manual-player-toggle'));
   await user.click(screen.getByTestId('add-manual-player'));
-  expect(screen.getByRole('alert')).toHaveTextContent('أدخل اسماً');
+  expect(screen.getByRole('alert')).toHaveTextContent('اكتب اسمك (حتى 30 حرفاً).');
   await user.type(screen.getByTestId('manual-player-name'), 'اسم جديد');
   await user.click(screen.getByTestId('manual-player-team-vertical'));
   await user.click(screen.getByTestId('add-manual-player'));
@@ -312,20 +312,24 @@ it('opens the question and buzzer from cell selection without manual host action
 it('makes an unanswered question continue to the next board cell and confirms full-match termination', async () => {
   const action = vi.fn();
   const teams = { horizontal: 'الأحمر', vertical: 'الأخضر' };
-  const { rerender } = render(<HostActions action={action} playerCount={2} state="QUESTION_FAILED" teams={teams} />);
+  const { rerender } = render(<><HostActions action={action} playerCount={2} questionFailedReason="no-answer" state="QUESTION_FAILED" teams={teams} /><EndWithoutWinnerControl action={action} /></>);
 
-  expect(screen.getByRole('status')).toHaveTextContent('اختر حرفًا آخر من اللوحة');
-  fireEvent.click(screen.getByRole('button', { name: 'استبدل الخلية واختر حرفًا آخر' }));
+  expect(screen.getByRole('status')).toHaveTextContent('انتهى الوقت — ما أحد جاوب');
+  const continueGame = screen.getByRole('button', { name: 'كمّلوا — اختاروا حرفاً آخر' });
+  expect(continueGame).toHaveClass('button--primary');
+  fireEvent.click(continueGame);
   expect(action).toHaveBeenCalledWith('RETRY_CELL');
   expect(screen.queryByRole('button', { name: 'أعد الخلية' })).not.toBeInTheDocument();
-  fireEvent.click(screen.getByRole('button', { name: 'إنهاء المباراة كاملةً بلا فائز' }));
+  const endGame = screen.getByRole('button', { name: 'إنهاء المباراة كاملةً بلا فائز' });
+  expect(endGame.closest('.control-grid')).toBeNull();
+  fireEvent.click(endGame);
   expect(screen.getByTestId('end-without-winner-dialog')).toHaveAttribute('open');
   const cancel = screen.getByRole('button', { name: 'متابعة اللعب' });
   await waitFor(() => expect(cancel).toHaveFocus());
   fireEvent.click(cancel);
   expect(action).toHaveBeenCalledTimes(1);
 
-  rerender(<HostActions action={action} contentHold={{ reason: 'CONTENT_EXHAUSTED', operation: 'SELECT_CELL' }} playerCount={2} state="CELL_SELECTION" teams={teams} />);
+  rerender(<><HostActions action={action} contentHold={{ reason: 'CONTENT_EXHAUSTED', operation: 'SELECT_CELL' }} playerCount={2} state="CELL_SELECTION" teams={teams} /><EndWithoutWinnerControl action={action} /></>);
   expect(screen.getByRole('status')).toHaveTextContent('لا تتغير ملكية الخلية');
   expect(screen.queryByRole('button', { name: 'اختر حرفًا من اللوحة' })).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'إنهاء المباراة كاملةً بلا فائز' }));
@@ -333,14 +337,12 @@ it('makes an unanswered question continue to the next board cell and confirms fu
   expect(action).toHaveBeenLastCalledWith('END_WITHOUT_WINNER');
 });
 
-it('gives a completed host a same-settings new-match path', () => {
+it('keeps the completed host controls clear for the results route', () => {
   const teams = { horizontal: 'الأحمر', vertical: 'الأخضر' };
   render(
     <MemoryRouter>
       <HostActions
         action={vi.fn()}
-        endedWithoutWinner
-        newMatchHref="/host/new?kind=categories&mode=fast&category=tahadani-006"
         playerCount={2}
         state="MATCH_COMPLETE"
         teams={teams}
@@ -348,8 +350,8 @@ it('gives a completed host a same-settings new-match path', () => {
     </MemoryRouter>,
   );
 
-  expect(screen.getByRole('status')).toHaveTextContent('انتهت المباراة بلا فائز');
-  expect(screen.getByRole('link', { name: 'مباراة جديدة بالإعدادات نفسها' })).toHaveAttribute('href', '/host/new?kind=categories&mode=fast&category=tahadani-006');
+  expect(screen.queryByRole('button')).not.toBeInTheDocument();
+  expect(screen.queryByRole('link')).not.toBeInTheDocument();
 });
 
 it('uses category-specific selection wording without changing the Huroof host prompt', () => {

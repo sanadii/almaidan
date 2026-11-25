@@ -1,0 +1,22 @@
+.game-artwork,
+.game-artwork img {
+  display: block;
+  inline-size: 100%;
+}
+
+.game-artwork img {
+  block-size: auto;
+  border-radius: var(--spatial-radius-control);
+}
+
+.game-artwork-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 17rem);
+  align-items: center;
+  gap: var(--space-4) var(--space-6);
+}
+
+@media (width < 40rem) {
+  .game-artwork-heading { grid-template-columns: minmax(0, 1fr); }
+  .game-artwork-heading > .game-artwork { max-inline-size: 17rem; }
+}

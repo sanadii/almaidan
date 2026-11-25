@@ -5,11 +5,10 @@
 .imposter-page { min-height: 100dvh; background: var(--surface-stage); color: var(--ink-primary); padding-block-end: 3rem; }
 .imposter-shell { width: calc(100% - 2 * var(--page-gutter, 32px)); max-width: none; margin-inline: auto; padding-block: 2rem; }
 .imposter-top { display: flex; gap: 1rem; justify-content: space-between; align-items: center; margin-block-end: 2rem; flex-wrap: wrap; }
+.imposter-top.game-artwork-heading { display: grid; }
 .imposter-top a { text-underline-offset: .25em; }
 .imposter-heading { display: flex; align-items: center; gap: 1rem; }
 .imposter-mark { width: 5.5rem; flex-shrink: 0; color: var(--action-primary-bg); filter: drop-shadow(0 3px 0 var(--ink-primary)); }
-.imposter-page h1 { font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.3; margin: 0; }
-.imposter-page h2 { margin: 0 0 .75rem; font-size: 1.55rem; }
 .imposter-page p { line-height: 1.9; }
 .imposter-eyebrow, .imposter-muted { color: var(--ink-muted); }
 .imposter-eyebrow { font-weight: 600; }
@@ -18,13 +17,7 @@
 .imposter-panel + .imposter-panel { margin-block-start: 1.5rem; }
 .imposter-stack { display: grid; gap: 1rem; }
 .imposter-page label { display: grid; gap: .4rem; font-weight: 600; }
-.imposter-page input, .imposter-page select { width: 100%; min-height: 3rem; border: 1px solid var(--rule-soft); background: var(--surface-cell); color: var(--on-surface-cell); border-radius: .65rem; padding: .6rem .8rem; }
-.imposter-page button { min-height: 2.75rem; }
 .imposter-actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-block-start: 1rem; align-items: center; }
-.imposter-page .button { cursor: pointer; text-align: center; text-decoration: none; border-radius: .75rem; padding: .7rem 1.25rem; }
-.imposter-page .button--quiet { background: var(--surface-recessed); color: var(--ink-primary); border: 1px solid var(--rule-soft); }
-.imposter-page .button--primary { background: var(--action-primary-bg); color: var(--action-primary-fg); border: 1px solid transparent; }
-.imposter-page .button:disabled { background: var(--control-disabled-bg); color: var(--control-disabled-fg); cursor: not-allowed; }
 .imposter-players { list-style: none; margin: 0; padding: 0; display: grid; gap: .65rem; }
 .imposter-players li { display: flex; align-items: center; gap: .7rem; padding: .7rem; border-radius: .8rem; border: 1px solid var(--rule-soft); min-width: 0; }
 .imposter-player-name { overflow-wrap: anywhere; flex: 1; }
@@ -33,12 +26,10 @@
 .imposter-current { border-color: var(--action-primary-bg) !important; box-shadow: inset -4px 0 var(--action-primary-bg); }
 .imposter-badge { padding: .25rem .6rem; border-radius: .5rem; background: var(--surface-recessed); font-size: .85rem; }
 .imposter-clock { display: flex; gap: .75rem; align-items: center; font-variant-numeric: tabular-nums; }
-.imposter-clock strong { font-size: 2rem; line-height: 1.2; }
 .imposter-code { font-family: ui-monospace, monospace; font-size: 1.8rem; letter-spacing: .08em; overflow-wrap: anywhere; }
-.imposter-invite { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
 .imposter-invite img { width: 7rem; height: 7rem; background: white; border-radius: .5rem; }
 .imposter-category-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; margin: .5rem 0 0; }
-.imposter-category-grid label { display: flex; gap: .5rem; align-items: center; font-size: .9rem; font-weight: 400; }
+.imposter-category-grid label { display: flex; gap: .5rem; align-items: center; font-size: .9rem; font-weight: var(--weight-regular); min-block-size: 2.75rem; cursor: pointer; }
 .imposter-category-grid input { width: 1.1rem; min-height: 1.1rem; height: 1.1rem; accent-color: var(--action-primary-bg); }
 .imposter-page fieldset { border: 1px solid var(--rule-soft); border-radius: .75rem; margin: 0; padding: .75rem; }
 .imposter-private { text-align: center; }
@@ -47,8 +38,8 @@
 .imposter-secret { display: grid; align-content: center; gap: .25rem; min-height: 8rem; margin-block: 1rem; padding: 1rem; background: var(--surface-cell); border-radius: 1rem; overflow-wrap: anywhere; }
 .imposter-secret strong { font-size: 2rem; }
 .imposter-votes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; margin-block: 1rem; }
-.imposter-votes button { display: flex; align-items: center; justify-content: center; gap: .5rem; padding: 1rem .5rem; border: 1px solid var(--rule-soft); border-radius: .9rem; color: var(--ink-primary); background: var(--surface-cell); overflow-wrap: anywhere; }
-.imposter-votes button[aria-pressed="true"] { outline: 3px solid var(--action-primary-bg); outline-offset: 1px; }
+.imposter-votes button { display: flex; align-items: center; justify-content: center; gap: .5rem; padding: 1rem .5rem; border: 1px solid var(--rule-soft); border-radius: .9rem; color: var(--ink-primary); background: var(--surface-cell); overflow-wrap: anywhere; min-block-size: 2.75rem; cursor: pointer; }
+.imposter-votes button[aria-pressed="true"] { background: var(--app-action); color: var(--app-on-action); box-shadow: var(--shadow-team-outline); }
 .imposter-clues { list-style: none; padding: 0; display: grid; gap: .6rem; }
 .imposter-clues li { display: flex; justify-content: space-between; gap: 1rem; padding-block: .65rem; border-block-end: 1px solid var(--rule-soft); }
 .imposter-result-word { font-size: clamp(2rem, 6vw, 3.2rem); font-weight: 700; margin-block: 1rem !important; }
@@ -60,11 +51,6 @@
 @media (max-width: 720px) { .imposter-grid { grid-template-columns: minmax(0, 1fr); } .imposter-top { margin-block-end: 1rem; } .imposter-shell { padding-block: 1rem; } .imposter-heading { gap: .5rem; } .imposter-mark { width: 4rem; } .imposter-votes { gap: .5rem; } }
 
 .imposter-join { max-width: 36rem; }
-.maydan-game-card--imposter { color: var(--ink-primary); }
-.maydan-game-card--imposter .maydan-game-card__content { gap: .65rem; }
-.maydan-game-card--imposter .maydan-game-icon { color: var(--action-primary-bg); }
-.maydan-game-cards-grid:has(.maydan-game-card--imposter) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-@media (max-width: 48rem) { .maydan-game-cards-grid:has(.maydan-game-card--imposter) { grid-template-columns: minmax(0, 1fr); } }
 
 /* Use the shared application palette without changing the game states. */
 .imposter-page {
@@ -84,10 +70,9 @@
 }
 
 .imposter-shell { max-width: var(--page-canvas-max); box-sizing: border-box; }
-.imposter-page h1 { font-size: 36px; line-height: 1.4; }
-.imposter-page h2 { font-size: 24px; }
+.imposter-page h1 { font-size: 36px; line-height: 1.4; margin: 0; }
+.imposter-page h2 { font-size: 24px; margin: 0 0 var(--space-3); }
 .imposter-panel { padding: 24px; border-radius: 16px; }
 .imposter-result-banner { background: linear-gradient(135deg, #112b55, #1c4987); color: #fff; border-radius: 16px; padding: 24px; margin-block-end: 24px; }
 .imposter-result-banner h2, .imposter-result-banner p { color: inherit; }
-.imposter-page .button--primary { min-height: 48px; }
 @media (max-width: 767px) { .imposter-page h1 { font-size: 28px; } .imposter-page h2 { font-size: 22px; } .imposter-panel, .imposter-result-banner { padding: 20px; } }

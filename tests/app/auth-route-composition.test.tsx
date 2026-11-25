@@ -32,10 +32,9 @@ it('keeps one owner provider from homepage through delayed login restoration and
  seam.signIn.mockImplementation(async()=>{seam.auth.currentUser=user;seam.observers.forEach(next=>next(user));return {user};});
  fireEvent.change(screen.getByLabelText('البريد الإلكتروني'),{target:{value:user.email}});fireEvent.change(screen.getByLabelText('كلمة المرور'),{target:{value:'local-test-only'}});
  await act(async()=>fireEvent.click(screen.getByRole('button',{name:'تسجيل الدخول بالبريد'})));
- await waitFor(()=>expect(screen.getByText('تم تسجيل الدخول بالبريد الإلكتروني وكلمة المرور.')).toBeVisible());
+ await waitFor(()=>expect(screen.getByTestId('home-auth')).toHaveTextContent('password'));
+ expect(seam.signIn).toHaveBeenCalledWith(seam.auth,user.email,'local-test-only');
  const epoch=ownerEpoch(user.uid);
- fireEvent.click(screen.getByRole('link',{name:'العب كضيف أو عُد للرئيسية'}));
- expect(screen.getByTestId('home-auth')).toHaveTextContent('password');
  fireEvent.click(screen.getByRole('link',{name:'History'}));expect(screen.getByTestId('history-owner')).toHaveTextContent(user.uid);
  fireEvent.click(screen.getByRole('link',{name:'Home'}));expect(isOwnerEpoch(epoch)).toBe(true);
  expect(seam.subscribe).toHaveBeenCalledOnce();expect(seam.observers.size).toBe(1);expect(seam.getAuth).toHaveBeenCalledOnce();

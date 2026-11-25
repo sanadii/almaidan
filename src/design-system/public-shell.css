@@ -1,0 +1,48 @@
+.public-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem 1.5rem;
+  padding: 1rem var(--page-gutter);
+  border-block-start: 1px solid var(--app-border);
+  background: var(--app-canvas);
+  color: var(--app-muted);
+}
+
+.public-footer p { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0; }
+.public-footer .brand-mark { flex: none; inline-size: auto; }
+.public-footer nav { display: flex; flex-wrap: wrap; column-gap: 1rem; }
+.public-footer a { display: inline-flex; align-items: center; min-block-size: 44px; color: var(--app-ink); }
+
+#root:has(> .public-footer) { display: flex; flex-direction: column; min-block-size: 100svh; }
+#root:has(> .public-footer) > main#main-content { flex: 1; min-block-size: auto; }
+
+.maydan-public-page .status-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+  align-items: start;
+  gap: clamp(1rem, 4vw, 2.5rem);
+  inline-size: min(58rem, calc(100% - 2 * var(--page-gutter)));
+  max-inline-size: none;
+  margin: clamp(1.5rem, 6vw, 4rem) auto;
+  padding: clamp(1rem, 5vw, 3rem);
+  border: 1px solid var(--app-border);
+  border-radius: var(--spatial-radius-dock);
+  background: var(--app-surface);
+  color: var(--app-ink);
+}
+
+.status-panel__illustration img { display: block; max-inline-size: 100%; block-size: auto; }
+.status-panel__body { display: grid; gap: .75rem; min-inline-size: 0; overflow-wrap: anywhere; }
+.status-panel__body ol { padding-inline-start: 1.5rem; }
+.status-panel__body li + li { margin-block-start: .75rem; }
+.media-credits__group { display: grid; gap: var(--space-2); }
+.media-credits__group ul { margin: 0; padding-inline-start: var(--space-6); }
+.maydan-footer__back-top { gap: var(--space-1); }
+.status-panel__action { margin-block-start: .5rem; }
+
+@media (max-width: 36rem) {
+  .maydan-public-page .status-panel { grid-template-columns: minmax(0, 1fr); }
+  .status-panel__illustration { inline-size: 6rem; }
+}

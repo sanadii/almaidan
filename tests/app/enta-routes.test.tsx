@@ -1,5 +1,6 @@
 import { ObservedFirebaseAuthProvider, renderObservedOwnerHook } from './fixtures/observed-firebase-auth';
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import { CategorySourceContext } from '../../src/features/enta/CategorySourceContext';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import type { User } from 'firebase/auth';
@@ -25,6 +26,7 @@ afterEach(() => { cleanup(); vi.useRealTimers(); vi.unstubAllGlobals(); vi.unstu
 
 it('static preview and unavailable/unverified auth perform no catalogue request', () => {
   vi.stubEnv('VITE_STATIC_PREVIEW', 'true'); const view = render(surface()); expect(screen.getByText('إنت صح غير متاحة في المعاينة')).toBeVisible(); expect(fetchMock).not.toHaveBeenCalled();
+  expect(view.container.querySelector('.enta-heading .game-artwork img')).toHaveAttribute('src', '/assets/games/enta-art-v1-360.webp');
   vi.stubEnv('VITE_STATIC_PREVIEW', 'false'); view.rerender(surface({ ...auth, status: 'unavailable', isAvailable: false })); expect(screen.getByText('تسجيل الدخول غير متاح الآن')).toBeVisible();
   view.rerender(surface({ ...auth, user: { ...user, emailVerified: false } as User })); expect(screen.getByText('أكّد بريدك للاستضافة')).toBeVisible(); expect(fetchMock).not.toHaveBeenCalled();
 });
@@ -80,6 +82,19 @@ it('late in-flight poll cannot clear mutation busy, and unknown command retry ke
   const opened = structuredClone(original); opened.phase = 'QUESTION_OPEN'; opened.version = 2; opened.tiles[0].active = true; opened.currentQuestion = { id: original.tiles[0].id, points: 200, prompt: 'سؤال اختبار', answeringTeamId: 'team_a', deadlineAt: 1800000030000 };
   fetchMock.mockImplementationOnce((_url, init) => { requests.push(JSON.parse(init.body)); return Promise.resolve(json({ match: opened })); });
   await act(async () => { hook.result.current.retry(); await Promise.resolve(); await Promise.resolve(); }); expect(requests[1]).toEqual(requests[0]); expect(hook.result.current.match?.version).toBe(2);
+});
+
+it('renders Western digits for host point tiles, scores and category collection counts', async () => {
+  const match = board();
+  match.teams[0].score = 1600;
+  fetchMock.mockResolvedValue(json({ match }));
+  render(<ThemeProvider><ObservedFirebaseAuthProvider value={auth}><MemoryRouter initialEntries={[`/enta/matches/${match.id}`]}><Routes><Route path="/enta/matches/:id" element={<EntaMatchRoute />} /></Routes></MemoryRouter></ObservedFirebaseAuthProvider></ThemeProvider>);
+  const tile = (await screen.findAllByRole('button', { name: /فئة 1، 200 نقطة/ }))[0];
+  expect(within(tile).getByText('200')).toBeInTheDocument();
+  expect(within(screen.getByRole('list', { name: 'نقاط الفرق' })).getByText('1600')).toBeInTheDocument();
+  const names = [{ key: 'a', label: 'علوم' }, { key: 'b', label: 'علوم' }];
+  render(<CategorySourceContext category={names[0]} categories={names} />);
+  expect(screen.getByText('المجموعة 1 من 2')).toBeInTheDocument();
 });
 
 it('response validator rejects unrevealed answers and private URLs', () => {

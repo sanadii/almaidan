@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { Link, MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ThemeProvider } from "../../src/app/ThemeProvider";
@@ -66,6 +66,7 @@ function renderHost(surface: "host" | "results" = "host") {
   return render(
     <ThemeProvider>
       <MemoryRouter initialEntries={[path]}>
+        <RoomLocation />
         <Routes>
           <Route path="/room/:roomCode/host" element={<RoomRoute surface="host" />} />
           <Route path="/room/:roomCode/results" element={<RoomRoute surface="results" />} />
@@ -145,7 +146,8 @@ describe("RoomRoute held and incomplete game surfaces", () => {
     expect(await screen.findByRole("heading", { name: "انتهت المباراة بلا فائز" })).toBeVisible();
     expect(screen.queryByText(/نفد المحتوى المتاح/)).not.toBeInTheDocument();
     expect(screen.getByText(/احتُفظ بالنقاط وسجل الجولات دون إعلان فائز/)).toBeVisible();
-    expect(screen.getByRole("link", { name: "مباراة جديدة" })).toHaveAttribute("href", "/host/new?kind=categories&mode=classic&category=tahadani-006&category=tahadani-007");
+    expect(screen.getByRole("link", { name: "غيّروا اللعبة" })).toHaveAttribute("href", "/#game-choice-title");
+    expect(screen.getByTestId("rematch-same-settings")).toHaveAccessibleName("العبوا مرة ثانية");
     fireEvent.click(screen.getByTestId("rematch-same-settings"));
     await waitFor(() => expect(runtime.createRoom).toHaveBeenCalledWith(expect.objectContaining({
       gameKind: "categories",
@@ -153,16 +155,83 @@ describe("RoomRoute held and incomplete game surfaces", () => {
     })));
   });
 
-  it("keeps a completed host out of the waiting-question surface and offers its configured new-match setup", async () => {
-    projection = hostProjection({ state: "MATCH_COMPLETE", endedWithoutWinner: true });
-    renderHost();
+  it.each([
+    { endedWithoutWinner: true, heading: "انتهت المباراة بلا فائز" },
+    { endedWithoutWinner: false, heading: "فاز فريق الأحمر" },
+  ])("gives the audience the correct match result ($heading)", async ({ endedWithoutWinner, heading }) => {
+    const base = hostProjection({ state: "MATCH_COMPLETE", endedWithoutWinner });
+    projection = {
+      ...base,
+      role: "audience",
+      projection: {
+        ...base.projection,
+        room: { ...base.projection.room, audienceQuestionVisible: false },
+        ...(endedWithoutWinner ? {} : { matchWinner: "horizontal" }),
+      },
+    };
+    sessionStorage.setItem("huroof:room-hold:audience", JSON.stringify({ token: "", role: "audience" }));
+    renderDisplay();
 
-    expect(await screen.findByText("انتهت المباراة بلا فائز. أنشئ مباراة جديدة للعب من البداية.")).toBeVisible();
-    expect(screen.queryByText("بانتظار السؤال")).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "مباراة جديدة بالإعدادات نفسها" })).toHaveAttribute("href", "/host/new?kind=categories&mode=classic&category=tahadani-006&category=tahadani-007");
+    expect(await screen.findByRole("heading", { name: heading })).toBeVisible();
+    const completedPath = screen.queryByText("اكتمل المسار والمباراة");
+    if (endedWithoutWinner) expect(completedPath).not.toBeInTheDocument();
+    else expect(completedPath).toBeVisible();
   });
 
-  it("focuses the next available board cell after a failed question returns to selection", async () => {
+  it("uses shared arrow icons and names both teams and round winners", async () => {
+    projection = hostProjection({ state: "MATCH_COMPLETE" });
+    projection.projection.roundResults = [{ round: 1, winner: "horizontal" }, { round: 2, winner: "vertical" }];
+    renderHost("results");
+
+    const scoreCards = (await screen.findByText("الأحمر", { selector: "h2 bdi" })).closest(".huroof-results__scores")! as HTMLElement;
+    const red = within(scoreCards).getByRole("heading", { name: "الأحمر" });
+    const green = within(scoreCards).getByRole("heading", { name: "الأخضر" });
+    expect(red.querySelector("svg")).toHaveAttribute("stroke", "currentColor");
+    expect(green.querySelector("svg")).toHaveAttribute("stroke", "currentColor");
+    expect(red.querySelector("path")?.getAttribute("d")).not.toBe(green.querySelector("path")?.getAttribute("d"));
+    expect(red.parentElement).toHaveTextContent("2 نقاط الإجابات");
+    expect(green.parentElement).toHaveTextContent("1 نقاط الإجابات");
+    const summary = screen.getByText("قواعد احتساب النقاط");
+    expect(summary.closest("details")).not.toHaveAttribute("open");
+    fireEvent.click(summary);
+    const rounds = within(screen.getByRole("list", { name: "نتائج الجولات" })).getAllByRole("listitem");
+    expect(rounds[0]).toHaveTextContent("الجولة 1 · الأحمر");
+    expect(rounds[1]).toHaveTextContent("الجولة 2 · الأخضر");
+  });
+
+  it("sends the completed host to their result, announces the winner and offers a rematch", async () => {
+    projection = hostProjection({ state: "MATCH_COMPLETE" });
+    projection.projection.matchWinner = "horizontal";
+    renderHost();
+
+    expect(await screen.findByRole("heading", { name: "فاز فريق الأحمر" })).toHaveFocus();
+    expect(screen.getByTestId("room-location")).toHaveTextContent("/room/HOLD42/results");
+    expect(screen.queryByText("بانتظار السؤال")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "العبوا مرة ثانية" })).toBeVisible();
+  });
+
+  it("keeps a retained final challenge review available until the host continues", async () => {
+    projection = hostProjection({ state: "MATCH_COMPLETE" });
+    projection.projection.matchWinner = "horizontal";
+    projection.projection.challenge = {
+      protocolVersion: "t36-challenge-runtime-v1", kind: "missing_tile", recipient: "host", occurrence: "last-challenge", revision: 5,
+      assignmentGeneration: 1, disclosureGeneration: 2, stage: "result", paused: false, strikes: 0,
+      entitledTeam: "horizontal", answeringTeam: "horizontal",
+      readiness: { protocolHash: "p", assignmentHash: "a", stimulusHash: "s", required: false, acknowledged: true },
+      legalActions: ["CONTINUE"], timing: { countdownSeconds: 3, answerSeconds: 30 }, assignments: {}, attemptsClosed: true, solutionRevealed: false,
+    };
+    let publish!: (value: ProjectionEnvelope<SafeProjection>) => void;
+    runtime.subscribeProjection.mockImplementation((_room, _role, _uid, next) => { publish = next; next(projection); return () => undefined; });
+    renderHost();
+    expect(await screen.findByTestId("challenge-stage")).toBeVisible();
+    expect(screen.getByTestId("room-location")).toHaveTextContent("/room/HOLD42/host");
+    const next = { ...projection, revision: 8, projection: { ...projection.projection, challenge: undefined } };
+    projection = next;
+    act(() => publish(next));
+    expect(await screen.findByRole("heading", { name: "فاز فريق الأحمر" })).toBeVisible();
+  });
+
+  it("moves focus with room state to the primary host action and question heading", async () => {
     const failed = hostProjection({ state: "QUESTION_FAILED" });
     let publish!: (value: ProjectionEnvelope<SafeProjection>) => void;
     runtime.subscribeProjection.mockImplementation((_roomId: string, _role: string, _uid: string, onProjection: (value: ProjectionEnvelope<SafeProjection>) => void) => {
@@ -171,6 +240,7 @@ describe("RoomRoute held and incomplete game surfaces", () => {
       return () => undefined;
     });
     renderHost();
+    expect(await screen.findByRole("button", { name: /كمّلوا/ })).toHaveFocus();
 
     act(() => {
       publish({
@@ -182,14 +252,46 @@ describe("RoomRoute held and incomplete game surfaces", () => {
         },
       });
     });
-    const nextCell = await waitFor(() => {
-      const cell = document.querySelector<HTMLButtonElement>(
-        ".host-board .game-board__button:not(:disabled)",
-      );
-      expect(cell).not.toBeNull();
-      return cell!;
-    });
-    await waitFor(() => expect(nextCell).toHaveFocus());
+    const next = await screen.findByRole("button", { name: "اختر فئة من اللوحة" });
+    expect(next).toHaveFocus();
+    fireEvent.click(next);
+    expect(screen.getByRole("button", { name: /من أنا/ })).toHaveFocus();
+    act(() => publish({ ...failed, revision: 9, projection: { ...failed.projection, room: { ...failed.projection.room, state: "PAUSED" } } }));
+    expect(screen.getByRole("heading", { name: "سؤال الجولة" })).toHaveFocus();
+  });
+
+  it("prepares a legacy round automatically if it is delivered in round setup", async () => {
+    projection = hostProjection({ state: "ROUND_SETUP" });
+    renderHost();
+    await waitFor(() => expect(runtime.submitGameIntent).toHaveBeenCalledWith("room-hold", expect.objectContaining({ type: "ROUND_READY", expectedRevision: 7 })));
+    expect(screen.queryByRole("button", { name: "جهّز الجولة" })).not.toBeInTheDocument();
+  });
+
+  it("offers round preparation recovery only after the automatic request fails", async () => {
+    projection = hostProjection({ state: "ROUND_SETUP" });
+    runtime.submitGameIntent.mockRejectedValueOnce(new Error("تعذّر تجهيز الجولة"));
+    renderHost();
+    const retry = await screen.findByRole("button", { name: "أعد تجهيز الجولة" });
+    fireEvent.click(retry);
+    await waitFor(() => expect(runtime.submitGameIntent).toHaveBeenCalledTimes(2));
+    expect(runtime.submitGameIntent.mock.calls[1][1]).toMatchObject({ type: "ROUND_READY", expectedRevision: 7 });
+  });
+
+  it("shows the post-award chooser on host and display, and the display reading timer when question text is hidden", async () => {
+    projection.projection.entitledTeam = "horizontal";
+    const host = renderHost();
+    expect(await screen.findByText("فريق الأحمر يختار الفئة التالية")).toBeVisible();
+    host.unmount();
+    sessionStorage.setItem("huroof:room-hold:audience", JSON.stringify({ token: "", role: "audience" }));
+    projection.role = "audience";
+    const display = renderDisplay();
+    expect(await screen.findByText("فريق الأحمر يختار الفئة التالية")).toBeVisible();
+    display.unmount();
+    projection.projection.room.state = "QUESTION_READING";
+    projection.projection.room.audienceQuestionVisible = false;
+    projection.projection.deadlineAt = new Date(Date.parse(projection.serverTime) + 20_000).toISOString();
+    renderDisplay();
+    expect(await screen.findByRole("timer", { name: "الوقت المتبقي" })).toHaveTextContent("00:20");
   });
   it("ignores a delayed completed-room projection while a same-route rematch lobby loads", async () => {
     const callbacks = new Map<string, (value: ProjectionEnvelope<SafeProjection>) => void>();

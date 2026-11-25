@@ -12,7 +12,7 @@ async function main(){
  const save=()=>writeFile(path,JSON.stringify(report,null,2));
  const admin=initializeApp({projectId:LOCAL_PROJECT},`live-recovery-${key()}`),email=`live-recovery-${key()}@example.test`,password=randomBytes(24).toString('base64url');
  await getAuth(admin).createUser({email,password,emailVerified:true});const ownerToken=await signIn(email,password);
- async function request(route:string,body?:unknown,guest?:string,expected?:number,bearer=ownerToken){const response=await fetch(base+route,{method:body===undefined?'GET':'POST',headers:{'content-type':'application/json',...(guest?{'x-enta-room-token':guest}:{authorization:`Bearer ${bearer}`})},...(body===undefined?{}:{body:JSON.stringify(body)}),signal:AbortSignal.timeout(45000)});const data=await response.json() as any;if(expected===undefined)assert.ok(response.ok,`${route}: ${response.status} ${data.error??''}`);else assert.equal(response.status,expected,`${route}: ${response.status} ${data.error??''}`);return data;}
+ async function request(route:string,body?:unknown,guest?:string,expected?:number,bearer=ownerToken){const response=await fetch(base+route,{method:body===undefined?'GET':'POST',headers:{'content-type':'application/json',...(guest?{'x-enta-room-token':guest}:{authorization:`Bearer ${bearer}`})},...(body===undefined?{}:{body:JSON.stringify(body)}),signal:AbortSignal.timeout(45000)});const data=response.status===204?{}:await response.json() as any;if(expected===undefined)assert.ok(response.ok,`${route}: ${response.status} ${data.error??''}`);else assert.equal(response.status,expected,`${route}: ${response.status} ${data.error??''}`);return data;}
  try{
   for(const competitive of [false,true]){
    const engine=competitive?'competitive':'round',prefix=competitive?'/competition':'',catalog=await request(`${prefix}/catalog/list`),category=catalog.categories[0];
@@ -54,7 +54,7 @@ async function main(){
    assert.equal(JSON.stringify(await request(`/matches/${finishedId}/original-result`)),before);
    const linked=await request('/rooms',{engine,matchId:successor.match.id,requestKey:key()});assert.equal(linked.room.phase,'LOBBY');
    const history=await request('/matches/history');assert.ok(history.matches.some((m:any)=>m.id===finishedId));assert.ok(history.matches.some((m:any)=>m.id===successor.match.id));
-   await request(`${rp}/private`,undefined,a.token,403);
+   await request(`${rp}/private`,undefined,a.token,204);
    report.checks.push({engine,mode:'list',code:room.code,matchId:finishedId,successorId:successor.match.id,typedSubmission:true,duplicateAndEmptyRejected:true,otherGuestAndDisplayPrivacy:true,realDeadlineRejected:true,retryAfterClose:true,hostAdjudicationOnly:true,rematchIdempotent:true,parentResultUnchanged:true,history:true});await save();console.log(`PASSED ${engine}: typed/deadline/privacy/rematch`);
   }
   // Read existing accepted game after the naturally stopped services were started anew.

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { User } from 'firebase/auth';
 import { EntaClientError } from './client';
+import { pollVisibleMatch } from './match-polling';
 import { parseGrantMetadata, parseRoundMatch, roundEnvelope, roundRequest, type GrantCommand, type HostCommand, type RoundMatch } from './round-client';
 type WithoutEnvelope<T> = T extends unknown ? Omit<T, 'commandId' | 'expectedVersion'> : never;
 type CommandInput = WithoutEnvelope<HostCommand> | WithoutEnvelope<GrantCommand>;
@@ -14,13 +15,21 @@ function issuance(input: unknown): Issuance | null {
 export function useRoundMatch(user: User | null, id: string | undefined) {
   const key = `${user?.uid ?? ''}:${id ?? ''}`, [state, setState] = useState<{ key: string; match: RoundMatch | null; error: unknown; loading: boolean; busy: boolean; uncertain: boolean; issuance: Issuance | null }>({ key, match: null, error: null, loading: true, busy: false, uncertain: false, issuance: null });
   const match = useRef<RoundMatch | null>(null), pending = useRef<{ endpoint: string; body: HostCommand | GrantCommand } | null>(null), epoch = useRef(0), request = useRef<AbortController | null>(null), poll = useRef<AbortController | null>(null), rejected = useRef(false);
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (controller = new AbortController()) => {
     if (!user || !id || pending.current) return;
-    const generation = epoch.current, controller = new AbortController(); poll.current?.abort(); poll.current = controller;
+    const generation = epoch.current; poll.current?.abort(); poll.current = controller;
     try { const next = parseRoundMatch(await roundRequest(`/round-matches/${id}`, user, controller.signal), id); if (generation !== epoch.current || controller.signal.aborted || pending.current || next.version < (match.current?.version ?? 0)) return; match.current = next; setState(previous => ({ ...previous, key, match: next, loading: false, error: rejected.current ? previous.error : null })); }
     catch (error) { if (generation === epoch.current && !controller.signal.aborted && !pending.current) setState(previous => ({ ...previous, key, error, loading: false })); }
   }, [id, key, user]);
-  useEffect(() => { epoch.current++; pending.current = null; match.current = null; rejected.current = false; setState({ key, match: null, error: null, loading: true, busy: false, uncertain: false, issuance: null }); void refresh(); const timer = window.setInterval(() => void refresh(), 2000); return () => { epoch.current++; window.clearInterval(timer); request.current?.abort(); poll.current?.abort(); }; }, [key, refresh]);
+  useEffect(() => {
+    epoch.current++; pending.current = null; match.current = null; rejected.current = false;
+    setState({ key, match: null, error: null, loading: true, busy: false, uncertain: false, issuance: null });
+    return () => { epoch.current++; request.current?.abort(); poll.current?.abort(); };
+  }, [key, user]);
+  const terminal = state.key === key && (state.match?.finished || (state.error instanceof EntaClientError && state.error.status === 404));
+  useEffect(() => {
+    if (user && id && !terminal) return pollVisibleMatch(refresh, 2000);
+  }, [user, id, terminal, refresh]);
   const mutate = async (input?: CommandInput) => {
     if (!user || !id || !match.current || (state.key === key && state.busy)) return;
     if (!pending.current) {

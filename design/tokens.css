@@ -3,6 +3,50 @@
     color-scheme: light;
     direction: rtl;
 
+    /* Shared product surfaces. */
+    --app-canvas: #f3f6fb;
+    --app-surface: #ffffff;
+    --app-subtle: #e8eef7;
+    --app-ink: #15253d;
+    --app-muted: #485c76;
+    --app-border: #76869b;
+    --app-accent: #075caa;
+    --app-action: #175bc4;
+    --app-error: #b42318;
+    --app-focus: var(--app-accent);
+    --app-on-action: var(--arena-ink);
+
+    /* Spatial shell and wordmark. These roles keep their established shades. */
+    --app-brand-blue: #2456d6;
+    --app-brand-cyan: #80dfef;
+    --app-brand-canvas: #f4f7ff;
+    --app-brand-ink: #14284b;
+    --app-brand-line: #cbd8f7;
+    --app-panel-surface: var(--app-surface);
+    --app-panel-subtle: #eaf0ff;
+    --app-panel-muted: #52627f;
+    --app-panel-border: var(--app-brand-line);
+    --app-panel-focus: var(--app-brand-blue);
+    --app-panel-selected: #172e5d;
+    --app-team-horizontal-fill: #a51f3d;
+    --app-team-vertical-fill: #176d55;
+    --app-team-horizontal-dark-ink: #ff98a8;
+    --app-team-vertical-dark-ink: #7ce2bd;
+    --shadow-brand-control: 0 4px 0 #153a9c, 0 10px 22px rgb(20 40 75 / 18%);
+    --shadow-host-panel: 0 7px 18px rgb(20 40 75 / 10%);
+    --shadow-host-score: 0 5px 13px rgb(20 40 75 / 8%);
+
+    /* The illustrated homepage defaults to its dark palette until theme bootstrap. */
+    --app-home-canvas: #080e1e;
+    --app-home-surface: #0f1a36;
+    --app-home-ink: #f1f5f9;
+    --app-home-body: #cbd5e1;
+    --app-home-muted: #8496b5;
+    --app-home-border: #1e2e5d;
+    --app-home-link: #38bdf8;
+    --app-home-action: #2563eb;
+    --app-home-action-hover: #1d4ed8;
+
     --surface-stage: #f2f1ec;
     --on-surface-stage: #171717;
     --midnight-canvas: #090d10;
@@ -91,6 +135,7 @@
     --shadow-action-focus: 0 0 0 0.2rem color-mix(in srgb, var(--action-active) 30%, transparent);
     --shadow-elevated: 0 1rem 2.5rem color-mix(in srgb, var(--ink-primary) 24%, transparent);
     --shadow-compact: 0 var(--space-1) var(--space-2) color-mix(in srgb, var(--spatial-canvas-deep) 24%, transparent);
+    --shadow-interactive-glow: 0 0 var(--space-6) color-mix(in srgb, var(--app-accent) 33%, transparent);
     --shadow-stage: 0 0.65rem 0.75rem rgb(0 7 39 / 36%);
     --shadow-team-focus: inset 0 0 0 2px var(--spatial-cyan);
     --shadow-team-outline: inset 0 0 0 1px currentColor;
@@ -143,8 +188,9 @@
     --arena-line-ring: inset 0 0 0 1px var(--arena-line-soft);
     --player-buzzer-deep-base: #000;
 
-    --font-sans: "Cairo", "Instrument Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-sans: "Cairo", "Cairo Fallback", "Cairo Fallback Naskh", "Cairo Fallback Arial", "Instrument Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-ui: var(--font-sans);
+    --font-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
     --weight-regular: 400;
     --weight-medium: 500;
     --weight-semibold: 600;
@@ -171,6 +217,35 @@
     --space-16: 4rem;
 
     --radius-none: 0;
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+    --radius-pill: 999px;
+    --radius-circle: 50%;
+    --radius-full: 100%;
+    --radius-control-compact: 0.7rem;
+    --radius-field: 0.85rem;
+    /* Existing pixel-sized surfaces keep their unit and exact dimensions. */
+    --radius-2px: 2px;
+    --radius-3px: 3px;
+    --radius-4px: 4px;
+    --radius-6px: 6px;
+    --radius-8px: 8px;
+    --radius-10px: 10px;
+    --radius-12px: 12px;
+    --radius-14px: 14px;
+    --radius-16px: 16px;
+    --radius-18px: 18px;
+    --radius-20px: 20px;
+    --radius-22px: 22px;
+    --radius-24px: 24px;
+    --radius-28px: 28px;
+    --radius-30px: 30px;
+    --radius-32px: 32px;
+    --radius-36px: 36px;
+    --radius-42px: 42px;
+    --radius-pill-wide: 9999px;
     --border-default: 1px;
     --border-strong: 2px;
     --border-path: 4px;
@@ -196,6 +271,25 @@
 
   :root[data-theme="dark"] {
     color-scheme: dark;
+    --app-canvas: #081321;
+    --app-surface: #142236;
+    --app-subtle: #20334c;
+    --app-ink: #f4f7fc;
+    --app-muted: #bdcbdc;
+    --app-border: #71849e;
+    --app-accent: #80d9f5;
+    --app-error: #ffb4ad;
+    --app-brand-canvas: #0d1a35;
+    --app-brand-ink: #e7f1ff;
+    --app-brand-line: #31517f;
+    --app-panel-surface: #14284b;
+    --app-panel-subtle: #19345f;
+    --app-panel-muted: #b6c6e5;
+    --app-panel-border: #385783;
+    --app-panel-focus: var(--app-brand-cyan);
+    --shadow-brand-control: 0 4px 0 #10275e, 0 10px 22px rgb(0 0 0 / 32%);
+    --shadow-host-panel: 0 8px 20px rgb(0 0 0 / 24%);
+    --shadow-host-score: 0 5px 14px rgb(0 0 0 / 20%);
     --surface-stage: #0d1318;
     --on-surface-stage: #f5f2ea;
     --midnight-canvas: #090d10;
@@ -278,6 +372,16 @@
     --arena-stage-shadow: 0 16px 0 #03104a, 0 28px 48px rgb(0 7 39 / 52%);
     --arena-panel-shadow: inset 0 0 0 2px var(--arena-line-soft), 0 12px 28px rgb(0 7 39 / 38%);
     --arena-score-shadow: 0 12px 0 var(--arena-panel-deep), 0 22px 34px rgb(0 7 39 / 42%);
+  }
+
+  :root[data-theme="light"] {
+    --app-home-canvas: #f0f4fa;
+    --app-home-surface: #ffffff;
+    --app-home-ink: #0b132b;
+    --app-home-body: #1e293b;
+    --app-home-muted: #5b6e8c;
+    --app-home-border: #cad8ed;
+    --app-home-link: #0284c7;
   }
 
   @media (prefers-reduced-motion: reduce) {

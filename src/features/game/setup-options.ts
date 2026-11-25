@@ -21,7 +21,7 @@ export const matchModeOptions: readonly MatchModeOption[] = [
   {
     id: "fast",
     labelAr: "سريعة",
-    descriptionAr: "يُحفَظ هذا الاختيار في الإعداد؛ التوقيت لا يتغير تلقائياً.",
+    descriptionAr: "وقت أقصر للسؤال.",
   },
   {
     id: "custom",
@@ -33,6 +33,8 @@ export const matchModeOptions: readonly MatchModeOption[] = [
 const matchModeIds = new Set<MatchMode>(matchModeOptions.map(({ id }) => id));
 const categoryIds = new Set([...availableCategoryCatalog.map(({ id }) => id), ...publicSourceCategoryIds.sourceCategoryIds]);
 const maximumSelectedCategories = 10;
+export const matchModeTiming = (mode: MatchMode) =>
+  mode === "fast" ? { questionSeconds: 10, opponentSeconds: 10 } : { questionSeconds: 20, opponentSeconds: 10 };
 
 export const setupGameKindOptions: readonly {
   id: SetupGameKind;
@@ -76,7 +78,7 @@ export const isSetupGameKind = (value: string | null): value is SetupGameKind =>
  * Reads only supported query values. This intentionally seeds a setup route once;
  * route components keep subsequent edits in local form state.
  */
-export function parseSetupQuery(search: URLSearchParams): SetupQuerySeed {
+export function parseSetupQuery(search: URLSearchParams, acceptInventoryIds = false): SetupQuerySeed {
   const requestedMode = search.get("mode");
   const requestedGameKind = search.get("kind");
   const mode = isMatchMode(requestedMode) ? requestedMode : "classic";
@@ -95,19 +97,21 @@ export function parseSetupQuery(search: URLSearchParams): SetupQuerySeed {
     value !== null && value.trim().length > 0 && value.trim().length <= 48 && !/\p{Cc}/u.test(value)
       ? value.trim()
       : fallback;
-  const questionSeconds = parseSeconds(requestedQuestionSeconds, 20);
-  const opponentSeconds = parseSeconds(requestedOpponentSeconds, 10);
+  const defaults = matchModeTiming(mode);
+  const questionSeconds = parseSeconds(requestedQuestionSeconds, defaults.questionSeconds);
+  const opponentSeconds = parseSeconds(requestedOpponentSeconds, defaults.opponentSeconds);
   const horizontal = parseTeamName(requestedHorizontal, "الأحمر");
   const vertical = parseTeamName(requestedVertical, "الأخضر");
   const demo = requestedDemo === "0" ? false : true;
-  const categories = canonicalizeCategoryIds(requestedCategories.filter((id) => categoryIds.has(id)), CURRENT_CATEGORY_PROJECTION)
+  const categoryIdAllowed = (id: string) => categoryIds.has(id) || (acceptInventoryIds && /^[a-z0-9_-]{1,128}$/i.test(id));
+  const categories = canonicalizeCategoryIds(requestedCategories.filter(categoryIdAllowed), CURRENT_CATEGORY_PROJECTION)
     .slice(0, maximumSelectedCategories);
   const hasInvalidMode = requestedMode !== null && !isMatchMode(requestedMode);
   const hasInvalidGameKind = requestedGameKind !== null && !isSetupGameKind(requestedGameKind);
-  const hasInvalidCategory = requestedCategories.some((id) => !categoryIds.has(id));
+  const hasInvalidCategory = requestedCategories.some((id) => !categoryIdAllowed(id));
   const hasInvalidSeconds =
-    (requestedQuestionSeconds !== null && questionSeconds === 20 && requestedQuestionSeconds !== "20") ||
-    (requestedOpponentSeconds !== null && opponentSeconds === 10 && requestedOpponentSeconds !== "10");
+    (requestedQuestionSeconds !== null && questionSeconds === defaults.questionSeconds && requestedQuestionSeconds !== String(defaults.questionSeconds)) ||
+    (requestedOpponentSeconds !== null && opponentSeconds === defaults.opponentSeconds && requestedOpponentSeconds !== String(defaults.opponentSeconds));
   const hasInvalidTeam =
     (requestedHorizontal !== null && horizontal === "الأحمر" && requestedHorizontal.trim() !== "الأحمر") ||
     (requestedVertical !== null && vertical === "الأخضر" && requestedVertical.trim() !== "الأخضر");
@@ -143,8 +147,9 @@ export function setupQueryString({
   const params = new URLSearchParams({ kind: gameKind, mode });
   if (horizontal !== "الأحمر") params.set("horizontal", horizontal);
   if (vertical !== "الأخضر") params.set("vertical", vertical);
-  if (questionSeconds !== 20) params.set("questionSeconds", String(questionSeconds));
-  if (opponentSeconds !== 10) params.set("opponentSeconds", String(opponentSeconds));
+  const defaults = matchModeTiming(mode);
+  if (questionSeconds !== defaults.questionSeconds) params.set("questionSeconds", String(questionSeconds));
+  if (opponentSeconds !== defaults.opponentSeconds) params.set("opponentSeconds", String(opponentSeconds));
   if (!demo) params.set("demo", "0");
   categories.forEach((category) => params.append("category", category));
   return params.toString();

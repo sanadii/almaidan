@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { Link } from 'react-router-dom';
 import { InternalHeader } from '../../design-system/InternalHeader';
+import { StatusArt, StatusHomeLink, StatusPage } from '../../design-system/StatusPanel';
 import { useFirebaseAuth } from '../auth/auth-context';
 import { ownerGeneration, subscribeOwnerGeneration } from '../enta/auth-epoch';
 import { studyPost } from './client';
@@ -37,7 +38,10 @@ export function StudyRoute({ available = false }: { available?: boolean } = {}) 
     finally { if (current === generation.current) { inFlight.current = false; setBusy(false); } }
   }
   const safeView = stateKey.current === viewKey ? view : null; const safePending = stateKey.current === viewKey ? pending : null; const safeMessage = stateKey.current === viewKey ? message : ''; const safeBusy = stateKey.current === viewKey && busy;
+  if (!available) return <StatusPage title="التدريب" illustration={<StatusArt art="buzzer" />} action={<StatusHomeLink />}>
+    <p role="status">التدريب غير متاح حالياً.</p>
+  </StatusPage>;
   return <main data-page-layout="wide" className="maydan-app maydan-public-page" id="main-content" tabIndex={-1}><InternalHeader /><section className="maydan-credits" aria-labelledby="study-title"><div><p className="eyebrow">الميدان</p><h1 id="study-title">التدريب</h1>
-    {!available ? <p role="status">التدريب غير متاح حالياً.</p> : !user ? <p>{status === 'loading' ? 'جارٍ التحقق من الحساب…' : <>سجّل الدخول لبدء التدريب. <Link to="/login">تسجيل الدخول</Link></>}</p> : !safeView ? <><p>أجب عن الأسئلة واحداً تلو الآخر.</p><button type="button" className="button button--primary" disabled={safeBusy || !!safePending} onClick={() => void act('/sessions', { requestId: crypto.randomUUID() })}>ابدأ التدريب</button></> : <><p>أجبت عن {safeView.progress.answered} من {safeView.progress.total}</p>{safeView.correct !== undefined ? <p role="status">{safeView.correct ? 'إجابة صحيحة' : 'إجابة غير صحيحة'}</p> : null}{safeView.question ? <><h2>{safeView.question.prompt}</h2><div>{safeView.question.choices.map(choice => <button type="button" className="button" key={choice.id} disabled={safeBusy || !!safePending} onClick={() => void act(`/sessions/${encodeURIComponent(safeView.sessionId)}/answers`, { questionId: safeView.question!.id, choiceId: choice.id })}>{choice.text}</button>)}</div></> : <p>اكتملت جلسة التدريب.</p>}</>}
-    {safeMessage ? <p role="alert">{safeMessage}</p> : null}{safePending && !safeBusy ? <button type="button" className="button" onClick={() => void act(safePending.path, safePending.body)}>إعادة المحاولة</button> : null}<p><Link to="/">العودة إلى البداية</Link></p></div></section></main>;
+    {!user ? <p>{status === 'loading' ? 'جارٍ التحقق من الحساب…' : <>سجّل الدخول لبدء التدريب. <Link to="/login">تسجيل الدخول</Link></>}</p> : !safeView ? <><p>أجب عن الأسئلة واحداً تلو الآخر.</p><button type="button" className="button button--primary" disabled={safeBusy || !!safePending} onClick={() => void act('/sessions', { requestId: crypto.randomUUID() })}>ابدأ التدريب</button></> : <><p>أجبت عن {safeView.progress.answered} من {safeView.progress.total}</p>{safeView.correct !== undefined ? <p role="status">{safeView.correct ? 'إجابة صحيحة' : 'إجابة غير صحيحة'}</p> : null}{safeView.question ? <><h2>{safeView.question.prompt}</h2><div>{safeView.question.choices.map(choice => <button type="button" className="button" key={choice.id} disabled={safeBusy || !!safePending} onClick={() => void act(`/sessions/${encodeURIComponent(safeView.sessionId)}/answers`, { questionId: safeView.question!.id, choiceId: choice.id })}>{choice.text}</button>)}</div></> : <p>اكتملت جلسة التدريب.</p>}</>}
+    {safeMessage ? <p role="alert">{safeMessage}</p> : null}{safePending && !safeBusy ? <button type="button" className="button" onClick={() => void act(safePending.path, safePending.body)}>إعادة المحاولة</button> : null}<StatusHomeLink /></div></section></main>;
 }

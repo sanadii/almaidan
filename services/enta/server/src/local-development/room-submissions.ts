@@ -1,4 +1,4 @@
 import {fail} from '../gameplay/types';
 export function normalizedRoomAnswer(input:unknown){if(typeof input!=='string'||!input.trim()||input.length>500||/[<>\p{Cc}\p{Cf}]/u.test(input))return fail(400,'INVALID_SUBMITTED_ANSWER');const normalized=input.normalize('NFKC').replace(/[\u064b-\u065f\u0670\u0640]/g,'').trim().replace(/\s+/g,' ').toLocaleLowerCase('ar');if(!normalized)return fail(400,'INVALID_SUBMITTED_ANSWER');return normalized;}
-export interface RoomSubmission{commandId:string;hash:string;memberId:string;roundId:string;itemId:string|null;text:string;normalizedText:string;receivedAt:number}
-export function publicRoomSubmissions(rows:RoomSubmission[],memberId:string|null,host:boolean){return rows.filter(r=>host||r.memberId===memberId).map(({commandId,memberId,roundId,itemId,text,receivedAt})=>({commandId,memberId,roundId,itemId,text,receivedAt}));}
+export interface RoomSubmission{commandId:string;hash:string;memberId:string;roundId:string;itemId:string|null;text:string;normalizedText:string;receivedAt:number;attemptId?:string}
+export function publicRoomSubmissions(rows:RoomSubmission[],memberId:string|null,host:boolean){return rows.filter(r=>host||r.memberId===memberId).map(({commandId,memberId,roundId,itemId,text,receivedAt,attemptId})=>({commandId,memberId,roundId,itemId,text,receivedAt,...(host&&attemptId?{attemptId}:{})}));}

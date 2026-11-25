@@ -1,0 +1,66 @@
+.room-code {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+
+.room-code__details {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-1);
+  min-inline-size: 0;
+}
+
+.room-code__details p {
+  display: grid;
+  margin: 0;
+}
+
+.room-code__details bdi {
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-family: var(--font-mono);
+  font-size: clamp(1rem, 4vw, 2.25rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.room-code__status,
+.room-code__qr-error {
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+.room-code__qr {
+  flex: none;
+  inline-size: 6.5rem;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--spatial-radius-control);
+}
+
+.room-code__qr img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+}
+
+.room-code--large {
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.room-code--large .room-code__details {
+  justify-items: center;
+}
+
+.room-code--large .room-code__details bdi {
+  font-size: clamp(1.125rem, 6vw, 6rem);
+}
+
+.room-code--large .room-code__qr {
+  inline-size: min(13rem, 54vw);
+}

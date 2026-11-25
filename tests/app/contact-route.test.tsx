@@ -14,7 +14,8 @@ it('shows the owner-supplied identity and opens the support email', () => {
 });
 
 it('exposes the contact page in public routing and the home footer', async () => {
-  const [app, homeSource] = await Promise.all(['src/app/App.tsx', 'src/routes/HomeSurface.tsx'].map(path => readFile(resolve(path), 'utf8')));
+  const [app, homeSource,footer] = await Promise.all(['src/app/App.tsx', 'src/routes/HomeSurface.tsx','src/design-system/PublicFooter.tsx'].map(path => readFile(resolve(path), 'utf8')));
   expect(app).toMatch(/path="\/contact"/);
-  expect(homeSource).toMatch(/to="\/contact"/);
+  expect(homeSource).toMatch(/<PublicFooter home/);
+  expect(footer).toMatch(/to="\/contact"/);
 });

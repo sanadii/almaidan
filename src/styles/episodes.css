@@ -13,6 +13,44 @@
 .maydan-episodes-page .episode-summary { display: grid; align-content: start; gap: 16px; padding: 24px; block-size: 100%; border: 1px solid var(--app-border); border-radius: 16px; background: var(--app-surface); }
 .maydan-episodes-page .episode-summary__number { color: var(--app-accent); font-weight: 600; font-size: 14px; }
 .maydan-episodes-page .episode-summary__description { white-space: pre-line; }
+.episode-summary__video {
+  display: block;
+  inline-size: 100%;
+  aspect-ratio: 16 / 9;
+  border: var(--border-default) solid var(--app-border);
+  border-radius: var(--spatial-radius-control);
+  background: var(--app-subtle);
+}
+.episode-summary__poster {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: var(--space-3);
+  cursor: pointer;
+}
+.episode-summary__poster:hover { border-color: var(--app-accent); }
+.episode-summary__poster picture {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.episode-summary__poster img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+.episode-summary__play {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--spatial-radius-control);
+  background: var(--app-surface);
+  color: var(--app-ink);
+}
 .maydan-episodes-page .episode-summary__date { border-block-start: 1px solid var(--app-border); padding-block-start: 16px; font-size: 14px; }
 .maydan-episodes-page .episodes-catalog :is(h1, h2, p, a, button) { min-inline-size: 0; overflow-wrap: anywhere; }
 .maydan-episodes-page .episodes-catalog__footer { display: flex; flex-wrap: wrap; gap: 16px; }

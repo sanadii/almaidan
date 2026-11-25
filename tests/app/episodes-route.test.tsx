@@ -1,10 +1,12 @@
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ThemeProvider } from '../../src/app/ThemeProvider';
 import { EpisodesRoute } from '../../src/routes/EpisodesRoute';
 import { EpisodeCatalogError, formatEpisodeDate, loadEpisodeCatalog, parseEpisodeCatalog } from '../../src/features/episodes/client';
+import { EpisodeNavigation } from '../../src/features/episodes/episode-navigation';
+import { InternalHeader } from '../../src/design-system/InternalHeader';
 
 const fetchMock = vi.fn();
 const row = { id: 'episode-one', number: 1, title: 'عنوان اختبار للحلقة', description: 'وصف عام للاختبار.', airDate: '2026-10-07' };
@@ -19,11 +21,13 @@ describe('public episodes route', () => {
     fetchMock.mockImplementation(() => new Promise<Response>(resolve => { finish = resolve; }));
     render(surface());
     expect(screen.getByRole('heading', { name: 'جارٍ تحميل الحلقات…' })).toBeVisible();
-    expect(screen.getByRole('region', { name: 'الحلقات' })).toHaveAttribute('aria-busy', 'true');
+    expect(screen.getByRole('region', { name: 'جارٍ تحميل الحلقات…' })).toHaveAttribute('aria-busy', 'true');
     expect(fetchMock).toHaveBeenCalledWith('/api/v1/episodes', expect.objectContaining({ credentials: 'omit', signal: expect.any(AbortSignal) }));
     await act(async () => finish(json({ episodes: [] })));
     expect(await screen.findByRole('heading', { name: 'لا توجد حلقات منشورة بعد' })).toBeVisible();
-    expect(screen.getByRole('region', { name: 'الحلقات' })).toHaveAttribute('aria-busy', 'false');
+    const status = screen.getByRole('region', { name: 'لا توجد حلقات منشورة بعد' });
+    expect(status).toHaveAttribute('aria-busy', 'false');
+    expect(status.querySelector('img')).toHaveAttribute('src', expect.stringContaining('maydan-e-trophy'));
     expect(document.title).toBe('الحلقات | الميدان');
     expect(screen.queryByRole('button', { name: 'إعادة المحاولة' })).not.toBeInTheDocument();
   });
@@ -53,10 +57,32 @@ describe('public episodes route', () => {
     await userEvent.keyboard('{Enter}');
     expect(await screen.findByRole('heading', { name: row.title })).toBeVisible();
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    const home = screen.getByRole('link', { name: 'العودة للرئيسية', exact: true });
+    const home = within(screen.getByRole('navigation', {name:'روابط الحلقات'})).getByRole('link', {name:'الرئيسية'});
     home.focus();
     await userEvent.keyboard('{Enter}');
     expect(await screen.findByRole('heading', { name: 'الرئيسية للاختبار' })).toBeVisible();
+  });
+
+  it('loads only the selected episode player on activation and leaves playback to its controls', async () => {
+    const withVideo = { ...row, youtubeId: 'xYz09aB_-Q0' };
+    const withoutVideo = { ...row, id: 'episode-two', number: 2, title: 'حلقة بالوصف فقط' };
+    fetchMock.mockResolvedValue(json({ episodes: [withVideo, withoutVideo] }));
+    const { container } = render(surface());
+    const poster = await screen.findByRole('button', { name: `شاهدوا ${row.title}` });
+    expect(container.querySelector('iframe')).toBeNull();
+    expect(container.querySelector('[src*="youtube"], [src*="ytimg"]')).toBeNull();
+    expect(poster.querySelector('img')).toHaveAttribute('src', '/assets/backgrounds/home-games-fantasy-v2-800.webp');
+    expect(poster.querySelector('img')).toHaveAttribute('alt', '');
+    expect(poster).toHaveClass('episode-summary__video');
+    expect(within(screen.getByRole('article', {name: withoutVideo.title})).queryByRole('button')).toBeNull();
+    poster.focus();
+    await userEvent.keyboard('{Enter}');
+    const player = screen.getByTitle(`شاهدوا ${row.title}`);
+    expect(player).toHaveClass('episode-summary__video');
+    expect(player).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/xYz09aB_-Q0?rel=0');
+    expect(player).not.toHaveAttribute('allow', expect.stringContaining('autoplay'));
+    expect(player).toHaveFocus();
+    expect(poster).not.toBeInTheDocument();
   });
 
   it('distinguishes malformed data from valid empty, and retries', async () => {
@@ -102,17 +128,23 @@ describe('public episodes route', () => {
     expect((fetchMock.mock.calls[1][1].signal as AbortSignal).aborted).toBe(true);
   });
 
-  it('adds real header discovery and preserves Escape focus restoration', async () => {
+  it('keeps an empty catalogue out of the menu and preserves Escape focus restoration', async () => {
     fetchMock.mockResolvedValue(json({ episodes: [] }));
     render(surface());
     await screen.findByText('لا توجد حلقات منشورة بعد');
-    expect(screen.getByRole('link', { name: 'الحلقات', exact: true })).toHaveAttribute('href', '/episodes');
+    expect(screen.queryByRole('link', { name: 'الحلقات', exact: true })).not.toBeInTheDocument();
     const menu = screen.getByRole('button', { name: 'القائمة' });
     await userEvent.click(menu);
     expect(menu).toHaveAttribute('aria-expanded', 'true');
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(menu).toHaveFocus());
     expect(menu).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('adds the episodes link when the public catalogue has a published episode', async () => {
+    fetchMock.mockResolvedValue(json({ episodes: [row] }));
+    render(<ThemeProvider><MemoryRouter><EpisodeNavigation enabled><InternalHeader /></EpisodeNavigation></MemoryRouter></ThemeProvider>);
+    expect(await screen.findByRole('link', { name: 'الحلقات', exact: true })).toHaveAttribute('href', '/episodes');
   });
 });
 
@@ -126,6 +158,13 @@ describe('episode client boundary', () => {
     ];
     for (const input of invalid) expect(() => parseEpisodeCatalog(input)).toThrow(EpisodeCatalogError);
     expect(parseEpisodeCatalog({ episodes: [{ ...row, airDate: '2024-02-29' }] })).toHaveLength(1);
+  });
+  it('accepts a bare YouTube ID and rejects URL, whitespace, controls and invalid types', () => {
+    const youtubeId = 'xYz09aB_-Q0';
+    expect(parseEpisodeCatalog({episodes: [{ ...row, youtubeId }]})).toEqual([{ ...row, youtubeId }]);
+    for (const invalid of [null, 123, undefined, 'xYz09aB_-Q', 'xYz09aB_-Q0\n', 'xYz09aB_ Q0', 'https://youtu.be/xYz09aB_-Q0']) {
+      expect(() => parseEpisodeCatalog({episodes: [{ ...row, youtubeId: invalid }]})).toThrow(EpisodeCatalogError);
+    }
   });
   it('rejects HTML SPA fallback, invalid JSON and excessive response text', async () => {
     for (const response of [new Response('<html>preview fallback</html>', { headers: { 'content-type': 'text/html' } }), new Response('{broken', { headers: { 'content-type': 'application/json' } }), new Response(' '.repeat(256 * 1024 + 1), { headers: { 'content-type': 'application/json' } })]) {

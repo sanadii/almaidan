@@ -25,7 +25,7 @@ export function createLocalEntaService(store:LocalStore) {
     return store.transaction(p.uid,async state => {
       const predecessor=predecessorId ? gameFor(state,p,predecessorId) : undefined;
       if (predecessor) { mode=predecessor.mode!; if(predecessor.phase!=='FINISHED') fail(409,'PREDECESSOR_NOT_FINISHED'); }
-      const parsed=mode==='CLASSIC' && !predecessor ? parseStartCommand(input) : parseSuccessor(input,mode,parseSetupName,foldSetupName,!!predecessor);
+      const parsed=mode==='CLASSIC' && !predecessor ? parseStartCommand(input,0) : parseSuccessor(input,mode,parseSetupName,foldSetupName,!!predecessor,0);
       const digest=hash({mode,predecessorId:predecessorId??null,parsed});
       const old=own(state.starts,parsed.requestKey);
       if(old) { if(old.hash!==digest) fail(409,'IDEMPOTENCY_KEY_CONFLICT'); return {idempotent:true,match:projectMatch(gameFor(state,p,old.id),Date.now())}; }

@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -40,7 +40,7 @@ function playerProjection({
         memberCount: 2,
         teams: { horizontal: "الأحمر", vertical: "الأخضر" },
       },
-      self: { uid: "player-1", ready: true, team, canBuzz },
+      self: { uid: "player-1", displayName: "نور", ready: true, team, canBuzz },
     },
   };
 }
@@ -51,6 +51,7 @@ function renderPlayer() {
       <MemoryRouter initialEntries={["/room/BUZZER/play"]}>
         <Routes>
           <Route path="/room/:roomCode/play" element={<RoomRoute surface="play" />} />
+          <Route path="/room/:roomCode/results" element={<RoomRoute surface="results" />} />
         </Routes>
       </MemoryRouter>
     </ThemeProvider>,
@@ -137,23 +138,65 @@ describe("RoomRoute player buzzer", () => {
     expect(await screen.findByRole("button", { name: "اضغط الآن" })).toBeEnabled();
   });
 
-  it("shows offline and completed-match instructions on the full-screen buzzer", async () => {
-    renderPlayer();
+  it("locks the offline buzzer and sends a completed player to the results with only the home action", async () => {
+    const play = renderPlayer();
     await screen.findByRole("button", { name: "اضغط الآن" });
 
     await act(async () => window.dispatchEvent(new Event("offline")));
     expect(await screen.findByRole("button", { name: "انقطع الاتصال" })).toBeDisabled();
-    await act(async () => {
-      publish({
-        ...projection,
-        revision: 3,
-        projection: {
-          ...projection.projection,
-          room: { ...projection.projection.room, state: "MATCH_COMPLETE" },
-          self: { ...projection.projection.self!, canBuzz: false },
-        },
-      });
-    });
-    expect(await screen.findByRole("button", { name: "اكتملت المباراة" })).toBeDisabled();
+    play.unmount();
+    projection = playerProjection({ state: "MATCH_COMPLETE", canBuzz: false });
+    projection.projection.matchWinner = "vertical";
+    renderPlayer();
+    expect(await screen.findByRole("heading", { name: "فاز فريق الأخضر" })).toBeVisible();
+    const actions = within(screen.getByRole("navigation", { name: "خيارات بعد المباراة" }));
+    expect(actions.getAllByRole("link")).toHaveLength(1);
+    expect(actions.getByRole("link", { name: "الرئيسية" })).toHaveAttribute("href", "/");
+    expect(actions.queryByRole("button")).not.toBeInTheDocument();
+  });
+
+  it("shows the round score, name, timer and guide on a phone during the reading phase", async () => {
+    projection.projection.deadlineAt = new Date(Date.parse(projection.serverTime) + 20_000).toISOString();
+    projection.projection.questionScores = { horizontal: 8, vertical: 6 };
+    projection.projection.board = [{ id: "cell", q: 0, r: 0, kind: "letter", visibleValue: "أ", owner: "vertical" }];
+    renderPlayer();
+    expect(await screen.findByRole("timer", { name: "الوقت المتبقي" })).toHaveTextContent("00:20");
+    expect(screen.getByText("نور").tagName).toBe("BDI");
+    expect(screen.getByText(/نتيجة الجولة/)).toHaveTextContent("0 – 1");
+    const guide = screen.getByRole("link", { name: "كيف نلعب؟" });
+    expect(guide).toHaveAttribute("target", "_blank");
+    expect(guide).toHaveAttribute("href", "/how-to-play#rules-khaliah");
+  });
+
+  it("names the buzzer winner during the answer and announces both judgments for three seconds", () => {
+    vi.useFakeTimers();
+    try {
+      projection = playerProjection({ state: "FIRST_ANSWER", canBuzz: false });
+      projection.projection.buzzWinner = { displayName: "Salem", team: "horizontal", method: "player" };
+      const view = renderPlayer();
+      expect(screen.getByText("Salem").tagName).toBe("BDI");
+      expect(screen.getByText(/أسرع — ننتظر الإجابة/)).toHaveTextContent("Salem أسرع — ننتظر الإجابة");
+
+      const wrong = playerProjection({ state: "OPPONENT_CHANCE", canBuzz: true });
+      wrong.revision = 2;
+      wrong.projection.answerFeedback = { outcome: "incorrect", expiresAt: new Date(Date.parse(wrong.serverTime) + 3_000).toISOString() };
+      act(() => publish(wrong));
+      expect(screen.getByText("إجابة خاطئة — الفرصة للفريق الآخر")).toBeVisible();
+      act(() => vi.advanceTimersByTime(2_999));
+      expect(screen.getByText("إجابة خاطئة — الفرصة للفريق الآخر")).toBeVisible();
+      act(() => vi.advanceTimersByTime(1));
+      expect(screen.queryByText("إجابة خاطئة — الفرصة للفريق الآخر")).not.toBeInTheDocument();
+
+      const correct = playerProjection({ state: "CELL_SELECTION", canBuzz: false });
+      correct.revision = 3;
+      correct.projection.self!.isBuzzWinner = true;
+      correct.projection.answerFeedback = { outcome: "correct", team: "vertical", expiresAt: new Date(Date.parse(correct.serverTime) + 3_000).toISOString() };
+      act(() => publish(correct));
+      expect(screen.queryByText("أنت الأسرع — أجب الآن")).not.toBeInTheDocument();
+      expect(screen.getByText("إجابة صحيحة — الخلية لفريق الأخضر")).toBeVisible();
+      act(() => vi.advanceTimersByTime(3_000));
+      expect(screen.queryByText(/إجابة صحيحة/)).not.toBeInTheDocument();
+      view.unmount();
+    } finally { vi.useRealTimers(); }
   });
 });

@@ -12,8 +12,9 @@ import { pendingStartStorageKey, type MatchProjection } from '../../src/features
 import { parsePendingIntent, persistPendingIntent, readPendingIntent, type PendingIntent } from '../../src/features/enta/pending-intent';
 import { parseHistory } from '../../src/features/enta/history';
 // These tests exercise Enta history in isolation; Huroof history has its own route tests.
-vi.mock('../../src/features/game/HuroofHistory', () => ({ HuroofHistory: () => null }));
-vi.mock('../../src/features/game/PublicHuroofHistory', () => ({ PublicHuroofHistory: () => null }));
+const huroofFixture = vi.hoisted(()=>({entries:[] as import('../../src/features/game/MatchHistoryList').MatchHistoryEntry[],feedback:null,paging:null,ready:true}));
+vi.mock('../../src/features/game/HuroofHistory', () => ({ HuroofHistory: ({children}: Required<import('../../src/features/game/MatchHistoryList').HistoryChildren>) => children(huroofFixture) }));
+vi.mock('../../src/features/game/PublicHuroofHistory', () => ({ PublicHuroofHistory: ({children}: Required<import('../../src/features/game/MatchHistoryList').HistoryChildren>) => children(huroofFixture) }));
 const user = { uid: 'e2-ui-host', isAnonymous: false, emailVerified: true, getIdToken: async () => 'host' } as User;
 const auth: FirebaseAuthContextValue = { ...loadingAuthContext, status: 'password', isAvailable: true, user };
 const categories = [{ key: 'kids_one', label: 'ألوان وأشكال' }, { key: 'kids_two', label: 'حيوانات وطبيعة' }];
@@ -26,7 +27,7 @@ const historyPage = (matches: typeof row[] = [], nextCursor: string | null = nul
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'content-type': 'application/json' } }); const fetchMock = vi.fn();
 function LocationProbe(){return <output data-testid="actual-path">{useLocation().pathname}</output>;}
 function surface(path: string, value = auth) { return <ThemeProvider><ObservedFirebaseAuthProvider value={value}><MemoryRouter initialEntries={[path]}><LocationProbe/><Routes><Route path="/enta/new/kids" element={<EntaKidsRoute />} /><Route path="/enta/history" element={<EntaHistoryRoute />} /><Route path="/enta/matches/:id/rematch" element={<EntaRematchRoute />} /><Route path="/enta/matches/:id" element={<h1>مباراة الاختبار المستعادة</h1>} /></Routes></MemoryRouter></ObservedFirebaseAuthProvider></ThemeProvider>; }
-beforeEach(() => { fetchMock.mockReset(); vi.stubGlobal('fetch', fetchMock); vi.stubEnv('VITE_STATIC_PREVIEW', 'false'); sessionStorage.clear(); });
+beforeEach(() => { huroofFixture.entries=[]; fetchMock.mockReset(); vi.stubGlobal('fetch', fetchMock); vi.stubEnv('VITE_STATIC_PREVIEW', 'false'); sessionStorage.clear(); });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.unstubAllEnvs(); sessionStorage.clear(); localStorage.clear(); });
 
 it('KIDS chooses exactly one category and dispatches strict v3 fixed endpoint without browser billing fields', async () => {
@@ -71,4 +72,27 @@ it('history filters/pagination use fixed scoped GET and malformed data is retrya
 
 it('KIDS/history/rematch static preview and unverified auth never request or fake states', () => {
   vi.stubEnv('VITE_STATIC_PREVIEW', 'true'); const view = render(surface('/enta/history')); expect(screen.getByText('إنت صح غير متاحة في المعاينة')).toBeVisible(); expect(fetchMock).not.toHaveBeenCalled(); view.unmount(); vi.stubEnv('VITE_STATIC_PREVIEW', 'false'); render(surface('/enta/matches/parent-game/rematch', { ...auth, user: { ...user, emailVerified: false } as User })); expect(screen.getByText('أكّد بريدك للاستضافة')).toBeVisible(); expect(fetchMock).not.toHaveBeenCalled();
+});
+it('merges games by date, filters by game and folds only old unfinished rooms',async()=>{
+ const newer=new Date(Date.parse(row.createdAt)+86_400_000).toISOString();
+ const older=new Date(Date.parse(row.createdAt)-86_400_000).toISOString();
+ huroofFixture.entries=[
+  {key:'room-1',game:'huroof',date:older,complete:true,title:'غرفة قديمة',details:null},
+  {key:'room-2',game:'huroof',date:newer,complete:true,title:'غرفة أحدث',details:null},
+  {key:'room-3',game:'huroof',date:'2020-01-01T00:00:00.000Z',complete:false,title:'غرفة متوقفة',details:null},
+ ];
+ fetchMock.mockResolvedValue(json(historyPage([row])));render(surface('/enta/history'));
+ await screen.findByRole('link',{name:'عرض النتيجة'});
+ expect([...document.querySelectorAll('ol.enta-history-list:first-of-type time')].slice(0,3).map(el=>el.getAttribute('datetime'))).toEqual([newer,row.createdAt,older]);
+ const details=screen.getByText('غرف لم تكتمل').closest('details')!;
+ expect(details.open).toBe(false);expect(details).toHaveTextContent('غرفة متوقفة');
+ await userEvent.selectOptions(screen.getByLabelText('اللعبة'),'enta');
+ expect(screen.queryByText('غرفة أحدث')).toBeNull();expect(screen.getByRole('link',{name:'عرض النتيجة'})).toBeVisible();
+ await userEvent.selectOptions(screen.getByLabelText('اللعبة'),'huroof');
+ expect(screen.getByText('غرفة أحدث')).toBeVisible();expect(screen.queryByRole('link',{name:'عرض النتيجة'})).toBeNull();
+});
+it('prompts a signed-out history visitor without requesting private records',()=>{
+ render(surface('/enta/history',{...auth,user:null,status:'signedOut'}));
+ expect(screen.getByRole('heading',{name:'سجّل دخولك لتشوف مبارياتك'})).toBeVisible();
+ expect(fetchMock).not.toHaveBeenCalled();
 });

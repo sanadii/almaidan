@@ -1,0 +1,69 @@
+.sound-toggle {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  min-block-size: 44px;
+  min-inline-size: 44px;
+  padding: 0;
+  border: var(--border-default) solid currentColor;
+  border-radius: var(--arena-radius-capsule);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.sound-toggle svg { inline-size: 1.1rem; block-size: 1.1rem; }
+.sound-toggle:focus-visible { outline: 3px solid var(--focus-ring-color); outline-offset: 2px; }
+.gameplay-preferences { display: inline-flex; align-items: center; gap: var(--space-2); color: inherit; }
+.gameplay-preferences .theme-toggle--compact > summary { color: inherit; border-color: currentColor; }
+.app-header .sound-toggle { color: var(--app-muted); border-color: var(--app-border); }
+.app-header .sound-toggle:hover { color: var(--app-accent); border-color: currentColor; }
+
+@media (max-width: 30rem) {
+  .app-header.stable-header.maydan-app-header:not(.app-header--game-context) {
+    grid-template-columns: minmax(max-content, 1fr) auto auto;
+    column-gap: var(--space-3);
+  }
+
+  .app-header.stable-header.maydan-app-header:not(.app-header--game-context) .app-header__utilities {
+    gap: var(--space-1);
+    padding: var(--space-1);
+  }
+
+  .app-header.stable-header.maydan-app-header:not(.app-header--game-context) .app-header__menu-toggle {
+    min-inline-size: 44px;
+    padding-inline: var(--space-2);
+  }
+
+  .app-header.stable-header.maydan-app-header:not(.app-header--game-context) .brand-mark {
+    gap: var(--space-1);
+  }
+
+  .app-header.stable-header.maydan-app-header:not(.app-header--game-context) .brand-mark__word {
+    font-size: var(--text-xl);
+  }
+}
+
+@media (max-width: 25rem) {
+  .app-header.stable-header.maydan-app-header:not(.app-header--game-context) .brand-mark__word {
+    display: none;
+  }
+
+  .app-header.stable-header.maydan-app-header:not(.app-header--game-context) .wordmark {
+    min-inline-size: 44px;
+    justify-content: center;
+  }
+}
+
+.enta-room-display > header { display: flex; justify-content: flex-end; inline-size: min(100%, 90rem); color: var(--arena-ink); }
+
+.player-page__header:has(.gameplay-preferences) { flex-wrap: wrap; }
+.player-page__header .gameplay-preferences { margin-inline-start: auto; pointer-events: auto; }
+.game-arena__header .gameplay-preferences { grid-column: 3; justify-self: end; color: var(--arena-ink); direction: rtl; }
+.huroof-waiting-display__join .gameplay-preferences { justify-self: start; color: var(--arena-ink); }
+
+@media (max-width: 48rem) {
+  .game-arena__header:has(.gameplay-preferences) { grid-template-columns: minmax(0, 1fr) auto; }
+  .game-arena__header:has(.gameplay-preferences) > .board-status-strip { grid-row: 2; grid-column: 1 / -1; }
+  .game-arena__header .gameplay-preferences { grid-column: 2; grid-row: 1; }
+}

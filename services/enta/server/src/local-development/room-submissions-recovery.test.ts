@@ -10,4 +10,10 @@ test('typed room retry recovers committed engine attempt after room failure and 
  const body={commandId:randomUUID(),expectedVersion:1,type:'RECORD_ATTEMPT',roundId:'round-one',itemId:'item-one',submittedText:'تفاحة'};
  await assert.rejects(rooms.participantCommand(code,guest.token!,body),/SIMULATED_RESPONSE_LOSS/);assert.equal(commands.size,1);assert.equal((await rooms.hostView(p,code)).room.submissions.length,0);
  await assert.rejects(rooms.participantCommand(code,guest.token!,{...body,submittedText:'موز'}),/STALE_VERSION/);await rooms.participantCommand(code,guest.token!,body);assert.equal(commands.size,1);assert.equal((await rooms.hostView(p,code)).room.submissions[0].text,'تفاحة');assert.equal((await rooms.participantCommand(code,guest.token!,body)).idempotent,true);
+ let backfills=0;
+ adapter.attemptIdsForCommands=async(owner,id,ids)=>{backfills++;assert.equal(owner.uid,p.uid);assert.equal(id,'recovery-match');assert.deepEqual(ids,[...commands.keys()]);return new Map([[ids[0],'attempt-accepted']]);};
+ assert.equal((await rooms.hostView(p,code)).room.submissions[0].attemptId,'attempt-accepted');
+ assert.equal((await rooms.hostView(p,code)).room.submissions[0].attemptId,'attempt-accepted');
+ assert.equal((await rooms.view(code,guest.token!)).room.submissions[0].attemptId,undefined);
+ assert.equal(backfills,1);
 });

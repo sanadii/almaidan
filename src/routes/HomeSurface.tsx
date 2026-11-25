@@ -1,12 +1,13 @@
-import { ImposterMark } from "../features/imposter/ImposterMark";
-import "../features/imposter/imposter.css";
+import { GameArtwork } from "../design-system/GameArtwork";
 import { CategoryCompatibility } from '../features/enta/CategoryCompatibility';
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { HomeHeroCards } from "./HomeHeroCards";
 import { HomePhonePreview } from "./HomePhonePreview";
-import { HomeEmblem, HomeGraphicIcon, HomeSharingIllustration } from "./HomeIllustrations";
+import { HomeEmblem, HomeSharingIllustration } from "./HomeIllustrations";
+import { Icon } from "../design-system/Icon";
 import { InternalHeader } from "../design-system/InternalHeader";
+import { PublicFooter } from "../design-system/PublicFooter";
 import { gameRuntime } from "../features/game/runtime";
 import { useFirebaseAuth } from "../features/auth/auth-context";
 import { catalogCategoryCovers, fetchLocalQuestionInventory, inventoryCategoryCovers, staticPreviewQuestionInventory, type LocalQuestionInventory } from "../data/local-question-inventory";
@@ -14,12 +15,15 @@ import type { ApprovedReleaseCatalog } from "../features/game/runtime/contracts"
 import { approvedCategoryPlayable, localCategoryPlayable } from "../data/category-playability";
 import { isAlmaidanLocalDevelopment } from "../lib/local-development";
 import { VerifyEmailNotice } from "../features/auth/VerifyEmailNotice";
+import { formatNumber } from "../lib/format-number";
 
 type HomeSurfaceProps = {
   joinForm: ReactNode;
   joinMessage: ReactNode;
   staticPreview?: boolean;
 };
+
+const gameCardArtworkSizes = '(max-width: 639px) calc(100vw - 4rem), (max-width: 999px) calc(50vw - 3.5rem), 21.875rem';
 
 function CategoryChooser({ staticPreview }: { staticPreview: boolean }) {
   const [query, setQuery] = useState("");
@@ -112,7 +116,7 @@ function CategoryChooser({ staticPreview }: { staticPreview: boolean }) {
 
         <h2 id="category-chooser-title" tabIndex={-1}>وش تعرفون أكثر؟</h2>
         <p>{previewCatalogue ? "تصفحوا نماذج الفئات من الفهرس المحفوظ. لا يمكن التحقق من جاهزيتها للعب الآن." : "تصفحوا الفئات الجاهزة للعب، واختاروا منها عند إعداد مباراة الفئات."}</p>
-        {inventory?.source==='local_saved_release'?<p role="status">{inventory.categories.length.toLocaleString('ar')} فئة من الأسئلة الأصلية المحفوظة · {inventory.categories.reduce((sum,c)=>sum+(c.sourceQuestionCount??c.questionCount),0).toLocaleString('ar')} سؤال · {eligibleCategories.length.toLocaleString('ar')} فئة جاهزة للعب محلياً</p>:null}
+        {inventory?.source==='local_saved_release'?<p role="status">{formatNumber(inventory.categories.length)} فئة · {formatNumber(inventory.categories.reduce((sum,c)=>sum+(c.sourceQuestionCount??c.questionCount),0))} سؤال · {formatNumber(eligibleCategories.length)} فئة جاهزة للعب</p>:null}
       </div>
       {isAlmaidanLocalDevelopment && !staticPreview ? <CategoryCompatibility /> : null}
       {staticPreview ? <p className="maydan-status" role="status">معاينة الواجهة لا تحتوي على فئات لعب منشورة.</p> : null}
@@ -148,7 +152,7 @@ function CategoryChooser({ staticPreview }: { staticPreview: boolean }) {
                     <span aria-hidden="true" className="maydan-category-card__art"><img src={`/${category.cover.web320}`} alt="" width={320} height={320} loading="lazy" decoding="async" /></span>
                     <strong>{category.displayNameAr}</strong>
                     <span className="maydan-category-card__hint">{previewCatalogue?'للمعاينة فقط':inventory?.categories.find(c=>c.id===category.id)?.unavailableReason??'تحتاج هذه الفئة أسئلة إضافية للعب'}</span>
-                  </div> : <Link className="maydan-category-card" to={`/host/new?kind=categories&category=${encodeURIComponent(category.id)}`}>
+                  </div> : <Link className="maydan-category-card" to={`/host/new?kind=categories&category=${encodeURIComponent(category.id)}`} state={inventory ? { questionInventory: inventory } : undefined}>
                     <span aria-hidden="true" className="maydan-category-card__art"><img src={`/${category.cover.web320}`} alt="" width={320} height={320} loading="lazy" decoding="async" /></span>
                     <strong>{category.displayNameAr}</strong>
                     <span className="maydan-category-card__hint">العبوا بهذه الفئة</span>
@@ -201,13 +205,21 @@ export function HomeSurface({ joinForm, joinMessage, staticPreview = false }: Ho
 
       <section className="maydan-hero" data-home-region="hero" aria-labelledby="maydan-hero-title">
         <picture className="maydan-hero__photo">
-          <img src="/assets/backgrounds/home-games-fantasy-v1.webp" alt="رسم لأصدقاء يتجمعون حول لوحة حروف في عالم خيالي" width={1672} height={941} fetchPriority="high" decoding="async" />
+          <source media="(width < 768px)" type="image/avif" width={800} height={600} sizes="100vw"
+            srcSet="/assets/backgrounds/home-games-fantasy-mobile-v2-800.avif 800w, /assets/backgrounds/home-games-fantasy-mobile-v2-1280.avif 1280w" />
+          <source media="(width < 768px)" type="image/webp" width={800} height={600} sizes="100vw"
+            srcSet="/assets/backgrounds/home-games-fantasy-mobile-v2-800.webp 800w, /assets/backgrounds/home-games-fantasy-mobile-v2-1280.webp 1280w" />
+          <source type="image/avif" sizes="100vw"
+            srcSet="/assets/backgrounds/home-games-fantasy-v2-800.avif 800w, /assets/backgrounds/home-games-fantasy-v2-1280.avif 1280w, /assets/backgrounds/home-games-fantasy-v2-1672.avif 1672w" />
+          <source type="image/webp" sizes="100vw"
+            srcSet="/assets/backgrounds/home-games-fantasy-v2-800.webp 800w, /assets/backgrounds/home-games-fantasy-v2-1280.webp 1280w, /assets/backgrounds/home-games-fantasy-v2-1672.webp 1672w" />
+          <img src="/assets/backgrounds/home-games-fantasy-v2-1280.webp" alt="رسم لأصدقاء يتجمعون حول لوحة حروف في عالم خيالي" width={1280} height={720} fetchPriority="high" decoding="async" />
         </picture>
         <div className="maydan-hero__inner">
           <div className="maydan-hero__copy">
             <h1 id="maydan-hero-title"><span>أحلى جمعة تبدأ بلعبة.</span><span>واللعبة تحلى بأصحابكم.</span><span>في الميدان.</span></h1>
             <p className="maydan-hero__description">ألعاب عربية تجمعكم على التحدّي والمعرفة. المضيف يبدأها، والكل يدخل برمز واحد.</p>
-            <div className="maydan-shortcuts"><a className="maydan-button maydan-button--primary" href="#game-choice-title">ابدأوا مباراة</a><a className="maydan-text-link" href="#room-code">معك رمز غرفة؟ <span aria-hidden="true">←</span></a></div>
+            <div className="maydan-shortcuts"><a className="button button--primary button--lg" href="#game-choice-title">ابدأوا مباراة</a><a className="maydan-text-link" href="#room-code">معك رمز غرفة؟ <Icon kind="arrow" /></a></div>
           </div>
         </div>
         <svg className="maydan-hero__wave" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 48 Q720 0 1440 48 V100 H0 Z" /></svg>
@@ -221,10 +233,10 @@ export function HomeSurface({ joinForm, joinMessage, staticPreview = false }: Ho
               <div className="maydan-prompt-row"><h3 id="join-room-title">معكم رمز غرفة؟</h3><div className="maydan-join-form">{joinForm}{joinMessage}</div><p className="maydan-prompt-note">الانضمام متاح للضيف أيضاً.</p></div>
               <div className="maydan-prompt-row maydan-action maydan-action--create" role="region" aria-labelledby="create-match-title">
                 <h3 id="create-match-title" tabIndex={-1}>ابدأوا مباراة الخلية</h3><p className="maydan-action__note" id="host-requirement">{hostStatus}</p>
-                {canHost ? <Link aria-describedby="host-requirement" className="maydan-button maydan-button--primary" to="/host/new?kind=huroof">إنشاء مباراة</Link>
-                  : disabledHost ? <button aria-busy={status === "loading" || undefined} aria-describedby="host-requirement" className="maydan-button maydan-button--primary" disabled type="button">{status === "loading" ? "جارٍ التحقق…" : "الاستضافة غير متاحة"}</button>
+                {canHost ? <Link aria-describedby="host-requirement" className="button button--primary" to="/host/new?kind=huroof">إنشاء مباراة</Link>
+                  : disabledHost ? <button aria-busy={status === "loading" || undefined} aria-describedby="host-requirement" className="button button--primary" disabled type="button">{status === "loading" ? "جارٍ التحقق…" : "الاستضافة غير متاحة"}</button>
                     : user && !user.isAnonymous && !user.emailVerified ? <VerifyEmailNotice user={user} />
-                    : <Link aria-describedby="host-requirement" className="maydan-text-link" to="/login?returnTo=%2Fhost%2Fnew%3Fkind%3Dhuroof">تسجيل الدخول للاستضافة <span aria-hidden="true">←</span></Link>}
+                    : <Link aria-describedby="host-requirement" className="maydan-text-link" to="/login?returnTo=%2Fhost%2Fnew%3Fkind%3Dhuroof">تسجيل الدخول للاستضافة <Icon kind="arrow" /></Link>}
               </div>
             </div>
           </div>
@@ -233,50 +245,34 @@ export function HomeSurface({ joinForm, joinMessage, staticPreview = false }: Ho
       </section>
 
       <section className="maydan-showcase maydan-section" data-home-region="game-choice" aria-labelledby="game-choice-title">
-        <div className="maydan-section-heading"><h2 id="game-choice-title" tabIndex={-1}>ألعاب الميدان</h2><p>اختاروا اللعبة وتنافسوا على الفوز بالمعرفة والسرعة.</p><a className="maydan-button maydan-button--primary" href="#create-match-title">ابدأوا جمعتكم</a></div>
+        <div className="maydan-section-heading"><h2 id="game-choice-title" tabIndex={-1}>ألعاب الميدان</h2><p>اختاروا اللعبة وتنافسوا على الفوز بالمعرفة والسرعة.</p></div>
         <div className="maydan-game-cards-showcase">
           <div className="maydan-game-cards-grid">
             <article className="maydan-game-card maydan-game-card--khaliah" aria-labelledby="game-khaliah-title">
+              <GameArtwork game="huroof" sizes={gameCardArtworkSizes} lazy />
               <div className="maydan-game-card__content">
                 <h3 className="maydan-game-card__title" id="game-khaliah-title">الخلية</h3>
                 <span className="maydan-game-card__badge">لعبة استراتيجية</span><p className="maydan-game-card__description">أجيبوا عن أسئلة الحروف وصِلوا خلايا فريقكم للفوز.</p>
               </div>
-              <div className="maydan-game-card__icon-wrap">
-                <svg viewBox="0 0 100 100" fill="none" className="maydan-game-icon maydan-game-icon--khaliah" aria-hidden="true">
-                  <polygon points="50,6 88,28 88,72 50,94 12,72 12,28" stroke="#00f0ff" strokeWidth="4" />
-                  <polygon points="50,26 72,39 72,61 50,74 28,61 28,39" stroke="#00f0ff" strokeWidth="3" />
-                  <line x1="50" y1="6" x2="50" y2="26" stroke="#00f0ff" strokeWidth="3" />
-                  <line x1="88" y1="28" x2="72" y2="39" stroke="#00f0ff" strokeWidth="3" />
-                  <line x1="88" y1="72" x2="72" y2="61" stroke="#00f0ff" strokeWidth="3" />
-                  <line x1="50" y1="94" x2="50" y2="74" stroke="#00f0ff" strokeWidth="3" />
-                  <line x1="12" y1="72" x2="28" y2="61" stroke="#00f0ff" strokeWidth="3" />
-                  <line x1="12" y1="28" x2="28" y2="39" stroke="#00f0ff" strokeWidth="3" />
-                </svg>
-              </div>
               <div className="maydan-game-card__actions"><Link className="maydan-game-card__start" to="/host/new?kind=huroof">ابدأ الخلية</Link><Link className="maydan-game-card__rules" to="/how-to-play#rules-khaliah">طريقة اللعب</Link></div>
             </article>
             <article className="maydan-game-card maydan-game-card--enta" aria-labelledby="game-enta-title">
+              <GameArtwork game="enta" sizes={gameCardArtworkSizes} lazy />
               <div className="maydan-game-card__content">
                 <h3 className="maydan-game-card__title" id="game-enta-title">إنت صح</h3>
                 <span className="maydan-game-card__badge maydan-game-card__badge--blue">تحدي وسرعة</span>
                 <p className="maydan-game-card__description">اختاروا الفئات وتنافسوا في الأسئلة والجولات على النقاط.</p>
               </div>
-              <div className="maydan-game-card__icon-wrap maydan-game-card__icon-wrap--blue">
-                <svg viewBox="0 0 100 100" fill="none" className="maydan-game-icon maydan-game-icon--enta" aria-hidden="true">
-                  <circle cx="50" cy="50" r="42" stroke="#2563eb" strokeWidth="4" />
-                  <path d="M54 22 L32 52 L48 52 L44 78 L68 46 L52 46 Z" stroke="#3b82f6" fill="rgba(37,99,235,0.2)" strokeWidth="4" />
-                </svg>
-              </div>
               <div className="maydan-game-card__actions">{isAlmaidanLocalDevelopment ? <Link className="maydan-game-card__start" to="/enta/new">ابدأ إنت صح</Link> : <p className="maydan-game-status">إنت صح — قريباً</p>}<Link className="maydan-game-card__rules" to="/how-to-play#rules-enta-sah">طريقة اللعب</Link></div>
             </article>
             <article className="maydan-game-card maydan-game-card--imposter" aria-labelledby="game-imposter-title">
+              <GameArtwork game="imposter" sizes={gameCardArtworkSizes} lazy />
               <div className="maydan-game-card__content">
                 <h3 className="maydan-game-card__title" id="game-imposter-title">الدخيل</h3>
                 <span className="maydan-game-card__badge">تلميح وخداع</span>
                 <p className="maydan-game-card__description">الكل يعرف الكلمة… إلا واحد! لمّحوا واكشفوا الدخيل.</p>
                 
               </div>
-              <div className="maydan-game-card__icon-wrap"><ImposterMark className="maydan-game-icon" /></div>
               <div className="maydan-game-card__actions">{isAlmaidanLocalDevelopment && !staticPreview ? <Link className="maydan-game-card__start" to="/host/new?kind=imposter">ابدأ الدخيل</Link> : <p className="maydan-game-status">الدخيل — اللعب المستضاف غير مفعّل</p>}<Link className="maydan-game-card__rules" to="/how-to-play/imposter">طريقة اللعب</Link></div>
             </article>
           </div>
@@ -286,11 +282,11 @@ export function HomeSurface({ joinForm, joinMessage, staticPreview = false }: Ho
 
       <section className="maydan-phone-showcase maydan-section" id="how-it-works" tabIndex={-1} data-home-region="guide" aria-label="كيف تبدأون اللعب">
           <ol className="maydan-showcase__examples">
-            <li><HomePhonePreview kind="host" /><div className="maydan-showcase__caption"><div className="maydan-caption-heading"><span className="maydan-caption-icon maydan-caption-icon--mint"><HomeGraphicIcon kind="settings" /></span><h3>المضيف يجهّزها</h3></div><p>سجّل دخولك بحساب موثّق، وافتح إعداد الخلية لاختيار تفاصيل المباراة.</p></div></li>
-            <li><HomePhonePreview kind="join" /><div className="maydan-showcase__caption"><div className="maydan-caption-heading"><span className="maydan-caption-icon maydan-caption-icon--violet"><HomeGraphicIcon kind="link" /></span><h3>شاركوا رمز الغرفة</h3></div><p>أرسلوا الرمز أو رابط الانضمام لأصحابكم، وخلّوهم يدخلون بأسمائهم.</p></div></li>
-            <li><HomePhonePreview kind="board" /><div className="maydan-showcase__caption"><div className="maydan-caption-heading"><span className="maydan-caption-icon"><HomeGraphicIcon kind="screen" /></span><strong className="maydan-phone-heading" id="huroof-choice-title">الخلية في الغرفة</strong></div><p>المضيف يرتّب الفرق قبل اللعب، ثم تبدأ منافسة الحروف والمعلومات.</p><a className="maydan-text-link" href="#create-match-title">العبوا الخلية <span aria-hidden="true">←</span></a></div></li>
+            <li><HomePhonePreview kind="host" /><div className="maydan-showcase__caption"><div className="maydan-caption-heading"><span className="maydan-caption-icon maydan-caption-icon--mint"><Icon kind="settings" /></span><h3>المضيف يجهّزها</h3></div><p>سجّل دخولك بحساب موثّق، وافتح إعداد الخلية لاختيار تفاصيل المباراة.</p></div></li>
+            <li><HomePhonePreview kind="join" /><div className="maydan-showcase__caption"><div className="maydan-caption-heading"><span className="maydan-caption-icon maydan-caption-icon--violet"><Icon kind="link" /></span><h3>شاركوا رمز الغرفة</h3></div><p>أرسلوا الرمز أو رابط الانضمام لأصحابكم، وخلّوهم يدخلون بأسمائهم.</p></div></li>
+            <li><HomePhonePreview kind="board" /><div className="maydan-showcase__caption"><div className="maydan-caption-heading"><span className="maydan-caption-icon"><Icon kind="screen" /></span><strong className="maydan-phone-heading" id="huroof-choice-title">الخلية في الغرفة</strong></div><p>المضيف يرتّب الفرق قبل اللعب، ثم تبدأ منافسة الحروف والمعلومات.</p><Link className="maydan-text-link" to="/host/new?kind=huroof">العبوا الخلية <Icon kind="arrow" /></Link></div></li>
           </ol>
-          <Link className="maydan-text-link" to="/how-to-play">شوفوا قواعد اللعب <span aria-hidden="true">←</span></Link>
+          <Link className="maydan-text-link" to="/how-to-play">شوفوا قواعد اللعب <Icon kind="arrow" /></Link>
       </section>
 
       <section className="maydan-discovery maydan-section" data-home-region="discovery" aria-labelledby="discovery-title"><div className="maydan-section-heading"><h2 id="discovery-title">خذوا لفة في الميدان.</h2><p>من إعداد المباراة إلى طريقة اللعب، اختاروا خطوتكم.</p></div><HomeHeroCards /></section>
@@ -298,22 +294,20 @@ export function HomeSurface({ joinForm, joinMessage, staticPreview = false }: Ho
       <CategoryChooser staticPreview={staticPreview} />
 
       <section className="maydan-gathering maydan-section" data-home-region="gathering" aria-labelledby="gathering-title">
-        <div className="maydan-gathering__copy"><h2 id="gathering-title" tabIndex={-1}>شاركوا الرمز.<br />وافتحوا اللوحة.<br />واجتمعوا.</h2><p>{isAlmaidanLocalDevelopment ? "افتحوا شاشة العرض من رابط المضيف في نافذة مستقلة على هذا الكمبيوتر. ينضم كل لاعب باسمه ورمز الغرفة من جلسة متصفح مستقلة." : "في البيت أو مع الأصحاب، افتحوا شاشة العرض من رابط المضيف في المتصفح. اللاعبون ينضمون من أجهزتهم برمز الغرفة، وتبقى اللوحة أمام الجميع."}</p><p className="maydan-gathering__note">{isAlmaidanLocalDevelopment ? "الألعاب والمحتوى تعمل على هذا الكمبيوتر عبر الخدمات المحلية." : "تحتاجون متصفحاً واتصالاً بالإنترنت. رابط شاشة العرض يظهر للمضيف داخل الغرفة."}</p><Link className="maydan-text-link" to="/how-to-play">تعرّفوا على طريقة اللعب <span aria-hidden="true">←</span></Link><div className="maydan-account-note" data-home-region="account-note"><h3 id="account-note-title">ابدأها بحسابك، وافتحها لأصحابك.</h3><p>{isAlmaidanLocalDevelopment ? "الاستضافة بحساب المضيف المحلي؛ والضيوف يدخلون بالرمز والاسم دون حساب." : "الاستضافة تتطلب حساب Google أو بريداً موثّقاً. أما أصحابك فيقدرون ينضمون كضيوف برمز الغرفة."}</p>{!isAlmaidanLocalDevelopment ? <p className="maydan-credit-note">شراء الرصيد غير متاح حالياً. لا توجد باقات شراء مفعّلة في هذه النسخة.</p> : null}{!staticPreview ? <Link className="maydan-text-link" to={user && !user.isAnonymous ? "/account" : "/login"}>{user && !user.isAnonymous ? "افتح حسابك" : "سجّل دخولك"} <span aria-hidden="true">←</span></Link> : <p className="maydan-status">الحساب غير متاح في المعاينة.</p>}</div></div>
+        <div className="maydan-gathering__copy"><h2 id="gathering-title" tabIndex={-1}>شاركوا الرمز.<br />وافتحوا اللوحة.<br />واجتمعوا.</h2><p>{isAlmaidanLocalDevelopment ? "افتحوا رابط شاشة العرض من غرفة المضيف. اللاعبون يكتبون رمز الغرفة ثم يدخلون بأسمائهم." : "في البيت أو مع الأصحاب، افتحوا شاشة العرض من رابط المضيف في المتصفح. اللاعبون ينضمون من أجهزتهم برمز الغرفة، وتبقى اللوحة أمام الجميع."}</p><p className="maydan-gathering__note">{isAlmaidanLocalDevelopment ? "رابط شاشة العرض موجود في غرفة المضيف." : "تحتاجون متصفحاً واتصالاً بالإنترنت. رابط شاشة العرض يظهر للمضيف داخل الغرفة."}</p><Link className="maydan-text-link" to="/how-to-play">تعرّفوا على طريقة اللعب <Icon kind="arrow" /></Link><div className="maydan-account-note" data-home-region="account-note"><h3 id="account-note-title">ابدأها بحسابك، وافتحها لأصحابك.</h3><p>{isAlmaidanLocalDevelopment ? "الاستضافة بحساب المضيف المحلي؛ والضيوف يدخلون بالرمز والاسم دون حساب." : "الاستضافة تتطلب حساب Google أو بريداً موثّقاً. أما أصحابك فيقدرون ينضمون كضيوف برمز الغرفة."}</p>{!isAlmaidanLocalDevelopment ? <p className="maydan-credit-note">شراء الرصيد غير متاح حالياً. لا توجد باقات شراء مفعّلة في هذه النسخة.</p> : null}{!staticPreview ? <Link className="maydan-text-link" to={user && !user.isAnonymous ? "/account" : "/login"}>{user && !user.isAnonymous ? "افتح حسابك" : "سجّل دخولك"} <Icon kind="arrow" /></Link> : <p className="maydan-status">الحساب غير متاح في المعاينة.</p>}</div></div>
         <div className="maydan-gathering__art"><HomeSharingIllustration /></div>
       </section>
 
       <section className="maydan-faq maydan-section" data-home-region="faq" aria-labelledby="faq-title">
         <div className="maydan-section-heading"><h2 id="faq-title">عندكم سؤال؟</h2></div>
-        <div className="maydan-faq__items">{homeFaqs.filter(([question]) => !isAlmaidanLocalDevelopment || question !== "هل أقدر أشتري رصيد؟").map(([question, answer]) => <details key={question}><summary>{question}<span className="maydan-faq-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m6 9 6 6 6-6" /></svg></span></summary><p>{answer}</p></details>)}</div>
+        <div className="maydan-faq__items">{homeFaqs.filter(([question]) => !isAlmaidanLocalDevelopment || question !== "هل أقدر أشتري رصيد؟").map(([question, answer]) => <details key={question}><summary>{question}<span className="maydan-faq-chevron"><Icon kind="chevron-down" /></span></summary><p>{answer}</p></details>)}</div>
       </section>
 
       <section className="maydan-final" data-home-region="final-action" aria-labelledby="final-title">
         <HomeEmblem closing /><h2 id="final-title">خلّوا جمعتكم في الميدان.</h2><p>جمّع أصحابك على اللعب والتحدّي. وخلّوا الحماس يبدأ.</p>
-        <div className="maydan-shortcuts"><a className="maydan-button maydan-button--primary" href="#game-choice-title">جهّزوا المباراة <span aria-hidden="true">←</span></a><a className="maydan-button maydan-button--secondary" href="#room-code">انضموا لأصحابكم</a></div>
+        <div className="maydan-shortcuts"><a className="button button--primary" href="#game-choice-title">جهّزوا المباراة <Icon kind="arrow" /></a><a className="button button--secondary" href="#room-code">انضموا لأصحابكم</a></div>
       </section>
-      <footer className="maydan-footer" data-home-region="footer">
-        <p>الميدان · المعرفة تحلى بالجمعة.</p><nav aria-label="معلومات إضافية"><Link to="/how-to-play">قواعد اللعب</Link><Link to="/media-credits">اعتمادات الصور</Link><Link to="/contact">تواصل معنا</Link><a href="#maydan-hero-title">للأعلى ↑</a></nav>
-      </footer>
+      <PublicFooter home />
     </main>
   );
 }

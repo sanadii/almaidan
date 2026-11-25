@@ -1,0 +1,72 @@
+.enta-mode-picker,
+.enta-mode-picker > section {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+
+.enta-mode-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+  inline-size: min(100%, 44rem);
+}
+
+.enta-page .enta-mode-choice {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: var(--space-2);
+  border: 1px solid var(--app-border);
+  border-radius: var(--spatial-radius-control);
+  background: var(--app-surface);
+  color: var(--app-ink);
+  font-weight: 700;
+  padding: var(--space-2);
+  text-decoration: none;
+}
+
+.enta-mode-choice picture,
+.enta-mode-choice img {
+  display: block;
+  inline-size: 100%;
+}
+
+.enta-mode-choice img {
+  block-size: auto;
+  object-fit: contain;
+  border-radius: var(--spatial-radius-control);
+}
+
+.enta-mode-choice[aria-disabled="true"] { opacity: .55; }
+.enta-mode-choice:focus-visible { outline: 3px solid var(--app-accent); outline-offset: 2px; }
+.enta-mode-switches { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.enta-mode-switches label { display: inline-flex; align-items: center; gap: var(--space-2); cursor: pointer; }
+.enta-mode-switches input[role="switch"] {
+  position: relative;
+  appearance: none;
+  inline-size: 2.5rem;
+  block-size: 1.5rem;
+  border-radius: var(--arena-radius-capsule);
+  border: var(--border-default) solid var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-ink);
+  cursor: pointer;
+}
+.enta-mode-switches input::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: .2rem;
+  inline-size: 1rem;
+  block-size: 1rem;
+  border-radius: 50%;
+  background: currentColor;
+  transform: translateY(-50%);
+}
+.enta-mode-switches input:checked { background: var(--app-action); color: var(--app-action-ink); }
+.enta-mode-switches input:checked::before { inset-inline-start: auto; inset-inline-end: .2rem; }
+@media (forced-colors: active) { .enta-mode-switches input[role="switch"] { appearance: auto; } .enta-mode-switches input::before { display: none; } }
+.enta-mode-picker > section { inline-size: 100%; }
+.enta-mode-picker__link { display: inline-flex; align-items: center; min-block-size: 44px; }
+@media (max-width: 36rem) { .enta-mode-options { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

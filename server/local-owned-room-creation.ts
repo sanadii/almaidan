@@ -21,5 +21,5 @@ export async function createLocalOwnedRoom(service:AuthoritativeGameService,auth
  if(typeof body.requestKey!=='string'||!/^[A-Za-z0-9._:-]{8,128}$/.test(body.requestKey)||body.demo!==true||body.displayName!==undefined&&(typeof body.displayName!=='string'||!body.displayName.trim()||body.displayName.length>60||/[<>\x00-\x1f\x7f]/.test(body.displayName)))throw new LocalRoomCreationError(400,'LOCAL_CREATE_REQUEST_INVALID');
  const hash=createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex');
  try{return service.createLocalOwned(principal.uid,body.requestKey,hash,body.displayName?.trim()??'المضيف',body);}
- catch(error){if(error instanceof Error&&error.message==='LOCAL_CREATE_KEY_CONFLICT')throw new LocalRoomCreationError(409,error.message);if(error instanceof LocalRoomPreparationError)throw new LocalRoomCreationError(422,'LOCAL_CREATE_SETUP_UNAVAILABLE');throw new LocalRoomCreationError(503,'LOCAL_CREATE_UNAVAILABLE');}
+ catch(error){if(error instanceof Error&&error.message==='LOCAL_CREATE_KEY_CONFLICT')throw new LocalRoomCreationError(409,error.message);if(error instanceof LocalRoomPreparationError)throw new LocalRoomCreationError(422,error.reason);throw new LocalRoomCreationError(503,'LOCAL_CREATE_UNAVAILABLE');}
 }

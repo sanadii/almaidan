@@ -8,6 +8,7 @@ import {
 import { lstat, readFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
+import { lookupRoomCode } from "./room-code-lookup.js";
 import { join, relative, resolve, sep, isAbsolute } from "node:path";
 import { tmpdir } from "node:os";
 import {
@@ -42,12 +43,13 @@ import {
   type MatchQuestionSelection,
   type RuntimeQuestionV32,
 } from "../src/features/game/runtime/challenge-question-selector.js";
-import type {
-  ChallengeCapabilityOffer,
-  ClientRole,
-  GameIntent,
-  ProjectionEnvelope,
-  SafeProjection,
+import {
+  CLIENT_CHALLENGE_CAPABILITY,
+  type ChallengeCapabilityOffer,
+  type ClientRole,
+  type GameIntent,
+  type ProjectionEnvelope,
+  type SafeProjection,
 } from "../src/features/game/runtime/contracts.js";
 import {
   canonicalChallengeJson,
@@ -68,6 +70,7 @@ import type { LocalRuntimeQuestionSource } from "./local-firestore-question-sour
 import { sourceCategoryRegistry } from "../scripts/source-category-crosswalk.js";
 import { localMediaEntry, assertLocalRealContent } from './local-release-question-source.js';
 import { isYouTubeMediaDescriptor, youtubeDescriptorBytes, type YouTubeMediaDescriptor } from '../src/features/game/runtime/youtube-media.js';
+import { normalizePlayerDisplayName } from '../src/features/game/runtime/display-name.js';
 
 type Member = {
   uid: string;
@@ -75,6 +78,8 @@ type Member = {
   displayName: string;
   team?: TeamAxis;
   ready: boolean;
+  joinGeneration?: string;
+  carried?: true;
 };
 type ManualParticipant = { id: string; displayName: string; team: TeamAxis };
 type QuestionMedia = { mediaId: string; assetSha256: string; altAr: string; type?: "image" | "video"; contentType?: string; youtube?: YouTubeMediaDescriptor };
@@ -126,6 +131,7 @@ type Room = {
   demo: boolean;
   questionSourceSnapshot?: string;
   localRematch?: {predecessorRoomId:string;sourceSnapshot:string;excludedQuestionIds:string[];excludedAnswerConceptIds:string[];excludedFactFamilies:string[]};
+  successor?: NonNullable<SafeProjection['room']['successor']>;
   roomSchemaVersion: 1 | 2;
   ruleSet: RuleSet;
   config: MatchConfig;
@@ -146,6 +152,8 @@ type Room = {
   deadlineAt?: string;
   buzzOpen?: boolean;
   pausedTimer?: { remainingMs: number; buzzOpen?: boolean };
+  answerFeedback?: SafeProjection['answerFeedback'];
+  questionFailedReason?: SafeProjection['questionFailedReason'];
   /** Persisted compact state; private grading stays in the injected repository. */
   challenge?: PersistedChallengeState;
   challengeBridge?: TrustedChallengeBridgeContext;
@@ -163,7 +171,14 @@ type Room = {
     payload: unknown;
   }>;
 };
-type Capability = { roomId: string; uid: string; role: ClientRole };
+type Capability = { roomId: string; uid: string; role: ClientRole; joinGeneration?: string };
+type JoinReceipt = { keyHash: string; name: string; memberUid: string; generation: string };
+const JOIN_CONNECTION_GRACE_MS = 15_000;
+const publicSeatId = (roomId: string, uid: string) => createHash('sha256').update(`${roomId}\0${uid}`).digest('base64url');
+const matchesPlayerName = (name: string) => {
+  const key = name.toLocaleLowerCase('ar');
+  return (candidate: { displayName: string }) => candidate.displayName.normalize('NFC').toLocaleLowerCase('ar') === key;
+};
 export type Clock = () => Date;
 export const verifyPrivateQuestionMediaBytes = (
   bytes: Buffer,
@@ -205,13 +220,6 @@ const canManageTeamsInState = (lifecycle: GameState["lifecycle"]) =>
     "QUESTION_FAILED",
     "ROUND_COMPLETE",
   ].includes(lifecycle);
-const validDisplayName = (value: unknown, fallback?: string) => {
-  const name = typeof value === "string" ? value.trim() : fallback?.trim();
-  if (!name || name.length > 48 || /\p{Cc}/u.test(name))
-    throw new Error("INVALID_DISPLAY_NAME");
-  return name;
-};
-
 const scores = (value?: unknown): Record<TeamAxis, number> => {
   const record = value as Partial<Record<TeamAxis, unknown>> | undefined;
   return {
@@ -318,6 +326,8 @@ function validIntent(intent: unknown): intent is GameIntent {
   if (value.type.startsWith("CHALLENGE_")) return validChallengeIntentPayload(value.type, value.payload);
   if (value.type === "LOBBY_SET_READY")
     return keys.length === 1 && typeof value.payload.ready === "boolean";
+  if (value.type === "START_MATCH")
+    return keys.length === 0 || (keys.length === 1 && value.payload.withoutWaiting === true);
   if (value.type === "LOBBY_ASSIGN_TEAM") {
     const hasMember =
       typeof value.payload.memberUid === "string" &&
@@ -373,7 +383,6 @@ function validIntent(intent: unknown): intent is GameIntent {
     return keys.length === 1 && typeof value.payload.occurrence === "string" && /^[A-Za-z0-9:_-]{1,180}$/.test(value.payload.occurrence);
   return (
     [
-      "START_MATCH",
       "ROUND_READY",
       "LETTER_REVEALED",
       "OPEN_QUESTION",
@@ -507,6 +516,28 @@ export class RoomStore {
     this.db.exec(
       "CREATE TABLE IF NOT EXISTS rooms (id TEXT PRIMARY KEY, code TEXT UNIQUE NOT NULL, revision INTEGER NOT NULL, data TEXT NOT NULL); CREATE TABLE IF NOT EXISTS events (room_id TEXT NOT NULL, revision INTEGER NOT NULL, event TEXT NOT NULL, created_at TEXT NOT NULL, PRIMARY KEY(room_id, revision)); CREATE TABLE IF NOT EXISTS snapshots (room_id TEXT NOT NULL, revision INTEGER NOT NULL, data TEXT NOT NULL, PRIMARY KEY(room_id, revision)); CREATE TABLE IF NOT EXISTS intent_receipts (room_id TEXT NOT NULL, actor_uid TEXT NOT NULL, intent_id TEXT NOT NULL, request_hash TEXT NOT NULL, revision INTEGER NOT NULL, created_at TEXT NOT NULL, PRIMARY KEY(room_id, actor_uid, intent_id)); CREATE TABLE IF NOT EXISTS local_admin_drafts (id TEXT PRIMARY KEY, data TEXT NOT NULL, updated_at TEXT NOT NULL);",
     );
+    this.initializeRoomLookup();
+  }
+  private initializeRoomLookup(): void {
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      const columns = new Set(this.db.prepare('PRAGMA table_info(rooms)').all().map(column => column.name));
+      if (!columns.has('deadline_at')) {
+        this.db.exec("ALTER TABLE rooms ADD COLUMN deadline_at TEXT; UPDATE rooms SET deadline_at=json_extract(data,'$.deadlineAt') WHERE json_valid(data)");
+      }
+      if (!columns.has('has_challenge')) {
+        this.db.exec("ALTER TABLE rooms ADD COLUMN has_challenge INTEGER NOT NULL DEFAULT 0; UPDATE rooms SET has_challenge=1 WHERE json_valid(data) AND json_extract(data,'$.challenge') IS NOT NULL");
+      }
+      this.db.exec(`
+        CREATE INDEX IF NOT EXISTS rooms_deadline_lookup ON rooms(deadline_at, id) WHERE deadline_at IS NOT NULL;
+        CREATE INDEX IF NOT EXISTS rooms_challenge_lookup ON rooms(has_challenge, id) WHERE has_challenge = 1;
+        CREATE TABLE IF NOT EXISTS join_receipts (room_id TEXT NOT NULL, key_hash TEXT NOT NULL, name TEXT NOT NULL, member_uid TEXT NOT NULL, generation TEXT NOT NULL, PRIMARY KEY(room_id, key_hash));
+      `);
+      this.db.exec('COMMIT');
+    } catch (error) {
+      this.db.exec('ROLLBACK');
+      throw error;
+    }
   }
   save(room: Room): void {
     this.persist(room);
@@ -526,29 +557,50 @@ export class RoomStore {
     this.db.prepare("INSERT INTO intent_receipts(room_id, actor_uid, intent_id, request_hash, revision, created_at) VALUES (?, ?, ?, ?, ?, ?)").run(roomId, actorUid, intentId, requestHash, revision, at);
   }
   /** A room revision, snapshot, audit event, and accepted receipt are one durable unit. */
-  commit(room: Room, event: unknown, at: string, receipt?: { actorUid: string; intentId: string; requestHash: string }): void {
+  commit(room: Room, event: unknown, at: string, receipt?: { actorUid: string; intentId: string; requestHash: string }, joinReceipt?: JoinReceipt): void {
     this.db.exec("BEGIN IMMEDIATE");
     try {
       this.persist(room);
       this.event(room, event, at);
       if (receipt) this.recordReceipt(room.id, receipt.actorUid, receipt.intentId, receipt.requestHash, room.revision, at);
+      if (joinReceipt) this.db.prepare('INSERT INTO join_receipts (room_id, key_hash, name, member_uid, generation) VALUES (?, ?, ?, ?, ?)')
+        .run(room.id, joinReceipt.keyHash, joinReceipt.name, joinReceipt.memberUid, joinReceipt.generation);
       this.db.exec("COMMIT");
     } catch (error) {
       try { this.db.exec("ROLLBACK"); } catch { /* transaction was never opened or already failed */ }
       throw error;
     }
   }
-  createLocalOwned(ownerUid:string,requestKey:string,requestHash:string,prepare:()=>Room):{room:Room;idempotent:boolean}{
+  joinReceipt(roomId: string, keyHash: string): JoinReceipt | undefined {
+    return this.db.prepare('SELECT key_hash AS keyHash, name, member_uid AS memberUid, generation FROM join_receipts WHERE room_id=? AND key_hash=?')
+      .get(roomId, keyHash) as JoinReceipt | undefined;
+  }
+  createLocalOwned(ownerUid:string,requestKey:string,requestHash:string,prepare:()=>Room,predecessorRoomId?:string):{room:Room;idempotent:boolean}{
     assertLocalRealContent();
     this.db.exec('CREATE TABLE IF NOT EXISTS local_owned_room_creations (owner_uid TEXT NOT NULL, request_key TEXT NOT NULL, request_hash TEXT NOT NULL, room_id TEXT NOT NULL, PRIMARY KEY(owner_uid,request_key))');
     this.db.exec('BEGIN IMMEDIATE');
     try {
+      const predecessor=predecessorRoomId?this.load(predecessorRoomId):undefined;
+      const predecessorOwner=predecessorRoomId?this.localRoomOwner(predecessorRoomId):undefined;
+      if (predecessorOwner && predecessorOwner !== ownerUid) throw Error('LOCAL_REMATCH_HOST_REQUIRED');
       const receipt=this.db.prepare('SELECT request_hash,room_id FROM local_owned_room_creations WHERE owner_uid=? AND request_key=?').get(ownerUid,requestKey) as {request_hash:string;room_id:string}|undefined;
       if(receipt){if(receipt.request_hash!==requestHash)throw Error('LOCAL_CREATE_KEY_CONFLICT');const room=this.load(receipt.room_id);if(!room)throw Error('LOCAL_CREATE_RECEIPT_UNAVAILABLE');this.db.exec('COMMIT');return {room,idempotent:true};}
+      if (predecessor?.successor) throw Error('LOCAL_REMATCH_ALREADY_STARTED');
       let room:Room;try{room=prepare();}catch(error){throw new LocalRoomPreparationError(error instanceof Error&&/^[A-Z0-9_]{1,100}$/.test(error.message)?error.message:'LOCAL_CREATE_SETUP_UNAVAILABLE');}this.persist(room);this.event(room,room.audit[0]!,room.audit[0]!.at);
+      if (predecessor) {
+        predecessor.successor = { roomId: room.id, roomCode: room.code };
+        predecessor.revision++;
+        const event = { revision: predecessor.revision, type: 'REMATCH_STARTED', at: room.audit[0]!.at, actor: ownerUid, payload: {} };
+        predecessor.audit = [...predecessor.audit.slice(-99), event];
+        this.persist(predecessor);
+        this.event(predecessor, event, event.at);
+        if (!predecessorOwner)
+          this.db.prepare('INSERT INTO local_owned_room_creations(owner_uid,request_key,request_hash,room_id) VALUES (?,?,?,?)')
+            .run(ownerUid, `/legacy-rematch:${predecessor.id}`, requestHash, predecessor.id);
+      }
       this.db.prepare('INSERT INTO local_owned_room_creations(owner_uid,request_key,request_hash,room_id) VALUES (?,?,?,?)').run(ownerUid,requestKey,requestHash,room.id);
       this.db.exec('COMMIT');return {room,idempotent:false};
-    }catch(error){try{this.db.exec('ROLLBACK');}catch{}throw error;}
+    }catch(error){try{this.db.exec('ROLLBACK');}catch{ /* Preserve the original transaction failure. */ }throw error;}
   }
   localRoomOwner(roomId:string):string|undefined{
     assertLocalRealContent();if(!this.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='local_owned_room_creations'").get())return undefined;
@@ -556,9 +608,9 @@ export class RoomStore {
   }
   localOwnedRoom(ownerUid:string,roomId:string):Room|undefined{
     assertLocalRealContent();
-    if(!ownerUid||!/^[a-f0-9-]{36}$/i.test(roomId))return undefined;
+    if(!ownerUid)return undefined;
     if(!this.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='local_owned_room_creations'").get())return undefined;
-    const row=this.db.prepare('SELECT r.data FROM local_owned_room_creations o JOIN rooms r ON r.id=o.room_id WHERE o.owner_uid=? AND o.room_id=?').get(ownerUid,roomId) as {data:string}|undefined;
+    const row=this.db.prepare('SELECT r.data FROM local_owned_room_creations o JOIN rooms r ON r.id=o.room_id WHERE o.owner_uid=? AND (o.room_id=? OR r.code=?)').get(ownerUid,roomId.toLowerCase(),roomId.toUpperCase()) as {data:string}|undefined;
     return row?upcastRoom(JSON.parse(row.data)):undefined;
   }
   localOwnedHistory(ownerUid:string,offset=0){
@@ -583,7 +635,8 @@ export class RoomStore {
   private persist(room: Room): void {
     // Keep legacy receipt JSON until a matching request has safely replayed it.
     const data = JSON.stringify(room);
-    this.db.prepare("INSERT INTO rooms(id, code, revision, data) VALUES (?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET revision=excluded.revision,data=excluded.data").run(room.id, room.code, room.revision, data);
+    this.db.prepare("INSERT INTO rooms(id, code, revision, data, deadline_at, has_challenge) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET revision=excluded.revision,data=excluded.data,deadline_at=excluded.deadline_at,has_challenge=excluded.has_challenge")
+      .run(room.id, room.code, room.revision, data, room.deadlineAt ?? null, room.challenge ? 1 : 0);
     this.db.prepare("INSERT OR REPLACE INTO snapshots(room_id, revision, data) VALUES (?, ?, ?)").run(room.id, room.revision, data);
   }
   private hydrate(data: string): Room {
@@ -596,6 +649,9 @@ export class RoomStore {
         .run(upgraded, room.id);
     return room;
   }
+  lookupRoomCode(code: string) {
+    return lookupRoomCode(this.db, code);
+  }
   load(idOrCode: string): Room | undefined {
     const row = this.db
       .prepare("SELECT data FROM rooms WHERE id=? OR code=?")
@@ -606,9 +662,9 @@ export class RoomStore {
    * Rooms the server clock may need to advance: an open buzzer deadline or an active challenge.
    * Filtering in SQLite keeps the 250ms tick from re-parsing every room ever created.
    */
-  tickCandidateIds(): string[] {
+  tickCandidateIds(now = new Date().toISOString()): string[] {
     return (
-      this.db.prepare("SELECT id FROM rooms WHERE json_extract(data,'$.challenge') IS NOT NULL OR json_extract(data,'$.deadlineAt') IS NOT NULL OR json_extract(data,'$.buzzOpen')=1").all() as Array<{ id: string }>
+      this.db.prepare('SELECT id FROM rooms WHERE deadline_at <= ? UNION SELECT id FROM rooms WHERE has_challenge = 1').all(now) as Array<{ id: string }>
     ).map((row) => row.id);
   }
   rooms(): Room[] {
@@ -641,6 +697,7 @@ export class AuthoritativeGameService {
   private readonly clock: Clock;
   private readonly newBoardNonce: () => string;
   private localFirestoreQuestionSource?: LocalRuntimeQuestionSource;
+  private localQuestionInventory?: ReturnType<AuthoritativeGameService["projectQuestionInventory"]>;
   private readonly localQuestionSourcesBySnapshot = new Map<
     string,
     LocalRuntimeQuestionSource
@@ -683,9 +740,11 @@ export class AuthoritativeGameService {
    * source bindings of rooms that are already active.
    */
   replaceLocalQuestionSource(source: LocalRuntimeQuestionSource): void {
+    if (source === this.localFirestoreQuestionSource) return;
     this.challengeDefinitions.add(source.challengeDefinitions ?? []);
     this.localQuestionSourcesBySnapshot.set(source.snapshotId, source);
     this.localFirestoreQuestionSource = source;
+    this.localQuestionInventory = undefined;
   }
   private now(): string {
     return this.clock().toISOString();
@@ -751,10 +810,29 @@ export class AuthoritativeGameService {
       const excludedFactFamilies=[...new Set([...(previous?.excludedFactFamilies??[]),...(family?.consumedFactFamilies??[])])];
       const retained={predecessorRoomId,sourceSnapshot:snapshot,excludedQuestionIds,excludedAnswerConceptIds,excludedFactFamilies};
       const filtered={...source,questions:this.excludePriorQuestions(source.questions,retained)};
-      const room=this.prepareRoom(predecessor.members.find(m=>m.role==='host')!.displayName,true,predecessor.config,filtered,true);room.localRematch=retained;return room;
-    });
+      const room=this.prepareRoom(predecessor.members.find(m=>m.role==='host')!.displayName,true,predecessor.config,filtered,true);
+      room.localRematch=retained;
+      room.members.push(...predecessor.members.filter(member=>member.role==='player').map(member=>({...member,ready:false,carried:true as const})));
+      return room;
+    },predecessorRoomId);
     if(result.room.localRematch?.predecessorRoomId!==predecessorRoomId)throw Error('LOCAL_CREATE_KEY_CONFLICT');
+    if(!result.idempotent)this.onRoomChanged?.(predecessorRoomId);
     return {...this.creationResponse(result.room),idempotent:result.idempotent,predecessorRoomId,source:{snapshotId:result.room.localRematch.sourceSnapshot,selection:'UNSEEN_PREDECESSOR' as const}};
+  }
+  carryRematch(predecessorRoomId: string, token: string) {
+    const capability = this.mustCapability(predecessorRoomId, token);
+    if (capability.role !== 'player') throw Error('UNAUTHORIZED');
+    const predecessor = this.mustRoom(predecessorRoomId);
+    if (!predecessor.successor) throw Error('ROOM_NOT_FOUND');
+    const successor = this.mustRoom(predecessor.successor.roomId);
+    const member = successor.members.find(member => member.role === 'player' && member.uid === capability.uid);
+    if (!member || member.joinGeneration !== capability.joinGeneration) throw Error('SEAT_REMOVED');
+    if (member.carried) {
+      delete member.carried;
+      this.commit(successor, 'REMATCH_PLAYER_JOINED', member.uid, {});
+      this.onRoomChanged?.(successor.id);
+    }
+    return { ...predecessor.successor, token: this.joinResponse(successor, member).token };
   }
   private excludePriorQuestions<T extends StoredQuestion>(questions:T[],prior:NonNullable<Room['localRematch']>){
     const ids=new Set(prior.excludedQuestionIds),concepts=new Set(prior.excludedAnswerConceptIds),families=new Set(prior.excludedFactFamilies??[]);
@@ -805,44 +883,12 @@ export class AuthoritativeGameService {
     const gameKind = requested.gameKind ?? "huroof";
     if (gameKind !== "huroof" && gameKind !== "categories")
       throw new Error("GAME_KIND_INVALID");
-    if (
-      gameKind === "categories" &&
-      (categories.length < 2 ||
-        categories.length > 10 ||
-        modality !== "classic")
-    )
-      throw new Error("CATEGORY_GAME_COMBINATION_INVALID");
-    if (requested.mapPresentation !== undefined && requested.mapPresentation !== "ordinary" && requested.mapPresentation !== "interactive")
-      throw new Error("MAP_PRESENTATION_INVALID");
-    const challenge = requested.challenge;
-    if (challenge !== undefined) {
-      const mechanics = challenge && typeof challenge === "object" ? challenge.mechanics : undefined;
-      const definitionSchemas = challenge && typeof challenge === "object" && challenge.definitionSchemas !== undefined ? challenge.definitionSchemas : ["t36-challenge-definition-v1"];
-      if (
-        !challenge ||
-        challenge.protocolVersion !== "t36-challenge-runtime-v1" ||
-        !Array.isArray(mechanics) ||
-        !mechanics.length ||
-        mechanics.length > 5 ||
-        new Set(mechanics).size !== mechanics.length ||
-        mechanics.some((mechanic) => !["navigation", "missing_tile", "memory", "qatar_map", "word_search"].includes(mechanic)) ||
-        !Array.isArray(definitionSchemas) || !definitionSchemas.length || definitionSchemas.length > 3 || new Set(definitionSchemas).size !== definitionSchemas.length || definitionSchemas.some((schema) => schema !== "t36-challenge-definition-v1" && schema !== "t37-clean70-challenge-definition-v1" && schema !== "t37-topup-word-search-definition-v1")
-      ) throw new Error("CHALLENGE_PROTOCOL_UNSUPPORTED");
-    }
-    const scopedQuestions = this.questionsForChallengeAdmission((localSourceOverride?.questions as StoredQuestion[]|undefined)??this.questionsSync(demo), challenge);
-    const scopedChallengeKinds = [...new Set([
-      ...scopedQuestions
-      .filter((question) => categories.includes(canonicalCategoryId(question.categoryId, categoryProjectionVersion)) && question.modality === modality)
-      .flatMap((question) => question.challenge ? [question.challenge.kind] : []),
-      ...(requested.mapPresentation === "interactive" && categories.includes("tahadani-games-326") ? ["qatar_map" as const] : []),
-    ])];
-    const scopedDefinitionSchemas = [...new Set(scopedQuestions.filter((question) => categories.includes(canonicalCategoryId(question.categoryId, categoryProjectionVersion)) && question.modality === modality && question.challenge).map((question) => question.challenge!.definition.schemaVersion))];
-    if (scopedChallengeKinds.length && !challenge) throw new Error("CHALLENGE_PROTOCOL_REQUIRED");
-    if (scopedChallengeKinds.length && (!challenge || gameKind !== "categories" || !this.hasInjectedChallengeDefinitions() || !scopedChallengeKinds.every((mechanic) => challenge.mechanics.includes(mechanic)) || !scopedChallengeKinds.every((mechanic) => this.enabledChallengeMechanics.has(mechanic)) || (requested.mapPresentation === "interactive" && !this.mapVariants.length)))
-      throw new Error("CHALLENGE_MECHANICS_DISABLED");
-    if (scopedDefinitionSchemas.length && (!challenge || !scopedDefinitionSchemas.every((schema) => (challenge.definitionSchemas ?? ["t36-challenge-definition-v1"]).includes(schema)))) throw new Error("CHALLENGE_DEFINITION_SCHEMA_UNSUPPORTED");
-    this.requirePlayableQuestionScope(demo, categories, modality, gameKind, scopedQuestions, categoryProjectionVersion);
     const localSource = demo ? localSourceOverride??this.localFirestoreQuestionSource : undefined;
+    const challenge = this.validateRoomQuestionScope(
+      demo, categories, modality, gameKind, requested,
+      (localSourceOverride?.questions as StoredQuestion[] | undefined) ?? this.questionsSync(demo),
+      categoryProjectionVersion,
+    );
     const config: MatchConfig = {
       policyVersion: 1,
       ...(categoryProjectionVersion ? { categoryProjectionVersion } : {}),
@@ -869,7 +915,7 @@ export class AuthoritativeGameService {
       showQuestionOnAudience: requested.showQuestionOnAudience !== false,
       labelledColours: requested.labelledColours === true,
       mapPresentation: requested.mapPresentation === "interactive" ? "interactive" : "ordinary",
-      ...(challenge && scopedChallengeKinds.length ? { challenge: { protocolVersion: challenge.protocolVersion, mechanics: scopedChallengeKinds, definitionSchemas: scopedDefinitionSchemas.sort() } } : {}),
+      ...(challenge ? { challenge } : {}),
     };
     const room: Room = {
       id,
@@ -914,42 +960,76 @@ export class AuthoritativeGameService {
     code: string,
     displayName: unknown,
     challenge?: unknown,
+    requestKey?: unknown,
   ): Promise<{ roomId: string; revision: number; token: string }> {
-    const initial = this.store.load(code);
+    const initial = this.store.load(code) ?? this.store.load(code.toUpperCase());
     if (!initial) throw new Error("ROOM_NOT_FOUND");
     return this.serialize(initial.id, async () =>
-      this.joinSerialized(code, displayName, challenge),
+      this.joinSerialized(initial.id, displayName, challenge, requestKey),
     );
   }
   private joinSerialized(
-    code: string,
+    roomId: string,
     displayName: unknown,
     challenge?: unknown,
+    requestKey?: unknown,
   ): { roomId: string; revision: number; token: string } {
-    const room = this.store.load(code);
+    const room = this.store.load(roomId);
     if (!room) throw new Error("ROOM_NOT_FOUND");
-    const name = validDisplayName(displayName);
+    const name = normalizePlayerDisplayName(displayName);
+    if (!name) throw new Error('INVALID_DISPLAY_NAME');
+    if (requestKey !== undefined && (typeof requestKey !== 'string' || !/^[A-Za-z0-9._:-]{16,128}$/.test(requestKey)))
+      throw new Error('JOIN_REQUEST_KEY_INVALID');
     if (room.config.challenge && !this.sameChallengeCapability(challenge, room.config.challenge))
       throw new Error("CHALLENGE_PROTOCOL_REQUIRED");
-    if (!canManageTeamsInState(room.game.lifecycle))
+    const keyHash = typeof requestKey === 'string' ? createHash('sha256').update(requestKey).digest('hex') : undefined;
+    const receipt = keyHash ? this.store.joinReceipt(roomId, keyHash) : undefined;
+    if (receipt) {
+      if (receipt.name !== name) throw new Error('JOIN_REQUEST_KEY_CONFLICT');
+      const member = room.members.find(candidate => candidate.uid === receipt.memberUid);
+      if (!member || member.joinGeneration !== receipt.generation) throw new Error('SEAT_REMOVED');
+      return this.joinResponse(room, member);
+    }
+    if (room.game.lifecycle === 'MATCH_COMPLETE') throw new Error('MATCH_COMPLETE');
+    const matchesName = matchesPlayerName(name);
+    const matching = room.members.filter(member => member.role === 'player' && matchesName(member));
+    if (matching.some(member => member.carried || this.isPlayerConnected(room.id, member.uid)) ||
+        (room.manualParticipants ?? []).some(matchesName))
+      throw new Error('DUPLICATE_DISPLAY_NAME');
+    const reclaim = matching[0];
+    if (!reclaim && !canManageTeamsInState(room.game.lifecycle))
       throw new Error("JOIN_NOT_ALLOWED");
-    if (this.participantCount(room) >= 16)
+    if (!reclaim && this.participantCount(room) >= 16)
       throw new Error("PLAYER_CAPACITY_REACHED");
-    const team = this.memberTeam(room);
-    const member: Member = {
+    const member: Member = reclaim ?? {
       uid: randomUUID(),
       role: "player",
       displayName: name,
-      team,
+      team: this.memberTeam(room),
       ready: false,
     };
-    room.members.push(member);
-    this.commit(room, "PLAYER_JOINED", member.uid, { team });
+    const generation = randomUUID();
+    member.joinGeneration = generation;
+    if (!reclaim) room.members.push(member);
+    this.commit(room, reclaim ? 'PLAYER_RECLAIMED' : 'PLAYER_JOINED', member.uid, { team: member.team }, undefined, undefined,
+      keyHash ? { keyHash, name, memberUid: member.uid, generation } : undefined);
+    return this.joinResponse(room, member);
+  }
+  private joinResponse(room: Room, member: Member): { roomId: string; revision: number; token: string } {
+    this.pendingPlayerConnections.set(`${room.id}:${member.uid}`, this.clock().getTime() + JOIN_CONNECTION_GRACE_MS);
     return {
       roomId: room.id,
       revision: room.revision,
-      token: this.token({ roomId: room.id, uid: member.uid, role: "player" }),
+      token: this.token({ roomId: room.id, uid: member.uid, role: 'player', joinGeneration: member.joinGeneration }),
     };
+  }
+  private readonly pendingPlayerConnections = new Map<string, number>();
+  playerHasConnectedTransport?: (roomId: string, uid: string) => boolean;
+  playerTransportObserved(roomId: string, uid: string): void {
+    this.pendingPlayerConnections.delete(`${roomId}:${uid}`);
+  }
+  private isPlayerConnected(roomId: string, uid: string): boolean {
+    return this.playerHasConnectedTransport?.(roomId, uid) === true || (this.pendingPlayerConnections.get(`${roomId}:${uid}`) ?? 0) > this.clock().getTime();
   }
   metadata(roomId: string, token: string): ProjectionEnvelope {
     const capability = this.mustCapability(roomId, token);
@@ -1018,7 +1098,7 @@ export class AuthoritativeGameService {
     if (!room) throw new Error("ROOM_NOT_FOUND");
     if (capability.role === "audience" && capability.uid === "audience") return capability;
     const member = room.members.find((candidate) => candidate.uid === capability.uid);
-    if (!member || member.role !== capability.role)
+    if (!member || member.role !== capability.role || member.joinGeneration !== capability.joinGeneration)
       throw new Error("UNAUTHORIZED");
     return capability;
   }
@@ -1317,12 +1397,15 @@ export class AuthoritativeGameService {
     room.deadlineAt = undefined;
     room.pausedTimer = undefined;
     room.buzzWinner = undefined;
+    room.answerFeedback = undefined;
+    room.questionFailedReason = undefined;
     room.game = reduceGame(
       room.game,
       nextRound
         ? { type: "START_NEXT_ROUND", board }
         : { type: "START_MATCH", board },
     );
+    room.game = reduceGame(room.game, { type: 'ROUND_READY' });
   }
   private openQuestionBuzzer(
     room: Room,
@@ -1358,7 +1441,11 @@ export class AuthoritativeGameService {
   private readonly tickFailures = new Map<string, string>();
   async tick(): Promise<string[]> {
     const changed: string[] = [];
-    for (const id of this.store.tickCandidateIds()) {
+    const now = this.clock();
+    for (const [uid, until] of this.pendingPlayerConnections) {
+      if (until <= now.getTime()) this.pendingPlayerConnections.delete(uid);
+    }
+    for (const id of this.store.tickCandidateIds(now.toISOString())) {
       try {
         if (
           await this.serialize(id, async () =>
@@ -1516,8 +1603,11 @@ export class AuthoritativeGameService {
       return false;
     }
     room.game = reduceGame(room.game, { type: "TIME_EXPIRED" });
+    room.questionFailedReason = 'no-answer';
+    room.answerFeedback = undefined;
     room.buzzOpen = false;
     room.deadlineAt = undefined;
+    room.buzzWinner = undefined;
     this.commit(room, "SERVER_TIME_EXPIRED", "server", {}, undefined);
     return true;
   }
@@ -1665,9 +1755,14 @@ export class AuthoritativeGameService {
         throw new Error("MANUAL_ADD_NOT_ALLOWED");
       if (this.participantCount(room) >= 16)
         throw new Error("PLAYER_CAPACITY_REACHED");
+      const name = normalizePlayerDisplayName(displayName);
+      if (!name) throw new Error('INVALID_DISPLAY_NAME');
+      const matchesName = matchesPlayerName(name);
+      if (room.members.some(member => member.role === 'player' && matchesName(member)) || (room.manualParticipants ?? []).some(matchesName))
+        throw new Error('DUPLICATE_DISPLAY_NAME');
       const participant: ManualParticipant = {
         id: randomUUID(),
-        displayName: validDisplayName(displayName),
+        displayName: name,
         team,
       };
       room.manualParticipants = [
@@ -1750,7 +1845,7 @@ export class AuthoritativeGameService {
     const before = structuredClone(room);
     try {
       if (intent.type === "START_MATCH") {
-        const reason = this.startBlockedReason(room);
+        const reason = this.startBlockedReason(room, intent.payload.withoutWaiting === true);
         if (reason) throw new Error(reason);
         await this.startBoard(room);
       } else await this.applyHostIntent(room, intent);
@@ -1838,6 +1933,8 @@ export class AuthoritativeGameService {
       if (room.game.lifecycle !== "QUESTION_READING" && room.game.lifecycle !== "OPPONENT_CHANCE")
         throw new Error("CLOSE_QUESTION_NOT_ALLOWED");
       room.game = reduceGame(room.game, { type: "TIME_EXPIRED" });
+      room.questionFailedReason = 'no-answer';
+      room.answerFeedback = undefined;
       room.buzzOpen = false;
       room.deadlineAt = undefined;
       room.buzzWinner = undefined;
@@ -1911,7 +2008,7 @@ export class AuthoritativeGameService {
       return;
     }
     if (intent.type === "END_WITHOUT_WINNER") {
-      if (room.game.lifecycle !== "PAUSED")
+      if (room.game.lifecycle !== "PAUSED" && (room.game.lifecycle !== 'QUESTION_FAILED' || room.game.contentHold))
         throw new Error("END_WITHOUT_WINNER_NOT_ALLOWED");
       room.game = {
         ...room.game,
@@ -1927,6 +2024,8 @@ export class AuthoritativeGameService {
       room.buzzOpen = false;
       room.deadlineAt = undefined;
       room.buzzWinner = undefined;
+      room.answerFeedback = undefined;
+      room.questionFailedReason = undefined;
       return;
     }
     if (
@@ -1945,6 +2044,7 @@ export class AuthoritativeGameService {
       room.activeQuestion = undefined;
       room.activeQuestionOccurrence = undefined;
       room.answerRevealedOccurrence = undefined;
+      room.questionFailedReason = undefined;
       return;
     }
     if (intent.type === "SELECT_CELL") {
@@ -1959,6 +2059,8 @@ export class AuthoritativeGameService {
       // Selecting a cell defines a new question boundary; it must never inherit
       // a previous prompt before the atomic reveal below.
       room.activeQuestion = undefined;
+      room.answerFeedback = undefined;
+      room.questionFailedReason = undefined;
       await this.revealActiveCell(room);
       return;
     }
@@ -1966,6 +2068,9 @@ export class AuthoritativeGameService {
       await this.revealActiveCell(room);
       return;
     }
+    // A saved ROUND_SETUP still transitions normally. Older clients may send this
+    // once just after an automatically prepared round has entered CELL_SELECTION.
+    if (intent.type === 'ROUND_READY' && room.game.lifecycle === 'CELL_SELECTION') return;
     const events: Partial<Record<
       Exclude<
         GameIntent["type"],
@@ -2015,12 +2120,23 @@ export class AuthoritativeGameService {
     const event = events[intent.type as keyof typeof events]?.();
     if (!event) throw new Error("UNKNOWN_INTENT");
     room.game = reduceGame(room.game, event);
+    if (intent.type === 'JUDGE_CORRECT' || intent.type === 'JUDGE_INCORRECT') {
+      room.answerFeedback = intent.type === 'JUDGE_CORRECT'
+        ? { outcome: 'correct', team: room.game.answeringTeam, expiresAt: new Date(this.clock().getTime() + 3_000).toISOString() }
+        : room.game.lifecycle === 'OPPONENT_CHANCE'
+          ? { outcome: 'incorrect', expiresAt: new Date(this.clock().getTime() + 3_000).toISOString() }
+          : undefined;
+      room.questionFailedReason = room.game.lifecycle === 'QUESTION_FAILED' ? 'incorrect' : undefined;
+      room.buzzWinner = undefined;
+    }
     if (intent.type === "JUDGE_CORRECT") this.finalizeCorrectAnswer(room);
     // Older clients can still submit this once from CELL_AWARDED. Finish its
     // path check here so a deployed UI never leaves a room at an action it no
     // longer renders.
-    if (intent.type === "AWARD_CELL")
+    if (intent.type === "AWARD_CELL") {
       room.game = reduceGame(room.game, { type: "CHECK_PATH" });
+      room.buzzWinner = undefined;
+    }
     if (["JUDGE_CORRECT", "JUDGE_INCORRECT"].includes(intent.type)) {
       room.buzzOpen = false;
       room.deadlineAt = undefined;
@@ -2038,6 +2154,10 @@ export class AuthoritativeGameService {
         this.clock().getTime() + room.config.opponentSeconds * 1000,
       ).toISOString();
       room.buzzWinner = undefined;
+    }
+    if (intent.type === 'RETRY_CELL') {
+      room.answerFeedback = undefined;
+      room.questionFailedReason = undefined;
     }
     if (
       intent.type === "RETRY_CELL" &&
@@ -2243,6 +2363,28 @@ export class AuthoritativeGameService {
     };
   }
   questionInventory() {
+    return this.localQuestionInventory ??= this.projectQuestionInventory();
+  }
+  questionCoverage(gameKind: "huroof" | "categories", categoryIds: string[], challengeEnabled: boolean, mapPresentation: MapPresentation) {
+    const source = this.localFirestoreQuestionSource;
+    if (!source) return undefined;
+    const categories = canonicalizeCategoryIds(categoryIds, CURRENT_CATEGORY_PROJECTION).sort();
+    if (!categories.length) return false;
+    try {
+      this.validateRoomQuestionScope(true, categories, "classic", gameKind, {
+        mapPresentation,
+        challenge: challengeEnabled ? CLIENT_CHALLENGE_CAPABILITY : undefined,
+      }, source.questions as StoredQuestion[], CURRENT_CATEGORY_PROJECTION);
+      return true;
+    } catch (error) {
+      if (error instanceof Error && [
+        "CATEGORY_GAME_COMBINATION_INVALID", "QUESTION_SCOPE_INSUFFICIENT_COVERAGE",
+        "CHALLENGE_PROTOCOL_REQUIRED", "CHALLENGE_MECHANICS_DISABLED", "CHALLENGE_DEFINITION_SCHEMA_UNSUPPORTED",
+      ].includes(error.message)) return false;
+      throw error;
+    }
+  }
+  private projectQuestionInventory() {
     const inventory = this.localFirestoreQuestionSource?.inventory;
     if (!inventory) return undefined;
     const grouped = new Map<string, typeof inventory.categories>();
@@ -2344,14 +2486,6 @@ export class AuthoritativeGameService {
     ) as StoredQuestion[];
     return this.questionsForRoom(materialized, room.config.challenge);
   }
-  /** Creation must see every scoped challenge row when a client offers the
-   * protocol, so an unsupported mechanic/schema cannot be hidden by filtering. */
-  private questionsForChallengeAdmission(
-    questions: readonly StoredQuestion[],
-    challenge: ChallengeCapabilityOffer | undefined,
-  ): StoredQuestion[] {
-    return challenge ? [...questions] : questions.filter((question) => !question.challenge);
-  }
   /** A room without negotiated challenge capability is an ordinary room, even
    * when one selected category has both ordinary and challenge children. */
   private questionsForRoom(
@@ -2395,6 +2529,57 @@ export class AuthoritativeGameService {
       return [];
     }
   }
+  private validateRoomQuestionScope(
+    demo: boolean,
+    categories: string[],
+    modality: MatchConfig["modality"],
+    gameKind: NonNullable<MatchConfig["gameKind"]>,
+    { challenge, mapPresentation }: Pick<CreateMatchConfig, "challenge" | "mapPresentation">,
+    questions: StoredQuestion[],
+    categoryProjectionVersion?: CategoryProjectionVersion,
+  ): ChallengeCapabilityOffer | undefined {
+    if (gameKind === "categories" && (categories.length < 2 || categories.length > 10 || modality !== "classic"))
+      throw new Error("CATEGORY_GAME_COMBINATION_INVALID");
+    if (mapPresentation !== undefined && mapPresentation !== "ordinary" && mapPresentation !== "interactive")
+      throw new Error("MAP_PRESENTATION_INVALID");
+    if (challenge !== undefined) {
+      const mechanics = challenge && typeof challenge === "object" ? challenge.mechanics : undefined;
+      const definitionSchemas = challenge && typeof challenge === "object" && challenge.definitionSchemas !== undefined ? challenge.definitionSchemas : ["t36-challenge-definition-v1"];
+      if (
+        !challenge ||
+        challenge.protocolVersion !== "t36-challenge-runtime-v1" ||
+        !Array.isArray(mechanics) ||
+        !mechanics.length ||
+        mechanics.length > 5 ||
+        new Set(mechanics).size !== mechanics.length ||
+        mechanics.some((mechanic) => !["navigation", "missing_tile", "memory", "qatar_map", "word_search"].includes(mechanic)) ||
+        !Array.isArray(definitionSchemas) || !definitionSchemas.length || definitionSchemas.length > 3 || new Set(definitionSchemas).size !== definitionSchemas.length || definitionSchemas.some((schema) => schema !== "t36-challenge-definition-v1" && schema !== "t37-clean70-challenge-definition-v1" && schema !== "t37-topup-word-search-definition-v1")
+      ) throw new Error("CHALLENGE_PROTOCOL_UNSUPPORTED");
+    }
+    // Validate every selected challenge row when negotiating the protocol.
+    const categorySet = new Set(categories);
+    const scopedQuestions = questions.filter((question) =>
+      (challenge || !question.challenge) && categorySet.has(canonicalCategoryId(question.categoryId, categoryProjectionVersion)),
+    );
+    const challengeQuestions = scopedQuestions.filter((question) => question.modality === modality && question.challenge);
+    const scopedChallengeKinds = [...new Set([
+      ...challengeQuestions.map((question) => question.challenge!.kind),
+      ...(mapPresentation === "interactive" && categorySet.has("tahadani-games-326") ? ["qatar_map" as const] : []),
+    ])];
+    const scopedDefinitionSchemas = [...new Set(challengeQuestions.map((question) => question.challenge!.definition.schemaVersion))];
+    if (scopedChallengeKinds.length && !challenge) throw new Error("CHALLENGE_PROTOCOL_REQUIRED");
+    if (scopedChallengeKinds.length && (!challenge || gameKind !== "categories" || !this.hasInjectedChallengeDefinitions() || !scopedChallengeKinds.every((mechanic) => challenge.mechanics.includes(mechanic)) || !scopedChallengeKinds.every((mechanic) => this.enabledChallengeMechanics.has(mechanic)) || (mapPresentation === "interactive" && !this.mapVariants.length)))
+      throw new Error("CHALLENGE_MECHANICS_DISABLED");
+    if (scopedDefinitionSchemas.length && (!challenge || !scopedDefinitionSchemas.every((schema) => (challenge.definitionSchemas ?? ["t36-challenge-definition-v1"]).includes(schema)))) throw new Error("CHALLENGE_DEFINITION_SCHEMA_UNSUPPORTED");
+
+    this.requirePlayableQuestionScope(demo, categories, modality, gameKind, scopedQuestions, categoryProjectionVersion);
+    if (challenge && scopedChallengeKinds.length) return {
+      protocolVersion: challenge.protocolVersion,
+      mechanics: scopedChallengeKinds,
+      definitionSchemas: scopedDefinitionSchemas.sort(),
+    };
+    return undefined;
+  }
   /** Reject an unusable category scope before it can create a lobby that will fail on start. */
   private requirePlayableQuestionScope(
     demo: boolean,
@@ -2424,7 +2609,7 @@ export class AuthoritativeGameService {
     } catch (reason) {
       if (
         reason instanceof Error &&
-        /^Insufficient (?:16 visible \+ 9 surprise letter coverage|concept reserve)/.test(
+        /^(?:Insufficient (?:16 visible \+ 9 surprise letter coverage|concept reserve)|Category .* has insufficient unique concepts|Category scope has overlapping concepts)/.test(
           reason.message,
         )
       )
@@ -2432,16 +2617,16 @@ export class AuthoritativeGameService {
       throw reason;
     }
   }
-  private startBlockedReason(room: Room): string | undefined {
+  private startBlockedReason(room: Room, withoutWaiting = false): string | undefined {
     if (!room.demo && !this.questionsSync(false).length)
       return "NO_APPROVED_QUESTION_STOCK";
-    const players = room.members.filter((member) => member.role === "player");
+    const players = room.members.filter((member) => member.role === "player" && (!withoutWaiting || member.ready));
     const manual = room.manualParticipants ?? [];
     const teams = [
       ...players.map((member) => member.team),
       ...manual.map((participant) => participant.team),
     ];
-    if (!teams.length) return undefined;
+    if (!teams.length && !withoutWaiting) return undefined;
     if (
       teams.length < 2 ||
       !teams.includes("horizontal") ||
@@ -2516,6 +2701,7 @@ export class AuthoritativeGameService {
     payload: unknown,
     intentId?: string,
     intentHash?: string,
+    joinReceipt?: JoinReceipt,
   ): void {
     room.revision++;
     const audit = {
@@ -2529,7 +2715,7 @@ export class AuthoritativeGameService {
     const divider = intentId?.indexOf("\u0000") ?? -1;
     this.store.commit(room, audit, audit.at, divider > 0 && intentHash
       ? { actorUid: intentId!.slice(0, divider), intentId: intentId!.slice(divider + 1), requestHash: intentHash }
-      : undefined);
+      : undefined, joinReceipt);
   }
   /** Restore an in-place transaction snapshot, including optional fields absent before a rejected mutation. */
   private restoreRoom(room: Room, before: Room): void {
@@ -2540,6 +2726,8 @@ export class AuthoritativeGameService {
   project(room: Room, capability: Capability): ProjectionEnvelope {
     const member = room.members.find((value) => value.uid === capability.uid);
     const isHost = capability.role === "host";
+    const now = this.clock();
+    const buzzWinner = room.game.lifecycle === 'FIRST_ANSWER' || room.game.lifecycle === 'OPPONENT_CHANCE' ? room.buzzWinner : undefined;
     const questionVisible =
       room.game.lifecycle === "QUESTION_READING" ||
       room.game.lifecycle === "FIRST_ANSWER" ||
@@ -2564,6 +2752,7 @@ export class AuthoritativeGameService {
     const manualParticipants = room.manualParticipants ?? [];
     const displayedMembers = [
       ...room.members.map(({ uid, displayName, team, ready, role }) => ({
+        seatId: publicSeatId(room.id, uid),
         displayName,
         team,
         ready,
@@ -2571,6 +2760,7 @@ export class AuthoritativeGameService {
         ...(isHost ? { uid } : {}),
       })),
       ...manualParticipants.map((participant) => ({
+        seatId: publicSeatId(room.id, participant.id),
         displayName: participant.displayName,
         team: participant.team,
         ready: true,
@@ -2582,6 +2772,7 @@ export class AuthoritativeGameService {
     const projection: SafeProjection & Record<string, unknown> = {
       room: {
         roomCode: room.code,
+        ...(room.successor ? { successor: room.successor } : {}),
         state: room.game.lifecycle,
         readyCount:
           room.members.filter((value) => value.role === "player" && value.ready)
@@ -2605,6 +2796,7 @@ export class AuthoritativeGameService {
         },
         audienceQuestionVisible: room.config.showQuestionOnAudience !== false,
         canStart: !startBlockedReason,
+        ...(startBlockedReason === "LOBBY_ALL_MEMBERS_MUST_BE_READY" && !this.startBlockedReason(room, true) ? { canStartWithoutWaiting: true } : {}),
         ...(startBlockedReason ? { startBlockedReason } : {}),
       },
       ...(room.demo ? { demo: true as const } : {}),
@@ -2658,13 +2850,14 @@ export class AuthoritativeGameService {
       ...(room.deadlineAt
         ? { deadlineAt: room.deadlineAt, buzzOpen: room.buzzOpen }
         : {}),
-      ...(room.buzzWinner &&
-      (capability.role === "host" || capability.role === "audience")
+      ...(room.answerFeedback && Date.parse(room.answerFeedback.expiresAt) > now.getTime() ? { answerFeedback: room.answerFeedback } : {}),
+      ...(room.game.lifecycle === 'QUESTION_FAILED' && room.questionFailedReason ? { questionFailedReason: room.questionFailedReason } : {}),
+      ...(buzzWinner
         ? {
             buzzWinner: {
-              displayName: room.buzzWinner.displayName,
-              team: room.buzzWinner.team,
-              method: room.buzzWinner.method,
+              displayName: buzzWinner.displayName,
+              team: buzzWinner.team,
+              method: buzzWinner.method,
             },
           }
         : {}),
@@ -2673,6 +2866,8 @@ export class AuthoritativeGameService {
         : {
             self: {
               uid: capability.uid,
+              seatId: publicSeatId(room.id, capability.uid),
+              displayName: member?.displayName,
               ready: member?.ready ?? false,
               team: member?.team,
               canBuzz:
@@ -2682,8 +2877,8 @@ export class AuthoritativeGameService {
                 (room.game.lifecycle === "QUESTION_READING" ||
                   (room.game.lifecycle === "OPPONENT_CHANCE" &&
                     member?.team === room.game.entitledTeam)),
-              ...(room.buzzWinner?.method === "player" &&
-              room.buzzWinner.uid === capability.uid
+              ...(buzzWinner?.method === "player" &&
+              buzzWinner.uid === capability.uid
                 ? { isBuzzWinner: true }
                 : {}),
             },

@@ -140,7 +140,7 @@ test('legacy local questions with no occurrence are unrevealed and keep clear vi
 
 test('host-only demo rooms start, while any partial player roster still requires ready teams', async () => withService(async (service) => {
   assert.throws(() => service.create('host', false), /NO_APPROVED_QUESTION_STOCK/);
-  const soloDemo = service.create('host', true); const soloStart = await service.intent(soloDemo.roomId, soloDemo.token, { type: 'START_MATCH', intentId: 'solo-demo', expectedRevision: soloDemo.revision, payload: {} }); assert.equal(soloStart.projection.projection.room.state, 'ROUND_SETUP'); assert.equal(soloStart.projection.projection.room.readyCount, 0); assert.equal(soloStart.projection.projection.room.memberCount, 0);
+  const soloDemo = service.create('host', true); const soloStart = await service.intent(soloDemo.roomId, soloDemo.token, { type: 'START_MATCH', intentId: 'solo-demo', expectedRevision: soloDemo.revision, payload: {} }); assert.equal(soloStart.projection.projection.room.state, 'CELL_SELECTION'); assert.equal(soloStart.projection.projection.room.readyCount, 0); assert.equal(soloStart.projection.projection.room.memberCount, 0);
   const host = service.create('host', true); const one = await service.join(host.roomCode, 'one');
   await assert.rejects(() => service.intent(host.roomId, host.token, { type: 'START_MATCH', intentId: 'early', expectedRevision: one.revision, payload: {} }), /LOBBY_NEEDS_TWO_TEAMS/);
   const two = await service.join(host.roomCode, 'two');
@@ -164,8 +164,8 @@ test('only the host can persist the audience-question visibility preference, whi
 
 test('host assigns active lobby players by UID, resets only changed-team readiness, and keeps roster IDs private', async () => withService(async (service) => {
   const host = service.create('host', true);
-  const first = await service.join(host.roomCode, 'اسم مكرر');
-  const second = await service.join(host.roomCode, 'اسم مكرر');
+  const first = await service.join(host.roomCode, 'اللاعب الأول');
+  const second = await service.join(host.roomCode, 'اللاعب الثاني');
   let revision = second.revision;
   const firstUid = service.metadata(host.roomId, first.token).projection.self!.uid;
   const secondUid = service.metadata(host.roomId, second.token).projection.self!.uid;
@@ -217,7 +217,7 @@ test('room creation rejects a category scope that cannot fill the complete lette
   );
   const playable = service.create('host', true, { categories: ['tahadani-006'] });
   const started = await service.intent(playable.roomId, playable.token, { type: 'START_MATCH', intentId: 'start-playable-scope', expectedRevision: playable.revision, payload: {} });
-  assert.equal(started.projection.projection.room.state, 'ROUND_SETUP');
+  assert.equal(started.projection.projection.room.state, 'CELL_SELECTION');
 }));
 
 test('category rooms use the real demo scope, expose only labels, and reserve a different replacement after failure', async () => withService(async (service) => {
@@ -456,7 +456,7 @@ test('next round receives a fresh diverse board with no inherited ownership', as
   const room = await readyRoom(service); await room.hostIntent('START_MATCH'); const before = service.store.load(room.host.roomId)!; const prior = before.game.board!;
   before.game = { ...before.game, lifecycle: 'ROUND_COMPLETE' }; service.store.save(before);
   const result = await service.intent(room.host.roomId, room.host.token, { type: 'START_NEXT_ROUND', intentId: 'fresh-round', expectedRevision: before.revision, payload: {} }); const board = result.projection.projection.board!;
-  assert.equal(result.projection.projection.room.state, 'ROUND_SETUP'); assert.notEqual(service.store.load(room.host.roomId)!.game.board?.seed, prior.seed); assert.equal(board.some((cell) => cell.owner), false); assert.equal(new Set(board.filter((cell) => cell.kind === 'letter').map((cell) => cell.visibleValue)).size, 16); assert.deepEqual(board.filter((cell) => cell.kind === 'surprise').map((cell) => cell.visibleValue).sort(), ['1', '2', '3', '4', '5', '6', '7', '8', '9']);
+  assert.equal(result.projection.projection.room.state, 'CELL_SELECTION'); assert.notEqual(service.store.load(room.host.roomId)!.game.board?.seed, prior.seed); assert.equal(board.some((cell) => cell.owner), false); assert.equal(new Set(board.filter((cell) => cell.kind === 'letter').map((cell) => cell.visibleValue)).size, 16); assert.deepEqual(board.filter((cell) => cell.kind === 'surprise').map((cell) => cell.visibleValue).sort(), ['1', '2', '3', '4', '5', '6', '7', '8', '9']);
 }));
 
 test('room entropy gives new games distinct persisted board seeds while reconnects retain the generated board', async () => withService(async (service, dbPath) => {
@@ -500,7 +500,7 @@ test('ordinary selection exhaustion persists a no-score hold, rejects gameplay, 
   await assert.rejects(() => service.intent(room.roomId, room.token, { type: 'END_WITHOUT_WINNER' as never, intentId: 'held-end-unpaused', expectedRevision: revision, payload: {} }), /END_WITHOUT_WINNER_NOT_ALLOWED/);
   await send('PAUSE');
   const ended = await send('END_WITHOUT_WINNER'); assert.equal(ended.projection.projection.room.state, 'MATCH_COMPLETE'); assert.equal(ended.projection.projection.endedWithoutWinner, true); assert.equal(ended.projection.projection.matchWinner, undefined);
-  const replacement = service.create('host', true); const fresh = await service.intent(replacement.roomId, replacement.token, { type: 'START_MATCH', intentId: 'fresh-start', expectedRevision: replacement.revision, payload: {} }); assert.equal(fresh.projection.projection.room.state, 'ROUND_SETUP');
+  const replacement = service.create('host', true); const fresh = await service.intent(replacement.roomId, replacement.token, { type: 'START_MATCH', intentId: 'fresh-start', expectedRevision: replacement.revision, payload: {} }); assert.equal(fresh.projection.projection.room.state, 'CELL_SELECTION');
 }));
 
 test('a host correction previews its reason and audits removal and restoration of a winning path', async () => withService(async (service) => {
@@ -538,7 +538,7 @@ test('manual lobby participants are persisted separately, start as ready, and su
   const add = async (intentId: string, expectedRevision: number, displayName: string, team: 'horizontal' | 'vertical') =>
     service.intent(host.roomId, host.token, { type: 'LOBBY_ADD_MANUAL_PLAYER', intentId, expectedRevision, payload: { displayName, team } });
   const first = await add('manual-one', host.revision, 'لاعب يدوي', 'horizontal');
-  const second = await add('manual-two', first.revision, 'لاعب يدوي', 'vertical');
+  const second = await add('manual-two', first.revision, 'لاعب ثانٍ', 'vertical');
   const stored = service.store.load(host.roomId)!;
   assert.equal(stored.members.filter((member) => member.role === 'player').length, 0);
   assert.equal(stored.manualParticipants?.length, 2);
@@ -550,7 +550,7 @@ test('manual lobby participants are persisted separately, start as ready, and su
   const audience = service.metadata(host.roomId, service.createAudienceCapability(host.roomId)).projection;
   assert.equal(JSON.stringify(audience).includes(manual[0].manualParticipantId!), false);
   const started = await service.intent(host.roomId, host.token, { type: 'START_MATCH', intentId: 'manual-start', expectedRevision: second.revision, payload: {} });
-  assert.equal(started.projection.projection.room.state, 'ROUND_SETUP');
+  assert.equal(started.projection.projection.room.state, 'CELL_SELECTION');
   const ready = await service.intent(host.roomId, host.token, { type: 'ROUND_READY', intentId: 'manual-round', expectedRevision: started.revision, payload: {} });
   const cell = ready.projection.projection.board![0];
   const question = await service.intent(host.roomId, host.token, { type: 'SELECT_CELL', intentId: 'manual-select', expectedRevision: ready.revision, payload: { cellId: cell.id } });

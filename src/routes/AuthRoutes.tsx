@@ -1,18 +1,18 @@
 import { isAlmaidanLocalDevelopment } from '../lib/local-development';
 import { Link, Navigate, useLocation } from 'react-router-dom';
 import { type FormEvent, type ReactNode, useEffect, useState } from 'react';
-import { BrandMark } from '../design-system/BrandMark';
 import { InternalHeader } from '../design-system/InternalHeader';
 import {FavoritesPanel} from '../features/favorites/FavoritesPanel';
 import { useFirebaseAuth } from '../features/auth/AuthProvider';
 import { VerifyEmailNotice } from '../features/auth/VerifyEmailNotice';
+import { setupGameForReturn } from '../features/auth/setup-sign-in';
 
 function useDocumentTitle(title: string) {
   useEffect(() => { document.title = `${title} | الميدان`; }, [title]);
 }
 
 function AuthShell({ children, login = false }: { children: ReactNode; login?: boolean }) {
-  return <main data-page-layout="wide" data-page-kind={login ? "auth" : "account"} className={`auth-page maydan-app${login ? ' auth-page--login' : ''}`} id="main-content"><InternalHeader /><section className="auth-panel page-rail" aria-label="الحساب"><div className="page-readable">{children}</div></section><footer className="auth-page__footer"><BrandMark /><span>الخلية · إنت صح · الدخيل</span></footer></main>;
+  return <main data-page-layout="wide" data-page-kind={login ? "auth" : "account"} className={`auth-page maydan-app${login ? ' auth-page--login' : ''}`} id="main-content"><InternalHeader /><section className="auth-panel page-rail" aria-label="الحساب"><div className="page-readable">{children}</div></section></main>;
 }
 
 function statusCopy(status: ReturnType<typeof useFirebaseAuth>['status']) {
@@ -36,19 +36,19 @@ export function LoginRoute() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const isSignedIn = Boolean(user && !user.isAnonymous);
+  const setupGame = setupGameForReturn(returnTo);
   const disabled = !isAvailable || pendingAction !== null || status === 'loading';
   const submit = (action: 'signIn' | 'create') => (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (action === 'signIn') void signInWithEmailPassword(email, password);
     else void createEmailPasswordAccount(email, password);
   };
-  if (isSignedIn && returnTo) return <Navigate replace to={returnTo}/>;
+  if (isSignedIn) return <Navigate replace to={returnTo ?? '/'} state={returnTo ? location.state : null} />;
   return <AuthShell login>
     <p className="eyebrow">أهلاً بك في الميدان</p>
-    <h1>{isSignedIn ? 'حسابك جاهز' : 'سجّل دخولك'}</h1>
-    <p>استضافة المباراة تتطلب حساباً موثقاً. ويمكن للضيوف الانضمام إلى الغرف.</p>
+    <h1>سجّل دخولك</h1>
+    <p>{setupGame ? `سجّل دخولك لتكمل إنشاء مباراة ${setupGame} — اختياراتك محفوظة.` : 'استضافة المباراة تتطلب حساباً موثقاً. ويمكن للضيوف الانضمام إلى الغرف.'}</p>
     <p className="auth-status" data-state={error ? 'error' : status} aria-live="polite">{error?.message ?? statusCopy(status)}</p>
-    {isSignedIn ? <Link className="button button--primary" to="/account">إدارة الحساب</Link> : <>
       {!isAlmaidanLocalDevelopment ? <button className="button button--primary auth-google-button" disabled={disabled} onClick={() => void signInWithGoogle()}>{pendingAction === 'signIn' ? 'جارٍ تسجيل الدخول…' : 'المتابعة مع Google'}</button> : null}
       {!isAlmaidanLocalDevelopment ? <div className="auth-divider"><span>أو بالبريد الإلكتروني</span></div> : null}
       <form className="auth-email-form" onSubmit={submit('signIn')}>
@@ -57,8 +57,7 @@ export function LoginRoute() {
         <button className={`button ${isAlmaidanLocalDevelopment ? 'button--primary' : 'button--secondary'}`} disabled={disabled} type="submit">{pendingAction === 'signIn' ? 'جارٍ تسجيل الدخول…' : 'تسجيل الدخول بالبريد'}</button>
         {!isAlmaidanLocalDevelopment ? <button className="text-link auth-email-form__create" disabled={disabled} onClick={(event) => { if (event.currentTarget.form?.reportValidity()) void createEmailPasswordAccount(email, password); }} type="button">إنشاء حساب جديد وإرسال رسالة التحقق</button> : null}
       </form>
-    </>}
-    <Link className="text-link" to="/">العب كضيف أو عُد للرئيسية</Link>
+    <Link className="text-link" to="/">الرئيسية</Link>
   </AuthShell>;
 }
 
@@ -87,6 +86,6 @@ export function AccountRoute() {
     <p className="auth-impact">تسجيل الخروج لا يحذف الغرف. ستنتهي جلستك على هذا الجهاز، وقد تحتاج إلى تسجيل الدخول مجدداً للعودة إلى الغرفة النشطة.</p>
     <button className="button button--secondary" disabled={pendingAction !== null} onClick={() => void signOut()}>{pendingAction === 'signOut' ? 'جارٍ تسجيل الخروج…' : 'تسجيل الخروج'}</button>
     </section>
-    <Link className="text-link" to="/">العودة للرئيسية</Link>
+    <Link className="text-link" to="/">الرئيسية</Link>
   </AuthShell>;
 }

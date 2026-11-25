@@ -1,0 +1,10 @@
+.app-panel {
+  color: var(--app-ink);
+  border-radius: var(--radius-sm) var(--radius-md) / var(--radius-lg) var(--radius-pill);
+  box-shadow: var(--shadow-panel), var(--arena-line-ring);
+  background: var(--arena-stage-surface);
+}
+
+.card--gold {
+  background: url("/assets/#fff");
+}

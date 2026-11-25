@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { User } from 'firebase/auth';
 import { EntaClientError, matchEnvelope, requestEnta, type MatchCommand, type MatchProjection } from './client';
+import { pollVisibleMatch } from './match-polling';
 
 type Action = Omit<Extract<MatchCommand, { type: 'OPEN_QUESTION' }>, 'commandId' | 'expectedVersion'> | Omit<Extract<MatchCommand, { type: 'REVEAL_ANSWER' }>, 'commandId' | 'expectedVersion'> | Omit<Extract<MatchCommand, { type: 'ADJUDICATE' }>, 'commandId' | 'expectedVersion'> | Omit<Extract<MatchCommand, { type: 'FINISH' }>, 'commandId' | 'expectedVersion'>;
 export function useEntaMatch(user: User | null, gameId: string | undefined) {
@@ -17,15 +18,20 @@ export function useEntaMatch(user: User | null, gameId: string | undefined) {
     catch (error) { if (epoch.current === generation && !signal.aborted && !pending.current) setData(previous => ({ ...previous, key, error, loading: false })); }
   }, [apply, gameId, key, user]);
   useEffect(() => {
-    const generation = ++epoch.current;
-    pending.current = null; mutationAbort.current?.abort(); setData({ key, match: null, error: null, loading: true, busy: false });
-    let current: AbortController | null = null;
-    const poll = () => { if (pending.current) return; current?.abort(); current = new AbortController(); void load(current.signal, generation); };
-    if (user && gameId) poll();
-    const interval = window.setInterval(poll, 2000);
-    return () => { epoch.current++; current?.abort(); mutationAbort.current?.abort(); window.clearInterval(interval); };
-  }, [gameId, key, load, user]);
+    ++epoch.current;
+    pending.current = null;
+    setData({ key, match: null, error: null, loading: true, busy: false });
+    return () => { ++epoch.current; mutationAbort.current?.abort(); };
+  }, [key, user]);
   const current = data.key === key ? data : { key, match: null, error: null, loading: true, busy: false };
+  const terminal = current.match?.phase === 'FINISHED' || (current.error instanceof EntaClientError && current.error.status === 404);
+  useEffect(() => {
+    if (!user || !gameId || terminal) return;
+    const generation = epoch.current;
+    return pollVisibleMatch(async controller => {
+      if (!pending.current) await load(controller.signal, generation);
+    }, 2000);
+  }, [gameId, load, terminal, user]);
   const command = async (action?: Action) => {
     if (!user || !gameId || !current.match || current.busy) return;
     const generation = epoch.current;

@@ -1,3 +1,4 @@
+import { isAlmaidanLocalDevelopment } from '../../lib/local-development';
 import {parseLocalRematchPending,type LocalRematchPending} from './local-rematch-client';
 import { inspectPending, requireReadable, savePending, PendingError, type Occupancy } from './pending-store';
 import { EntaClientError, foldEntaName, pendingName, pendingStartStorageKey, parsePendingStart, type EntaMode, type RematchStart, type StartCommand, type SuccessorSetup, type SuccessorStart } from './client';
@@ -14,7 +15,7 @@ const id = /^[A-Za-z0-9_-]{1,128}$/, key = /^[A-Za-z0-9._:-]{8,128}$/;
 function exact(value: unknown, keys: string[]): value is Record<string, unknown> { return !!value && typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === keys.length && keys.every(key => Object.hasOwn(value, key)); }
 export function parseSuccessorSetup(value: unknown, mode: EntaMode): SuccessorSetup {
   if (!exact(value, ['version', 'categoryKeys', 'teams', 'rules']) || value.version !== 3 || !Array.isArray(value.categoryKeys) || value.categoryKeys.length !== (mode === 'KIDS' ? 1 : 6) || !value.categoryKeys.every(key => typeof key === 'string' && id.test(key)) || new Set(value.categoryKeys).size !== value.categoryKeys.length || !exact(value.rules, ['questionSeconds']) || !Number.isInteger(value.rules.questionSeconds) || (value.rules.questionSeconds as number) < 5 || (value.rules.questionSeconds as number) > 120 || !Array.isArray(value.teams) || value.teams.length < 2 || value.teams.length > 4) throw new EntaClientError('MALFORMED_RESPONSE');
-  for (const team of value.teams) if (!exact(team, ['name', 'players', 'lifelines']) || !pendingName(team.name, 2, 22) || !Array.isArray(team.players) || team.players.length < 1 || team.players.length > 8 || !team.players.every(player => pendingName(player, 1, 30)) || !Array.isArray(team.lifelines) || team.lifelines.length) throw new EntaClientError('MALFORMED_RESPONSE');
+  for (const team of value.teams) if (!exact(team, ['name', 'players', 'lifelines']) || !pendingName(team.name, 2, 22) || !Array.isArray(team.players) || (!isAlmaidanLocalDevelopment && team.players.length < 1) || team.players.length > 8 || !team.players.every(player => pendingName(player, 1, 30)) || !Array.isArray(team.lifelines) || team.lifelines.length) throw new EntaClientError('MALFORMED_RESPONSE');
   if (new Set(value.teams.map(team => foldEntaName(team.name))).size !== value.teams.length) throw new EntaClientError('MALFORMED_RESPONSE');
   return value as unknown as SuccessorSetup;
 }

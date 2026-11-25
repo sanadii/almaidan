@@ -2,6 +2,7 @@ import { beginOwnerProvider, currentOwnerProvider, observeProviderOwner, invalid
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { onAuthStateChanged, type Auth, type User } from 'firebase/auth';
 import { getOptionalFirebaseAuth } from '../../lib/firebase/client';
+import { clearHuroofSessions } from '../game/runtime/huroof-session';
 import { authErrorMessage, createEmailPasswordAccount, signInOrLinkGoogle, signInWithEmailPassword, signOutFirebaseUser, type AuthActionError } from './auth-service';
 import { FirebaseAuthContext, FirebaseAuthRuntimeBoundary, type AuthPendingAction, type FirebaseAuthContextValue, type FirebaseAuthStatus, useFirebaseAuth } from './auth-context';
 
@@ -45,8 +46,11 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
     }
     setIsAvailable(true);
     let restored = false;
+    let signedIn = false;
     const applyUser = (nextUser: User | null) => {
       if (!current()) return;
+      if (signedIn && !nextUser) clearHuroofSessions();
+      signedIn = Boolean(nextUser && !nextUser.isAnonymous);
       observeProviderOwner(lease, nextUser?.uid ?? null);
       setUser(nextUser);
       setError(null);
@@ -113,7 +117,10 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
     signInWithGoogle: () => runAction('signIn', async (auth) => { await signInOrLinkGoogle(auth); }),
     signInWithEmailPassword: (email, password) => runAction('signIn', async (auth) => { await signInWithEmailPassword(auth, email, password); }),
     createEmailPasswordAccount: (email, password) => runAction('signIn', async (auth) => { await createEmailPasswordAccount(auth, email, password); }),
-    signOut: () => runAction('signOut', signOutFirebaseUser),
+    signOut: () => runAction('signOut', async (auth) => {
+      await signOutFirebaseUser(auth);
+      clearHuroofSessions();
+    }),
   }), [status, user, pendingAction, error, isAvailable]);
   return <FirebaseAuthRuntimeBoundary><FirebaseAuthContext.Provider value={value}>{children}</FirebaseAuthContext.Provider></FirebaseAuthRuntimeBoundary>;
 }

@@ -4,6 +4,13 @@
   "stylesheet": "https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Instrument+Sans:wght@400..700&display=swap",
   "files": [
     {
+      "file": "Cairo-Latin-Variable.woff2",
+      "source": "https://fonts.gstatic.com/s/cairo/v31/SLXVc1nY6HkvangtZmpQdkhzfH5lkSscRiyS.woff2",
+      "retrieved": "2026-11-25",
+      "bytes": 33820,
+      "sha256": "82c13cbd1352d76e97c3d335caa912ae68fecdc3949a43cf8d149eb892384c1b"
+    },
+    {
       "file": "Cairo-Arabic-Variable.woff2",
       "source": "https://fonts.gstatic.com/s/cairo/v31/SLXVc1nY6HkvangtZmpQdkhzfH5lkSscQyyS4J0.woff2",
       "bytes": 30896,

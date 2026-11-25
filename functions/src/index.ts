@@ -16,7 +16,6 @@ import { admissionProject, readRoomAdmission, startedProof, assertReadiness, typ
 import { assertProof, assertRoomBinding } from "../../services/enta/server/src/admission/huroof-protocol.cjs";
 import { HttpsError, onCall } from "firebase-functions/https";
 import {
-  canManageTeamsInState,
   expireRoom,
   intentHash,
   intentReceiptId,
@@ -24,10 +23,13 @@ import {
   MAX_AUDIENCE,
   MAX_PLAYERS,
   activePlayerCount,
+  memberSeatId,
   normalizeRoomCode,
   preflightContentPreparation,
   projectRoom,
+  reclaimableJoinSeat,
   roomGameKind,
+  planHostedRematch,
   reduceIntent,
   makeBoard,
   validateDisplayName,
@@ -36,6 +38,7 @@ import {
   type CanonicalQuestion,
   type CanonicalRoom,
 } from "./game.js";
+import { normalizePlayerDisplayName } from '../../src/features/game/runtime/display-name.js';
 import { authorizeCurrentQuestionMedia, emulatorCurrentQuestionMediaUrl, expectedReleaseMediaObjectName, immutableReleaseYouTubeMedia, readWithFinalMediaAuthorization } from "./question-media.js";
 import { YOUTUBE_MEDIA_CONTENT_TYPE } from "../../src/features/game/runtime/youtube-media.js";
 import {
@@ -237,24 +240,26 @@ export function validateQuestionScope(value: unknown): {
   if (
     !categories.length || categories.length > MAX_ROOM_SCOPE_CATEGORIES ||
     (modality !== "classic" && modality !== "image" && modality !== "video" && modality !== "charades") ||
-    (gameKind !== "huroof" && gameKind !== "categories") ||
-    (gameKind === "categories" && (categories.length < 2 || categories.length > 10 || modality !== "classic"))
+    (gameKind !== "huroof" && gameKind !== "categories")
   )
     throw new HttpsError(
       "invalid-argument",
       "A non-empty classic, image, video, or separate charades category scope is required.",
     );
+  if (gameKind === "categories" && (categories.length < 2 || categories.length > 10 || modality !== "classic"))
+    throw new HttpsError("invalid-argument", "CATEGORY_GAME_COMBINATION_INVALID");
   return { categories, modality, gameKind };
 }
 function error(error: unknown) {
   if (error instanceof HttpsError) throw error;
   const message = error instanceof Error ? error.message : "invalid";
+  if (message === 'DUPLICATE_DISPLAY_NAME') throw new HttpsError('already-exists', message);
   const code =
     message === "stale-revision"
       ? "aborted"
       : message === "player-capacity-reached"
         ? "resource-exhausted"
-        : message === "invalid-display-name" || message === "invalid-room-code" || message === "invalid-presence-request"
+        : message === 'INVALID_DISPLAY_NAME' || message === "invalid-display-name" || message === "invalid-room-code" || message === "invalid-presence-request"
           ? "invalid-argument"
           : "failed-precondition";
   throw new HttpsError(code, message);
@@ -310,6 +315,46 @@ function writes(
         projectRoom(id, room, members, "host", member.uid, now(), definition),
       );
   }
+}
+async function readHostedRematchRoom(tx: FirebaseFirestore.Transaction, id: string, actor: string) {
+  const ref = database.doc(`rooms/${id}`);
+  const [snapshot, roster] = await Promise.all([tx.get(ref), tx.get(ref.collection('members'))]);
+  const room = snapshot.data() as CanonicalRoom | undefined;
+  const members = roster.docs.map(member => member.data() as CanonicalMember);
+  if (!room || !members.some(member => member.uid === actor && member.active && member.role === 'host'))
+    throw new HttpsError('permission-denied', 'REMATCH_HOST_REQUIRED');
+  await readRoomAdmission(database, tx, id, room, members);
+  return { id, room, members };
+}
+
+function writeHostedRematch(
+  tx: FirebaseFirestore.Transaction,
+  actor: string,
+  predecessor: Awaited<ReturnType<typeof readHostedRematchRoom>>,
+  target: Awaited<ReturnType<typeof readHostedRematchRoom>>,
+  createTarget = false,
+) {
+  let planned: ReturnType<typeof planHostedRematch>;
+  try { planned = planHostedRematch(actor, predecessor, target); }
+  catch (reason) {
+    const code = (reason as Error).message;
+    throw new HttpsError(code === 'REMATCH_HOST_REQUIRED' ? 'permission-denied' : 'failed-precondition', code);
+  }
+  if (!planned) return target.room.revision;
+  const oldRef = database.doc(`rooms/${predecessor.id}`);
+  const targetRef = database.doc(`rooms/${target.id}`);
+  const updatedAt = FieldValue.serverTimestamp();
+  tx.set(oldRef, { ...planned.predecessor, updatedAt });
+  if (createTarget) tx.create(targetRef, { ...planned.target, updatedAt });
+  else tx.set(targetRef, { ...planned.target, updatedAt });
+  tx.create(oldRef.collection('events').doc(String(planned.predecessor.revision).padStart(12, '0')), {
+    type: 'REMATCH_STARTED', actorUid: actor, revision: planned.predecessor.revision, createdAt: updatedAt,
+  });
+  for (const player of planned.players)
+    tx.create(targetRef.collection('members').doc(player.uid), { ...player, joinedAt: updatedAt });
+  writes(tx, predecessor.id, planned.predecessor, predecessor.members);
+  writes(tx, target.id, planned.target, [...target.members, ...planned.players]);
+  return planned.target.revision;
 }
 async function activeRelease(
   tx: FirebaseFirestore.Transaction,
@@ -859,6 +904,7 @@ function firebaseChallengeIntent(intent: import("./game.js").GameIntent, actor: 
 export const createRoom = onCall(releaseReaderCallable, async (request) => {
   const actor = uid(request);
   const requestData = request.data ?? {};
+  const predecessorId = requestData.predecessorRoomId === undefined ? undefined : roomId(requestData.predecessorRoomId);
   // This existing public name resolves a durable admission; it never mints a
   // production room. The old creation code below is isolated demo-fixture only.
   if (!(process.env.FUNCTIONS_EMULATOR === "true" && isDemoProject() && requestData.demo === true)) {
@@ -877,7 +923,15 @@ export const createRoom = onCall(releaseReaderCallable, async (request) => {
       const room = roomRaw.data() as CanonicalRoom;
       assertRoomBinding(proof.binding, proof.binding.roomId, room.config, hostRaw.data() as CanonicalMember);
       if (isRoomClosed(room)) throw new HttpsError("failed-precondition", "Room is closed.");
-      return { roomId: proof.binding.roomId, roomCode: room.roomCode, revision: room.revision };
+      let revision = room.revision;
+      if (predecessorId) {
+        const [predecessor, target] = await Promise.all([
+          readHostedRematchRoom(tx, predecessorId, actor),
+          readHostedRematchRoom(tx, proof.binding.roomId, actor),
+        ]);
+        revision = writeHostedRematch(tx, actor, predecessor, target);
+      }
+      return { roomId: proof.binding.roomId, roomCode: room.roomCode, revision };
     });
   }
   const demo = requestData.demo === true;
@@ -911,6 +965,16 @@ export const createRoom = onCall(releaseReaderCallable, async (request) => {
   }) : undefined;
   const candidates = Array.from({ length: 12 }, code);
   return database.runTransaction(async (tx) => {
+    const predecessor = predecessorId ? await readHostedRematchRoom(tx, predecessorId, actor) : undefined;
+    if (predecessor) {
+      if (predecessor.room.config.qaAdmission || qaPermitId || !predecessor.room.config.demo || predecessor.room.game.lifecycle !== 'MATCH_COMPLETE')
+        throw new HttpsError('failed-precondition', 'REMATCH_NOT_AVAILABLE');
+      if (predecessor.room.successor) {
+        const target = await readHostedRematchRoom(tx, predecessor.room.successor.roomId, actor);
+        const revision = writeHostedRematch(tx, actor, predecessor, target);
+        return { roomId: target.id, roomCode: target.room.roomCode, revision };
+      }
+    }
     // A consumed permit is an idempotency receipt, not a fresh admission. It
     // deliberately resolves before current-release/expiry validation so a
     // retried network request cannot allocate a different room after rollout.
@@ -996,7 +1060,7 @@ export const createRoom = onCall(releaseReaderCallable, async (request) => {
         releaseId: release.releaseId,
         releaseRootSha256: release.releaseRootSha256,
         releaseDemoFixture: release.demoFixture,
-        showQuestionOnAudience: true,
+        showQuestionOnAudience: predecessor?.room.config.showQuestionOnAudience !== false,
         labelledColours,
         mapPresentation,
         ...scope,
@@ -1015,12 +1079,12 @@ export const createRoom = onCall(releaseReaderCallable, async (request) => {
     const host: CanonicalMember = {
       uid: actor,
       role: "host",
-      displayName,
+      displayName: predecessor?.members.find(member => member.uid === actor)?.displayName ?? displayName,
       ready: true,
       active: true,
       joinedAt: FieldValue.serverTimestamp(),
     };
-    tx.create(ref, room);
+    if (!predecessor) tx.create(ref, room);
     tx.create(database.doc(`roomCodes/${roomCode}`), {
       roomId: ref.id,
       createdAt: FieldValue.serverTimestamp(),
@@ -1035,8 +1099,11 @@ export const createRoom = onCall(releaseReaderCallable, async (request) => {
         consumedAt: FieldValue.serverTimestamp(), consumedRequestHash: normalizedQaRequest,
       });
     }
-    writes(tx, ref.id, room, [host]);
-    return { roomId: ref.id, roomCode, revision: room.revision };
+    const revision = predecessor
+      ? writeHostedRematch(tx, actor, predecessor, { id: ref.id, room, members: [host] }, true)
+      : room.revision;
+    if (!predecessor) writes(tx, ref.id, room, [host]);
+    return { roomId: ref.id, roomCode, revision };
   });
 });
 
@@ -1086,8 +1153,59 @@ export const closeQaChallengeRoom = onCall(callable, async (request) => {
   });
 });
 
+export const restoreHostRoomAccess = onCall(callable, async (request) => {
+  const actor = uid(request);
+  let roomCode: string;
+  try { roomCode = normalizeRoomCode(String(request.data?.roomCode ?? '')); }
+  catch (reason) { return error(reason); }
+  return database.runTransaction(async tx => {
+    const code = await tx.get(database.doc(`roomCodes/${roomCode}`));
+    const id = code.data()?.roomId;
+    if (typeof id !== 'string') throw new HttpsError('not-found', 'ROOM_NOT_FOUND');
+    const ref = database.doc(`rooms/${id}`);
+    const [raw, memberDocs] = await Promise.all([tx.get(ref), tx.get(ref.collection('members'))]);
+    const room = raw.data() as CanonicalRoom | undefined;
+    const members = memberDocs.docs.map(doc => doc.data() as CanonicalMember);
+    if (!room || isRoomClosed(room) || !members.some(member => member.active && member.role === 'host' && member.uid === actor))
+      throw new HttpsError('not-found', 'ROOM_NOT_FOUND');
+    await readRoomAdmission(database, tx, id, room, members);
+    return { roomId: id, roomCode, revision: room.revision };
+  });
+});
+
+export async function lookupHostedRoomCode(
+  roomCode: unknown,
+  read: (path: string) => Promise<{
+    exists: boolean;
+    data(): { roomId?: unknown; game?: { lifecycle?: unknown }; successor?: { roomCode?: unknown }; closedAt?: unknown } | undefined;
+  }>,
+): Promise<import('../../src/features/game/runtime/contracts.js').HuroofRoomCodeLookup> {
+  if (typeof roomCode !== 'string' || !/^[A-Z0-9]{8}$/.test(roomCode)) return { exists: false };
+  const code = await read(`roomCodes/${roomCode}`);
+  const roomId = code.data()?.roomId;
+  if (typeof roomId !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(roomId)) return { exists: false };
+  const snapshot = await read(`rooms/${roomId}`);
+  if (!snapshot.exists) return { exists: false };
+  const room = snapshot.data();
+  if (room?.game?.lifecycle !== 'MATCH_COMPLETE') return { exists: true };
+  const successor = room.successor?.roomCode;
+  const successorCode = !room.closedAt && typeof successor === 'string' && successor !== roomCode && /^[A-Z0-9]{8}$/.test(successor)
+    ? successor : undefined;
+  return { exists: true, finished: true, ...(successorCode ? { successorCode } : {}) };
+}
+
+export const roomCodeExists = onCall(callable, async (request) => {
+  uid(request);
+  return lookupHostedRoomCode(request.data?.roomCode, path => database.doc(path).get());
+});
+
 export const joinRoom = onCall(callable, async (request) => {
   const actor = uid(request);
+  const displayName = normalizePlayerDisplayName(request.data?.displayName);
+  if (!displayName) throw new HttpsError('invalid-argument', 'INVALID_DISPLAY_NAME');
+  const requestKey: unknown = request.data?.requestKey;
+  if (requestKey !== undefined && (typeof requestKey !== 'string' || !/^[A-Za-z0-9._:-]{16,128}$/.test(requestKey)))
+    throw new HttpsError('invalid-argument', 'JOIN_REQUEST_KEY_INVALID');
   let roomCode: string;
   try {
     roomCode = normalizeRoomCode(String(request.data?.roomCode ?? ""));
@@ -1100,21 +1218,31 @@ export const joinRoom = onCall(callable, async (request) => {
       throw new HttpsError("not-found", "Room not found.");
     const id = codeDoc.data()!.roomId as string;
     const ref = database.doc(`rooms/${id}`);
-    const [raw, own, memberDocs] = await Promise.all([
+    const receiptRef = typeof requestKey === 'string' ? ref.collection('joinReceipts').doc(intentReceiptId(actor, requestKey)) : undefined;
+    const [raw, own, memberDocs, existingReceipt] = await Promise.all([
       tx.get(ref),
       tx.get(ref.collection("members").doc(actor)),
       tx.get(ref.collection("members")),
+      receiptRef ? tx.get(receiptRef) : undefined,
     ]);
     if (!raw.exists) throw new HttpsError("not-found", "Room not found.");
-    let room = expiring(raw.data() as CanonicalRoom);
+    const original = raw.data() as CanonicalRoom;
+    let room = expiring(original);
     await readRoomAdmission(database, tx, id, room, memberDocs.docs.map((item) => item.data() as CanonicalMember));
     if (room.config.challenge) {
       const offered = challengeCapabilityOffer(request.data?.challenge);
       if (!offered || offered.protocolVersion !== room.config.challenge.protocolVersion || !room.config.challenge.mechanics.every((mechanic) => offered.mechanics.includes(mechanic)) || !(room.config.challenge.definitionSchemas ?? ["t36-challenge-definition-v1"]).every((schema) => offered.definitionSchemas.includes(schema)))
         throw new HttpsError("failed-precondition", "CHALLENGE_PROTOCOL_REQUIRED");
     }
-    if (isRoomClosed(room))
-      throw new HttpsError("failed-precondition", "Room is closed.");
+    const ownMember = own.data() as CanonicalMember | undefined;
+    if (existingReceipt?.exists) {
+      if (existingReceipt.data()?.displayName !== displayName) throw new HttpsError('already-exists', 'JOIN_REQUEST_KEY_CONFLICT');
+      if (!ownMember?.active || ownMember.role !== 'player' || existingReceipt.data()?.seatId !== memberSeatId(id, ownMember))
+        throw new HttpsError('permission-denied', 'SEAT_REMOVED');
+      return { roomId: id, revision: original.revision };
+    }
+    if (isRoomClosed(room) || room.game.lifecycle === 'MATCH_COMPLETE')
+      throw new HttpsError('failed-precondition', 'MATCH_COMPLETE');
     const members = memberDocs.docs.map(
       (item) => item.data() as CanonicalMember,
     );
@@ -1134,44 +1262,52 @@ export const joinRoom = onCall(callable, async (request) => {
         room = { ...room, revision: room.revision + 1, game, challenge: compactChallengeState(reconciled), challengeBridge: bridge, updatedAt: FieldValue.serverTimestamp() };
       }
     }
-    if (own.exists) {
+    if (ownMember) {
+      if (!ownMember.active || ownMember.role !== 'player') throw new HttpsError('failed-precondition', 'JOIN_NOT_ALLOWED');
       if (room.revision !== (raw.data() as CanonicalRoom).revision) {
         tx.set(ref, room);
         tx.create(ref.collection("events").doc(String(room.revision).padStart(12, "0")), { type: "CHALLENGE_JOIN_RECONCILE", actorUid: "server", revision: room.revision, createdAt: FieldValue.serverTimestamp() });
         writes(tx, id, room, members, definition);
       }
+      if (receiptRef) tx.create(receiptRef, { displayName, seatId: memberSeatId(id, ownMember) });
       return { roomId: id, revision: room.revision };
     }
-    let displayName: string;
+    const presence = await tx.get(ref.collection('presence'));
+    const leases = new Map(presence.docs.map(lease => [lease.id, lease.data()]));
+    const currentTime = now();
+    let reclaim: CanonicalMember | undefined;
     try {
-      displayName = validateDisplayName(request.data?.displayName);
+      reclaim = reclaimableJoinSeat(room, members, displayName, uid => leaseState(leases.get(uid), currentTime) === 'connected');
     } catch (reason) {
+      if (reason instanceof Error && reason.message === 'PLAYER_CAPACITY_REACHED') throw new HttpsError('resource-exhausted', reason.message);
       return error(reason);
     }
-    if (!canManageTeamsInState(room.game.lifecycle))
-      throw new HttpsError(
-        "failed-precondition",
-        "Joining is currently locked during an active question or match stop.",
-      );
-    if (activePlayerCount(room, members) >= MAX_PLAYERS)
-      throw new HttpsError("resource-exhausted", "Player capacity reached.");
     const member: CanonicalMember = {
       uid: actor,
       role: "player",
-      displayName,
-      ready: false,
+      displayName: reclaim?.displayName ?? displayName,
+      ready: reclaim?.ready ?? false,
       active: true,
-      team: memberTeam(members, room),
-      joinedAt: FieldValue.serverTimestamp(),
+      team: reclaim?.team ?? memberTeam(members, room),
+      seatId: reclaim ? memberSeatId(id, reclaim) : randomUUID(),
+      joinedAt: reclaim?.joinedAt ?? FieldValue.serverTimestamp(),
     };
     const next = {
       ...room,
       revision: room.revision + 1,
       updatedAt: FieldValue.serverTimestamp(),
     };
+    if (reclaim) {
+      tx.delete(ref.collection('members').doc(reclaim.uid));
+      tx.delete(ref.collection('presence').doc(reclaim.uid));
+      tx.delete(ref.collection('projections').doc(`player_${reclaim.uid}`));
+      if (next.buzzWinner?.uid === reclaim.uid) next.buzzWinner = { ...next.buzzWinner, uid: actor };
+    }
     tx.create(ref.collection("members").doc(actor), member);
+    tx.set(ref.collection('presence').doc(actor), { uid: actor, updatedAtMs: currentTime, expiresAtMs: currentTime + PRESENCE_LEASE_MS });
+    if (receiptRef) tx.create(receiptRef, { displayName, seatId: memberSeatId(id, member) });
     tx.set(ref, next);
-    writes(tx, id, next, [...members, member], definition);
+    writes(tx, id, next, [...members.filter(candidate => candidate.uid !== reclaim?.uid), member], definition);
     return { roomId: id, revision: next.revision };
   });
 });
@@ -1298,6 +1434,7 @@ export const resumeRoom = onCall(callable, async (request) => {
       tx.create(ref.collection("events").doc(String(next.revision).padStart(12, "0")), { type: "CHALLENGE_RESUME_RECONCILE", actorUid: "server", revision: next.revision, createdAt: FieldValue.serverTimestamp() });
       writes(tx, id, next, members, definition);
     }
+    if (member.carried) tx.update(ref.collection('members').doc(actor), { carried: FieldValue.delete() });
     return { revision: next.revision, serverTime: new Date(now()).toISOString() };
   });
 });
@@ -1440,7 +1577,7 @@ export const submitGameIntent = onCall(releaseReaderCallable, async (request) =>
       if (paidProof.state !== "RESERVED" || member.role !== "host" || actor !== paidProof.binding.uid || room.game.lifecycle !== "LOBBY" || room.revision !== intent.expectedRevision) throw new HttpsError("failed-precondition", "ADMISSION_START_DENIED");
       const [readiness, root] = await Promise.all([tx.get(database.doc("runtime/catalogSelectorAttestation")), tx.get(database.doc(`releases/${paidProof.binding.releaseId}`))]);
       assertReadiness(paidProof.binding, readiness.data(), root.data());
-    } else if (paidProof?.state === "RESERVED" && !["LOBBY_SET_READY", "LOBBY_ASSIGN_TEAM", "LOBBY_ADD_MANUAL_PLAYER", "SET_AUDIENCE_QUESTION_VISIBILITY"].includes(intent.type)) {
+    } else if (paidProof?.state === "RESERVED" && !["LOBBY_SET_READY", "LOBBY_ASSIGN_TEAM", "LOBBY_ADD_MANUAL_PLAYER", "LOBBY_REMOVE_PARTICIPANT", "SET_AUDIENCE_QUESTION_VISIBILITY"].includes(intent.type)) {
       throw new HttpsError("failed-precondition", "ADMISSION_NOT_STARTED");
     }
     if (isRoomClosed(room))
@@ -1463,10 +1600,11 @@ export const submitGameIntent = onCall(releaseReaderCallable, async (request) =>
         return { revision: next.revision, replayed: false, stale: true };
       }
     }
-    if (receiptRaw.exists) {
-      if (receiptRaw.data()?.requestHash !== receiptHash)
-        throw new HttpsError("already-exists", "Intent id was reused with a different request.");
-      return { revision: receiptRaw.data()?.revision, replayed: true };
+    if (room.revision !== (raw.data() as CanonicalRoom).revision) {
+      tx.set(ref, room);
+      tx.create(ref.collection('events').doc(String(room.revision).padStart(12, '0')), { type: 'SERVER_TIME_EXPIRED', actorUid: 'server', revision: room.revision, createdAt: FieldValue.serverTimestamp() });
+      writes(tx, id, room, members);
+      return { revision: room.revision, replayed: false, stale: true };
     }
     if (intent.type.startsWith("CHALLENGE_")) {
       if (intent.expectedRevision !== room.revision) return { revision: room.revision, replayed: false, stale: true };
@@ -1568,7 +1706,7 @@ export const submitGameIntent = onCall(releaseReaderCallable, async (request) =>
       const proof = startedProof(paidProof, actor, intent.intentId, receiptHash, room.revision, next.revision);
       tx.set(database.doc(`paidAdmissions/${paidProof.binding.admissionId}`), proof);
     }
-    const nextMembers = members.map((item) =>
+    const nextMembers = members.filter((item) => item.uid !== result.removedMemberUid).map((item) =>
       item.uid === actor
         ? result.member
         : item.uid === result.targetMember?.uid
@@ -1577,6 +1715,11 @@ export const submitGameIntent = onCall(releaseReaderCallable, async (request) =>
     );
     tx.set(ref, next);
     tx.set(memberRef, result.member);
+    if (result.removedMemberUid) {
+      tx.delete(ref.collection("members").doc(result.removedMemberUid));
+      tx.delete(ref.collection("presence").doc(result.removedMemberUid));
+      tx.delete(ref.collection("projections").doc(`player_${result.removedMemberUid}`));
+    }
     if (result.targetMember)
       tx.set(
         ref.collection("members").doc(result.targetMember.uid),

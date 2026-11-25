@@ -109,9 +109,9 @@ function GoalTeeth({ axis, edge }: { axis: TeamAxis; edge: Edge }) {
 
 export function EntryBoard() {
   return (
-    <div className="entry-board" aria-label="لوح الحروف: خمسة وعشرون خلية سداسية متصلة">
+    <div className="entry-board" aria-label="لوحة الحروف: خمسة وعشرون خلية سداسية متصلة">
       <svg aria-labelledby="entry-board-title entry-board-description" role="img" viewBox="0 0 480 560">
-        <title id="entry-board-title">لوح الحروف</title>
+        <title id="entry-board-title">لوحة الحروف</title>
         <desc id="entry-board-description">خمسة وعشرون خلية سداسية. هدف الفريق الأفقي من اليسار إلى اليمين، وهدف الفريق العمودي من الأعلى إلى الأسفل.</desc>
         <GoalBase axis="vertical" edge="start" />
         <GoalBase axis="vertical" edge="end" />

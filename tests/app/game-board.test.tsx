@@ -407,9 +407,9 @@ it("shows five real round markers in the host score card", () => {
   );
 });
 
-it("keeps both generated background fields at their recorded dimensions and production weights", async () => {
+it("keeps both archived background fields at their recorded dimensions and file weights", async () => {
   for (const name of ["studio-field-light.webp", "studio-field-dark.webp"]) {
-    const asset = join(process.cwd(), "public", "assets", "backgrounds", name);
+    const asset = join(process.cwd(), "design", "evidence", "assets", "backgrounds", name);
     const [metadata, details] = await Promise.all([
       sharp(asset).metadata(),
       stat(asset),

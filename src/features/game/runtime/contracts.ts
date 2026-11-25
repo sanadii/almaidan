@@ -13,6 +13,7 @@ export const CLIENT_CHALLENGE_CAPABILITY: ChallengeCapabilityOffer = { protocolV
 
 export interface SafeRoomSummary {
   roomCode: string;
+  successor?: { roomId: string; roomCode: string };
   state: RoomState;
   readyCount: number;
   memberCount: number;
@@ -21,6 +22,8 @@ export interface SafeRoomSummary {
   /** Member IDs are included only in the host projection for lobby assignments. */
   members?: Array<{
     uid?: string;
+    /** Room-scoped roster key, independent of an authentication UID. */
+    seatId?: string;
     /** Manual IDs are host-only targets and are never auth/member UIDs. */
     manualParticipantId?: string;
     participation?: 'manual';
@@ -33,6 +36,7 @@ export interface SafeRoomSummary {
   /** Host-controlled room preference. Missing legacy values deliberately remain visible. */
   audienceQuestionVisible?: boolean;
   canStart?: boolean;
+  canStartWithoutWaiting?: boolean;
   startBlockedReason?: string;
 }
 
@@ -57,10 +61,12 @@ export interface SafeProjection {
   endedWithoutWinner?: true;
   entitledTeam?: 'horizontal' | 'vertical';
   answeringTeam?: 'horizontal' | 'vertical';
+  answerFeedback?: { outcome: 'correct' | 'incorrect'; team?: 'horizontal' | 'vertical'; expiresAt: string };
+  questionFailedReason?: 'no-answer' | 'incorrect';
   winningPath?: string[];
   correction?: { cellId: string; owner?: 'horizontal' | 'vertical'; priorOwner?: 'horizontal' | 'vertical'; reason: string };
-  self?: { uid: string; ready: boolean; team?: 'horizontal' | 'vertical'; canBuzz: boolean; isBuzzWinner?: boolean };
-  /** Public only for host/audience; players learn only whether they themselves won. */
+  self?: { uid: string; seatId?: string; displayName?: string; ready: boolean; team?: 'horizontal' | 'vertical'; canBuzz: boolean; isBuzzWinner?: boolean };
+  /** The display name of the current buzzer winner, without their account ID. */
   buzzWinner?: { displayName: string; team: 'horizontal' | 'vertical'; method: 'player' | 'host' };
   /** Immutable identity only. A delivery grant is authorized separately. */
   question?: { occurrence?: string; headerAr?: string; promptAr?: string; media?: { mediaId: string; assetSha256: string; altAr: string; type?: "image" | "video"; contentType?: string; audiencePresentation?: "clear" | "concealed" }; revealedAnswer?: string; primaryAnswer?: string; acceptedAnswers?: string[]; sources?: unknown[]; moderation?: unknown };
@@ -91,7 +97,7 @@ export type GameIntent = {
   payload: Record<string, unknown>;
 };
 
-export interface CreateRoomRequest { /** Owner-scoped isolated local creation retry key; contains no credentials. */ requestKey?: string; displayName?: string; demo?: boolean; bestOf?: 1 | 3 | 5 | 7; questionSeconds?: number; opponentSeconds?: number; teams?: { horizontal?: string; vertical?: string }; categories?: string[]; modality?: 'classic' | 'image' | 'charades'; gameKind?: 'huroof' | 'categories'; difficulty?: string; mode?: 'classic' | 'fast' | 'custom'; showQuestionOnAudience?: boolean; labelledColours?: boolean; /** Pinned at room creation; absent legacy rooms are ordinary. */ mapPresentation?: 'ordinary' | 'interactive'; /** Server-issued, opaque, flags-off QA permit reference. */ qaChallengePermitId?: string; expectedRelease?: { releaseId: string; releaseRootSha256: string }; challenge?: ChallengeCapabilityOffer; }
+export interface CreateRoomRequest { predecessorRoomId?: string; /** Owner-scoped isolated local creation retry key; contains no credentials. */ requestKey?: string; displayName?: string; demo?: boolean; bestOf?: 1 | 3 | 5 | 7; questionSeconds?: number; opponentSeconds?: number; teams?: { horizontal?: string; vertical?: string }; categories?: string[]; modality?: 'classic' | 'image' | 'charades'; gameKind?: 'huroof' | 'categories'; difficulty?: string; mode?: 'classic' | 'fast' | 'custom'; showQuestionOnAudience?: boolean; labelledColours?: boolean; /** Pinned at room creation; absent legacy rooms are ordinary. */ mapPresentation?: 'ordinary' | 'interactive'; /** Server-issued, opaque, flags-off QA permit reference. */ qaChallengePermitId?: string; expectedRelease?: { releaseId: string; releaseRootSha256: string }; challenge?: ChallengeCapabilityOffer; }
 /** Metadata-only active-release discovery. It deliberately contains no runtime questions or media bindings. */
 export interface ApprovedReleaseCatalog {
   releaseId: string;
@@ -120,7 +126,7 @@ export const isApprovedReleaseCatalog = (value: unknown): value is ApprovedRelea
   if (catalog.challengeAvailability !== undefined && (!catalog.challengeAvailability || !Array.isArray(catalog.challengeAvailability.enabledMechanics) || catalog.challengeAvailability.enabledMechanics.some((kind) => !isChallengeMechanic(kind)) || new Set(catalog.challengeAvailability.enabledMechanics).size !== catalog.challengeAvailability.enabledMechanics.length)) return false;
   return ids.size > 0;
 };
-export interface JoinRoomRequest { roomCode: string; displayName: string; challenge?: ChallengeCapabilityOffer; }
+export interface JoinRoomRequest { roomCode: string; displayName: string; requestKey?: string; challenge?: ChallengeCapabilityOffer; }
 export type PlayerPresenceState = 'connected' | 'disconnected' | 'unknown';
 export interface HostPresenceSnapshot {
   roomId: string;
@@ -130,18 +136,26 @@ export interface HostPresenceSnapshot {
   players: Record<string, { state: PlayerPresenceState; lastSeen?: string }>;
 }
 
+export type HuroofRoomCodeLookup =
+  | { exists: false }
+  | { exists: true; finished?: never }
+  | { exists: true; finished: true; successorCode?: string };
+
 export interface GameRuntimeAdapter {
   readonly kind: 'fixture' | 'firebase' | 'local' | 'pg';
   createRoom(request: CreateRoomRequest, authority?: { idToken: string; assertCurrent?: () => void }): Promise<{ roomId: string; roomCode: string; revision: number; token?: string }>;
   rematchRoom?(predecessorRoomId:string,requestKey:string,authority:{idToken:string;hostCapability?:string;assertCurrent?:()=>void}):Promise<{roomId:string;roomCode:string;revision:number;token:string;predecessorRoomId:string;source:{snapshotId:string;selection:'UNSEEN_PREDECESSOR'}}>;
+  carryRematch?(predecessorRoomId: string, successorRoomId: string, capability: string, signal: AbortSignal): Promise<{ token?: string }>;
   /** Firebase obtains this through an authenticated App Check callable; local/fixture do not need it. */
   getApprovedReleaseCatalog?(): Promise<ApprovedReleaseCatalog>;
   /** Local runtime flags are metadata only; room creation remains authoritative. */
   getChallengeAvailability?(): Promise<{ enabledMechanics: ChallengeMechanic[] }>;
+  lookupRoomCode?(roomCode: string): Promise<HuroofRoomCodeLookup>;
   joinRoom(request: JoinRoomRequest): Promise<{ roomId: string; revision: number; token?: string }>;
-  joinAudience?(roomCode: string, challenge?: ChallengeCapabilityOffer): Promise<{ roomId: string; revision: number; token?: string }>;
+  joinAudience?(roomCode: string, challenge?: ChallengeCapabilityOffer, signal?: AbortSignal): Promise<{ roomId: string; revision: number; token?: string }>;
+  restoreHostRoomAccess?(roomCode: string): Promise<{ roomId: string; roomCode: string; revision: number }>;
   /** Reconnect handshake also returns a fresh authority clock sample for deadline-only client masking. */
-  resumeRoom?(roomId: string, challenge?: ChallengeCapabilityOffer): Promise<{ revision: number; serverTime?: string }>;
+  resumeRoom?(roomId: string, challenge?: ChallengeCapabilityOffer, signal?: AbortSignal): Promise<{ revision: number; serverTime?: string }>;
   syncDeadline?(roomId: string): Promise<{ revision: number; expired: boolean }>;
   submitGameIntent(roomId: string, intent: GameIntent): Promise<{ revision: number; replayed: boolean }>;
   subscribeProjection(roomId: string, role: ClientRole, uid: string, onProjection: (value: ProjectionEnvelope) => void, onError?: (error: Error) => void): () => void;

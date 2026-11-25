@@ -9,5 +9,14 @@ export async function createLocalOwnedRematch(service:AuthoritativeGameService,a
  if(!hostCapability||hostCapability.length>4096)throw new LocalRoomCreationError(403,'LOCAL_REMATCH_HOST_REQUIRED');
  const hash=createHash('sha256').update(JSON.stringify({operation:'LOCAL_REMATCH',predecessorRoomId,requestKey:key})).digest('hex');
  try{return service.createLocalRematch(principal.uid,key,hash,predecessorRoomId,hostCapability);}
- catch(error){if(error instanceof Error&&error.message==='LOCAL_REMATCH_HOST_REQUIRED')throw new LocalRoomCreationError(403,error.message);if(error instanceof Error&&error.message==='LOCAL_CREATE_KEY_CONFLICT')throw new LocalRoomCreationError(409,error.message);if(error instanceof LocalRoomPreparationError&&error.reason==='LOCAL_REMATCH_NOT_FINISHED')throw new LocalRoomCreationError(409,error.reason);if(error instanceof LocalRoomPreparationError)throw new LocalRoomCreationError(422,'LOCAL_CREATE_SETUP_UNAVAILABLE');throw new LocalRoomCreationError(503,'LOCAL_CREATE_UNAVAILABLE');}
+ catch(error){
+  if(error instanceof Error&&error.message==='LOCAL_REMATCH_HOST_REQUIRED')throw new LocalRoomCreationError(403,error.message);
+  if(error instanceof Error&&['LOCAL_CREATE_KEY_CONFLICT','LOCAL_REMATCH_ALREADY_STARTED'].includes(error.message))throw new LocalRoomCreationError(409,error.message);
+  if(error instanceof LocalRoomPreparationError){
+   if(error.reason==='LOCAL_REMATCH_NOT_FINISHED')throw new LocalRoomCreationError(409,error.reason);
+   if(error.reason==='LOCAL_REMATCH_SOURCE_UNAVAILABLE')throw new LocalRoomCreationError(422,error.reason);
+   throw new LocalRoomCreationError(422,'LOCAL_CREATE_SETUP_UNAVAILABLE');
+  }
+  throw new LocalRoomCreationError(503,'LOCAL_CREATE_UNAVAILABLE');
+ }
 }

@@ -69,14 +69,14 @@ describe('EntryRoute', () => {
     await user.click(screen.getByRole('button', { name: 'دخول الغرفة' }));
     expect(screen.getByLabelText('اسم اللاعب')).toHaveAttribute('aria-invalid', 'true');
     expect(screen.getByLabelText('اسم اللاعب')).toHaveFocus();
-    expect(screen.getByRole('alert')).toHaveTextContent('أدخل اسماً من حرف إلى 48 حرفاً');
+    expect(screen.getByRole('alert')).toHaveTextContent('اكتب اسمك (حتى 30 حرفاً).');
   });
 
   it('sends a QR room query directly to the room-specific name step', async () => {
     renderJoinJourney('/?room=qr-12');
     expect(await screen.findByRole('heading', { name: 'ما اسمك؟' })).toBeInTheDocument();
     expect(screen.getByText('QR12')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'تغيير رمز الغرفة' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: 'غيّر الرمز' })).toHaveAttribute('href', '/');
   });
 
   it('keeps the code and direct name-join paths visibly unavailable in an explicit static preview', async () => {
@@ -114,6 +114,14 @@ describe('EntryRoute', () => {
     const khaliah = screen.getByRole('article', { name: 'الخلية' });
     const enta = screen.getByRole('article', { name: 'إنت صح' });
     const imposter = screen.getByRole('article', { name: 'الدخيل' });
+    for (const [card, game] of [[khaliah, 'huroof'], [enta, 'enta'], [imposter, 'imposter']] as const) {
+      const art = card.querySelector('picture.game-artwork');
+      expect(art?.querySelector('source[type="image/avif"]')).toHaveAttribute('srcset',
+        `/assets/games/${game}-art-v1-360.avif 360w, /assets/games/${game}-art-v1-720.avif 720w`);
+      expect(art?.querySelector('img')).toHaveAttribute('srcset',
+        `/assets/games/${game}-art-v1-360.webp 360w, /assets/games/${game}-art-v1-720.webp 720w`);
+      expect(art?.querySelector('img')).toHaveAttribute('loading', 'lazy');
+    }
     expect(within(khaliah).getByRole('link', { name: 'ابدأ الخلية' })).toHaveAttribute('href', '/host/new?kind=huroof');
     expect(within(khaliah).getByRole('link', { name: 'طريقة اللعب' })).toHaveAttribute('href', '/how-to-play#rules-khaliah');
     expect(within(enta).getByRole('link', { name: 'طريقة اللعب' })).toHaveAttribute('href', '/how-to-play#rules-enta-sah');

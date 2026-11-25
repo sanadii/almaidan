@@ -1,6 +1,132 @@
 /* Almaidan product surfaces: brand blue is an action, neutral surfaces carry content. */
-:root { --app-canvas:#f3f6fb; --app-surface:#ffffff; --app-subtle:#e8eef7; --app-ink:#15253d; --app-muted:#485c76; --app-border:#76869b; --app-accent:#075caa; --app-action:#175bc4; --app-error:#b42318; --app-focus:#075caa; }
-html[data-theme="dark"] { --app-canvas:#081321; --app-surface:#142236; --app-subtle:#20334c; --app-ink:#f4f7fc; --app-muted:#bdcbdc; --app-border:#71849e; --app-accent:#80d9f5; --app-action:#175bc4; --app-error:#ffb4ad; --app-focus:#80d9f5; }
+:root {
+  --focus-ring-color: var(--app-accent);
+}
+:is(.game-arena:not(.game-arena--host), .enta-room-display, .maydan-final) {
+  --focus-ring-color: var(--arena-line);
+}
+
+.button,
+:where(.maydan-public-page) button:where(:not(.button, .enta-tile)) {
+  align-items: center;
+  background: var(--app-subtle);
+  border: var(--border-default) solid var(--app-border);
+  border-radius: var(--spatial-radius-control);
+  box-shadow: none;
+  color: var(--app-ink);
+  cursor: pointer;
+  display: inline-flex;
+  font: var(--weight-bold) var(--text-base)/1.5 var(--font-ui);
+  gap: var(--space-2);
+  justify-content: center;
+  margin: 0;
+  min-block-size: 3rem;
+  min-inline-size: 2.75rem;
+  padding: var(--space-2) var(--space-4);
+  text-align: center;
+  text-decoration: none;
+  text-shadow: none;
+  transition: filter var(--duration-fast) var(--ease-out);
+}
+.button--lg {
+  min-block-size: 3.5rem;
+  padding-inline: var(--space-6);
+  font-size: var(--text-lg);
+}
+.button--primary {
+  background: var(--app-action);
+  border-color: var(--app-action);
+  color: var(--app-on-action);
+}
+.button--secondary {
+  background: var(--app-surface);
+  color: var(--app-ink);
+}
+.button--quiet {
+  background: transparent;
+  color: var(--app-accent);
+}
+.button:hover:not(:disabled),
+:where(.maydan-public-page) button:where(:not(.button, .enta-tile)):hover:not(:disabled) { filter: brightness(.92); }
+.button:disabled,
+:where(.maydan-public-page) button:where(:not(.button, .enta-tile)):disabled {
+  background: var(--app-subtle);
+  border-color: var(--app-border);
+  color: var(--app-muted);
+  cursor: not-allowed;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) { .button { transition: none; } }
+
+:where(.maydan-app, .maydan-home-page, .spatial-shell, .game-arena, .challenge-frame, .app-confirm-dialog) :is(input:where(:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="hidden"])), select, textarea) {
+  background: var(--app-canvas);
+  border: var(--border-default) solid var(--app-border);
+  border-radius: var(--spatial-radius-control);
+  box-shadow: none;
+  box-sizing: border-box;
+  color: var(--app-ink);
+  font: inherit;
+  font-weight: var(--weight-regular);
+  inline-size: 100%;
+  min-block-size: 3rem;
+  min-inline-size: 0;
+  padding: var(--space-2) var(--space-4);
+}
+:where(.maydan-app, .maydan-home-page, .spatial-shell, .game-arena) input::placeholder { color: var(--app-muted); opacity: 1; }
+:where(.maydan-app, .maydan-home-page, .spatial-shell, .game-arena) input[aria-invalid="true"] { border-color: var(--app-error); }
+:where(.maydan-app, .maydan-home-page, .spatial-shell, .game-arena) :is(input, select, textarea):disabled { background: var(--app-subtle); color: var(--app-muted); }
+
+:where(.maydan-app, .maydan-home-page, .spatial-shell, .game-arena, .challenge-frame) :is(h1, h2) {
+  font-family: var(--font-ui);
+  font-weight: var(--weight-bold);
+}
+:where(.maydan-app, .spatial-shell) :is(.field-note, .form-message, .setup-kind-selector small, .setup-summary dd, .enta-summary-note, .enta-summary-hint, .imposter-muted) { font-weight: var(--weight-regular); }
+:where(.maydan-app, .maydan-home-page, .spatial-shell, .game-arena) summary {
+  min-block-size: 2.75rem;
+  align-content: center;
+  cursor: pointer;
+}
+:where(.maydan-app, .maydan-home-page, .spatial-shell, .game-arena) :is(.text-link, .maydan-text-link, .maydan-inline-action, .imposter-panel a:not(.button), .game-guide__actions a:not(.button)) {
+  min-block-size: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+}
+:is(.team-score__points-value, .team-score__rounds, .timer, .enta-timer, .enta-scores strong, .enta-count, .imposter-clock, .imposter-clues strong) { font-variant-numeric: tabular-nums; }
+
+.app-toast:not(:empty) {
+  position: fixed;
+  z-index: var(--z-toast, 100);
+  inset-block-end: max(var(--space-4), env(safe-area-inset-bottom));
+  inset-inline: var(--space-4);
+  display: grid;
+  justify-items: center;
+  pointer-events: none;
+}
+.app-toast span {
+  max-inline-size: 100%;
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-default) solid var(--app-border);
+  border-radius: var(--spatial-radius-control);
+  background: var(--app-surface);
+  color: var(--app-ink);
+  box-shadow: var(--shadow-compact);
+}
+.correction-dialog.app-confirm-dialog {
+  --arena-canvas: var(--app-canvas);
+  --arena-panel-deep: var(--app-surface);
+  --arena-panel: var(--app-surface);
+  --arena-line: var(--app-border);
+  --arena-line-soft: var(--app-border);
+  --arena-ink: var(--app-ink);
+  --arena-muted: var(--app-muted);
+  border-radius: var(--spatial-radius-dock);
+  background: var(--app-surface);
+  color: var(--app-ink);
+  box-shadow: var(--shadow-elevated);
+}
+.app-confirm-dialog p { margin: 0; color: var(--app-ink); }
+.app-confirm-dialog__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.app-confirm-dialog__actions .button { flex: 1 1 10rem; }
 /* INT-070.A: functional surfaces reuse the approved homepage, scoped away from gameplay. */
 .brand-mark.brand-mark--maydan { display:inline-flex; gap:8px; max-inline-size:none; color:inherit; white-space:nowrap; align-items:center; }
 .brand-mark--maydan .brand-mark__emblem { display:block; inline-size:42px; block-size:42px; color:var(--app-accent); flex:none; filter:drop-shadow(0 0 6px rgba(0,240,255,0.45)); transition:filter 0.3s ease; }
@@ -10,56 +136,46 @@ html[data-theme="dark"] { --app-canvas:#081321; --app-surface:#142236; --app-sub
 html[data-theme="dark"] .brand-mark--maydan .brand-mark__emblem { color:var(--app-accent); }
 .app-header.stable-header.maydan-app-header { background:var(--app-canvas); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); color:var(--app-ink); border-block-end:1px solid rgba(30,46,93,0.5); box-shadow:0 1px 0 var(--app-border); padding-inline:var(--page-gutter); max-inline-size:none; inline-size:auto; transform:none; font-family:var(--font-ui); }
 .app-header.stable-header.maydan-app-header .wordmark { color:var(--app-ink); inline-size:auto; min-inline-size:0; padding:0; min-block-size:44px; display:inline-flex; align-items:center; text-decoration:none; }
-.app-header.stable-header.maydan-app-header nav { background:var(--app-surface); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(56,189,248,0.25); border-radius:9999px; padding:4px 8px; box-shadow:none; gap:4px; }
-.app-header.stable-header.maydan-app-header nav a { color:var(--app-muted); border-radius:9999px; min-block-size:44px; padding:6px 14px; display:inline-flex; align-items:center; font-weight:600; font-size:16px; text-decoration:none; background:transparent; box-shadow:none; transition:all 0.2s cubic-bezier(0.16,1,0.3,1); }
+.app-header.stable-header.maydan-app-header nav { background:var(--app-surface); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(56,189,248,0.25); border-radius:var(--radius-pill-wide); padding:4px 8px; box-shadow:none; gap:4px; }
+.app-header.stable-header.maydan-app-header nav a { color:var(--app-muted); border-radius:var(--radius-pill-wide); min-block-size:44px; padding:6px 14px; display:inline-flex; align-items:center; font-weight:600; font-size:16px; text-decoration:none; background:transparent; box-shadow:none; transition:background-color 0.2s cubic-bezier(0.16,1,0.3,1), color 0.2s cubic-bezier(0.16,1,0.3,1); }
 .app-header.stable-header.maydan-app-header nav a:hover { color:var(--app-ink); background:var(--app-subtle); text-shadow:none; transform:none; }
 .app-header.stable-header.maydan-app-header nav a[aria-current="page"] { background:var(--app-subtle); color:var(--app-accent); border:1px solid var(--app-border); box-shadow:none; text-shadow:none; }
-.app-header.stable-header.maydan-app-header .app-header__menu-toggle { background:var(--app-surface); border:1px solid rgba(56,189,248,0.3); border-radius:9999px; color:var(--app-ink); min-block-size:44px; padding:8px 16px; font:inherit; font-weight:700; box-shadow:none; }
-.app-header.stable-header.maydan-app-header .app-header__utilities { background:var(--app-surface); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(56,189,248,0.25); border-radius:9999px; padding:4px 8px; box-shadow:none; }
-.app-header.stable-header.maydan-app-header .stable-header__account .account-control, .app-header.stable-header.maydan-app-header .theme-toggle--compact > summary { color:var(--app-muted); border:1px solid rgba(56,189,248,0.2); background:transparent; box-shadow:none; border-radius:50%; transition:all 0.2s ease; }
+.app-header.stable-header.maydan-app-header .app-header__menu-toggle { background:var(--app-surface); border:1px solid rgba(56,189,248,0.3); border-radius:var(--radius-pill-wide); color:var(--app-ink); min-block-size:44px; padding:8px 16px; font:inherit; font-weight:700; box-shadow:none; }
+.app-header.stable-header.maydan-app-header .app-header__utilities { background:var(--app-surface); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(56,189,248,0.25); border-radius:var(--radius-pill-wide); padding:4px 8px; box-shadow:none; }
+.app-header.stable-header.maydan-app-header .stable-header__account .account-control, .app-header.stable-header.maydan-app-header .theme-toggle--compact > summary { color:var(--app-muted); border:1px solid rgba(56,189,248,0.2); background:transparent; box-shadow:none; border-radius:var(--radius-circle); transition:border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease; }
 .app-header.stable-header.maydan-app-header .stable-header__account .account-control:hover, .app-header.stable-header.maydan-app-header .theme-toggle--compact > summary:hover { color:var(--app-accent); border-color:var(--app-accent); box-shadow:0 0 14px rgba(0,240,255,0.5); }
-.app-header.stable-header.maydan-app-header .theme-toggle__choices { background:var(--app-surface); color:var(--app-ink); border:1px solid var(--app-border); border-radius:12px; box-shadow:0 8px 24px rgb(0 0 0 / 12%); }
+.app-header.stable-header.maydan-app-header .theme-toggle__choices { background:var(--app-surface); color:var(--app-ink); border:1px solid var(--app-border); border-radius:var(--radius-12px); box-shadow:0 8px 24px rgb(0 0 0 / 12%); }
 .app-header.stable-header.maydan-app-header .theme-toggle__choices label { min-inline-size:44px; min-block-size:44px; }
 .app-header.stable-header.maydan-app-header .theme-toggle__choices span { background:transparent; color:var(--app-ink); min-inline-size:44px; min-block-size:44px; }
 .app-header.stable-header.maydan-app-header .theme-toggle__choices input:checked + span { background:var(--app-subtle); color:var(--app-accent); }
-.maydan-app :focus-visible, .app-header.stable-header.maydan-app-header :focus-visible { outline:3px solid var(--app-accent); outline-offset:3px; }
+.maydan-app :focus-visible, .app-header.stable-header.maydan-app-header :focus-visible { outline:3px solid var(--focus-ring-color); outline-offset:3px; }
 main.maydan-app.auth-page, main.maydan-app.maydan-join-page { background:var(--app-canvas); color:var(--app-ink); display:flex; flex-direction:column; min-block-size:100svh; padding:0; font-family:var(--font-ui); font-size:16px; line-height:1.7; font-synthesis:none; }
 main.maydan-app::before, main.maydan-app::after { content:none; }
-.maydan-app.auth-page .auth-panel, .maydan-app.maydan-join-page .maydan-join-card { box-sizing:border-box; background:var(--app-surface); color:var(--app-ink); border:1px solid var(--app-border); border-radius:20px; box-shadow:none; display:grid; gap:24px; inline-size:calc(100% - 48px); max-inline-size:560px; padding:32px; margin:40px auto; align-self:center; transform:none; overflow:visible; }
+.maydan-app.auth-page .auth-panel, .maydan-app.maydan-join-page .maydan-join-card { box-sizing:border-box; background:var(--app-surface); color:var(--app-ink); border:1px solid var(--app-border); border-radius:var(--radius-20px); box-shadow:none; display:grid; gap:24px; inline-size:calc(100% - 48px); max-inline-size:560px; padding:32px; margin:40px auto; align-self:center; transform:none; overflow:visible; }
 .maydan-app.maydan-join-page .maydan-join-card { margin-block:64px; max-inline-size:520px; }
 .maydan-app :is(.auth-panel,.maydan-join-card)::before, .maydan-app :is(.auth-panel,.maydan-join-card)::after { content:none; }
 .maydan-app :is(.auth-panel,.maydan-join-card) :is(h1,p,dl) { margin:0; }
-.maydan-app :is(.auth-panel,.maydan-join-card) h1 { color:var(--app-ink); font-family:var(--font-ui); font-size:36px; line-height:1.4; font-weight:800; letter-spacing:normal; transform:none; }
+.maydan-app :is(.auth-panel,.maydan-join-card) h1 { color:var(--app-ink); font-family:var(--font-ui); font-size:36px; line-height:1.4; letter-spacing:normal; transform:none; }
 .maydan-app :is(.auth-panel,.maydan-join-card) .eyebrow { display:block; color:var(--app-accent); font-size:14px; font-weight:700; }
 .maydan-app :is(.auth-panel,.maydan-join-card) p:not(.eyebrow), .maydan-app .maydan-join-card small { color:var(--app-muted); font-size:16px; }
-.maydan-app :is(.auth-panel,.maydan-join-card) .button { border:1px solid var(--app-border); border-radius:12px; box-shadow:none; color:var(--app-ink); background:var(--app-subtle); min-block-size:48px; inline-size:100%; padding:12px 16px; font:inherit; font-weight:600; line-height:1.5; text-decoration:none; transform:none; transition:filter 120ms ease; }
-.maydan-app :is(.auth-panel,.maydan-join-card) .button--primary { color:#fff; background:var(--app-action); border-color:var(--app-action); }
-.maydan-app :is(.auth-panel,.maydan-join-card) .button:hover:not(:disabled) { filter:brightness(.94); transform:none; box-shadow:none; }
-.maydan-app :is(.auth-panel,.maydan-join-card) .button:disabled { opacity:1; color:var(--app-muted); background:var(--app-subtle); border-color:var(--app-border); cursor:not-allowed; }
+.maydan-app :is(.auth-panel,.maydan-join-card) .button { inline-size:100%; }
 .maydan-app :is(.auth-email-form,.maydan-join-card form) { display:grid; gap:24px; margin:0; }
 .maydan-app :is(.auth-email-form,.maydan-join-card) label { display:grid; gap:8px; color:var(--app-ink); font-weight:600; font-size:16px; }
-.maydan-app :is(.auth-panel,.maydan-join-card) input { box-sizing:border-box; background:var(--app-canvas); color:var(--app-ink); border:1px solid var(--app-border); border-radius:8px; min-block-size:48px; inline-size:100%; min-inline-size:0; padding:8px 16px; font:inherit; box-shadow:none; }
-.maydan-app :is(.auth-panel,.maydan-join-card) input::placeholder { color:var(--app-muted); opacity:1; }
-.maydan-app :is(.auth-panel,.maydan-join-card) input[aria-invalid="true"] { border-color:var(--app-error); }
-.maydan-app :is(.auth-panel,.maydan-join-card) input:disabled { background:var(--app-subtle); }
 .maydan-app :is(.text-link,.maydan-join-card__back) { display:inline-flex; align-items:center; justify-content:center; min-block-size:44px; color:var(--app-accent); font:inherit; font-weight:600; line-height:1.6; text-decoration:underline; text-underline-offset:4px; background:transparent; border:0; padding:8px 0; }
 .maydan-app .text-link:disabled { color:var(--app-muted); cursor:not-allowed; }
 .maydan-app .auth-divider { display:flex; align-items:center; gap:16px; color:var(--app-muted); font-size:14px; }
 .maydan-app .auth-divider::before, .maydan-app .auth-divider::after { content:""; block-size:1px; background:var(--app-border); flex:1; }
-.maydan-app.auth-page .auth-status, .maydan-app.auth-page .auth-impact, .maydan-app.maydan-join-page .form-message { padding:16px; background:var(--app-subtle); border:1px solid var(--app-border); border-radius:12px; color:var(--app-muted); font-size:14px; }
+.maydan-app.auth-page .auth-status, .maydan-app.auth-page .auth-impact, .maydan-app.maydan-join-page .form-message { padding:16px; background:var(--app-subtle); border:1px solid var(--app-border); border-radius:var(--radius-12px); color:var(--app-muted); font-size:14px; }
 .maydan-app .auth-status[data-state="error"], .maydan-app.maydan-join-page .form-message[role="alert"], .maydan-app.maydan-join-page .form-message[data-state="error"] { color:var(--app-error); border-color:var(--app-error); }
 .maydan-app .auth-status[data-state="verified"] { color:var(--app-accent); }
-.maydan-app.auth-page .account-details { display:grid; background:transparent; padding:0; border:0; border-radius:0; gap:0; }
+.maydan-app.auth-page .account-details { display:grid; background:transparent; padding:0; border:0; border-radius:var(--radius-none); gap:0; }
 .maydan-app .account-details > div { display:grid; gap:8px; padding-block:16px; border-block-end:1px solid var(--app-border); }
 .maydan-app .account-details dt { color:var(--app-muted); font-size:14px; }
 .maydan-app .account-details dd { color:var(--app-ink); font-size:16px; margin:0; overflow-wrap:anywhere; }
-.maydan-app.maydan-join-page .maydan-join-card__code { padding:12px 16px; background:var(--app-subtle); border:1px solid var(--app-border); border-radius:8px; font-size:14px; }
+.maydan-app.maydan-join-page .maydan-join-card__code { padding:12px 16px; background:var(--app-subtle); border:1px solid var(--app-border); border-radius:var(--radius-8px); font-size:14px; }
 .maydan-app.maydan-join-page .maydan-join-card__code bdi { color:var(--app-accent); font-size:20px; letter-spacing:2px; }
-.maydan-app .auth-page__footer { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:16px; margin-block:auto 0; padding:24px; color:var(--app-muted); border-block-start:1px solid var(--app-border); background:transparent; font-size:14px; }
-.maydan-app .auth-page__footer .brand-mark__word { font-size:24px; }
-.maydan-app .auth-page__footer .brand-mark__emblem { inline-size:28px; block-size:28px; }
-@media(max-width:68rem) {
-  .app-header.stable-header.maydan-app-header nav { background:var(--app-surface); border-block-end:1px solid var(--app-border); border-radius:0 0 16px 16px; }
+@media(max-width:56rem) {
+  .app-header.stable-header.maydan-app-header nav { background:var(--app-surface); border-block-end:1px solid var(--app-border); border-radius:var(--radius-none) var(--radius-none) var(--radius-16px) var(--radius-16px); }
 }
 @media(max-width:48rem) {
   .app-header.stable-header.maydan-app-header { padding-inline:24px; grid-template-columns:minmax(0,1fr) auto auto; gap:8px; }
@@ -81,42 +197,35 @@ main.maydan-app::before, main.maydan-app::after { content:none; }
 /* INT-060.V: public task surfaces only; room/gameplay bodies keep their styles. */
 main.maydan-app.maydan-public-page { background:var(--app-canvas); color:var(--app-ink); display:flex; flex-direction:column; min-block-size:100svh; padding:0; margin:0; font:400 16px/1.7 var(--font-ui); font-synthesis:none; }
 .maydan-public-page *, .maydan-public-page *::before, .maydan-public-page *::after { box-sizing:border-box; }
-.maydan-public-page :is(h1,h2,h3) { color:var(--app-ink); font-family:var(--font-ui); font-weight:800; font-style:normal; letter-spacing:normal; margin:0; }
+.maydan-public-page :is(h1,h2,h3) { color:var(--app-ink); font-family:var(--font-ui); font-style:normal; letter-spacing:normal; margin:0; }
 .maydan-public-page h1 { font-size:36px; line-height:1.4; }
 .maydan-public-page h2 { font-size:24px; line-height:1.45; }
 .maydan-public-page p { margin:0; color:var(--app-muted); }
 .maydan-public-page h3 { font-size:20px; line-height:1.5; font-weight:600; }
 .maydan-public-page .eyebrow { display:block; color:var(--app-accent); font-size:14px; font-weight:700; margin:0 0 8px; }
 .maydan-public-page :is(.maydan-host-setup,.maydan-rules,.maydan-credits,.maydan-status-panel) { inline-size:calc(100% - 64px); max-inline-size:none; margin:40px auto; min-inline-size:0; }
-.maydan-public-page :is(button,.button) { background:var(--app-subtle); color:var(--app-ink); border:1px solid var(--app-border); border-radius:10px; box-shadow:none; min-block-size:44px; padding:8px 16px; font:700 16px/1.5 var(--font-ui); text-decoration:none; transform:none; transition:filter 120ms ease; cursor:pointer; }
-.maydan-public-page :is(button,.button):hover:not(:disabled) { background:var(--app-subtle); color:var(--app-ink); filter:brightness(.96); box-shadow:none; transform:none; }
-.maydan-public-page .button.button--primary { background:var(--app-action); border-color:var(--app-action); color:#fff; }
-.maydan-public-page .button.button--primary:hover:not(:disabled) { background:var(--app-action); color:#fff; }
-.maydan-public-page :is(button,.button):disabled { color:var(--app-muted); background:var(--app-subtle); opacity:1; cursor:not-allowed; }
-.maydan-public-page input:not([type="checkbox"]):not([type="radio"]), .maydan-public-page select { background:var(--app-canvas); color:var(--app-ink); border:1px solid var(--app-border); border-radius:8px; box-shadow:none; min-block-size:48px; min-inline-size:0; inline-size:100%; padding:8px 16px; font:inherit; }
-.maydan-public-page input::placeholder { color:var(--app-muted); opacity:1; }
 .maydan-public-page input:is([type="checkbox"],[type="radio"]) { accent-color:var(--app-action); inline-size:20px; block-size:20px; flex:none; margin:4px 0; }
 .maydan-public-page label { color:var(--app-ink); font-weight:600; }
 .maydan-public-page label:has(>input:is([type="checkbox"],[type="radio"])) { display:flex; align-items:flex-start; gap:12px; min-block-size:44px; padding-block:8px; cursor:pointer; }
 .maydan-public-page a:not(.button) { color:var(--app-accent); text-underline-offset:4px; }
 .maydan-public-page :is(.field-note,.form-message) { color:var(--app-muted); font-size:14px; margin:0; }
-.maydan-public-page .form-message:not(:empty), .maydan-public-page [role="alert"], .maydan-public-page p[role="status"] { border:1px solid var(--app-border); border-radius:10px; padding:16px; background:var(--app-subtle); }
+.maydan-public-page .form-message:not(:empty), .maydan-public-page [role="alert"], .maydan-public-page p[role="status"] { border:1px solid var(--app-border); border-radius:var(--radius-10px); padding:16px; background:var(--app-subtle); }
 .maydan-public-page [role="alert"], .maydan-public-page [role="alert"] .field-note { color:var(--app-error); border-color:var(--app-error); }
 .maydan-public-page [role="alert"] .button { margin-block-start:12px; }
 .maydan-host-setup { display:grid; gap:32px; }
 .maydan-host-setup .setup-form { display:grid; grid-template-columns:minmax(0,1fr); gap:24px; margin:0; }
 .maydan-host-setup .setup-fields { display:grid; align-content:start; gap:24px; min-inline-size:0; }
-.maydan-host-setup .setup-fields > section { grid-column:1; background:var(--app-surface); border:1px solid var(--app-border); border-radius:16px; padding:24px; display:grid; gap:16px; min-inline-size:0; }
+.maydan-host-setup .setup-fields > section { grid-column:1; background:var(--app-surface); border:1px solid var(--app-border); border-radius:var(--radius-16px); padding:24px; display:grid; gap:16px; min-inline-size:0; }
 .maydan-host-setup .setup-fields > :is(.demo-control,.form-message,.field-note,.selected-categories-bar) { grid-column:1; }
-.maydan-host-setup .setup-summary { grid-column:1; grid-row:auto; align-self:start; position:static; border:1px solid var(--app-border); border-radius:16px; background:var(--app-surface); padding:24px; margin:0; color:var(--app-ink); display:grid; gap:24px; box-shadow:none; transform:none; }
+.maydan-host-setup .setup-summary { grid-column:1; grid-row:auto; align-self:start; position:static; border:1px solid var(--app-border); border-radius:var(--radius-16px); background:var(--app-surface); padding:24px; margin:0; color:var(--app-ink); display:grid; gap:24px; box-shadow:none; transform:none; }
 .maydan-host-setup .setup-summary dl { display:grid; gap:16px; margin:0; }
 .maydan-host-setup .setup-summary dl > div { display:grid; gap:4px; border-block-end:1px solid var(--app-border); padding-block-end:16px; }
 .maydan-host-setup .setup-summary dt { color:var(--app-muted); font-size:14px; }
 .maydan-host-setup .setup-summary dd { color:var(--app-ink); margin:0; }
-.maydan-host-setup .setup-summary .button { inline-size:100%; min-block-size:48px; }
+.maydan-host-setup .setup-summary .button { inline-size:100%; }
 .maydan-host-setup .setup-kind-selector { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
 .maydan-host-setup .setup-kind-selector button { display:grid; grid-template-columns:64px minmax(0,1fr); gap:12px; padding:16px; min-block-size:112px; min-inline-size:0; text-align:start; align-items:center; position:relative; background:var(--app-canvas); }
-.maydan-host-setup .setup-kind-selector__image { inline-size:64px; block-size:64px; object-fit:contain; grid-row:1; grid-column:1; }
+.maydan-host-setup .setup-kind-selector__image { inline-size:64px; block-size:64px; object-fit:contain; grid-row:1; grid-column:1; border-radius:var(--spatial-radius-control); }
 .maydan-host-setup .setup-kind-selector__copy { display:grid; gap:4px; white-space:normal; grid-column:2; }
 .maydan-host-setup .setup-kind-selector__copy strong { color:var(--app-ink); font-size:16px; font-weight:700; white-space:normal; }
 .maydan-host-setup .setup-kind-selector__copy small { color:var(--app-muted); font-size:14px; white-space:normal; }
@@ -124,13 +233,13 @@ main.maydan-app.maydan-public-page { background:var(--app-canvas); color:var(--a
 .maydan-host-setup .setup-kind-selector button.is-selected { border-color:var(--app-accent); box-shadow:inset 0 0 0 1px var(--app-accent); background:var(--app-subtle); }
 .maydan-host-setup .setup-kind-selector button.is-selected .setup-kind-selector__check { display:block; }
 .maydan-host-setup .segmented { display:flex; flex-wrap:wrap; gap:8px; border:0; padding:0; background:transparent; }
-.maydan-host-setup .segmented button { border-radius:8px; flex:1; min-inline-size:80px; }
+.maydan-host-setup .segmented button { flex:1; min-inline-size:80px; }
 .maydan-host-setup .segmented button.is-selected { background:var(--app-action); color:#fff; border-color:var(--app-action); }
 .maydan-host-setup .timing-fields { grid-template-columns:repeat(2,minmax(0,1fr)); }
 .maydan-host-setup .timing-fields h2 { grid-column:1/-1; }
 .maydan-host-setup .timing-fields__control { display:grid; gap:8px; }
 .maydan-host-setup .challenge-capability-fields label { display:flex; gap:12px; }
-.maydan-host-setup .challenge-capability-fields fieldset { border:1px solid var(--app-border); border-radius:8px; padding:16px; margin:0; }
+.maydan-host-setup .challenge-capability-fields fieldset { border:1px solid var(--app-border); border-radius:var(--radius-8px); padding:16px; margin:0; }
 .maydan-host-setup .category-filter { display:grid; grid-template-columns:minmax(0,1fr); gap:16px; margin:0; padding:0; border:0; }
 .maydan-host-setup .category-filter > * { grid-column:1; min-inline-size:0; }
 .maydan-host-setup .category-filter > label { display:grid; gap:8px; }
@@ -138,32 +247,33 @@ main.maydan-app.maydan-public-page { background:var(--app-canvas); color:var(--a
 .maydan-host-setup .category-topic-picker { display:grid; gap:8px; min-inline-size:0; }
 .maydan-host-setup .category-topic-picker__list { display:flex; flex-wrap:wrap; gap:8px; }
 .maydan-host-setup .category-topic-picker__button { display:flex; align-items:center; gap:8px; padding:8px 12px; min-inline-size:0; font-size:14px; }
+.maydan-host-setup .category-topic-picker__button small { font-size:max(12px, var(--text-xs)); }
 .maydan-host-setup .category-topic-picker__button.is-selected { border-color:var(--app-accent); color:var(--app-accent); background:var(--app-subtle); }
 .maydan-host-setup :is(.category-topic-picker__image,.category-topic-picker__all-mark) { display:none; }
 .maydan-host-setup .category-filter__meta { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
 .maydan-host-setup :is(.category-filter__hint,.category-filter__scope,.category-filter__empty) { margin:0; color:var(--app-muted); font-size:14px; }
 .maydan-host-setup .category-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); grid-auto-rows:max-content; align-content:start; gap:16px; margin:0; min-inline-size:0; }
-.maydan-host-setup .category-choice { background:var(--app-canvas); border:1px solid var(--app-border); display:grid; grid-template-columns:minmax(0,1fr); align-content:start; padding:0; overflow:hidden; border-radius:12px; min-inline-size:0; block-size:auto; inline-size:100%; }
+.maydan-host-setup .category-choice { background:var(--app-canvas); border:1px solid var(--app-border); display:grid; grid-template-columns:minmax(0,1fr); align-content:start; padding:0; overflow:hidden; border-radius:var(--radius-12px); min-inline-size:0; block-size:auto; inline-size:100%; }
 .maydan-host-setup .category-choice img { inline-size:100%; min-inline-size:0; block-size:auto; aspect-ratio:1; object-fit:contain; background:transparent; padding:8px; }
 .maydan-host-setup .category-choice__title { background:transparent; color:var(--app-ink); min-inline-size:0; overflow-wrap:anywhere; padding:12px; font-size:14px; white-space:normal; }
 .maydan-host-setup .category-choice.is-selected { border-color:var(--app-accent); box-shadow:inset 0 0 0 2px var(--app-accent); background:var(--app-subtle); }
 .maydan-host-setup .category-filter__empty { grid-column:1/-1; }
-.maydan-host-setup .selected-categories-bar { position:static; grid-column:1; display:grid; gap:16px; inline-size:auto; max-inline-size:none; margin:0; inset:auto; transform:none; padding:24px; background:var(--app-surface); color:var(--app-ink); border:1px solid var(--app-border); border-radius:16px; box-shadow:none; z-index:auto; }
+.maydan-host-setup .selected-categories-bar { position:static; grid-column:1; display:grid; gap:16px; inline-size:auto; max-inline-size:none; margin:0; inset:auto; transform:none; padding:24px; background:var(--app-surface); color:var(--app-ink); border:1px solid var(--app-border); border-radius:var(--radius-16px); box-shadow:none; z-index:auto; }
 .maydan-host-setup .selected-categories-bar__heading { display:flex; align-items:center; justify-content:space-between; gap:16px; }
 .maydan-host-setup .selected-categories-bar__heading strong { color:var(--app-ink); }
 .maydan-host-setup .selected-categories-bar__heading bdi { color:var(--app-accent); }
 .maydan-host-setup .selected-categories-bar__chips { display:flex; flex-wrap:wrap; list-style:none; gap:8px; padding:0; margin:0; }
 .maydan-host-setup .selected-categories-bar__chips button { display:flex; align-items:center; gap:8px; background:var(--app-subtle); }
 .maydan-host-setup .selected-categories-bar__chip-label, .maydan-host-setup .selected-categories-bar__chip-close { color:var(--app-ink); }
-.maydan-public-page :is(.maydan-credits,.maydan-status-panel) { max-inline-size:none; padding:32px; background:var(--app-surface); border:1px solid var(--app-border); border-radius:20px; }
+.maydan-public-page :is(.maydan-credits,.maydan-status-panel) { max-inline-size:none; padding:32px; background:var(--app-surface); border:1px solid var(--app-border); border-radius:var(--radius-20px); }
 .maydan-status-panel, .maydan-status-panel > div, .maydan-credits > div { display:grid; gap:24px; }
 .maydan-status-panel .button { justify-self:start; display:inline-flex; align-items:center; }
 .maydan-credits a:not(.button) { display:inline-flex; align-items:center; min-block-size:44px; overflow-wrap:anywhere; }
 .maydan-rules { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:48px; align-items:center; }
 .maydan-rules ol { list-style:none; counter-reset:rules; display:grid; gap:16px; padding:0; margin:24px 0 0; }
-.maydan-rules li { counter-increment:rules; display:flex; align-items:center; gap:16px; background:var(--app-surface); border:1px solid var(--app-border); border-radius:12px; padding:16px; }
+.maydan-rules li { counter-increment:rules; display:flex; align-items:center; gap:16px; background:var(--app-surface); border:1px solid var(--app-border); border-radius:var(--radius-12px); padding:16px; }
 .maydan-rules li::before { content:counter(rules); color:var(--app-accent); font-weight:700; font-size:20px; }
-.maydan-rules__board { border:1px solid var(--app-border); border-radius:20px; background:var(--app-surface); padding:24px; min-inline-size:0; }
+.maydan-rules__board { border:1px solid var(--app-border); border-radius:var(--radius-20px); background:var(--app-surface); padding:24px; min-inline-size:0; }
 .maydan-rules__board .game-board-wrap { inline-size:100%; margin:0; }
 .maydan-rules__board .game-board { inline-size:100%; max-inline-size:100%; }
 .maydan-rules__board p { margin-block-start:16px; font-size:14px; }
@@ -189,46 +299,34 @@ main.maydan-app.maydan-public-page { background:var(--app-canvas); color:var(--a
 @media(prefers-reduced-motion:reduce) { .maydan-public-page :is(button,.button,input,a) { transition:none; animation:none; } }
 .maydan-rules__board .game-board__overlays { display:none; }
 .maydan-public-page > .skip-link, :where(#app-chrome) > .skip-link { inset-block-start:8px; background:var(--app-surface); color:var(--app-accent); }
-/* The game arena keeps its board and team semantics, with shared application surfaces. */
 .game-arena {
- --arena-canvas:var(--app-canvas); --arena-panel:var(--app-surface); --arena-panel-deep:var(--app-subtle);
- --arena-line:var(--app-border); --arena-line-soft:var(--app-border); --arena-ink:var(--app-ink); --arena-muted:var(--app-muted);
  --spatial-background-image:none;
  background-image:none; font-family:var(--font-ui);
 }
 .game-arena .game-arena__decor { display:none; }
-.game-arena :is(.button,input,select,textarea) {border-radius:10px;min-block-size:44px;box-shadow:none;text-shadow:none;}
-.game-arena .button--primary {background:var(--app-action);color:#fff;border-color:var(--app-action);}
-.game-arena :is(.button--quiet,.connection,.phase-label) {color:var(--app-ink);}
-.game-arena :is(button,input,select):focus-visible {outline:3px solid var(--app-focus);outline-offset:3px;}
+.game-arena :is(.connection,.phase-label) {color:var(--arena-ink);}
 /* Compact utility controls keep toggles readable instead of stretching beside them. */
-.game-arena.game-arena--host .host-controls .button {border-radius:10px;min-block-size:44px;block-size:auto;align-self:start;box-shadow:none;text-shadow:none;transition:transform 160ms ease,box-shadow 160ms ease;}
-@media (prefers-reduced-motion:reduce) { .game-arena.game-arena--host .host-controls .button { transition:none; } }
 .game-arena.game-arena--host .host-controls__action-row--three {grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;}
 .game-arena.game-arena--host .host-controls__action-row--three .host-visibility-controls {grid-column:1/-1;grid-row:2;}
 .game-arena.game-arena--host .host-visibility-control {justify-content:space-between;gap:12px;}
-.game-arena.game-arena--host .host-visibility-control input {min-block-size:24px;inline-size:24px;}
-.game-arena.game-arena--host .game-state-banner {border-radius:12px;}
+.game-arena.game-arena--host .host-visibility-control input {min-block-size:2.75rem;inline-size:2.75rem;}
+.game-arena.game-arena--host .game-state-banner {border-radius:var(--radius-12px);}
 
 .room-game-navigation {display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}.game-arena .theme-toggle {color:var(--app-ink)}.game-arena .theme-toggle__choices {background:var(--app-surface);color:var(--app-ink);border:1px solid var(--app-border)}
-html[data-theme] .game-arena.game-arena {
+html[data-theme] .game-arena.game-arena--host {
  --arena-canvas:var(--app-canvas);--arena-panel:var(--app-surface);--arena-panel-deep:var(--app-subtle);--arena-ink:var(--app-ink);--arena-muted:var(--app-muted);--arena-line:var(--app-border);--arena-line-soft:var(--app-border);--arena-radius-capsule:12px;
 }
-.game-arena.game-arena--host .host-controls .button:not(.button--primary):not(.host-team-selection__button) {background:var(--app-subtle);color:var(--app-ink);border:1px solid var(--app-border);}
-.game-arena.game-arena--host .host-controls .button--primary {background:var(--app-action);color:#fff;border-color:var(--app-action);}
-.game-arena.game-arena--host .room-game-navigation .button {font-size:.85rem;}
 .game-arena .theme-toggle__choices label {min-block-size:44px;}
 .game-arena .theme-toggle__choices span {background:var(--app-subtle);color:var(--app-ink);}
 
 .game-arena.game-arena--host .host-stage {overflow-x:hidden;}
 
-.enta-compatibility{min-width:0;width:100%;box-sizing:border-box;border:1px solid var(--app-border);border-radius:14px;padding:18px;margin-block:20px;background:var(--app-surface);color:var(--app-ink);text-align:start}
+.enta-compatibility{min-width:0;width:100%;box-sizing:border-box;border:1px solid var(--app-border);border-radius:var(--radius-14px);padding:18px;margin-block:20px;background:var(--app-surface);color:var(--app-ink);text-align:start}
 .enta-compatibility summary{cursor:pointer;font-weight:700;min-height:44px;display:list-item;align-content:center}
-.enta-compatibility summary:focus-visible{outline:3px solid var(--app-focus);outline-offset:4px}
-.enta-compatibility :is(input,select){box-sizing:border-box;max-width:100%;width:100%;min-height:44px;background:var(--app-surface);color:var(--app-ink);border:1px solid var(--app-border);border-radius:8px;padding:8px}
+.enta-compatibility summary:focus-visible{outline:3px solid var(--focus-ring-color);outline-offset:4px}
 .enta-compatibility .enta-history-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px}
 .enta-compatibility .compatibility-grid{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:14px}
-.enta-compatibility .compatibility-grid li{min-width:0;padding:16px;border:1px solid var(--app-border);border-radius:10px;background:var(--app-subtle);overflow-wrap:anywhere}
+.enta-compatibility .compatibility-grid li{min-width:0;padding:16px;border:1px solid var(--app-border);border-radius:var(--radius-10px);background:var(--app-subtle);overflow-wrap:anywhere}
 .enta-compatibility h3{margin-block:0 8px;font-size:1.1rem;color:var(--app-ink)}
 .enta-compatibility :is(p,small){color:var(--app-muted);font-size:1rem;line-height:1.7}
 
@@ -236,7 +334,7 @@ html[data-theme] .game-arena.game-arena {
 .rules-overview { padding-block: 40px 0; scroll-margin-block-start: 6rem; }
 .rules-overview > p:not(.eyebrow) { max-inline-size: 60ch; }
 .rules-overview__nav { display: flex; flex-wrap: wrap; gap: 8px; margin-block-start: 20px; }
-.rules-overview__nav a { display: inline-flex; align-items: center; min-block-size: 44px; padding: 8px 16px; border: 1px solid var(--app-border); border-radius: 999px; color: var(--app-ink); text-decoration: none; }
+.rules-overview__nav a { display: inline-flex; align-items: center; min-block-size: 44px; padding: 8px 16px; border: 1px solid var(--app-border); border-radius: var(--radius-pill); color: var(--app-ink); text-decoration: none; }
 .rules-overview__nav a:hover { border-color: var(--app-accent); color: var(--app-accent); }
 :is(#rules-khaliah, #rules-enta-sah, #rules-imposter) { scroll-margin-block-start: 6rem; }
 .rules-imposter { margin-block: 32px 48px; }
@@ -245,7 +343,7 @@ main.auth-page--login .auth-status[data-state="error"] { color: var(--app-error)
 
 /* Shared account and setup hierarchy. */
 .account-nav { display:flex; flex-wrap:wrap; gap:8px; }
-.maydan-app .account-nav a { display:inline-flex; align-items:center; min-block-size:44px; padding:8px 12px; border:1px solid var(--app-border); border-radius:10px; color:var(--app-accent); text-decoration:none; }
+.maydan-app .account-nav a { display:inline-flex; align-items:center; min-block-size:44px; padding:8px 12px; border:1px solid var(--app-border); border-radius:var(--radius-10px); color:var(--app-accent); text-decoration:none; }
 .account-section { display:grid; gap:16px; min-inline-size:0; scroll-margin-block-start:calc(var(--page-header-height) + 16px); }
 @media (min-width:64rem) {
   .maydan-host-setup .setup-form { grid-template-columns:minmax(0,1fr) 320px; align-items:start; }
@@ -288,6 +386,44 @@ main.auth-page--login .auth-status[data-state="error"] { color: var(--app-error)
 .verify-email-notice p { margin:0; line-height:1.7; }
 .verify-email-notice__actions { display:flex; flex-wrap:wrap; gap:.5rem; }
 /* Huroof setup: unavailable categories read as quietly unavailable, not as a shouted caption. */
-.maydan-host-setup .category-choice[aria-disabled="true"] img { filter: grayscale(0.75); opacity: 0.7; }
-.maydan-host-setup .category-choice[aria-disabled="true"] .category-choice__title { color: var(--app-muted); }
-.maydan-host-setup .category-choice__reason { display: block; padding: 0 12px 12px; color: var(--app-muted); font-size: 13px; font-weight: 600; line-height: 1.5; text-align: start; }
+.maydan-host-setup .category-choice:disabled img { filter: grayscale(0.75); opacity: 0.7; }
+.maydan-host-setup .category-choice:disabled .category-choice__title { color: var(--app-muted); }
+.maydan-host-setup .setup-advanced {
+  background: var(--app-surface);
+  border: var(--border-default) solid var(--app-border);
+  border-radius: var(--spatial-radius-control);
+  min-inline-size: 0;
+  padding-inline: var(--space-4);
+}
+.maydan-host-setup .setup-advanced summary {
+  cursor: pointer;
+  font-weight: var(--weight-semibold);
+  padding-block: var(--space-3);
+}
+.maydan-host-setup .setup-advanced > section {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: minmax(0, 1fr);
+  padding-block: var(--space-3);
+}
+.maydan-host-setup .setup-advanced > .timing-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.maydan-host-setup .setup-advanced .timing-fields__control > span { white-space: normal; }
+.maydan-host-setup .setup-categories { scroll-margin-block-start: var(--page-header-height, 4rem); }
+.maydan-host-setup .setup-categories__heading {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  justify-content: space-between;
+}
+.maydan-host-setup .setup-categories__heading bdi { margin-inline-end: var(--space-2); }
+.maydan-host-setup .setup-categories__random { justify-self: start; }
+.maydan-host-setup .setup-categories__unavailable .field-note { margin-block: var(--space-3); }
+.maydan-host-setup .setup-categories__skeleton {
+  aspect-ratio: 4 / 5;
+  background: var(--app-subtle);
+  border: var(--border-default) solid var(--app-border);
+  border-radius: var(--spatial-radius-control);
+}

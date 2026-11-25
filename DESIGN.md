@@ -21,9 +21,9 @@ selected whole-app direction, recorded immutably in
 [`0006`](design/evidence/history/0006-spatial-studio-homepage-direction.md) with
 [receipt 0006](design/evidence/selection-receipt-0006.json). The homepage/create/join journey received human approval for full-route rollout in immutable 0007; existing flat surfaces are temporary fallback, not the selected long-term direction.
 
-The homepage replaces the old nine-region composition with a cobalt spatial stage: utility
-header, headline, canonical board, opaque create/join rail, supported category chooser, and
-concise footer. Homepage-only radii, shadows, and depth use `--spatial-*` tokens.
+The current homepage pairs the illustrated stage and floating navigation with direct entry to
+the three games, a join-by-code form, the category chooser, and a footer. Its radii and shadows
+use the shared shape and spatial tokens.
 
 ## 0007 whole-app rollout authority
 
@@ -34,7 +34,8 @@ This is the current authority for screen composition and semantic use of existin
 hierarchy observed on Golbha; it is not a Golbha derivative. The 25-cell Arabic honeycomb,
 physical team axes, and real match state remain the product identity.
 
-Shared routes retain light, dark, and system controls. Host, player, and audience use the 0007 spatial treatment while gameplay legibility remains theme-invariant. At desktop live play:
+Shared routes, host controls, and player screens follow the light, dark, or system setting.
+Audience displays use a theme-invariant navy stage. At desktop live play,
 vertical green score physical left, authentic board centered, horizontal crimson score physical
 right, control console below. RTL affects reading order only; it never mirrors board axes.
 
@@ -53,22 +54,9 @@ right, control console below. RTL affects reading order only; it never mirrors b
 Source-backed role/data safety outranks visual treatment. A requirement is never described as
 implemented without source or test evidence.
 
-The homepage is one core-game entry surface, not a multi-game marketplace. All nine audited
-regions are binding scope in [the homepage surface specification](design/HOME-SURFACE-SPEC.md):
-
-1. full product/navigation header;
-2. verification/reward notice;
-3. classic, fast, and custom mode shortcuts;
-4. daily challenge panel;
-5. offer/package area;
-6. featured core-game band;
-7. weekly-play discovery rail;
-8. Tahadani category catalogue for match setup; and
-9. complete product/support/legal footer.
-
-The mode and category sections are planned compositions over source-backed setup concepts.
-Unsupported account, credit, reward, daily, commerce, aggregate-analytics, legal, social, and
-store behavior stays explicitly deferred until its route, data owner, and authorization exist.
+The homepage links to **الخلية**, **إنت صح**, and **الدخيل**, and shows the supported category
+catalogue and game guides. Historical homepage research and deferred features are recorded in
+the [homepage surface specification](design/HOME-SURFACE-SPEC.md).
 
 ## Product semantics that do not move
 
@@ -77,7 +65,7 @@ store behavior stays explicitly deferred until its route, data owner, and author
   physical deep-green top/bottom vertical rails.
 - Team identity is color + axis icon + pattern + Arabic label. Color alone never carries state.
 - Real state only: no fake players, scores, questions, timers, or planned modes.
-- Mint is active/focus/ready/primary action, never a team; use existing token authority only.
+- Blue identifies primary actions. Cyan highlights links and focus on the navy shell. Team colors have their own role tokens.
 
 ## Product jobs and experience principles
 
@@ -117,12 +105,12 @@ layout.
 
 ## Visual and interaction system
 
-- IBM Plex Sans Arabic: 700 display letters/major scores, 600 controls/headings, 400–500
-  body; joined Arabic is never letter-spaced. Scores/timers use tabular figures.
-- Existing 4px scale and 24–64px section rhythm; zero-radius rectangles; circular countdown
-  only; hexagons only for game objects.
-- Bounded outlined zones and solid blocks create energy. Do not copy Golbha pills, rounded
-  cards, palette, layout, artwork, photography, language, or mechanics.
+- Cairo leads the interface stack, with genuine font weights for headings and the wordmark.
+  Joined Arabic uses normal tracking and scores and timers use tabular figures.
+- Use the existing 4px spacing scale and 24?64px section rhythm. Apply named radii and
+  shadow tokens to controls, cards, and panels. Preserve the hexagonal board geometry.
+- Use the shared navy, blue, and cyan palette. Designated gradients support the illustrated
+  homepage, audience arena lighting, and board materials.
 - Every action has rest, hover where available, focus-visible, pressed, loading, disabled
   with Arabic reason, success/error, offline, reconnecting, and stale treatment.
 - Motion: 90–120ms press, 200ms transition, one 320ms winning path. Reduced motion removes
@@ -219,8 +207,7 @@ outcome history, rather than being independent decorative counters. For the curr
 rules, a match winner is derived by either two consecutive round wins or three total round
 wins; legacy best-of counters are explicitly grandfathered behavior. Results therefore show
 real derived winner/path and round state first, question-score points second, and only
-role-authorized actions. A rematch UI is a requirement until an application-level source proves
-its behavior.
+role-authorized actions. A finished room can publish its successor so the display can follow and players can carry their seats.
 
 ## Reference synthesis decision ledger
 
@@ -259,7 +246,7 @@ provenance, limitations, and exclusions.
 ## Delivery sequence from the current codebase
 
 1. **Authority alignment:** implement the shared-shell framed-zone treatment without changing
-   existing token values; keep history-0005 gameplay flat and midnight.
+   existing token values. Keep the audience arena theme-invariant and host and player controls theme-aware.
 2. **Shared routes:** finish entry, rules, setup, lobby, wildcard, and their light/dark/system,
    loading, validation, empty, error, and authorization evidence.
 3. **Role surfaces:** complete every lifecycle and connection projection for host, player, and

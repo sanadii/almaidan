@@ -65,7 +65,16 @@ export const staticPreviewQuestionInventory: LocalQuestionInventory = {
 };
 
 /** Metadata-only local setup projection; questions and answers remain server-side. */
-export async function fetchLocalQuestionInventory(): Promise<
+let inventoryRequest: Promise<LocalQuestionInventory | undefined> | undefined;
+
+export function fetchLocalQuestionInventory() {
+  inventoryRequest ??= requestLocalQuestionInventory().finally(() => {
+    inventoryRequest = undefined;
+  });
+  return inventoryRequest;
+}
+
+async function requestLocalQuestionInventory(): Promise<
   LocalQuestionInventory | undefined
 > {
   const response = await fetch("/api/question-inventory", {

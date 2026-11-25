@@ -1,10 +1,16 @@
 import {parseHuroofRematchResult} from '../huroof-rematch-client';
+import { roomRequestError } from './room-request-error';
 import { authenticateYouTubeMedia, youtubeEmbedUrl, YOUTUBE_MEDIA_CONTENT_TYPE } from './youtube-media';
 import { CLIENT_CHALLENGE_CAPABILITY, type ChallengeMechanic, type ClientRole, type CreateRoomRequest, type GameIntent, type GameRuntimeAdapter, type JoinRoomRequest, type ProjectionEnvelope } from './contracts';
 
 export class LocalRoomCreationFailure extends Error {
   readonly definitive:boolean;
-  constructor(readonly status:number,readonly code:string){super(code);this.name='LocalRoomCreationFailure';this.definitive=status===400&&code==='LOCAL_CREATE_REQUEST_INVALID'||status===422&&code==='LOCAL_CREATE_SETUP_UNAVAILABLE';}
+  constructor(readonly status:number,readonly code:string){
+    super(code);
+    this.name='LocalRoomCreationFailure';
+    this.definitive = (status === 400 && code === 'LOCAL_CREATE_REQUEST_INVALID') ||
+      (status === 422 && ['LOCAL_CREATE_SETUP_UNAVAILABLE', 'CATEGORY_GAME_COMBINATION_INVALID', 'QUESTION_SCOPE_INSUFFICIENT_COVERAGE'].includes(code));
+  }
 }
 /** Default adapter; the Node service validates its capability token on every request. */
 export class LocalRealtimeGameAdapter implements GameRuntimeAdapter {
@@ -17,10 +23,20 @@ export class LocalRealtimeGameAdapter implements GameRuntimeAdapter {
     if(!response.ok){let code='LOCAL_CREATE_UNAVAILABLE';try{const data=await response.json();if(typeof data.error==='string'&&/^[A-Z0-9_]{1,100}$/.test(data.error))code=data.error;}catch{/* non-JSON error body: keep the generic code */}throw new LocalRoomCreationFailure(response.status,code);}
     const value=await response.json();authority.assertCurrent?.();try{parseHuroofRematchResult(value,predecessorRoomId);}catch{throw new LocalRoomCreationFailure(503,'LOCAL_CREATE_UNAVAILABLE');}this.token=value.token;return value;
   }
+  async carryRematch(predecessorRoomId: string, successorRoomId: string, capability: string, signal: AbortSignal) {
+    const response = await fetch(`/api/rooms/${encodeURIComponent(predecessorRoomId)}/carry-rematch`, {
+      method: 'POST', headers: { authorization: `Bearer ${capability}` }, cache: 'no-store', signal,
+    });
+    if (!response.ok) throw await roomRequestError(response);
+    const value = await response.json();
+    if (value?.roomId !== successorRoomId || typeof value.token !== 'string' || !value.token)
+      throw new Error('SEAT_REMOVED');
+    return { token: value.token as string };
+  }
   async getChallengeAvailability() { const response = await fetch('/api/challenge-availability', { cache: 'no-store' }); if (!response.ok) throw new Error(await response.text()); return response.json() as Promise<{ enabledMechanics: ChallengeMechanic[] }>; }
   async joinRoom(request: JoinRoomRequest) { const response = await fetch(`/api/rooms/${encodeURIComponent(request.roomCode)}/join`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...request, challenge: request.challenge ?? CLIENT_CHALLENGE_CAPABILITY }) }); if (!response.ok) throw new Error(await response.text()); const value = await response.json(); this.token = value.token; return value; }
-  async joinAudience(roomCode: string, challenge = CLIENT_CHALLENGE_CAPABILITY) { const response = await fetch(`/api/rooms/${encodeURIComponent(roomCode)}/audience`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ challenge }) }); if (!response.ok) throw new Error(await response.text()); const value = await response.json(); this.token = value.token; return value; }
-  async resumeRoom(roomId: string, challenge = CLIENT_CHALLENGE_CAPABILITY) { const response = await fetch(`/api/rooms/${encodeURIComponent(roomId)}/resume`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${this.token}` }, body: JSON.stringify({ challenge }) }); if (!response.ok) throw new Error(await response.text()); return response.json(); }
+  async joinAudience(roomCode: string, challenge = CLIENT_CHALLENGE_CAPABILITY, signal?: AbortSignal) { const response = await fetch(`/api/rooms/${encodeURIComponent(roomCode)}/audience`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ challenge }), signal }); if (!response.ok) throw await roomRequestError(response); const value = await response.json(); return value; }
+  async resumeRoom(roomId: string, challenge = CLIENT_CHALLENGE_CAPABILITY, signal?: AbortSignal) { const response = await fetch(`/api/rooms/${encodeURIComponent(roomId)}/resume`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${this.token}` }, body: JSON.stringify({ challenge }), signal }); if (!response.ok) throw await roomRequestError(response); return response.json(); }
   async submitGameIntent(roomId: string, intent: GameIntent) { const response = await fetch(`/api/rooms/${encodeURIComponent(roomId)}/intents`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${this.token}` }, body: JSON.stringify(intent) }); if (!response.ok) throw new Error(await response.text()); return response.json(); }
   async getCurrentQuestionMedia(request: { roomId: string; mediaId: string; assetSha256: string }) {
     const issued = await fetch(`/api/rooms/${encodeURIComponent(request.roomId)}/current-question-media`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${this.token}` }, body: JSON.stringify({ mediaId: request.mediaId, assetSha256: request.assetSha256 }) });

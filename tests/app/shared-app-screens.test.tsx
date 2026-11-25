@@ -50,7 +50,8 @@ it('closes the navigation with Escape and restores keyboard focus',async()=>{
 it('retains pending, failed and successful join behavior with a normalized room code',async()=>{
   let settle:(response:Response)=>void=()=>undefined;const fetchMock=vi.fn(()=>new Promise<Response>(resolve=>{settle=resolve;}));vi.stubGlobal('fetch',fetchMock);mount('join');const user=userEvent.setup();
   expect(document.title).toBe('اسم اللاعب | الميدان');await user.type(screen.getByLabelText('اسم اللاعب'),' نور ');await user.click(screen.getByRole('button',{name:'دخول الغرفة'}));expect(screen.getByRole('button',{name:'جارٍ الدخول…'})).toBeDisabled();
-  expect(fetchMock).toHaveBeenCalledWith('/api/rooms/AB12/join',expect.objectContaining({body:JSON.stringify({displayName:'نور',challenge:CLIENT_CHALLENGE_CAPABILITY})}));
+  expect(fetchMock).toHaveBeenCalledWith('/api/rooms/AB12/join',expect.objectContaining({method:'POST'}));
+  expect(JSON.parse(String(fetchMock.mock.calls[0][1]?.body))).toEqual({displayName:'نور',requestKey:expect.any(String),challenge:CLIENT_CHALLENGE_CAPABILITY});
   await act(async()=>settle(new Response('ROOM_UNAVAILABLE',{status:503})));expect(screen.getByRole('alert')).toHaveTextContent('تعذر الانضمام الآن. تحقق من اتصال الخدمة ثم حاول مرة أخرى.');expect(screen.getByRole('button',{name:'دخول الغرفة'})).toBeEnabled();
   await user.click(screen.getByRole('button',{name:'دخول الغرفة'}));await act(async()=>settle(new Response(JSON.stringify({roomId:'fixture-room',token:'fixture-token'}))));
   expect(await screen.findByRole('heading',{name:'ردهة الغرفة'})).toBeVisible();expect(JSON.parse(sessionStorage.getItem('huroof:fixture-room')!)).toEqual({token:'fixture-token',role:'player'});

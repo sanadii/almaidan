@@ -1,4 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
+import { readFile } from "node:fs/promises";
+import { runInNewContext } from "node:vm";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { expect, it } from "vitest";
@@ -16,16 +18,25 @@ it("offers five named navigation destinations with distinct standalone artwork",
   const { container } = renderHomepage();
   const navigation = screen.getByRole("navigation", { name: "اكتشفوا الميدان" });
   const destinations = [
-    ["العبوا الخلية", "game-choice-title"], ["جهّزوا المباراة", "create-match-title"],
+    ["العبوا الخلية", "/host/new?kind=huroof"], ["جهّزوا المباراة", "create-match-title"],
     ["طريقة اللعب", "how-it-works"], ["استكشفوا الفئات", "category-chooser-title"],
     ["جمعة على كل جهاز", "gathering-title"],
   ];
   const images = new Set<string>();
   for (const [name, target] of destinations) {
     const link = within(navigation).getByRole("link", { name });
-    expect(link).toHaveAttribute("href", `#${target}`);
-    expect(container.querySelector(`[id="${target}"]`)).toHaveAttribute("tabindex", "-1");
-    images.add(link.querySelector("img")!.getAttribute("src")!);
+    if (target.startsWith("/")) expect(link).toHaveAttribute("href", target);
+    else {
+      expect(link).toHaveAttribute("href", `#${target}`);
+      expect(container.querySelector(`[id="${target}"]`)).toHaveAttribute("tabindex", "-1");
+    }
+    const picture = link.querySelector("picture")!;
+    for (const source of picture.querySelectorAll("source")) {
+      expect(source.getAttribute("sizes")).toContain("(max-width: 767px) calc((100vw - 104px) / 2)");
+      expect(source.getAttribute("sizes")).toContain("(max-width: 1199px) calc((100vw - 144px) / 5 - 22px)");
+    }
+    expect(link.querySelector("svg")).toHaveAttribute("stroke", "currentColor");
+    images.add(picture.querySelector("img")!.getAttribute("src")!);
   }
   expect(within(navigation).getAllByRole("link")).toHaveLength(5);
   expect(images.size).toBe(5);
@@ -61,11 +72,36 @@ it("renders three clearly illustrative workflow phones with one 25-cell board an
 it("uses the selected full-bleed illustrated hero and dark closing around the common rail", () => {
   const { container } = renderHomepage();
   expect(container.querySelector(".maydan-hero__photo img")).toHaveAttribute("fetchpriority", "high");
-  expect(container.querySelector(".maydan-hero__photo img")).toHaveAttribute("src", "/assets/backgrounds/home-games-fantasy-v1.webp");
+  expect(container.querySelector(".maydan-hero__photo img")).toHaveAttribute("src", "/assets/backgrounds/home-games-fantasy-v2-1280.webp");
   expect(container.querySelector(".maydan-hero__scene")).toBeNull();
   expect(container.querySelector(".maydan-final")).not.toHaveClass("maydan-section");
   expect(container.querySelector(".maydan-faq__items")!.querySelectorAll("details")).toHaveLength(6);
   expect(container.querySelector(".maydan-showcase")!.compareDocumentPosition(container.querySelector(".maydan-discovery")!)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+});
+
+it("preloads only the matching AVIF hero on the homepage and reuses the mobile asset for the phone illustration", async () => {
+  const { container } = renderHomepage();
+  const script = await readFile('public/theme-bootstrap.js', 'utf8');
+  const hero = container.querySelector('.maydan-hero__photo')!;
+  const sources = Array.from(hero.querySelectorAll('source'));
+  expect(sources.map(source => source.type)).toEqual(['image/avif', 'image/webp', 'image/avif', 'image/webp']);
+  expect(sources.slice(0, 2).map(source => source.media)).toEqual(['(width < 768px)', '(width < 768px)']);
+  expect(sources.slice(0, 2).map(source => [source.getAttribute('width'), source.getAttribute('height')])).toEqual([['800', '600'], ['800', '600']]);
+  expect(container.querySelector('.maydan-phone--invite picture source')).toHaveAttribute('srcset', sources[0].srcset.split(' ')[0]);
+  for (const { pathname, width } of [{pathname: '/', width: 390}, {pathname: '/', width: 768}, {pathname: '/room/ABCDEF', width: 390}]) {
+    const isolatedDocument = document.implementation.createHTMLDocument();
+    const device = {location: {pathname}, matchMedia: (query: string) => ({matches: query === '(width < 768px)' && width < 768})};
+    runInNewContext(script, { window: device, document: isolatedDocument, localStorage });
+    const preload = isolatedDocument.head.querySelector('link[rel="preload"][as="image"]');
+    if (pathname !== '/') {
+      expect(preload).toBeNull();
+      continue;
+    }
+    const avif = sources[width < 768 ? 0 : 2];
+    expect(preload?.getAttribute('type')).toBe(avif.type);
+    expect(preload?.getAttribute('imagesrcset')).toBe(avif.srcset);
+    expect(preload?.getAttribute('imagesizes')).toBe(avif.sizes);
+  }
 });
 
 it("renders distinct full-screen illustrations and native sharing symbols without controls", () => {
@@ -86,5 +122,8 @@ it("keeps the three-line display, compact emblem and native FAQ chevrons", () =>
   expect(document.body.querySelector(".app-header .brand-mark svg, .maydan-header .maydan-emblem svg")).not.toBeNull();
   expect(container.querySelector(".maydan-final .maydan-emblem--closing svg")).not.toBeNull();
   expect(container.querySelectorAll(".maydan-faq-chevron svg")).toHaveLength(6);
+  const backToTop = screen.getByRole('link', { name: 'للأعلى' });
+  expect(backToTop).toHaveAttribute('href', '#maydan-hero-title');
+  expect(backToTop.querySelector('svg')).toHaveAttribute('stroke', 'currentColor');
   expect(document.body.querySelector(".app-header .theme-toggle summary, .maydan-header .theme-toggle summary")).toHaveAccessibleName(/المظهر/);
 });

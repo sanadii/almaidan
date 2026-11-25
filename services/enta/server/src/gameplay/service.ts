@@ -37,7 +37,7 @@ function text(value: unknown, min: number, max: number): string {
   return normalized;
 }
 export { text as parseSetupName };
-export function parseStartCommand(value: unknown): StartCommand {
+export function parseStartCommand(value: unknown, minimumPlayers = 1): StartCommand {
   const row = object(value, ["requestKey", "logicalMatchId", "setup"]);
   if (typeof row.requestKey !== "string" || !KEY.test(row.requestKey) || typeof row.logicalMatchId !== "string" || !ID.test(row.logicalMatchId)) return fail(400, "INVALID_START");
   const setup = object(row.setup, ["version", "categoryKeys", "teams", "rules"]), rules = object(setup.rules, ["questionSeconds"]);
@@ -45,7 +45,7 @@ export function parseStartCommand(value: unknown): StartCommand {
     || !Array.isArray(setup.teams) || setup.teams.length < 2 || setup.teams.length > 4 || !Number.isSafeInteger(rules.questionSeconds) || (rules.questionSeconds as number) < 5 || (rules.questionSeconds as number) > 120) return fail(400, "INVALID_SETUP");
   const teams = setup.teams.map(input => {
     const team = object(input, ["name", "players", "lifelines"]);
-    if (!Array.isArray(team.players) || team.players.length < 1 || team.players.length > 8 || !Array.isArray(team.lifelines) || team.lifelines.length !== 0) return fail(400, "INVALID_SETUP");
+    if (!Array.isArray(team.players) || team.players.length < minimumPlayers || team.players.length > 8 || !Array.isArray(team.lifelines) || team.lifelines.length !== 0) return fail(400, "INVALID_SETUP");
     return { name: text(team.name, 2, 22), players: team.players.map(player => text(player, 1, 30)), lifelines: [] as [] };
   });
   if (new Set(teams.map(team => foldSetupName(team.name))).size !== teams.length) return fail(400, "DUPLICATE_TEAM_NAME");

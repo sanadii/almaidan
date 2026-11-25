@@ -61,8 +61,11 @@ it('loads the bound image, retries HTTP/image failures, and revokes a late blob 
   const view = render(<CurrentQuestionMedia roomId="room-a" media={media} load={first} />);
   expect(await screen.findByTestId('question-media-error')).toBeVisible();
   fireEvent.click(screen.getByRole('button', { name: 'أعد المحاولة' }));
-  const image = (await screen.findByTestId('question-media')).querySelector('img')!;
-  expect(image).toHaveAttribute('src', 'blob:retry');
+  const image = await waitFor(() => {
+    const image = screen.getByTestId('question-media').querySelector('img');
+    expect(image).toHaveAttribute('src', 'blob:retry');
+    return image!;
+  });
   fireEvent.error(image);
   expect(await screen.findByTestId('question-media-error')).toBeVisible();
   let resolveLate: ((value: { url: string; expiresAt: string }) => void) | undefined;
@@ -94,8 +97,11 @@ it('renders a contained muted inline video from the currently bound blob', async
   const video = { mediaId: 'goal-quiz-2026:001:blur', assetSha256: 'c'.repeat(64), altAr: 'مقطع السؤال', type: 'video' as const, contentType: 'video/mp4' };
   const load = vi.fn().mockResolvedValue({ ...video, url: 'blob:goal', expiresAt: new Date(Date.now() + 60_000).toISOString() });
   render(<CurrentQuestionMedia roomId="room-a" media={video} load={load} />);
-  const element = (await screen.findByTestId('question-media')).querySelector('video')!;
-  expect(element).toHaveAttribute('src', 'blob:goal');
+  const element = await waitFor(() => {
+    const video = screen.getByTestId('question-media').querySelector('video');
+    expect(video).toHaveAttribute('src', 'blob:goal');
+    return video;
+  });
   expect(element).toHaveProperty('muted', true);
   expect(element).toHaveAttribute('playsinline');
 });

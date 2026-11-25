@@ -16,6 +16,6 @@ describe('EntryBoard', () => {
         expect(container.querySelectorAll(`[data-goal-axis="${axis}"][data-goal-edge="${edge}"]`)).toHaveLength(5);
       }
     }
-    expect(screen.getByLabelText('لوح الحروف: خمسة وعشرون خلية سداسية متصلة')).toBeInTheDocument();
+    expect(screen.getByLabelText('لوحة الحروف: خمسة وعشرون خلية سداسية متصلة')).toBeInTheDocument();
   });
 });

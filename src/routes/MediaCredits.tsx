@@ -1,31 +1,36 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { InternalHeader } from "../design-system/InternalHeader";
+import { StatusArt, StatusHomeLink, StatusPage } from "../design-system/StatusPanel";
 
-/** Public attribution surface for image assets whose release review permits use. */
 export function MediaCreditsRoute() {
-  useEffect(() => { document.title = 'اعتمادات الصور | الميدان'; }, []);
+  useEffect(() => { document.title = 'اعتمادات الخطوط والصور | الميدان'; }, []);
   return (
-    <main data-page-layout="wide" className="maydan-app maydan-public-page" id="main-content" tabIndex={-1}>
-      <InternalHeader />
-      <section className="maydan-credits" aria-labelledby="media-credits-title">
-        <div>
-          <p className="eyebrow">حقوق الوسائط</p>
-          <h1 id="media-credits-title">اعتمادات الصور</h1>
-          <p>تظهر هذه الصفحة لاعبي اللعبة اعتمادات الصور المستخدمة بعد اكتمال مراجعتها وإدراجها في إصدار معتمد.</p>
-          <h2>OpenMoji</h2>
-          <p>
-            بعض رسوم الصور مشتقة من <a href="https://openmoji.org/" rel="noreferrer" target="_blank">OpenMoji</a> — HfG Schwäbisch Gmünd والمساهمون،
-            بموجب <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license noreferrer" target="_blank">CC BY-SA 4.0</a>.
-          </p>
-          <p>
-            مصدر الرسوم هو <a href="https://github.com/hfg-gmuend/openmoji/tree/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg" rel="noreferrer" target="_blank">مراجعة OpenMoji المثبتة</a>.
-            حُوّلت الرسوم إلى PNG، وقد تُقص بعض الصور لتكون مناسبة للسؤال؛ هذه تعديلات على الأصل وتبقى خاضعة لشرط النسبة والمشاركة بالمثل.
-          </p>
-          <p>لكل علم أو صورة من Wikimedia Commons اعتماد وترخيص خاصان بالملف في سجل الإصدار المعتمد؛ لا يعني ظهور هذه الصفحة قبول أي ملف مرشح غير مراجع.</p>
-          <p><Link className="button button--secondary" to="/">العودة إلى البداية</Link></p>
-        </div>
+    <StatusPage title="اعتمادات الخطوط والصور" illustration={<StatusArt art="hex" />} action={<StatusHomeLink />}>
+      <section className="media-credits__group">
+        <h2 id="media-credits-fonts">الخطوط</h2>
+        <ul aria-labelledby="media-credits-fonts">
+          <li><bdi>Cairo</bdi> · <a href="/fonts/Cairo-OFL.txt" rel="license">رخصة SIL المفتوحة للخطوط 1.1</a></li>
+          <li><bdi>Instrument Sans</bdi> · <a href="/fonts/InstrumentSans-OFL.txt" rel="license">رخصة SIL المفتوحة للخطوط 1.1</a></li>
+        </ul>
       </section>
-    </main>
+      <section className="media-credits__group">
+        <h2 id="media-credits-illustrations">الرسوم التوضيحية</h2>
+        <ul aria-labelledby="media-credits-illustrations">
+          <li>رسمة جمعة الميدان وصور بطاقات الاكتشاف من رسومات الميدان.</li>
+          <li>رسوم الخلية وإنت صح والدخيل ورسوم طرق اللعب في إنت صح أُنشئت للميدان باستخدام الذكاء الاصطناعي.</li>
+        </ul>
+      </section>
+      <section className="media-credits__group">
+        <h2 id="media-credits-questions">صور الأسئلة</h2>
+        <ul aria-labelledby="media-credits-questions">
+          <li>
+            <a href="https://openmoji.org/" rel="noreferrer" target="_blank">OpenMoji</a> من <bdi>HfG Schwäbisch Gmünd</bdi> والمساهمين،
+            برخصة <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license noreferrer" target="_blank">CC BY-SA 4.0</a>.
+            حُوّلت الرسوم إلى PNG، وقد تُقص لتناسب السؤال. تُشارك هذه النسخ بالرخصة نفسها. <a href="https://github.com/hfg-gmuend/openmoji/tree/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg" rel="noreferrer" target="_blank">الرسوم الأصلية</a>.
+          </li>
+          <li>صور أعمال فنية مفتوحة بترخيص <bdi>CC0</bdi> من <a href="https://www.metmuseum.org/hubs/open-access">متحف المتروبوليتان للفنون</a> و<a href="https://www.clevelandart.org/open-access">متحف كليفلاند للفنون</a>.</li>
+          <li>رسوم تشكيلات كرة القدم من الميدان. تُنسب صور ويكيميديا كومنز إلى أصحابها حسب رخصة كل ملف في سجل الإصدار.</li>
+        </ul>
+      </section>
+    </StatusPage>
   );
 }

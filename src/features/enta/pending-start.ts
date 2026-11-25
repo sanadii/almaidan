@@ -10,6 +10,7 @@ import { pendingOccupancy, type PendingIntent } from './pending-intent';
 
 const serialized = (intent: PendingIntent): string => JSON.stringify(intent.version === 2 ? intent.command : intent);
 const mismatch = (): never => { throw new EntaClientError('PENDING_COMMIT_MISMATCH'); };
+const competingRematch = ['ROOM_REMATCH_ALREADY_STARTED', 'ROOM_REMATCH_IN_PROGRESS'];
 
 /** Online POST completion only. This captures client dispatch context, not a server receipt.
  * No detached projection or caller-supplied Game ID can authorize storage removal. */
@@ -36,6 +37,12 @@ export async function completePendingStart(user: Pick<User, 'uid' | 'getIdToken'
     assertCaptured();
     return token;
   } });
+  const retireRematchRejection = (error: unknown, allowed: string[]) => {
+    if (!isAlmaidanLocalDevelopment || !(error instanceof EntaClientError) || error.status !== 409 || !allowed.includes(error.code)) return;
+    assertCaptured();
+    try { sessionStorage.removeItem(storageKey); }
+    catch { throw new EntaClientError('PENDING_INTENT_STORAGE_UNAVAILABLE'); }
+  };
   let gameId: string;
   if (intent.version === 6) {
     let response: unknown;
@@ -44,11 +51,7 @@ export async function completePendingStart(user: Pick<User, 'uid' | 'getIdToken'
       // This local endpoint rejects exhaustion before create, within its atomic
       // transaction. Only that definite rejection can retire this exact intent;
       // timeouts, malformed responses and other failures remain retryable.
-      if (isAlmaidanLocalDevelopment && error instanceof EntaClientError && error.code === 'REMATCH_CONTENT_EXHAUSTED' && error.status === 409) {
-        assertCaptured();
-        try { sessionStorage.removeItem(storageKey); }
-        catch { throw new EntaClientError('PENDING_INTENT_STORAGE_UNAVAILABLE'); }
-      }
+      retireRematchRejection(error, ['REMATCH_CONTENT_EXHAUSTED', ...competingRematch]);
       throw error;
     }
     const envelope=verifyLocalRematchCompletion(response,intent);
@@ -56,7 +59,10 @@ export async function completePendingStart(user: Pick<User, 'uid' | 'getIdToken'
     if(match.id!==intent.command.logicalMatchId||match.executionFormat!==intent.executionFormat)throw new EntaClientError('MALFORMED_RESPONSE');
     gameId=match.id;
   } else if (intent.version === 2 || intent.version === 3) {
-    const value = await requestEnta(intent.endpoint, actor, signal, intent.command, assertCaptured);
+    const value = await requestEnta(intent.endpoint, actor, signal, intent.command, assertCaptured).catch(error => {
+      if (intent.version === 3 && intent.startKind === 'REMATCH') retireRematchRejection(error, competingRematch);
+      throw error;
+    });
     if (!value || typeof value !== 'object' || Array.isArray(value) || Object.keys(value).length !== 2 || !Object.hasOwn(value, 'match') || !Object.hasOwn(value, 'idempotent') || typeof (value as { idempotent?: unknown }).idempotent !== 'boolean') throw new EntaClientError('MALFORMED_RESPONSE');
     const match = matchEnvelope(value);
     if (match.mode !== intent.mode) throw new EntaClientError('MALFORMED_RESPONSE');
@@ -109,4 +115,5 @@ export async function completePendingStart(user: Pick<User, 'uid' | 'getIdToken'
   return { id: gameId, ...(roomCode ? {roomCode} : {}) };
 }
 /** True when completion retired the pending intent with a definite reason. */
-export const pendingStartRetired = (error: unknown): boolean => error instanceof EntaClientError && error.code === 'ROOM_REQUIRES_NEW_MATCH' && error.status === 409;
+export const pendingStartRetired = (error: unknown): boolean => error instanceof EntaClientError && error.status === 409 &&
+  (error.code === 'ROOM_REQUIRES_NEW_MATCH' || isAlmaidanLocalDevelopment && competingRematch.includes(error.code));

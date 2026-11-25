@@ -11,7 +11,12 @@
 .maydan-rules-page .game-guide__section-heading h2 { margin-block: 0 8px; font-size: clamp(1.5rem, 3vw, 2rem); }
 .maydan-rules-page :is(.game-guide__start-steps, .game-guide__steps) { list-style: none; counter-reset: guide-step; display: grid; gap: 12px; margin: 0; padding: 0; }
 .maydan-rules-page .game-guide__start-steps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.maydan-rules-page .game-guide__steps--grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.maydan-rules-page .game-guide__steps--grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, max(13rem, 34%)), 1fr)); }
+.maydan-rules-page #rules-imposter { container-type: inline-size; }
+.maydan-rules-page #rules-imposter .game-guide__steps--grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, max(13rem, 26%)), 1fr)); }
+@container (width < 40.5rem) {
+  .maydan-rules-page #rules-imposter .game-guide__steps--grid > li:last-child { grid-column: 1 / -1; }
+}
 .maydan-rules-page :is(.game-guide__start-steps, .game-guide__steps) > li { counter-increment: guide-step; display: grid; grid-template-columns: 36px minmax(0, 1fr); align-content: start; gap: 4px 12px; padding: 16px; min-inline-size: 0; border: 1px solid var(--app-border); border-radius: 14px; background: var(--app-subtle); }
 .maydan-rules-page :is(.game-guide__start-steps, .game-guide__steps) > li::before { content: counter(guide-step); grid-row: 1 / span 2; display: grid; place-items: center; inline-size: 36px; block-size: 36px; border-radius: 10px; background: #175bc4; color: #fff; font-weight: 700; }
 .maydan-rules-page :is(.game-guide__start-steps, .game-guide__steps) strong { color: var(--app-ink); }
@@ -26,12 +31,12 @@
 .maydan-rules-page .game-guide__details p { padding-block: 8px; line-height: 1.9; }
 .maydan-rules-page .game-guide__note { margin-block-start: 20px; padding: 16px; border-inline-start: 4px solid var(--app-accent); background: var(--app-subtle); border-radius: 8px; }
 .maydan-rules-page .game-guide__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-block-start: 24px; }
-.maydan-rules-page :is(.game-guide__nav a, .game-guide__details summary):focus-visible { outline: 3px solid var(--app-focus); outline-offset: 3px; }
+.maydan-rules-page :is(.game-guide__nav a, .game-guide__details summary):focus-visible { outline: 3px solid var(--focus-ring-color); outline-offset: 3px; }
 @media (max-width: 61rem) { .maydan-rules-page .game-guide__start-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 40rem) { .maydan-rules-page .game-guide { gap: 20px; padding-block: 24px 48px; } .maydan-rules-page :is(.game-guide__start-steps, .game-guide__steps--grid, .game-guide__board-layout) { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 40rem) { .maydan-rules-page .game-guide { gap: 20px; padding-block: 24px 48px; } .maydan-rules-page :is(.game-guide__start-steps, .game-guide__board-layout) { grid-template-columns: minmax(0, 1fr); } }
 .maydan-rules-page .game-guide__board .game-board-wrap { inline-size: 100%; margin: 0; }
 .maydan-rules-page .game-guide__board .game-board { inline-size: 100%; max-inline-size: 100%; }
 .maydan-rules-page .game-guide__board .game-board__overlays { display: none; }
 
 
-.maydan-rules-page .game-guide :is(.game-guide__intro > p, .game-guide__section-heading > p, .game-guide__details p) { max-inline-size: var(--page-prose-size); }
+.maydan-rules-page .game-guide :is(.game-guide__intro > p, .game-guide__section-heading p, .game-guide__details p) { max-inline-size: var(--page-prose-size); }

@@ -240,12 +240,12 @@ export function PublishedQuestionDetail({ value }: { value: Row }) {
       <div><dt>الصعوبة</dt><dd>{typeof value.difficulty === 'string' && value.difficulty ? value.difficulty : 'غير مخزنة في هذا الإصدار'}</dd></div>
     </dl>
     <section className="admin-published-panel admin-published-panel--question" aria-labelledby="admin-published-question-heading">
-      <div className="admin-published-panel__heading"><span className="admin-published-panel__number" aria-hidden="true">١</span><h2 id="admin-published-question-heading">السؤال</h2></div>
+      <div className="admin-published-panel__heading"><span className="admin-published-panel__number" aria-hidden="true">1</span><h2 id="admin-published-question-heading">السؤال</h2></div>
       <p className="admin-published-panel__copy">{text(value.promptAr)}</p>
       {questionMedia?.mediaId ? <PublishedMediaPreview key={`${releaseId}:${questionId}:question:${String(questionMedia.mediaId)}`} media={questionMedia} variant="question" questionId={questionId} releaseId={releaseId} /> : null}
     </section>
     <section className="admin-published-panel admin-published-panel--answer" aria-labelledby="admin-published-answer-heading">
-      <div className="admin-published-panel__heading"><span className="admin-published-panel__number" aria-hidden="true">٢</span><h2 id="admin-published-answer-heading">الإجابة</h2></div>
+      <div className="admin-published-panel__heading"><span className="admin-published-panel__number" aria-hidden="true">2</span><h2 id="admin-published-answer-heading">الإجابة</h2></div>
       <p className="admin-published-panel__copy">{text(value.canonicalAnswer)}</p>
       {aliases.length ? <p className="admin-published-aliases"><strong>بدائل مقبولة</strong> {aliases.map(text).join('، ')}</p> : null}
       {answerMedia?.mediaId ? <PublishedMediaPreview key={`${releaseId}:${questionId}:answer:${String(answerMedia.mediaId)}`} media={answerMedia} variant="answer" questionId={questionId} releaseId={releaseId} /> : null}

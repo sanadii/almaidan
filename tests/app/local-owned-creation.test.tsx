@@ -1,11 +1,11 @@
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
-import {MemoryRouter,Route,Routes} from 'react-router-dom';
+import {MemoryRouter,Route,Routes,useLocation,useNavigate} from 'react-router-dom';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {ThemeProvider} from '../../src/app/ThemeProvider';
-const mocks=vi.hoisted(()=>({create:vi.fn(),token:vi.fn(async()=>'demo-token')}));
+const mocks=vi.hoisted(()=>({create:vi.fn(),token:vi.fn(async()=>'demo-token'),signedIn:true}));
 vi.mock('../../src/features/game/runtime',()=>({gameRuntime:{kind:'local',createRoom:mocks.create}}));
 vi.mock('../../src/lib/local-development',()=>({isAlmaidanLocalDevelopment:true,isAlmaidanRealContent:true,localContentNote:'محتوى محلي'}));
-vi.mock('../../src/features/auth/auth-context',()=>({useFirebaseAuth:()=>({user:{uid:'owner-one',isAnonymous:false,getIdToken:mocks.token},status:'ready'})}));
+vi.mock('../../src/features/auth/auth-context',()=>({useFirebaseAuth:()=>({user:mocks.signedIn?{uid:'owner-one',isAnonymous:false,getIdToken:mocks.token}:null,status:'ready'})}));
 import {HostNewRoute} from '../../src/routes/GameRoutes';
 import {beginOwnerProvider,observeProviderOwner,invalidateProviderOwner,invalidateOwner} from '../../src/features/enta/auth-epoch';
 import {localCreationKey,parseLocalCreationPending} from '../../src/features/game/runtime/local-creation-pending';
@@ -15,12 +15,84 @@ const uid='owner-one';let lease:ReturnType<typeof beginOwnerProvider>;
 const inventory=(count=2)=>({source:'local_saved_release',huroofAvailable:true,recommendedHuroofCategoryIds:['category-0'],categories:Array.from({length:count},(_,i)=>({id:`category-${i}`,labelAr:`فئة محفوظة ${i}`,sourceOnly:false,questionCount:i<520?30:5,sourceQuestionCount:30,heldQuestionCount:0,huroofQuestionCount:i<520?30:0,categoryGameEligible:i<520,availability:i<520?'ready':'insufficient_questions',...(i>=520?{unavailableReason:'لا توجد إجابات مختلفة كافية لإنشاء اللوحة'}:{})}))});
 const pending=()=>({uid,request:{requestKey:'owned-request-01',displayName:'المضيف',demo:true,gameKind:'huroof',modality:'classic',mode:'classic',questionSeconds:20,opponentSeconds:10,teams:{horizontal:'الأحمر',vertical:'الأخضر'},categories:['category-0'],labelledColours:false,mapPresentation:'ordinary'}});
 function mount(){return render(<ThemeProvider><MemoryRouter initialEntries={['/host/new?demo=true&category=category-0']}><Routes><Route path="/host/new" element={<HostNewRoute/>}/><Route path="/room/:code/lobby" element={<p>الغرفة جاهزة</p>}/></Routes></MemoryRouter></ThemeProvider>);}
-beforeEach(()=>{lease=beginOwnerProvider();observeProviderOwner(lease,uid);sessionStorage.clear();localStorage.clear();mocks.create.mockReset();mocks.token.mockReset().mockResolvedValue('demo-token');vi.spyOn(globalThis,'fetch').mockImplementation(async()=>new Response(JSON.stringify(inventory())));});
+beforeEach(()=>{lease=beginOwnerProvider();observeProviderOwner(lease,uid);sessionStorage.clear();localStorage.clear();mocks.signedIn=true;mocks.create.mockReset();mocks.token.mockReset().mockResolvedValue('demo-token');vi.spyOn(globalThis,'fetch').mockImplementation(async()=>new Response(JSON.stringify(inventory())));});
 afterEach(()=>{cleanup();invalidateOwner();vi.restoreAllMocks();});
 async function ready(){const category=await screen.findByRole('button',{name:/^فئة محفوظة 0 —/});if(category.getAttribute('aria-pressed')!=='true')fireEvent.click(category);expect(screen.getByTestId('create-room')).toBeEnabled();}
 
-it('shows all530 saved categories while ten insufficient categories cannot be selected',async()=>{
- vi.mocked(fetch).mockImplementation(async()=>new Response(JSON.stringify(inventory(530))));mount();await ready();await waitFor(()=>expect(document.querySelectorAll('.category-choice')).toHaveLength(530));const buttons=[...document.querySelectorAll<HTMLButtonElement>('.category-choice')];expect(buttons.filter(b=>b.getAttribute('aria-disabled')==='true')).toHaveLength(10);expect(screen.getByText('فئة محفوظة 529')).toBeInTheDocument();fireEvent.click(buttons[529]);expect(buttons[529]).toHaveAttribute('aria-pressed','false');expect(buttons[529]).toHaveTextContent('لا تحتوي على أسئلة بإجابات تبدأ بحروف اللوح');
+it('shows the 520 playable categories first and reveals ten unavailable cards under one note',async()=>{
+  vi.mocked(fetch).mockImplementation(async()=>new Response(JSON.stringify(inventory(530))));
+  mount();
+  await ready();
+  expect(document.querySelectorAll('.category-choice')).toHaveLength(520);
+  expect(screen.queryByText('فئة محفوظة 529')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button',{name:'أظهر غير المتاحة (10)'}));
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.category-choice');
+  expect(buttons).toHaveLength(530);
+  expect([...buttons].filter(button=>button.disabled)).toHaveLength(10);
+  expect(buttons[529]).toHaveAccessibleName('فئة محفوظة 529 — غير متاحة');
+  expect(screen.getAllByText('هالفئات ما فيها أسئلة كافية للوح اللي اخترتوه.')).toHaveLength(1);
+  fireEvent.click(screen.getByRole('button',{name:'أخفِ غير المتاحة'}));
+  expect(screen.queryByText('فئة محفوظة 529')).not.toBeInTheDocument();
+});
+
+it('keeps an inventory-only category through loading and the sign-in return', async () => {
+  mocks.signedIn = false;
+  function SignIn() {
+    const navigate = useNavigate();
+    const returnTo = new URLSearchParams(useLocation().search).get('returnTo')!;
+    return <button data-return-to={returnTo} onClick={() => { mocks.signedIn = true; navigate(returnTo); }}>تسجيل الدخول</button>;
+  }
+  let resolveInventory!: (response: Response) => void;
+  vi.mocked(fetch).mockImplementationOnce(() => new Promise(resolve => { resolveInventory = resolve; }));
+  render(<ThemeProvider><MemoryRouter initialEntries={['/host/new?kind=categories&category=category-0']}><Routes>
+    <Route path="/host/new" element={<HostNewRoute />} />
+    <Route path="/login" element={<SignIn />} />
+  </Routes></MemoryRouter></ThemeProvider>);
+  expect(screen.getByTestId('create-room')).toBeDisabled();
+  await act(async () => resolveInventory(new Response(JSON.stringify(inventory()))));
+  expect(await screen.findByRole('button',{name:'فئة محفوظة 0 — محددة'})).toBeVisible();
+  expect(screen.getByText('اختاروا فئة ثانية على الأقل لتكتمل اللوحة.')).toBeVisible();
+  fireEvent.click(screen.getByTestId('create-room'));
+  const signIn = await screen.findByRole('button', { name: 'تسجيل الدخول' });
+  expect(signIn.getAttribute('data-return-to')).toContain('category=category-0');
+  fireEvent.click(signIn);
+  expect(await screen.findByRole('button',{name:'فئة محفوظة 0 — محددة'})).toBeVisible();
+  expect(mocks.create).not.toHaveBeenCalled();
+});
+
+it('updates the live answer coverage and clears a definitive rejection when another category is picked', async () => {
+  vi.mocked(fetch).mockImplementation(async (url) => {
+    if (String(url).startsWith('/api/question-inventory/coverage?')) {
+      const selected = new URL(String(url), 'http://example.test').searchParams.getAll('category');
+      return Response.json({ sufficient: selected.length >= 2 });
+    }
+    return Response.json(inventory());
+  });
+  mocks.create.mockRejectedValueOnce(new LocalRoomCreationFailure(422, 'QUESTION_SCOPE_INSUFFICIENT_COVERAGE'))
+    .mockResolvedValueOnce({roomId:'owned-room',roomCode:'ABCDEF',token:'host-cap'});
+  mount();
+  await ready();
+  expect(await screen.findByText('تحتاجون فئات أكثر')).toBeVisible();
+  fireEvent.click(screen.getByTestId('create-room'));
+  expect(await screen.findByRole('alert')).toHaveTextContent('الفئات المختارة لا تكفي لتعبئة اللوح.');
+  expect(screen.getByRole('searchbox', { name: 'تصفية الفئات' })).toHaveFocus();
+  expect(sessionStorage.getItem(localCreationKey(uid))).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: 'فئة محفوظة 1 — أضف إلى الاختيار' }));
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  const sufficient = await screen.findByText('أسئلة كافية');
+  expect(sufficient).toBeVisible();
+  expect(sufficient.querySelector('svg')).toHaveAttribute('stroke', 'currentColor');
+  fireEvent.click(screen.getByTestId('create-room'));
+  expect(await screen.findByText('الغرفة جاهزة')).toBeVisible();
+  expect(mocks.create.mock.calls[1][0].categories).toEqual(['category-0', 'category-1']);
+});
+
+it('randomly fills the remaining category board choice with an available category', async () => {
+  render(<ThemeProvider><MemoryRouter initialEntries={['/host/new?kind=categories&category=category-0']}><HostNewRoute /></MemoryRouter></ThemeProvider>);
+  expect(await screen.findByRole('button', { name: 'فئة محفوظة 0 — محددة' })).toBeVisible();
+  fireEvent.click(screen.getByRole('button', { name: 'اختاروا لنا عشوائياً' }));
+  expect(screen.getByRole('button', { name: 'فئة محفوظة 1 — محددة' })).toBeVisible();
+  expect(screen.getByText('فئة محفوظة 0، فئة محفوظة 1', { selector: 'dd' })).toBeVisible();
 });
 it.each(['{broken',JSON.stringify({...pending(),uid:'someone-else'}),JSON.stringify({...pending(),request:{...pending().request,requestKey:'bad'}})])('blocks unreadable saved creation without overwriting it',async raw=>{
  sessionStorage.setItem(localCreationKey(uid),raw);mount();await screen.findByText(/تعذر قراءة طلب إنشاء الغرفة المحفوظ/);expect(screen.getByTestId('create-room')).toBeDisabled();fireEvent.click(screen.getByTestId('create-room'));expect(mocks.create).not.toHaveBeenCalled();expect(sessionStorage.getItem(localCreationKey(uid))).toBe(raw);

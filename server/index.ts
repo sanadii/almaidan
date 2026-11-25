@@ -12,7 +12,7 @@ import type { ChallengeDefinitionEnvelope } from "../src/features/game/challenge
 import { isLocalAdminPath, isLoopbackAddress } from "./local-admin-guard.js";
 import { loadLocalFirestoreQuestionSource, type LocalRuntimeQuestionSource } from "./local-firestore-question-source.js";
 import { loadLocalSqliteImportQuestionSource } from "./local-sqlite-import-question-source.js";
-import { loadLocalReleaseQuestionSource, retainedLocalReleaseSources, localRoomSecret, localRealChallengeDefinitions } from './local-release-question-source.js';
+import { currentLocalReleaseQuestionSource, retainedLocalReleaseSources, localRoomSecret, localRealChallengeDefinitions } from './local-release-question-source.js';
 import {
   isTrustedImportReviewRequest,
   localImportReviewDetail,
@@ -55,7 +55,7 @@ const localChallengeFixtureSource: LocalRuntimeQuestionSource | undefined = loca
     })()
   : undefined;
 const localQuestionSource =
-  (localSavedReleaseMode ? await loadLocalReleaseQuestionSource() : undefined) ?? localChallengeFixtureSource ??
+  (localSavedReleaseMode ? await currentLocalReleaseQuestionSource() : undefined) ?? localChallengeFixtureSource ??
   localFirestoreSource ??
   (localSqliteImportMode
     ? await loadLocalSqliteImportQuestionSource({
@@ -103,11 +103,12 @@ const imposterService = localSavedReleaseMode && process.env.ALMAIDAN_LOCAL_ONLY
   ? new LocalImposterService(join(dirname(process.env.GAME_DB_PATH), 'imposter.sqlite'))
   : undefined;
 let sqliteRefresh = Promise.resolve();
-const refreshLocalSqliteQuestionSource = () => {
-  if (!localSqliteImportMode && !localSavedReleaseMode) return;
+const refreshLocalQuestionSource = () => {
+  if (localSavedReleaseMode) return currentLocalReleaseQuestionSource().then((source) => service.replaceLocalQuestionSource(source));
+  if (!localSqliteImportMode) return;
   const refresh = sqliteRefresh.then(async () => {
     service.replaceLocalQuestionSource(
-      localSavedReleaseMode ? await loadLocalReleaseQuestionSource() : await loadLocalSqliteImportQuestionSource({
+      await loadLocalSqliteImportQuestionSource({
         dbPath: process.env.GAME_DB_PATH,
       }),
     );
@@ -184,7 +185,7 @@ const server = createServer(async (request, response) => {
       if (request.method === 'POST' && url.pathname === '/api/imposter/rooms') {
         await localVerifiedHost(request.headers.authorization);
         const body=await json(request,4096);
-        const value=imposterService.create(typeof body.displayName === 'string' ? body.displayName : '');
+        const value=imposterService.create(typeof body.displayName === 'string' ? body.displayName : '',body.categories);
         response.writeHead(200,{'content-type':'application/json','cache-control':'no-store'}).end(JSON.stringify(value)); return;
       }
       if (request.method === 'POST' && parts.length===4 && parts[2]==='resolve') {
@@ -266,7 +267,7 @@ const server = createServer(async (request, response) => {
     ) {
       if (!trustedLocalDbRequest(request))
         throw new Error("LOCAL_DB_ORIGIN_REQUIRED");
-      await refreshLocalSqliteQuestionSource();
+      await refreshLocalQuestionSource();
       const inventory = service.questionInventory();
       if (!inventory) throw new Error("LOCAL_DB_SOURCE_DISABLED");
       response
@@ -275,6 +276,25 @@ const server = createServer(async (request, response) => {
           "cache-control": "no-store",
         })
         .end(JSON.stringify(inventory));
+      return;
+    }
+    if (request.method === "GET" && url.pathname === "/api/question-inventory/coverage") {
+      if (!trustedLocalDbRequest(request)) throw new Error("LOCAL_DB_ORIGIN_REQUIRED");
+      const kind = url.searchParams.get("kind");
+      const categories = url.searchParams.getAll("category");
+      const challenge = url.searchParams.get("challenge");
+      const mapPresentation = url.searchParams.get("mapPresentation") ?? "ordinary";
+      if (
+        (kind !== "huroof" && kind !== "categories") || categories.length > 10 ||
+        categories.some((id) => !/^[A-Za-z0-9:._-]{1,128}$/.test(id)) ||
+        (challenge !== null && challenge !== "1") ||
+        (mapPresentation !== "ordinary" && mapPresentation !== "interactive")
+      ) throw new Error("QUESTION_COVERAGE_REQUEST_INVALID");
+      await refreshLocalQuestionSource();
+      const sufficient = service.questionCoverage(kind, categories, challenge === "1", mapPresentation);
+      if (sufficient === undefined) throw new Error("LOCAL_DB_SOURCE_DISABLED");
+      response.writeHead(200, { "content-type": "application/json", "cache-control": "no-store" })
+        .end(JSON.stringify({ sufficient }));
       return;
     }
     if (request.method === "GET" && url.pathname === "/api/challenge-availability") {
@@ -314,7 +334,7 @@ const server = createServer(async (request, response) => {
         .end(payload);
       return;
     }
-    const ownerAccessPath=url.pathname.match(/^\/api\/rooms\/([a-f0-9-]{36})\/owner-access$/i);
+    const ownerAccessPath=url.pathname.match(/^\/api\/rooms\/([a-z0-9-]{6,36})\/owner-access$/i);
     if(request.method==='POST'&&ownerAccessPath&&localSavedReleaseMode){
       if(!trustedLocalDbRequest(request))throw new LocalRoomCreationError(403,'LOCAL_DB_ORIGIN_REQUIRED');
       const access=await localOwnerRoomAccess(service,request.headers.authorization,ownerAccessPath[1]);
@@ -333,10 +353,30 @@ const server = createServer(async (request, response) => {
       const result=await createLocalOwnedRematch(service,request.headers.authorization,typeof request.headers['x-almaidan-host-capability']==='string'?request.headers['x-almaidan-host-capability']:undefined,parts[2],await json(request,4096));
       response.writeHead(result.idempotent?200:201,{'content-type':'application/json','cache-control':'no-store'}).end(JSON.stringify(result));return;
     }
+    if(localSavedReleaseMode&&request.method==='POST'&&parts.length===4&&parts[0]==='api'&&parts[1]==='rooms'&&parts[3]==='carry-rematch'){
+      if(!trustedLocalDbRequest(request))throw new LocalRoomCreationError(403,'LOCAL_DB_ORIGIN_REQUIRED');
+      const authorization=request.headers.authorization;
+      if(!authorization?.startsWith('Bearer '))throw new LocalRoomCreationError(403,'UNAUTHORIZED');
+      const result=service.carryRematch(parts[2],authorization.slice(7));
+      response.writeHead(200,{'content-type':'application/json','cache-control':'no-store'}).end(JSON.stringify(result));return;
+    }
+    if (request.method === 'GET' && parts.length === 4 &&
+        parts[0] === 'api' && parts[1] === 'rooms' && parts[3] === 'exists') {
+      if (localImportedSourceMode && !trustedLocalDbRequest(request))
+        throw new Error('LOCAL_DB_ORIGIN_REQUIRED');
+      const lookup = service.store.lookupRoomCode(parts[2]);
+      if (lookup.exists && lookup.finished) {
+        response.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' })
+          .end(JSON.stringify(lookup));
+      } else {
+        response.writeHead(lookup.exists ? 204 : 404, { 'cache-control': 'no-store' }).end();
+      }
+      return;
+    }
     if (request.method === "POST" && url.pathname === "/api/rooms") {
       if (localImportedSourceMode && !trustedLocalDbRequest(request))
         throw new Error("LOCAL_DB_ORIGIN_REQUIRED");
-      await refreshLocalSqliteQuestionSource();
+      await refreshLocalQuestionSource();
       const body = await json(request,localSavedReleaseMode?32768:Infinity);
       const creation=localSavedReleaseMode
         ? await createLocalOwnedRoom(service,request.headers.authorization,body)
@@ -359,10 +399,11 @@ const server = createServer(async (request, response) => {
         parts[2],
         typeof body.displayName === "string" ? body.displayName : undefined,
         body.challenge,
+        body.requestKey,
       );
       broadcast(joined.roomId);
       response
-        .writeHead(200, { "content-type": "application/json" })
+        .writeHead(200, { "content-type": "application/json", "cache-control": "no-store" })
         .end(JSON.stringify(joined));
       return;
     }
@@ -509,10 +550,13 @@ const server = createServer(async (request, response) => {
     }
     response.writeHead(404).end();
   } catch (error) {
+    const code = error instanceof Error ? error.message : 'BAD_REQUEST';
     if (!response.headersSent)
       response
         .writeHead(
-          error instanceof LocalRoomCreationError ? error.status : localSavedReleaseMode&&request.method==='POST'&&request.url?.split('?')[0]==='/api/rooms'?503 : String(error).includes("UNAUTHORIZED") ||
+          error instanceof LocalRoomCreationError ? error.status : localSavedReleaseMode&&request.method==='POST'&&request.url?.split('?')[0]==='/api/rooms'?503 : code === 'ROOM_NOT_FOUND' ? 404 :
+            code === 'MATCH_COMPLETE' || code === 'DUPLICATE_DISPLAY_NAME' || code === 'JOIN_REQUEST_KEY_CONFLICT' ? 409 :
+            code === 'UNAUTHORIZED' || code === 'SEAT_REMOVED' ||
             String(error).includes("FORBIDDEN") ||
             String(error).includes("LOCAL_ONLY_") ||
             String(error).includes("LOCAL_ADMIN_REQUEST_REQUIRED") ||
@@ -523,7 +567,7 @@ const server = createServer(async (request, response) => {
         )
         .end(
           JSON.stringify({
-            error: error instanceof Error ? error.message : "BAD_REQUEST",
+            error: code,
           }),
         );
     else response.destroy(error instanceof Error ? error : undefined);
@@ -549,6 +593,8 @@ type Connection = {
 };
 const connections = new Map<string, Set<Connection>>();
 const presenceSeen = new Map<string, Map<string, number>>();
+service.playerHasConnectedTransport = (roomId, uid) => [...(connections.get(roomId) ?? [])]
+  .some(connection => connection.role === 'player' && connection.uid === uid && connection.ws.readyState === connection.ws.OPEN);
 const broadcast = (roomId: string) => {
   // Each recipient is projected separately; one projection failure must not starve the others
   // (or turn an already-committed HTTP intent into an error response).
@@ -689,6 +735,7 @@ function handleUpgrade(request: import("node:http").IncomingMessage, socket: imp
     roomConnections.add(connection);
     connections.set(roomId, roomConnections);
     if (actor.role === "player") {
+      service.playerTransportObserved(roomId, actor.uid);
       const seen = presenceSeen.get(roomId) ?? new Map<string, number>();
       seen.set(actor.uid, Date.now());
       presenceSeen.set(roomId, seen);
@@ -740,9 +787,10 @@ function handleUpgrade(request: import("node:http").IncomingMessage, socket: imp
 }
 const port = Number(process.env.PORT ?? 8787);
 const host = process.env.GAME_HOST ?? "127.0.0.1";
-server.listen(port, host, () =>
-  console.log(`Huroof local authority listening on ${host}:${port}`),
-);
+server.listen(port, host, () => {
+  const address = server.address();
+  console.log(`Huroof local authority listening on ${host}:${typeof address === 'object' && address ? address.port : port}`);
+});
 const close = () => {
   clearInterval(imposterTick);
   imposterSockets.clients.forEach(client => client.close());

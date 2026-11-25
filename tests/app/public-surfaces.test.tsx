@@ -23,8 +23,8 @@ it('retains selection, removable-tray focus, mode keyboard control and selected 
  const classic=screen.getByRole('radio',{name:'كلاسيكية'});classic.focus();await user.keyboard('{ArrowLeft}');expect(screen.getByRole('radio',{name:'سريعة'})).toHaveFocus();expect(screen.getByRole('radio',{name:'سريعة'})).toHaveAttribute('aria-checked','true');
 });
 it('keeps the two-category requirement and sends the existing create payload/capability',async()=>{
- mount(<HostNewRoute/>,'?kind=categories');const user=userEvent.setup();await screen.findByRole('button',{name:/معلومات عامة/,pressed:false});await user.click(screen.getByTestId('create-room'));expect(screen.getByText('لإنشاء لعبة الفئات، اختر فئتين مختلفتين على الأقل من الفئات المختارة.')).toBeVisible();expect(screen.getByRole('searchbox',{name:'تصفية الفئات'})).toHaveFocus();
- await user.click(screen.getByRole('button',{name:/معلومات عامة/,pressed:false}));await user.click(screen.getByRole('button',{name:/عالم الحيوان/,pressed:false}));await user.click(screen.getByTestId('create-room'));expect(await screen.findByRole('heading',{name:'ردهة الاختبار'})).toBeVisible();expect(runtimeMock.createRoom).toHaveBeenCalledWith(expect.objectContaining({gameKind:'categories',categories:['tahadani-006','tahadani-007'],demo:true}),undefined);expect(JSON.parse(sessionStorage.getItem('huroof:v-test-room')!)).toEqual({token:'test-host-token',role:'host'});
+ mount(<HostNewRoute/>,'?kind=categories');const user=userEvent.setup();await user.click(await screen.findByRole('button',{name:/معلومات عامة/,pressed:false}));await user.click(screen.getByTestId('create-room'));expect(screen.getByRole('alert')).toHaveTextContent('الفئات المختارة لا تكفي لتعبئة اللوح.');expect(screen.getByRole('searchbox',{name:'تصفية الفئات'})).toHaveFocus();
+ await user.click(screen.getByRole('button',{name:/عالم الحيوان/,pressed:false}));await user.click(screen.getByTestId('create-room'));expect(await screen.findByRole('heading',{name:'ردهة الاختبار'})).toBeVisible();expect(runtimeMock.createRoom).toHaveBeenCalledWith(expect.objectContaining({gameKind:'categories',categories:['tahadani-006','tahadani-007'],demo:true}),undefined);expect(JSON.parse(sessionStorage.getItem('huroof:v-test-room')!)).toEqual({token:'test-host-token',role:'host'});
 });
 it('keeps static setup disabled while clearly labeling preview inventory',()=>{
  vi.stubEnv('VITE_STATIC_PREVIEW','true');mount(<HostNewRoute/>);expect(screen.getByTestId('create-room')).toBeDisabled();expect(screen.getByText('يعرض هذا الفهرس محتوى معاينة الواجهة فقط، ولا يثبت توفره للعب المنشور.')).toBeVisible();expect(fetchMock).not.toHaveBeenCalled();
@@ -40,8 +40,9 @@ it('guides shared setup and preserves each game’s rules and availability', asy
  expect(within(nav).getByRole('link',{name:'إنت صح'})).toHaveAttribute('href','#rules-enta-sah');
  expect(within(nav).getByRole('link',{name:'الدخيل'})).toHaveAttribute('href','#rules-imposter');
  const khaliah=screen.getByRole('region',{name:'كيف تلعب الخلية؟'});
- expect(within(khaliah).getAllByRole('listitem')).toHaveLength(4);
- expect(within(khaliah).getByText(/بين طرفَي اللوح للفوز/)).toBeVisible();
+ expect(within(khaliah).getAllByRole('listitem')).toHaveLength(8);
+ for (const step of ['جرّبوا البازر', 'الخلايا المرقّمة', 'الفرصة الثانية', 'الفوز بالمباراة']) expect(within(khaliah).getByText(step)).toBeVisible();
+ expect(within(khaliah).getByText(/يوصل طرفيه على اللوح يفوز بالجولة/)).toBeVisible();
  expect(within(khaliah).getByRole('link',{name:'إعداد الخلية'})).toHaveAttribute('href','/host/new');
  const enta=screen.getByRole('region',{name:'كيف تلعب إنت صح؟'});
  expect(within(enta).getByText(/الإنهاء المبكر يحتاج تأكيداً/)).toBeVisible();
@@ -59,8 +60,8 @@ it('guides shared setup and preserves each game’s rules and availability', asy
  expect(within(imposter).queryByRole('link',{name:'ابدأ الدخيل'})).not.toBeInTheDocument();
 });
 it('preserves attribution and license links with the product title',()=>{
- mount(<MediaCreditsRoute/>);expect(document.title).toBe('اعتمادات الصور | الميدان');expect(screen.getByRole('link',{name:'OpenMoji'})).toHaveAttribute('href','https://openmoji.org/');expect(screen.getByRole('link',{name:'CC BY-SA 4.0'})).toHaveAttribute('rel','license noreferrer');expect(screen.getByText(/حُوّلت الرسوم إلى PNG/)).toBeVisible();
+ mount(<MediaCreditsRoute/>);expect(document.title).toBe('اعتمادات الخطوط والصور | الميدان');expect(screen.getByRole('link',{name:'OpenMoji'})).toHaveAttribute('href','https://openmoji.org/');expect(screen.getByRole('link',{name:'CC BY-SA 4.0'})).toHaveAttribute('rel','license noreferrer');expect(screen.getByText(/حُوّلت الرسوم إلى PNG/)).toBeVisible();
 });
 it('keeps not-found recovery as real navigation to the homepage',async()=>{
- mount(<NotFoundRoute/>);expect(document.title).toBe('الصفحة غير موجودة | الميدان');await userEvent.click(screen.getByRole('link',{name:'العودة للرئيسية',exact:true}));expect(screen.getByRole('heading',{name:'الرئيسية'})).toBeVisible();
+ mount(<NotFoundRoute/>);expect(document.title).toBe('الصفحة غير موجودة | الميدان');await userEvent.click(within(screen.getByRole('main')).getByRole('link',{name:'الرئيسية',exact:true}));expect(screen.getByRole('heading',{name:'الرئيسية'})).toBeVisible();
 });
